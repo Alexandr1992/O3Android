@@ -24,6 +24,8 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import java.util.*
+import android.support.v4.content.ContextCompat.startActivity
+import org.jetbrains.anko.image
 
 
 /**
@@ -35,8 +37,8 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
     var images =  listOf(R.drawable.ic_settingsprivatekeyicon, R.drawable.ic_settingsaddressbookicon,
-            R.drawable.ic_settingswatchonlyaddressicon, R.drawable.ic_settingsnetworkicon, R.drawable.ic_settingsnetworkicon,
-            R.drawable.ic_settingscontacticon,
+            R.drawable.ic_settingswatchonlyaddressicon, R.drawable.ic_settingsnetworkicon,
+            R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
             R.drawable.ic_settings_logout, R.drawable.ic_mobile_android, R.drawable.ic_bug)
     init {
         mContext = context
@@ -46,7 +48,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     enum class CellType {
         PRIVATEKEY, CONTACTS,
         WATCHADRESS, NETWORK,
-        CONTACT, LOGOUT,
+        SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
 
     }
@@ -76,7 +78,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             titleTextView.text = mContext.resources.getString(R.string.SETTINGS_version, version)
         }
 
-        view.findViewById<ImageView>(R.id.settingsIcon).setImageResource(getItem(position).second)
+        view.findViewById<ImageView>(R.id.settingsIcon).image = mContext.getDrawable(images[position])
 
         view.setOnClickListener {
             getClickListenerForPosition(position)
@@ -116,6 +118,9 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             val networkModal = NetworkFragment.newInstance()
             networkModal.show((mContext as AppCompatActivity).supportFragmentManager, networkModal.tag)
             return
+        } else if (position == CellType.SUPPORT.ordinal) {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))
+            startActivity(mContext, browserIntent, null)
         } else if (position == CellType.CONTACT.ordinal) {
             val intent = Intent(Intent.ACTION_VIEW)
             val data = Uri.parse("mailto:support@o3.network")
