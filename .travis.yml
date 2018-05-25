@@ -1,6 +1,14 @@
 language: android
 jdk: oraclejdk8
-sudo: false
+sudo: falsei
+
+env:
+  global:
+    - ANDROID_ABI=armeabi-v7a
+    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
+    - ANDROID_ABI=armeabi-v7ai
+    - ANDROID_TAG=google_apis
+
 
 android:
   components:
@@ -8,7 +16,7 @@ android:
     - tools
     - build-tools-27.0.3
     - android-27
-    - sys-img-armeabi-v7a-addon-google_apis-google-27 
+    - sys-img-armeabi-v7a-google_apis-27
     - extra-android-m2repository
 
 before_install:
@@ -24,7 +32,7 @@ cache:
     - $HOME/.android/build-cache
 
 before_script:
-  - echo no | android create avd --force -n test -t android-27 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t "android-23" --abi $ANDROID_ABI --tag $ANDROID_TAG
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
