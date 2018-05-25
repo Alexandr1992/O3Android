@@ -1,26 +1,14 @@
 language: android
 jdk: oraclejdk8
-sudo: falsei
+sudo: false
 
 env:
   global:
-    - ANDROID_ABI=armeabi-v7a
+    - ANDROID_API_LEVEL=27
+    - EMULATOR_API_LEVEL=27
     - ANDROID_BUILD_TOOLS_VERSION=27.0.3
-    - ANDROID_ABI=armeabi-v7ai
+    - ANDROID_ABI=armeabi-v7a
     - ANDROID_TAG=google_apis
-
-
-android:
-  components:
-    - platform-tools
-    - tools
-    - build-tools-27.0.3
-    - android-27
-    - sys-img-armeabi-v7a-google_apis-27
-    - extra-android-m2repository
-
-before_install:
-    - yes | sdkmanager "platforms;android-27"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -30,6 +18,31 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
+
+android:
+  components:
+    - tools # to get the new `repository-11.xml`
+    - platform-tools
+    - tools # to install Android SDK tools 25.1.x
+    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+    - android-$ANDROID_API_LEVEL
+    - android-$EMULATOR_API_LEVEL
+    # For Google APIs
+    - addon-google_apis-google-$ANDROID_API_LEVEL
+    - addon-google_apis-google-$EMULATOR_API_LEVEL
+    # Google Play Services
+    - extra-google-google_play_services
+    # Support library
+    - extra-android-support
+    # Latest artifacts in local repository
+    - extra-google-m2repository
+    - extra-android-m2repository
+    # Specify at least one system image
+    - sys-img-armeabi-v7a-google_apis-$ANDROID_API_LEVEL
+    - sys-img-armeabi-v7a-google_apis-$EMULATOR_API_LEVEL
+
+before_install:
+    - yes | sdkmanager "platforms;android-27"
 
 before_script:
   - echo no | android create avd --force -n test -t "android-23" --abi $ANDROID_ABI --tag $ANDROID_TAG
