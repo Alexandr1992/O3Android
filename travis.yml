@@ -24,6 +24,7 @@ android:
   components:
     - platform-tools
     - tools # to install Android SDK tools 25.1.x
+    - tools
     - build-tools-$ANDROID_BUILD_TOOLS_VERSION
     - android-$ANDROID_API_LEVEL
     - addon-google_apis-google-$ANDROID_API_LEVEL

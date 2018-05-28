@@ -2,6 +2,7 @@ package network.o3.o3wallet.Wallet.Send
 
 import android.app.Activity
 import android.app.Fragment
+import android.app.KeyguardManager
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -137,6 +138,22 @@ class SendActivity: AppCompatActivity() {
         }
     }
 
+    private fun verifyPassCode() {
+        val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        if (!mKeyguardManager.isKeyguardSecure) {
+            // Show a message that the user hasn't set up a lock screen.
+            Toast.makeText(this,
+                    resources.getString(R.string.ALERT_no_passcode_setup),
+                    Toast.LENGTH_LONG).show()
+            return
+        } else {
+            val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
+            if (intent != null) {
+                startActivityForResult(intent, 1)
+            }
+        }
+    }
+
     private fun send() {
         //validate field
         val address = addressTextView.text.trim().toString()
@@ -153,7 +170,6 @@ class SendActivity: AppCompatActivity() {
         } else {
             sendTokenAsset(address, amount)
         }
-
     }
 
     private fun sendNativeAsset(address: String, amount: Double) {
@@ -252,7 +268,7 @@ class SendActivity: AppCompatActivity() {
                     alert(resources.getString(R.string.SEND_send_confirmation, amount.toString(),
                             this.shortName.toUpperCase(), address)) {
                         positiveButton(resources.getString(R.string.SEND_send)) {
-                            send()
+                            verifyPassCode()
                         }
                         negativeButton(resources.getString(R.string.ALERT_cancel)) {
 
@@ -292,6 +308,15 @@ class SendActivity: AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null && result.contents == null) {
+            Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
+        } else {
+            if (requestCode == 1) {
+                send()
+                return
+            }
+        }
+
         if (result != null) {
             if (result.contents == null) {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
