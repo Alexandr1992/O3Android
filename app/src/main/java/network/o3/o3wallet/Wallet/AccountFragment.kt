@@ -46,6 +46,7 @@ class AccountFragment : Fragment() {
     private var firstLoad = true
     private var tickupHandler = Handler()
     private lateinit var tickupRunnable: Runnable
+    private var claimSucceeded = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -88,10 +89,16 @@ class AccountFragment : Fragment() {
                             this.syncButton.isEnabled = false
                             context?.toast(accountViewModel.getLastError().localizedMessage)
                         } else {
-                            showClaims(it)
-                            if (firstLoad) {
-                                beginTickup()
-                                firstLoad = false
+
+                            if (it.data.claims.isNotEmpty() && !claimSucceeded) {
+                                showReadyToClaim()
+                            } else {
+                                claimSucceeded = false
+                                showClaims(it)
+                                if (firstLoad) {
+                                    beginTickup()
+                                    firstLoad = false
+                                }
                             }
                         }
                     })
@@ -182,6 +189,8 @@ class AccountFragment : Fragment() {
         val amount = claims.data.gas.toDouble()
         unclaimedGASTicker.text =  "%.8f".format(accountViewModel.getEstimatedGas(claims))
         claimAmount = amount
+        learnMoreClaimButton.visibility = View.VISIBLE
+        syncButton.visibility = View.VISIBLE
 
         if (accountViewModel.getClaimingStatus()) {
             this.syncButton.isEnabled = false
@@ -210,6 +219,8 @@ class AccountFragment : Fragment() {
         onUiThread {
             unclaimedGASTicker.text = accountViewModel.getStoredClaims().data.gas
             unclaimedGASTicker.textColor = resources.getColor(R.color.colorBlack)
+            learnMoreClaimButton.visibility = View.GONE
+            syncButton.visibility = View.GONE
 
             view?.find<ImageView>(R.id.syncingProgress)?.visibility = View.GONE
             view?.find<TextView>(R.id.syncingSubtitle)?.visibility = View.GONE
@@ -241,6 +252,8 @@ class AccountFragment : Fragment() {
             view?.find<TextView>(R.id.successfulClaimAmountTextView)?.text = unclaimedGASTicker.text
             view?.find<ImageView>(R.id.coinsImageView)?.visibility = View.VISIBLE
 
+
+            unclaimedGASTicker.text = "0.00000000"
             progressBarBegin(60000, true)
 
         }
@@ -254,9 +267,17 @@ class AccountFragment : Fragment() {
         val animation = ObjectAnimator.ofInt(progressBar, "progress" , 0, 10000)
         animation.setDuration(millis)
         animation.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {
+                swipeContainer.setOnRefreshListener {
+                    swipeContainer.isRefreshing = false
+                }
+            }
             override fun onAnimationRepeat(animation: Animator?) {}
             override fun onAnimationEnd(animation: Animator?) {
+                swipeContainer.setOnRefreshListener {
+                    swipeContainer.isRefreshing = true
+                    reloadAllData()
+                }
                 if (claimComplete) {
                     showUnsyncedClaim(true)
                 }
@@ -326,6 +347,7 @@ class AccountFragment : Fragment() {
                 }
                return@performClaim
             } else {
+                claimSucceeded = true
                 showClaimSucceeded()
             }
         }
