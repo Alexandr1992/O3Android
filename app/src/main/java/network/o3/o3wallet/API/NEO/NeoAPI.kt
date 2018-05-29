@@ -450,7 +450,7 @@ class NeoNodeRPC {
 
         var params: ArrayList<Any> = arrayListOf<Any>()
         params.add(contractHash)
-        params.add("tokensale_status")
+        params.add("kycStatus")
         var invokeFunctionParams: ArrayList<Any> = arrayListOf()
         //var stack = Stack(type = "Hash160",value = address.hash160().toString())
         var stack = JsonObject()
@@ -514,9 +514,11 @@ class NeoNodeRPC {
 
     fun participateTokenSales(scriptHash: String, assetID: String, amount: Double, remark: String, networkFee: Double,  completion: (Pair<String?, Error?>) -> Unit){
         var utxoEndpoint = "main"
-        val isPrivateNet =  O3Wallet.appContext!!.defaultSharedPreferences.getBoolean("USING_PRIVATE_NET", false)
-        if (isPrivateNet) {
-            utxoEndpoint = "main"
+
+        if (PersistentStore.getNetworkType() == "Test") {
+            utxoEndpoint = "test"
+        } else if(PersistentStore.getNetworkType() == "Private") {
+            utxoEndpoint = "private"
         }
         var finalPayload: RawTransaction? = null
         try {
@@ -533,6 +535,9 @@ class NeoNodeRPC {
         sendRawTransaction(finalPayload.data) {
             var success = it.first
             var error = it.second
+            if (success == false) {
+                error = Error("Transaction Failed")
+            }
             completion(Pair (finalPayload.txid, error))
         }
     }

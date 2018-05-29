@@ -2,6 +2,7 @@ package network.o3.o3wallet.TokenSales
 
 import android.content.Intent
 import android.net.Uri
+import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -27,7 +28,7 @@ import org.jetbrains.anko.yesButton
 import java.text.DecimalFormat
 import network.o3.o3wallet.DecimalDigitsInputFilter
 import android.text.InputFilter
-
+import android.view.Gravity
 
 
 class TokenSaleInfoActivity : AppCompatActivity() {
@@ -66,6 +67,12 @@ class TokenSaleInfoActivity : AppCompatActivity() {
     fun initiateAssetSelectorCards() {
         val gasCard = footerView.findViewById<CardView>(R.id.gasAssetCardView)
         val neoCard = footerView.findViewById<CardView>(R.id.neoAssetCardView)
+
+        if (gasInfo.basicRate.toInt() == 0) {
+            gasCard.visibility = View.GONE
+            neoCard.foregroundGravity = Gravity.CENTER_HORIZONTAL
+        }
+
 
         val gasCardTitleTextView = footerView.findViewById<TextView>(R.id.gasCardTitleTextView)
         val neoCardTitleTextView = footerView.findViewById<TextView>(R.id.neoCardTitleTextView)
@@ -270,7 +277,7 @@ class TokenSaleInfoActivity : AppCompatActivity() {
 
         val tokenJSON = intent.getStringExtra("TOKENSALE_JSON")
         tokenSale = Gson().fromJson(tokenJSON)
-        gasInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "GAS" }!!
+        gasInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "GAS" } ?: AcceptingAsset("GAS", 0,0.0,0.0)
         neoInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "NEO" }!!
 
         val listView = findViewById<ListView>(R.id.tokenInfoListView)
