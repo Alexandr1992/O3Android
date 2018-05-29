@@ -229,12 +229,7 @@ class NeoNodeRPC {
         }
     }
 
-    private fun getInputsNecessaryToSendAsset(asset: Asset, amount: Double, utxos: UTXOS?): SendAssetReturn {
-        //for assetLess Invoke
-        if (utxos == null) {
-            return  SendAssetReturn(0.0, byteArrayOf(0), null)
-        }
-
+    private fun getInputsNecessaryToSendAsset(asset: Asset, amount: Double, utxos: UTXOS): SendAssetReturn {
         var sortedUnspents  = getSortedUnspents(asset, utxos.data)
         var neededForTransaction: MutableList<UTXO> = arrayListOf()
         if (sortedUnspents.sumByDouble { it.value.toDouble() } <  amount) {
@@ -276,16 +271,10 @@ class NeoNodeRPC {
 //                numberOfAttributes = numberOfAttributes + 1
 //            }
 //        }
-//      }
+//        }
 
         var payload: ByteArray = payloadPrefix + numberOfAttributes
         payload = payload + attributesPayload + inputDataBytes
-
-        //send token no asset
-        if (runningAmount == 0.0) {
-            return payload + byteArrayOf(0)
-        }
-
         if (needsTwoOutputTransactions) {
             //Transaction To Reciever
             payload = payload + byteArrayOf(0x02.toByte()) + asset.assetID().hexStringToByteArray().reversedArray()
@@ -334,7 +323,7 @@ class NeoNodeRPC {
     }*/
 
 
-    private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String, contractAddress: String): ByteArray {
+    private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS, script: String, contractAddress: String): ByteArray {
         val inputData = getInputsNecessaryToSendAsset(NeoNodeRPC.Asset.GAS, 0.00000001, utxos)
         val payloadPrefix = byteArrayOf(0xd1.toUByte(), 0x00.toUByte()) + script.hexStringToByteArray()
         var rawTransaction = packRawTransactionBytes(payloadPrefix, wallet, Asset.GAS,
@@ -344,7 +333,7 @@ class NeoNodeRPC {
         val privateKeyHex = wallet.privateKey.toHex()
         val signature = sign(rawTransaction, privateKeyHex)
         var finalPayload = concatenatePayloadData(wallet, rawTransaction, signature)
-        //finalPayload = finalPayload + contractAddress.hexStringToByteArray()
+        finalPayload = finalPayload + contractAddress.hexStringToByteArray()
         return finalPayload
 
     }
@@ -502,15 +491,24 @@ class NeoNodeRPC {
     // toAddress -> Address of Recipient
     // transfer amount *
     fun sendNEP5Token(wallet: Wallet, tokenContractHash: String, fromAddress: String, toAddress: String, amount: Double,
-                          completion: (Pair<Boolean?, Error?>) -> Unit) {
-        val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount)
-        val scriptBytesString = scriptBytes.toHex()
-        val finalPayload = generateInvokeTransactionPayload(wallet, null, scriptBytes.toHex(), tokenContractHash)
-        val finalPayloadString = finalPayload.toHex()
-        sendRawTransaction(finalPayload) {
-            var success = it.first
+                      completion: (Pair<Boolean?, Error?>) -> Unit) {
+        O3PlatformClient().getUTXOS(wallet.address) {
+            var assets = it.first
             var error = it.second
-            completion(Pair<Boolean?, Error?>(success, error))
+            if (error != null) {
+                completion(Pair<Boolean?, Error?>(false, error))
+                return@getUTXOS
+            } else {
+                val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount)
+                val scriptBytesString = scriptBytes.toHex()
+                val finalPayload = generateInvokeTransactionPayload(wallet, assets!!, scriptBytes.toHex(), tokenContractHash)
+                val finalPayloadString = finalPayload.toHex()
+                sendRawTransaction(finalPayload) {
+                    var success = it.first
+                    var error = it.second
+                    completion(Pair<Boolean?, Error?>(success, error))
+                }
+            }
         }
     }
 
