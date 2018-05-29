@@ -81,4 +81,15 @@ class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
             print(value)
         }
     }
+
+    fun deepCopy(): TransferableAsset {
+        var copyValue: BigDecimal
+        if (isToken) {
+            copyValue = value.multiply(BigDecimal(Math.pow(10.0, 8.0)))
+        } else {
+            copyValue = value
+        }
+        val balance = TransferableBalance(asset.id, asset.name, copyValue.toPlainString(), asset.symbol, asset.decimals)
+        return TransferableAsset(balance, isToken)
+    }
 }

@@ -9,6 +9,7 @@ import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
+import network.o3.o3wallet.API.O3Platform.TransferableBalance
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -131,7 +132,12 @@ class HomeViewModel {
     }
 
     fun combineReadOnlyAndWritable(): ArrayList<TransferableAsset>{
-        var assets = assetsWritable
+        var assets = arrayListOf<TransferableAsset>()
+        for (asset in assetsWritable) {
+            assets.add(asset.deepCopy())
+        }
+
+        //var assets = assetsWritable
         for (asset in assetsReadOnly) {
             val index = assets.indices.find { assets[it].name == asset.name } ?: -1
             if (index == -1) {

@@ -27,6 +27,7 @@ import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
+import java.text.NumberFormat
 
 
 class AccountFragment : Fragment() {
@@ -152,7 +153,9 @@ class AccountFragment : Fragment() {
 
 
     private fun tickup() {
-        var current = unclaimedGASTicker.text.toDouble()
+        val format = NumberFormat.getInstance()
+        val number = format.parse(unclaimedGASTicker.text)
+        val current = number.toDouble()
         val addIntervalAmount = (accountViewModel.getNeoBalance() * 7 / 100000000.0)
         unclaimedGASTicker.text = "%.8f".format(current + addIntervalAmount)
     }
@@ -186,7 +189,10 @@ class AccountFragment : Fragment() {
 
 
     fun showClaims(claims: ClaimData) {
-        val amount = claims.data.gas.toDouble()
+        val format = NumberFormat.getInstance()
+        val number = format.parse(claims.data.gas)
+        val amount = number.toDouble()
+
         unclaimedGASTicker.text =  "%.8f".format(accountViewModel.getEstimatedGas(claims))
         claimAmount = amount
         //learnMoreClaimButton.visibility = View.VISIBLE
