@@ -28,6 +28,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
+import java.util.*
 
 
 class AccountFragment : Fragment() {
@@ -112,6 +113,13 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         accountViewModel = AccountViewModel()
 
+        tickupRunnable = object : Runnable {
+            override fun run() {
+                tickup()
+                tickupHandler.postDelayed(this, 15000)
+            }
+        }
+
         syncButton = view.findViewById(R.id.syncButton)
         claimButton = view.find(R.id.claimButton)
         learnMoreClaimButton = view.find(R.id.learnMoreClaimButton)
@@ -161,12 +169,6 @@ class AccountFragment : Fragment() {
     }
 
     private fun beginTickup() {
-        tickupRunnable = object : Runnable {
-            override fun run() {
-                tickup()
-                tickupHandler.postDelayed(this, 15000)
-            }
-        }
         tickupHandler.postDelayed(tickupRunnable, 15000)
     }
 
@@ -189,7 +191,8 @@ class AccountFragment : Fragment() {
 
 
     fun showClaims(claims: ClaimData) {
-        val format = NumberFormat.getInstance()
+        //Claim data always comes as us number
+        val format = NumberFormat.getInstance(Locale.US)
         val number = format.parse(claims.data.gas)
         val amount = number.toDouble()
 
@@ -288,7 +291,12 @@ class AccountFragment : Fragment() {
                     showUnsyncedClaim(true)
                 }
             }
-            override fun onAnimationCancel(animation: Animator?) {}
+            override fun onAnimationCancel(animation: Animator?) {
+                swipeContainer.setOnRefreshListener {
+                    swipeContainer.isRefreshing = true
+                    reloadAllData()
+                }
+            }
         })
         animation.start()
     }
