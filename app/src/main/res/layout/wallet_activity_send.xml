@@ -10,7 +10,6 @@
     tools:context="network.o3.o3wallet.Wallet.Send.SendActivity">
 
     <ScrollView
-        android:id="@+id/scrollView2"
         android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -58,7 +57,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/fromAddressButton"
+                    android:id="@+id/sendToContactButton"
                     style="@style/BorderLessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,7 +81,6 @@
                 android:layout_height="48dp">
 
                 <TextView
-                    android:id="@+id/textView12"
                     style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,7 +110,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView13"
                     style="@style/BoldText"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"

@@ -47,6 +47,7 @@ class SendActivity: AppCompatActivity() {
     lateinit var sendButton: Button
     lateinit var pasteAddressButton: Button
     lateinit var scanAddressButton: Button
+    lateinit var sendToContactButton: Button
     lateinit var view: View
 
     var ownedAssets: ArrayList<TransferableAsset> = arrayListOf()
@@ -70,6 +71,7 @@ class SendActivity: AppCompatActivity() {
         pasteAddressButton = findViewById<Button>(R.id.pasteAddressButton)
         scanAddressButton = findViewById<Button>(R.id.scanAddressButton)
         selectedAssetTextView = findViewById<TextView>(R.id.selectedAssetTextView)
+        sendToContactButton = findViewById(R.id.sendToContactButton)
 
         amountTextView.keyListener = DigitsKeyListener.getInstance("0123456789")
         selectedAssetTextView.text = shortName.toUpperCase()
@@ -82,7 +84,7 @@ class SendActivity: AppCompatActivity() {
 
         pasteAddressButton.setOnClickListener { pasteAddressTapped() }
         scanAddressButton.setOnClickListener { scanAddressTapped() }
-        fromAddressButton.setOnClickListener { addFromAddressTapped() }
+        sendToContactButton.setOnClickListener { addFromAddressTapped() }
 
         val extras = intent.extras
         val address = extras.getString("address")
