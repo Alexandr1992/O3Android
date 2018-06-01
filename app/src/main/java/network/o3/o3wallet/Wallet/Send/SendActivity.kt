@@ -326,13 +326,23 @@ class SendActivity: AppCompatActivity() {
                 val uri = parseNEP9URI(result.contents.trim())
                 addressTextView.text = uri.to
                 amountTextView.text = uri.amount.toString()
-                isNativeAsset = true
-                assetID = uri.assetID
-                if (assetID.contains(NeoNodeRPC.Asset.NEO.assetID())) {
+
+                if (uri.asset.contains(NeoNodeRPC.Asset.NEO.assetID()) || uri.asset.toLowerCase() == "neo") {
+                    isNativeAsset = true
+                    assetID = NeoNodeRPC.Asset.NEO.assetID()
                     shortName = "NEO"
-                } else {
+                } else if (uri.asset.contains(NeoNodeRPC.Asset.GAS.assetID())  || uri.asset.toLowerCase() == "gas") {
+                    isNativeAsset = true
+                    assetID = NeoNodeRPC.Asset.GAS.assetID()
                     shortName = "GAS"
+                } else {
+                    isNativeAsset = false
+                    assetID = uri.asset
+
+                    val asset = ownedAssets.firstOrNull { it.id == uri.asset }
+                    shortName = asset?.name ?: "GAS"
                 }
+
                 updateSelectedAsset()
 
             } catch (e: Exception) {
