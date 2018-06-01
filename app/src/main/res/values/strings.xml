@@ -56,7 +56,6 @@
         The most secure way to back up your key is to write it down on paper and store it somewhere safe from theft or damage
     </string>
     <string name="SETTINGS_copy_to_clipboard" comment="Copy private key to clipboard">Copy to Clipboard</string>
-    <string name="SETTINGS_save_as_qr" comment="save your qr image via sharing">Save as QR Key</string>
     <string name="SETTINGS_copied_key" comment="displayed when copied to clipboard">Copied Key</string>
 
     <!-- Settings: Currency -->
@@ -64,10 +63,6 @@
 
     <!-- Settings: Watch Addresses -->
     <string name="SETTINGS_watch_addresses" comment="A title for watch addresses">Watch Addresses</string>
-    <string name="SETTINGS_add_address_watch_addresses" comment="Button title to add a new watch address">+ ADD ADDRESS</string>
-    <string name="SETTINGS_watch_address_explanation" comment="An explanation on what adding a new watch address means">Watch only addresses let you monitor your portfolio in an
-    isolated environment. Although you won\'t be able to send funds frm these addresses, you will be able to check
-    the balance</string>
     <string name="SETTINGS_watch_address" comment="A title for an individual watch address">Watch Address</string>
     <string name="SETTINGS_address_watch_addresses" comment="Address title for input field of watch address">Address</string>
     <string name="SETTINGS_paste_watch_addresses" comment="A title for paste button when adding a watch address">Paste</string>
@@ -75,8 +70,6 @@
     <string name="SETTINGS_name_watch_addresses" comment="A title for nickname input field when adding a watch address">Name</string>
     <string name="SETTINGS_add_watch_address" comment="Add title for when adding watch address">Add Watch Address</string>
     <string name="SETTINGS_scan_prompt_watch_address" comment="A prompt instructing the user user to scan the QR code of the address that they want to watch">Scan the QR code of the address you want to save</string>
-    <string name="SETTINGS_remove_watch_address" comment="A button title for removing a watch address from your list">Remove Watch Address</string>
-    <string name="SETTINGS_remove_watch_address_warning" comment="A warning prompt asking if the user for sure wants to remove the address">Are you sure you want to remove this watch address?</string>
     <string name="SETTINGS_add_address_watch_address_description" comment="Description explaining what will happen when you add a watch address">Watch only let you monitor your portfolio in
         an isolated environment. Although you won\'t be able to send funds from these addresses you will be able
         to check the balance</string>
@@ -92,34 +85,22 @@
 
     <!-- Wallet: Address Book -->
     <string name="WALLET_address_book" comment="A title for the address book">Address Book</string>
-    <string name="WALLET_add_address_address_book" comment="A title for the button to add a new address to the address book">+ ADD ADDRESS</string>
-    <string name="WALLET_address" comment="A title for address input field when adding contact to address book">Address</string>
     <string name="WALLET_paste" comment="pasted action when entering address in wallet page">Paste</string>
     <string name="WALLET_scan" comment="scan action when scanning address in wallet page">Scan</string>
     <string name="WALLET_name_address_book" comment="A nickname for your contact in the address book">Name</string>
     <string name="WALLET_add_contact" comment="Add new contact action for new contact to address book">Add Contact</string>
-    <string name="WALLET_address_book_scan_prompt" comment="A prompt for adding a new address to the address book">Scan the QR code of the address you want to save</string>
     <string name="WALLET_copied_address" comment="displayed when successfully copied an address to the clipboard">Copied Address</string>
     <string name="WALLET_remove_contact" comment="Action to remove a contact from the address book">Remove Contact</string>
     <string name="WALLET_remove_contact_warning" comment="Warning displayed when user attempts to remove contract from the address book">Are you sure you want to remove this contact?</string>
-    <string name="WALLET_add_address_contact_description" comment="Description explaining what happens when you add a contact">Your address book will let you send funds
-        all over the world without needing to remember your address</string>"
+    "
 
     <!-- Wallet -->
     <string name="WALLET_my_o3_wallet" comment="A title for the wallet page where all utxos are listed">My O3 Wallet</string>
     <string name="WALLET_assets" comment="A title for the utxos tab on the wallet page">Assets</string>
     <string name="WALLET_transactions" comment="A title for the transactions tab in the wallet page">Transactions</string>
-    <string name="WALLET_unclaimed_gas" comment="A title for the unclaimed gas portio">UNCLAIMED GAS</string>
-    <string name="WALLET_add_nep_5_token" comment="Button title to add a nep5 token on the account screen">+ ADD NEP5 TOKEN</string>
     <string name="WALLET_claim" comment="A title for a claim in the transaction history">CLAIM</string>
-    <string name="WALLET_nep_5_tokens" comment="Header for NEP 5 tokens in wallet">NEP5 Tokens</string>
     <string name="WALLET_my_address" comment="Header for my address page">My Address</string>
     <string name="WALLET_copy_address_my_address" comment="Copy Address action when looking at my address qr">COPY ADDRESS</string>
-    <string name="WALLET_no_transactions" comment="Title for when transaction history is empty">No Transactions</string>
-    <string name="WALLET_claiming_gas" comment="A title for when claiming gas is in progress">Claiming Gas</string>
-    <string name="WALLET_claimed_gas_successfully" comment="A message displayed when gas has been claimed succcessfully">Claimed Gas Successfully, Please Wait several minutes before claiming again</string>
-    <string name="WALLET_please_wait_for_claim" comment="A message to display when the claiming is in progresss">Claim Pending...Please Wait</string>
-    <string name="WALLET_Claim_Error_Load_Account_State" comment="An error to display when attemptinf to claim gas, but can not load the account detaiks">Unable to retrieve account details, check settings -> network</string>
 
     <string name="WALLET_my_address_action_label" comment="Action button title to look at your neo address">My NEO address</string>
     <string name="WALLET_send_action_label" comment="Action button title to send NEO">Send</string>
@@ -256,16 +237,12 @@
     <string name="ALERT_invalid_neo_address" comment="alert when trying to send to or add an invalid neo address">Your provided an invalid NEO address, please check it again.</string>
     <string name="ALERT_error" comment="title for error dialogs">Error</string>
     <string name="ALERT_invalid_wif" comment="Trying to etner an invalid wif when logging in">Invalid WIF</string>
-    <string name="ALERT_action_share" comment="Share data with another app">Share</string>
-    <string name="ALERT_action_reply" comment="reply">Reply</string>
     <string name="ALERT_OK_Confirm_Button" comment="OK button for alert dialogs">OK</string>
     <string name="ALERT_Something_Went_Wrong" comment="Generic error when it is unclear what went wrong">Something went wrong. Please Try Again Error</string>
     <string name="ALERT_Close" comment="string for close actions in alert">Close</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="neo_asset_id">0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b</string>
-    <string name="gas_asset_id">0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7"</string>
     <string name="WALLET_sync">sync now</string>
     <string name="WALLET_estimated_gas">Estimated</string>
     <string name="WALLET_confirmed_gas">Confirmed</string>
