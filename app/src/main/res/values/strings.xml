@@ -122,7 +122,6 @@
     <string name="WALLET_Claim_Error_Load_Account_State" comment="An error to display when attemptinf to claim gas, but can not load the account detaiks">Unable to retrieve account details, check settings -> network</string>
 
     <string name="WALLET_my_address_action_label" comment="Action button title to look at your neo address">My NEO address</string>
-    <string name="WALLET_topup_cold_storage_action_label" comment="Action button title to look at your cold storage address">Cold Storage</string>
     <string name="WALLET_send_action_label" comment="Action button title to send NEO">Send</string>
     <string name="WALLET_token_sale_action_label" comment="Action button title to participate in a token sale">Token Sale</string>
 
@@ -218,66 +217,6 @@
         O3 Team
     </string>
 
-
-    <!-- Wallet Topup  DEPRECATED DO NOT LOCALZIE-->
-    <string name="TOPUP_from_cold_storage" comment="Allowing you to topup from the cold storage address">From: Cold Storage Address</string>
-    <string name="TOPUP_asset" comment="Label for which asset you want to withdraw from your cold storage address">Asset</string>
-    <string name="TOPUP_amount" comment="Label for the ammount which you wish to withdraw from cold storage">Amount</string>
-    <string name="TOPUP_scan_qr_code" comment="Button to scan QR code for Key Fragment">SCAN QR CODE</string>
-    <string name="TOPUP_footnote" comment="Indicator asking user to find their QR Code">Please have your QR code ready to scan</string>
-    <string name="TOPUP_confirm" comment="Confirm button title">CONFIRM</string>
-
-    <string name="TOPUP_get_started" comment="Get started action item when no Cold storage address has been set yet">GET STARTED</string>
-
-    <string name="TOPUP_cold_storage_private_key" comment="Cold Storage Private Key Labrl">Your Cold Storage Private Key (WIF)</string>
-    <string name="TOPUP_cold_storage_private_key_explanation" comment="Explanation of how cold storage actually works">Your cold storage private key will never be stored on this device.
-    Instead it will be encrypted into two seperate fragments. You will need both pieces in order to withdraw from cold storage. This
-    is made possible from some math magic called "Shamir's Secret Sharing Algorithm."</string>
-    <string name="TOPUP_cold_storage_scan" comment="scan button title">Scan</string>
-    <string name="TOPUP_cold_storage_read_more" comment="read more about cold storage button title">Read More</string>
-    <string name="TOPUP_generate_encrypted_key_fragments" comment="Encrypt into key fragments button title">Encrypt Into Key Fragments</string>
-    <string name="TOPUP_scan_prompt_cold_storage" comment="Prompt asking you to scan the private key of cold storage">Scan the private key of cold storage</string>
-    <string name="TOPUP_encryption_in_progress" comment="Loading dialog while encryption is taking place">Encryption in Progress...</string>
-    <string name="TOPUP_first_fragment_secure" comment="Dialog after the data has been fenerated">Two pieces of encrypted data is generated.
-        One is securely stored on your device and You will be given another one in the next screen.</string>
-    <string name="TOPUP_continue_button" comment="Continue button title">Continue</string>
-    <string name="TOPUP_encryption_done" comment="Successfully store the first private key fragment on the device">First Fragment Stored on Device</string>
-
-    <string name="TOPUP_second_key_fragment" comment="Title Label for second key fragment">Second Key Fragment</string>
-    <string name="TOPUP_save" comment="Save button title">Save</string>
-    <string name="TOPUP_second_key_fragment_explanation" comment="Suggestions on how to save the key fragment in a secure location">You can choose to print this or email it to yourself.
-        You will scan this QR code with your O3 wallet inorder to topup from your cold storage account.
-        Anyone who gets a hold of this data alone is not able to do anything with your NEO.</string>
-    <string name="TOPUP_done" comment="Done button title">Done</string>
-    <string name="TOPUP_save_fragment_confirm" comment="Prompt asking for comnfirmation that you have saved the qr code in a secure location">I have saved this QR Code</string>
-    <string name="TOPUP_withdraw" comment="withdraw button title">Withdraw</string>
-    <string name="TOPUP_cold_storage_vault" comment="cold storage vault title">Cold Storage Vault</string>
-    <string name="TOPUP_remove_cold_storage" comment="Remove Cold Storage button title">Remove Cold Storage</string>
-    <string name="TOPUP_Introducing" comment="Title introducting new topup feature">Introducing</string>
-    <string name="TOPUP_O3_Simple_Transfer" comment="O3 Simple Transfer Explanation">O3 Simple Transfer</string>
-    <string name="TOPUP_Simple_Transfer_Explanation" comment="Explanation of toup feature">Secure and Convenient way to transfer NEO or GAS from any one of your NEO addresses to O3 Mobile Wallet.</string>
-
-
-    <string-array name="TOPUP_tutorial_titles">
-        <item>O3 Simple Transfer</item>
-        <item>Security</item>
-        <item>Convenience</item>
-    </string-array>
-
-    <string-array name="TOPUP_tutorial_subtitles">
-        <item>Introducing</item>
-        <item>O3 Simple Transfer</item>
-        <item>O3 Simple Transfer</item>
-    </string-array>
-
-    <string-array name="TOPUP_tutorial_explanations">
-        <item>Secure and Convenient way to transfer
-            NEO or GAS from any one of your NEO addresses to O3 Mobile Wallet.</item>
-        <item>Two pieces of information will be genereated from your private key. One part is securely stored on this device.
-            Another part you can choose to store it anywhere. </item>
-        <item>Simply scan the given QR code and enter NEO or GAS amount you would like to transfer to your O3 Wallet.
-            You’re all set!</item>
-    </string-array>
 
     <!-- Portfolio -->
     <string name="PORTFOLIO_selecting_best_node">Selecting Best Node</string>
