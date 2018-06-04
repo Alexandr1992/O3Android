@@ -120,17 +120,23 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:fillViewport="true"
                 app:layout_constraintTop_toBottomOf="@+id/intervalButtonLayout">
-
-                <ListView
-                    android:id="@+id/assetListView"
+                <android.support.v4.widget.SwipeRefreshLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/portfolioSwipeRefresh"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginTop="8dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:divider="@null"
-                    android:dividerHeight="0dp" />
+                    android:layout_height="match_parent">
+                    <ListView
+                        android:id="@+id/assetListView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginTop="8dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:divider="@null"
+                        android:dividerHeight="0dp" />
+                </android.support.v4.widget.SwipeRefreshLayout>
+
             </ScrollView>
         </android.support.constraint.ConstraintLayout>
 

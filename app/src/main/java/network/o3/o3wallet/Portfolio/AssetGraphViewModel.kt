@@ -19,7 +19,7 @@ class AssetGraphViewModel: ViewModel() {
     private var history: MutableLiveData<PriceHistory>? = null
     private var symbol = "NEO"
     private var interval = O3Wallet.appContext!!.resources.getString(R.string.PORTFOLIO_one_day)
-    private var currency = CurrencyType.USD
+    private var currency = CurrencyType.FIAT
     private var latestPrice: PriceData? = null
     private var initialPrice: PriceData? = null
 
@@ -36,20 +36,20 @@ class AssetGraphViewModel: ViewModel() {
         return if (currency == CurrencyType.BTC) {
             latestPrice?.averageBTC?.formattedBTCString() ?: "$0.00"
         } else {
-            latestPrice?.averageUSD?.formattedUSDString() ?: "0.0BTC"
+            latestPrice?.averageUSD?.formattedFiatString() ?: "0.0BTC"
         }
     }
 
     fun getInitialPrice(): Double {
         return when(currency) {
-            CurrencyType.USD -> initialPrice?.averageUSD ?: 0.0
+            CurrencyType.FIAT -> initialPrice?.averageUSD ?: 0.0
             CurrencyType.BTC -> initialPrice?.averageBTC ?: 0.0
         }
     }
 
     fun getCurrentPrice(): Double {
         return when(currency) {
-            CurrencyType.USD -> latestPrice?.averageUSD ?: 0.0
+            CurrencyType.FIAT -> latestPrice?.averageUSD ?: 0.0
             CurrencyType.BTC -> latestPrice?.averageBTC ?: 0.0
         }
     }
@@ -89,7 +89,7 @@ class AssetGraphViewModel: ViewModel() {
 
     fun getPriceFloats(): FloatArray {
         val data = when (currency) {
-            CurrencyType.USD -> history?.value?.data?.map { it.averageUSD }?.toTypedArray()!!
+            CurrencyType.FIAT -> history?.value?.data?.map { it.averageUSD }?.toTypedArray()!!
             CurrencyType.BTC -> history?.value?.data?.map { it.averageBTC }?.toTypedArray()!!
         }
 

@@ -157,6 +157,7 @@ class AccountFragment : Fragment() {
 
         activity?.title = "Account"
         reloadAllData()
+
     }
 
 
@@ -302,6 +303,10 @@ class AccountFragment : Fragment() {
     }
 
     fun showUnsyncedClaim(reload: Boolean) {
+        //the thread progress could have finished earlier
+        if (activity == null) {
+            return
+        }
         onUiThread {
             view?.find<ImageView>(R.id.syncingProgress)?.visibility = View.GONE
             view?.find<TextView>(R.id.syncingSubtitle)?.visibility = View.GONE

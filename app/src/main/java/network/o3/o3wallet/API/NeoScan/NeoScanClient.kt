@@ -3,6 +3,7 @@ package network.o3.o3wallet.API.NeoScan
 import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import java.util.*
 
 /**
  * Created by drei on 4/24/18.
@@ -14,7 +15,7 @@ class NeoScanClient {
         GET_ADDRESS_ABSTRACTS;
 
         fun routeName(): String {
-            return this.name.toLowerCase() + "/"
+            return this.name.toLowerCase(Locale.US) + "/"
         }
     }
 

@@ -58,10 +58,10 @@ class PortfolioHeader:Fragment() {
 
         view?.findViewById<TextView>(R.id.fundAmountTextView)!!.setOnClickListener {
             var pFragment = (parentFragment as HomeFragment)
-            if (pFragment.homeModel.getCurrency() == CurrencyType.USD) {
+            if (pFragment.homeModel.getCurrency() == CurrencyType.FIAT) {
                 pFragment.homeModel.setCurrency(CurrencyType.BTC)
             } else {
-                pFragment.homeModel.setCurrency(CurrencyType.USD)
+                pFragment.homeModel.setCurrency(CurrencyType.FIAT)
             }
             pFragment.homeModel.loadAssetsFromModel(true)
         }

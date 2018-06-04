@@ -4,6 +4,7 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import network.o3.o3wallet.PersistentStore
+import java.util.*
 
 /**
  * Created by drei on 11/24/17.
@@ -17,7 +18,7 @@ class O3PlatformClient {
         UTXO;
 
         fun routeName(): String {
-            return this.name.toLowerCase()
+            return this.name.toLowerCase(Locale.US)
         }
     }
 

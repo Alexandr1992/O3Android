@@ -82,10 +82,10 @@ class AssetGraph : AppCompatActivity() {
     private fun initiatePriceView() {
         val priceView = findViewById<TextView>(R.id.currentPriceTextView)
         priceView.setOnClickListener {
-            if (assetGraphModel?.getCurrency() == CurrencyType.USD) {
+            if (assetGraphModel?.getCurrency() == CurrencyType.FIAT) {
                 assetGraphModel?.setCurrency(CurrencyType.BTC)
             } else {
-                assetGraphModel?.setCurrency(CurrencyType.USD)
+                assetGraphModel?.setCurrency(CurrencyType.FIAT)
             }
             loadGraph(true)
         }

@@ -2,18 +2,14 @@ package network.o3.o3wallet.Portfolio
 
 import network.o3.o3wallet.API.O3.O3API
 import network.o3.o3wallet.API.O3.PriceData
-import network.o3.o3wallet.API.NEO.*
-import android.util.Log
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
-import network.o3.o3wallet.API.O3Platform.TransferableBalance
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import kotlin.collections.ArrayList
@@ -37,7 +33,7 @@ class HomeViewModel {
 
     private var displayType: DisplayType = DisplayType.HOT
     private var interval: String = O3Wallet.appContext!!.resources.getString(R.string.PORTFOLIO_one_day)
-    private var currency = CurrencyType.USD
+    private var currency = CurrencyType.FIAT
     private lateinit var portfolio: Portfolio
     private var balanceCountDownLatch: CountDownLatch? = null
 
@@ -70,7 +66,7 @@ class HomeViewModel {
     fun getInitialPortfolioValue(): Double  {
         return when(currency) {
             CurrencyType.BTC -> initialPrice?.averageBTC ?: 0.0
-            CurrencyType.USD -> initialPrice?.averageUSD ?: 0.0
+            CurrencyType.FIAT -> initialPrice?.averageUSD ?: 0.0
         }
     }
 
@@ -86,7 +82,7 @@ class HomeViewModel {
     fun getCurrentPortfolioValue(): Double {
         return when(currency) {
             CurrencyType.BTC -> latestPrice?.averageBTC ?: 0.0
-            CurrencyType.USD -> latestPrice?.averageUSD ?: 0.0
+            CurrencyType.FIAT -> latestPrice?.averageUSD ?: 0.0
         }
     }
 
@@ -216,7 +212,7 @@ class HomeViewModel {
     fun getPriceFloats(): FloatArray {
 
         val data: Array<Double>? = when (currency) {
-            CurrencyType.USD -> portfolio.data.map { it.averageUSD }.toTypedArray()
+            CurrencyType.FIAT -> portfolio.data.map { it.averageUSD }.toTypedArray()
             CurrencyType.BTC -> portfolio.data.map { it.averageBTC }.toTypedArray()
         }
         if (data == null) {

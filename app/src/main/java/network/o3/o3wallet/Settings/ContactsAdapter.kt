@@ -106,6 +106,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
     fun getAddView(layoutInflater: LayoutInflater, viewGroup: ViewGroup?): View {
         val view = layoutInflater.inflate(R.layout.settings_add_address_row, viewGroup, false)
         view.findViewById<TextView>(R.id.footerTextView).text = ""
+        view.findViewById<Button>(R.id.AddButton).text =  mContext.getString(R.string.WALLET_add_contact)
         view.findViewById<Button>(R.id.AddButton).setOnClickListener {
             mFragment.addNewAddress()
         }

@@ -68,6 +68,7 @@
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
 
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -86,7 +87,10 @@
         <activity android:name=".TokenSales.TokenSaleInfoActivity" />
         <activity android:name=".TokenSales.TokenSaleReviewActivity" />
         <activity android:name=".TokenSales.TokenSaleReceiptActivity" />
-        <activity android:name=".Settings.AdvancedSettingsActivity"></activity>
+        <activity android:name=".Settings.AdvancedSettingsActivity" />
+        <activity android:name=".BackupKeyDialogActivity"
+            android:theme="@style/AppTheme.Dialog">
+        </activity>
     </application>
 
 </manifest>

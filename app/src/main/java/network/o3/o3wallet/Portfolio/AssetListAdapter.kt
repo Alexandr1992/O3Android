@@ -1,6 +1,5 @@
 package network.o3.o3wallet.Portfolio
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat
@@ -10,10 +9,12 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
+import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 
 /**
@@ -28,7 +29,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
     private val mfragment: HomeFragment
     var assets = ArrayList<TransferableAsset>()
     var portfolio: Portfolio? = null
-    var referenceCurrency: CurrencyType = CurrencyType.USD
+    var referenceCurrency: CurrencyType = CurrencyType.FIAT
     init {
         mContext = context
         mfragment = fragment
@@ -40,7 +41,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         assetData.assetAmount = assets.get(position).value.toDouble()
 
         if (portfolio != null) {
-            if (referenceCurrency == CurrencyType.USD) {
+            if (referenceCurrency == CurrencyType.FIAT) {
                 val latestPrice = portfolio!!.price[assets.get(position).symbol]?.averageUSD ?: 0.0
                 val firstPrice = portfolio!!.firstPrice[assets.get(position).symbol]?.averageUSD ?: 0.0
                 assetData.assetPrice = latestPrice
@@ -81,6 +82,27 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         assetTotalValueView.text = asset.totalValue.formattedCurrencyString(referenceCurrency)
         assetPercentChangeView.text = asset.percentChange.formattedPercentString()
 
+        if (asset.assetPrice == 0.0 && portfolio?.price?.get(assets.get(position).symbol)?.averageUSD != null) {
+            assetPercentChangeView.visibility = View.GONE
+            assetPriceView.visibility = View.GONE
+            view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.VISIBLE
+            view.setOnClickListener {
+                mfragment.activity?.alert (
+                    mContext.getString(R.string.PORTFOLIO_pricing_not_available_description)) {
+                    yesButton { mContext.getString(R.string.ALERT_OK_Confirm_Button) }
+                }?.show()
+            }
+        } else {
+            assetPercentChangeView.visibility = View.VISIBLE
+            assetPriceView.visibility = View.VISIBLE
+            view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.GONE
+            view.setOnClickListener {
+                val intent = Intent(mfragment.activity, AssetGraph::class.java)
+                intent.putExtra("SYMBOL", asset.assetName.capitalize())
+                mfragment.activity?.startActivity(intent)
+            }
+        }
+
         if (asset.percentChange < 0) {
             assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, R.color.colorLoss))
         } else {
@@ -90,14 +112,6 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         var formatter = NumberFormat.getNumberInstance()
         formatter.maximumFractionDigits = assets[position].decimals
         assetAmountView.text = formatter.format(asset.assetAmount)
-
-
-
-        view.setOnClickListener {
-            val intent = Intent(mfragment.activity, AssetGraph::class.java)
-            intent.putExtra("SYMBOL", asset.assetName.capitalize())
-            mfragment.activity?.startActivity(intent)
-        }
 
         return view
     }

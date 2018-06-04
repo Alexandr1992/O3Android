@@ -1,6 +1,5 @@
 package network.o3.o3wallet
 
-import java.text.DateFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -8,9 +7,6 @@ import android.text.Spanned
 import android.text.InputFilter
 import java.math.BigDecimal
 import java.util.regex.Pattern
-import java.util.Collections.replaceAll
-
-
 
 
 /**
@@ -20,9 +16,9 @@ fun Double.formattedBTCString() : String {
     return "%.8f".format(this) + "BTC"
 }
 
-fun Double.formattedUSDString() : String {
+fun Double.formattedFiatString() : String {
     val formatter = NumberFormat.getCurrencyInstance()
-    formatter.currency = Currency.getInstance("USD")
+    formatter.currency = Currency.getInstance(PersistentStore.getCurrency().toUpperCase())
     return formatter.format(this)
 }
 
@@ -51,13 +47,13 @@ fun Double.removeTrailingZeros(): String {
 
 
 enum class CurrencyType {
-    BTC, USD
+    BTC, FIAT
 }
 
 fun Double.formattedCurrencyString(currency: CurrencyType): String {
     return when(currency) {
         CurrencyType.BTC -> this.formattedBTCString()
-        CurrencyType.USD -> this.formattedUSDString()
+        CurrencyType.FIAT -> this.formattedFiatString()
     }
 }
 

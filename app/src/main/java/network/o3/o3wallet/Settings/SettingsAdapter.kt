@@ -36,7 +36,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_settingsprivatekeyicon, R.drawable.ic_settingsaddressbookicon,
+    var images =  listOf(R.drawable.ic_settingsprivatekeyicon, R.drawable.ic_dollar_sign,
             R.drawable.ic_settingswatchonlyaddressicon, R.drawable.ic_settingsnetworkicon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
             R.drawable.ic_settings_logout, R.drawable.ic_mobile_android, R.drawable.ic_bug)
@@ -46,7 +46,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     enum class CellType {
-        PRIVATEKEY, CONTACTS,
+        PRIVATEKEY, CURRENCY,
         WATCHADRESS, NETWORK,
         SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
@@ -103,12 +103,9 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     fun getClickListenerForPosition(position: Int) {
-        if (position == CellType.CONTACTS.ordinal  ) {
-            val contactsModal = ContactsFragment.newInstance()
-            val args = Bundle()
-            args.putBoolean("canAddAddress", true)
-            contactsModal.arguments = args
-            contactsModal.show((mContext as AppCompatActivity).supportFragmentManager, contactsModal.tag)
+        if (position == CellType.CURRENCY.ordinal  ) {
+            val currencyModal = CurrencyFragment.newInstance()
+            currencyModal.show((mContext as AppCompatActivity).supportFragmentManager, currencyModal.tag)
             return
         } else if (position == CellType.WATCHADRESS.ordinal) {
             val watchAddressModal = WatchAddressFragment.newInstance()

@@ -12,7 +12,6 @@
     tools:layout_editor_absoluteY="16dp">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/graphHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

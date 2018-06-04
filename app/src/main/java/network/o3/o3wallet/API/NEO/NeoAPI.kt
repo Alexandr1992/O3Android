@@ -21,12 +21,13 @@ import unsigned.toUByte
 import java.lang.Exception
 import java.math.BigDecimal
 import java.nio.*
+import java.util.*
 
 
 class NeoNodeRPC {
     var nodeURL = PersistentStore.getNodeURL()
-
     //var nodeURL = "http://seed3.neo.org:20332" //TESTNET
+
     enum class Asset {
         NEO,
         GAS;
@@ -54,7 +55,7 @@ class NeoNodeRPC {
         INVOKEFUNCTION;
 
         fun methodName(): String {
-            return this.name.toLowerCase()
+            return this.name.toLowerCase(Locale.US)
         }
     }
 
@@ -190,7 +191,7 @@ class NeoNodeRPC {
         }
     }
 
-    fun sendNativeAssetTransaction(wallet: Wallet, asset: Asset, amount: Double, toAddress: String, attributes: Array<TransactionAttritbute>?, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+    fun sendNativeAssetTransaction(wallet: Wallet, asset: Asset, amount: Double, toAddress: String, attributes: Array<TransactionAttribute>?, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
         O3PlatformClient().getUTXOS(wallet.address) {
             var assets = it.first
             var error = it.second
@@ -216,8 +217,6 @@ class NeoNodeRPC {
     }
 
     data class SendAssetReturn(val totalAmount: Double?, val payload: ByteArray?, val error: Error?)
-    data class TransactionAttritbute(val messaeg: String?)
-
 
     private fun getSortedUnspents(asset: Asset, utxos: Array<UTXO>): List<UTXO> {
         if (asset == Asset.NEO) {
@@ -229,7 +228,11 @@ class NeoNodeRPC {
         }
     }
 
-    private fun getInputsNecessaryToSendAsset(asset: Asset, amount: Double, utxos: UTXOS): SendAssetReturn {
+    private fun getInputsNecessaryToSendAsset(asset: Asset, amount: Double, utxos: UTXOS?): SendAssetReturn {
+        if (utxos == null) {
+            return SendAssetReturn(0.0, byteArrayOf(0.toByte()), null)
+        }
+
         var sortedUnspents  = getSortedUnspents(asset, utxos.data)
         var neededForTransaction: MutableList<UTXO> = arrayListOf()
         if (sortedUnspents.sumByDouble { it.value.toDouble() } <  amount) {
@@ -257,24 +260,31 @@ class NeoNodeRPC {
 
     private fun packRawTransactionBytes(payloadPrefix: ByteArray, wallet: Wallet, asset: Asset, inputData: ByteArray,
                                         runningAmount: Double, toSendAmount: Double, toAddress: String,
-                                        attributes: Array<TransactionAttritbute>?): ByteArray {
+                                        attributes: Array<TransactionAttribute>?): ByteArray {
         var inputDataBytes = inputData
         val needsTwoOutputTransactions = runningAmount != toSendAmount
 
-        var numberOfAttributes: Byte = 0x00.toByte()
+        var numberOfAttributes: Int = 0
         var attributesPayload: ByteArray = ByteArray(0)
         //TODO add attribute
-//        if attributes != nil {
-//            for (attribute in attributes!!) {
-//            if attribute.data != nil {
-//                attributesPayload = attributesPayload + attribute.data!
-//                numberOfAttributes = numberOfAttributes + 1
-//            }
-//        }
-//        }
+        if (attributes != null) {
+            for (attribute in attributes!!) {
+                if (attribute.data != null) {
+                    attributesPayload += attribute.data!!
+                    numberOfAttributes += 1
+                }
+            }
+        }
 
-        var payload: ByteArray = payloadPrefix + numberOfAttributes
+        var payload: ByteArray = payloadPrefix + byteArrayOf(numberOfAttributes.toUByte())
         payload = payload + attributesPayload + inputDataBytes
+        //assetless send
+        if(runningAmount == 0.0) {
+            payload += byteArrayOf(0.toUByte())
+            return payload
+        }
+
+
         if (needsTwoOutputTransactions) {
             //Transaction To Reciever
             payload = payload + byteArrayOf(0x02.toByte()) + asset.assetID().hexStringToByteArray().reversedArray()
@@ -297,7 +307,7 @@ class NeoNodeRPC {
         return payload
     }
 
-    private fun generateSendTransactionPayload(wallet: Wallet, asset: Asset, amount: Double, toAddress: String, utxos: UTXOS, attributes: Array<TransactionAttritbute>?): ByteArray {
+    private fun generateSendTransactionPayload(wallet: Wallet, asset: Asset, amount: Double, toAddress: String, utxos: UTXOS, attributes: Array<TransactionAttribute>?): ByteArray {
         var error: Error?
         val inputData = getInputsNecessaryToSendAsset(asset, amount, utxos)
         val payloadPrefix = byteArrayOf(0x80.toUByte(), 0x00.toByte())
@@ -323,12 +333,12 @@ class NeoNodeRPC {
     }*/
 
 
-    private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS, script: String, contractAddress: String): ByteArray {
+    private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String, contractAddress: String, attributes: Array<TransactionAttribute>? = null): ByteArray {
         val inputData = getInputsNecessaryToSendAsset(NeoNodeRPC.Asset.GAS, 0.00000001, utxos)
         val payloadPrefix = byteArrayOf(0xd1.toUByte(), 0x00.toUByte()) + script.hexStringToByteArray()
         var rawTransaction = packRawTransactionBytes(payloadPrefix, wallet, Asset.GAS,
                 inputData.payload!!, inputData.totalAmount!!, 0.00000001,
-                Account.getWallet()?.address!!, null)
+                Account.getWallet()?.address!!, attributes)
 
         val privateKeyHex = wallet.privateKey.toHex()
         val signature = sign(rawTransaction, privateKeyHex)
@@ -397,7 +407,7 @@ class NeoNodeRPC {
                 "id" to 3
         )
 
-        var request = nodeURL.httpPost().body(dataJson.toString()).timeout(600000)
+        var request = PersistentStore.getNodeURL().httpPost().body(dataJson.toString()).timeout(600000)
         request.headers["Content-Type"] = "application/json"
         request.responseString { request, response, result ->
             val (data, error) = result
@@ -492,23 +502,19 @@ class NeoNodeRPC {
     // transfer amount *
     fun sendNEP5Token(wallet: Wallet, tokenContractHash: String, fromAddress: String, toAddress: String, amount: Double,
                       completion: (Pair<Boolean?, Error?>) -> Unit) {
-        O3PlatformClient().getUTXOS(wallet.address) {
-            var assets = it.first
+        val attributes = arrayOf<TransactionAttribute>(
+            TransactionAttribute().scriptAttribute(fromAddress.hashFromAddress()),
+            TransactionAttribute().remarkAttribute(String.format("O3X%s", Date().time.toString())),
+            TransactionAttribute().hexDescriptionAttribute(tokenContractHash))
+
+        val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount)
+        val scriptBytesString = scriptBytes.toHex()
+        val finalPayload = generateInvokeTransactionPayload(wallet, null, scriptBytes.toHex(), tokenContractHash, attributes)
+        val finalPayloadString = finalPayload.toHex()
+        sendRawTransaction(finalPayload) {
+            var success = it.first
             var error = it.second
-            if (error != null) {
-                completion(Pair<Boolean?, Error?>(false, error))
-                return@getUTXOS
-            } else {
-                val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount)
-                val scriptBytesString = scriptBytes.toHex()
-                val finalPayload = generateInvokeTransactionPayload(wallet, assets!!, scriptBytes.toHex(), tokenContractHash)
-                val finalPayloadString = finalPayload.toHex()
-                sendRawTransaction(finalPayload) {
-                    var success = it.first
-                    var error = it.second
-                    completion(Pair<Boolean?, Error?>(success, error))
-                }
-            }
+            completion(Pair<Boolean?, Error?>(success, error))
         }
     }
 

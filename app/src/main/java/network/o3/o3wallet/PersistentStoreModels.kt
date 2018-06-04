@@ -141,4 +141,26 @@ object PersistentStore {
         return  PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
                 .getString("NETWORK_TYPE", "Main")
     }
+
+    fun getFirstTokenAppeared(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getBoolean("FIRST_TOKEN", true)
+    }
+
+    fun setFirstTokenAppeared(firstToken: Boolean) {
+        val settingPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+        settingPref.putBoolean("FIRST_TOKEN", firstToken)
+        settingPref.apply()
+    }
+  
+    fun setCurrency(currency: String) {
+        val settingsPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+        settingsPref.putString("CURRENCY", currency)
+        settingsPref.apply()
+    }
+
+    fun getCurrency(): String {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("CURRENCY", "usd")
+    }
 }

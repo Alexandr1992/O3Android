@@ -14,12 +14,13 @@ import com.robinhood.spark.SparkView
 import android.os.Handler
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager.*
+import android.support.v4.widget.SwipeRefreshLayout
 import android.widget.*
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
 
 
@@ -30,9 +31,15 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     var chartDataAdapter = PortfolioDataAdapter(FloatArray(0))
     var assetListAdapter: AssetListAdapter? = null
 
-    val needReloadDataReciever = object : BroadcastReceiver() {
+    val needReloadWatchAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             homeModel.watchAddresses = PersistentStore.getWatchAddresses()
+        }
+    }
+
+    val needReloadPortfolioReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            homeModel.loadPortfolioValue()
         }
     }
 
@@ -43,8 +50,10 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadDataReciever,
-                IntentFilter("need-update-data-event"))
+        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadWatchAddressReciever,
+                IntentFilter("need-update-watch-address-event"))
+        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadPortfolioReciever,
+                IntentFilter("need-update-currency-event"))
         return inflater.inflate(R.layout.portfolio_fragment_home, container, false)
     }
 
@@ -58,11 +67,18 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         initiateGraph(view)
         initiateViewPager(view)
         initiateIntervalButtons(view)
+        view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setColorSchemeResources(R.color.colorPrimary)
+        view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setOnRefreshListener {
+            homeModel.loadPortfolioValue()
+        }
+
     }
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this.context!!)
-                .unregisterReceiver(needReloadDataReciever)
+                .unregisterReceiver(needReloadWatchAddressReciever)
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadPortfolioReciever)
         super.onDestroy()
     }
 
@@ -128,14 +144,20 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
 
     override fun updatePortfolioData(portfolio: Portfolio) {
         onUiThread {
+            view?.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh)?.isRefreshing = false
             assetListAdapter?.portfolio = portfolio
             assetListAdapter?.referenceCurrency = homeModel.getCurrency()
             assetListAdapter?.notifyDataSetChanged()
-
             updateHeader(homeModel.getCurrentPortfolioValue().formattedCurrencyString(homeModel.getCurrency()),
                     homeModel.getPercentChange())
             chartDataAdapter.setData(homeModel.getPriceFloats())
             hideLoadingIndicator()
+            if (PersistentStore.getFirstTokenAppeared() && homeModel.getCurrentPortfolioValue() != 0.0
+                    && homeModel.getDisplayType() == HomeViewModel.DisplayType.HOT) {
+                val backupKeyCheck = DialogBackupKeyFragment.newInstance()
+                backupKeyCheck.show(this.fragmentManager, "backupkey")
+                PersistentStore.setFirstTokenAppeared(false)
+            }
         }
     }
 
