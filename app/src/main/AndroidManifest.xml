@@ -32,7 +32,7 @@
         </provider>
 
         <activity
-            android:name=".Onboarding.MainActivity"
+            android:name=".Onboarding.LandingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,7 +68,6 @@
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
 
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -77,20 +76,14 @@
             android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
 
         <activity android:name=".SelectingBestNode" />
-        <activity android:name=".Topup.TopupSendAmountActivity" />
-        <activity android:name=".Topup.TopupTutorial" />
-        <activity android:name=".Topup.TutorialPrivateKey" />
-        <activity android:name=".Topup.TopupKeyGeneration" />
-        <activity android:name=".Topup.TopupSecondFragmentInfo" />
-        <activity android:name=".Topup.TopupColdStorageBalanceActivity" />
         <activity android:name=".TokenSales.TokenSalesActivity" />
         <activity android:name=".TokenSales.TokenSaleInfoActivity" />
         <activity android:name=".TokenSales.TokenSaleReviewActivity" />
         <activity android:name=".TokenSales.TokenSaleReceiptActivity" />
         <activity android:name=".Settings.AdvancedSettingsActivity" />
-        <activity android:name=".BackupKeyDialogActivity"
-            android:theme="@style/AppTheme.Dialog">
-        </activity>
+        <activity
+            android:name=".BackupKeyDialogActivity"
+            android:theme="@style/AppTheme.Dialog"></activity>
     </application>
 
 </manifest>

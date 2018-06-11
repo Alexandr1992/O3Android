@@ -18,6 +18,9 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name = "AppTheme.NoTopBar" parent = "Theme.AppCompat.Light.NoActionBar">
+    </style>
+
 
 
     <style name="NoShadowActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
