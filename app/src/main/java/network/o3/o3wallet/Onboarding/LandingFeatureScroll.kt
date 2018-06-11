@@ -5,10 +5,10 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.R
+import org.jetbrains.anko.find
 
 
 /**
@@ -21,8 +21,8 @@ import network.o3.o3wallet.R
  */
 
 class LandingFeatureScroll: Fragment() {
-    val imageIds: List<Int> = listOf(R.drawable.chart_line, R.drawable.exchange, R.drawable.lock)
-    var titles = O3Wallet.appContext!!.resources.getStringArray(R.array.ONBOARDING_image_titles)
+    var titles = O3Wallet.appContext!!.resources.getStringArray(R.array.ONBOARDING_landing_titles)
+    var subtitles = O3Wallet.appContext!!.resources.getStringArray(R.array.ONBOARDING_landing_subtitles)
 
     companion object {
         fun newInstance(position: Int): LandingFeatureScroll {
@@ -37,12 +37,11 @@ class LandingFeatureScroll: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.onboarding_fragment_landing_feature_scroll, container, false)
         val position = arguments!!.getInt("position")
-        val featureImageView = view.findViewById<ImageView>(R.id.featureImage)
-        val featureTextView = view.findViewById<TextView>(R.id.featureText)
+        val featureSubtitleTextView = view.findViewById<TextView>(R.id.featureSubtitle)
+        val featureTitleTextView = view.find<TextView>(R.id.fetaureTitle)
 
-        featureImageView.setImageResource(imageIds[position])
-        featureTextView.text = titles[position]
-
+        featureSubtitleTextView.text = subtitles[position]
+        featureTitleTextView.text = titles[position]
         return view
     }
 }

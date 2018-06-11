@@ -12,19 +12,14 @@ import android.widget.ImageView
 import android.widget.Toast
 import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
 import network.o3.o3wallet.*
-import network.o3.o3wallet.Onboarding.MainActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import android.os.Build
-import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
+import network.o3.o3wallet.Onboarding.LandingActivity
 import java.util.*
-import android.support.v4.content.ContextCompat.startActivity
 import org.jetbrains.anko.image
 
 
@@ -128,7 +123,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {
                 yesButton {
                     Account.deleteKeyFromDevice()
-                    val intent = Intent(mContext, MainActivity::class.java)
+                    val intent = Intent(mContext, LandingActivity::class.java)
                     startActivity(mContext, intent, null)
                 }
                 noButton {

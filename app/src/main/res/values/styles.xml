@@ -136,6 +136,10 @@
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
+    <style name="RegularText.Primary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <style name="RegularText.Gain">
         <item name="android:textColor">@color/colorGain</item>
     </style>
@@ -145,6 +149,10 @@
     </style>
 
     <style name="RegularText.Accent.Bold">
+        <item name="android:fontFamily">@font/muli_bold</item>
+    </style>
+
+    <style name="RegularText.Primary.Bold">
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
