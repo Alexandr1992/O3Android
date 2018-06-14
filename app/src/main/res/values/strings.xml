@@ -29,7 +29,7 @@
     <string-array name="ONBOARDING_tutorial_titles" comment="These are the subtitles for each image in the tutorial">
         <item>Quick tips!</item>
         <item>Your Private Key</item>
-        <item>Don't lose your key</item>
+        <item>Don\'t lose your key</item>
         <item>Back it up!</item>
         <item>For your eyes only</item>
     </string-array>
@@ -88,11 +88,11 @@
     <string name="ONBOARDING_screenshot_dialog_title" comment="Title for dialog when doing screenshot backup">Screenshot Secure?</string>
     <string name="ONBOARDING_screenshot_dialog_subtitle" comment="Subtitle for dialog when doing screenshot backup">We reccomend that later on
     you back it up in another secure location in case your device is damaged.</string>
-    <string name="ONBOARDING_screenshot_dialog_button" comment="button title for the screenshot dialog">Sounds good, I'm ready!</string>
+    <string name="ONBOARDING_screenshot_dialog_button" comment="button title for the screenshot dialog">Sounds good, I\'m ready!</string>
 
     <string name="ONBOARDING_copy_dialog_title" comment="Title for dialog when doing copy clipboard backup">Copied to Clipboard</string>
     <string name="ONBOARDING_copy_dialog_subtitle" comment="Subtitle for dialog when doing copy clipboard backup">Take a moment to paste this somewhere safe!</string>
-    <string name="ONBOARDING_COPY_dialog_button" comment="button title for the screenshot dialog">Sounds good, I'm ready!</string>
+    <string name="ONBOARDING_COPY_dialog_button" comment="button title for the screenshot dialog">Sounds good, I\'m ready!</string>
 
     <string name="ONBOARDING_verify_private_key" comment="Title for when verifying private key that was written on paper">Verify Private Key</string>
     <string name="ONBOARDING_private_key" comment="Title above edit text for private key">Private Key</string>
@@ -101,7 +101,7 @@
     <string name="ONBOARDING_paper_dialog_title" comment="Dialog title for when succesffully backed up private key on paper">Key Verified!</string>
     <string name="ONBOARDING_paper_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on paper">Make sure to keep your paper backup safe, you'll need it in case your phone is ever lost or damaged.</string>
     <string name="ONBOARDING_paper_dialog_button" comment="button title for paper backup dialog">Ok, got it!</string>
-    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn't match</string>
+    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn\'t match</string>
     <string name="ONBOARDING_paper_key_no_match_description" comment="alert descripition when paper key doesn't match the expected value">Please double check your private key and try again</string>
 
     <!-- Create Wallet Page -->

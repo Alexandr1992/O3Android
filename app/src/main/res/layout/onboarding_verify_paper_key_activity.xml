@@ -40,11 +40,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/ONBOARDING_private_key"
                 android:textAppearance="@style/RegularText.Small"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/editText"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/verifyHeaderTextView" />
 
             <EditText
                 android:id="@+id/editText"
@@ -52,12 +54,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:ems="10"
                 android:breakStrategy="simple"
+                android:ems="10"
                 android:inputType="textVisiblePassword|textMultiLine|textNoSuggestions"
-                app:layout_constraintBottom_toTopOf="@+id/verifyAndContinueButton"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="162dp" />
 
             <Button
                 android:id="@+id/verifyAndContinueButton"

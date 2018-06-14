@@ -1,5 +1,7 @@
 package network.o3.o3wallet.Onboarding.CreateKey.Backup
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
@@ -50,18 +54,23 @@ class BackupAdapter(context: Context, fragment: Fragment): BaseAdapter() {
     fun createDialogForClipboardCopy() {
         val clipboardDialog = DialogCompletedBackupFragment.newInstance()
         var args = Bundle()
-        args.putString("wif", "")
+        args.putString("wif", (mFragment.activity as CreateNewWalletActivity).wif)
         args.putString("title", mContext.resources.getString(R.string.ONBOARDING_copy_dialog_title))
         args.putString("subtitle", mContext.resources.getString(R.string.ONBOARDING_copy_dialog_subtitle))
         args.putString("buttonTitle", mContext.resources.getString(R.string.ONBOARDING_COPY_dialog_button))
         clipboardDialog.arguments = args
         clipboardDialog.show(mFragment.activity!!.fragmentManager, clipboardDialog.tag)
+
+        val clipboard = mContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(mContext.resources.getString(R.string.SETTINGS_copied_key),
+                (mFragment.activity as CreateNewWalletActivity).wif)
+        clipboard.primaryClip = clip
     }
 
     fun createDialogForScreenShot() {
         val screenshotDialog = DialogCompletedBackupFragment.newInstance()
         var args = Bundle()
-        args.putString("wif", "")
+        args.putString("wif", (mFragment.activity as CreateNewWalletActivity).wif)
         args.putString("title", mContext.resources.getString(R.string.ONBOARDING_screenshot_dialog_title))
         args.putString("subtitle", mContext.resources.getString(R.string.ONBOARDING_screenshot_dialog_subtitle))
         args.putString("buttonTitle", mContext.resources.getString(R.string.ONBOARDING_screenshot_dialog_button))

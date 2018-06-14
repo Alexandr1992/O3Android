@@ -76,6 +76,5 @@ class SelectingBestNode : AppCompatActivity() {
             }
             gotBestNode(data.await())
         }
-
     }
 }
