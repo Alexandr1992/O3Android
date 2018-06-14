@@ -70,6 +70,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.android.support:gridlayout-v7:27.1.1'
     implementation 'com.google.guava:guava:23.3-android'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
     annotationProcessor 'com.google.auto.value:auto-value:1.2'
     compileOnly 'com.google.auto.value:auto-value:1.2'
     implementation 'com.robinhood.ticker:ticker:1.2.2'

@@ -81,9 +81,8 @@
         <activity android:name=".TokenSales.TokenSaleReviewActivity" />
         <activity android:name=".TokenSales.TokenSaleReceiptActivity" />
         <activity android:name=".Settings.AdvancedSettingsActivity" />
-        <activity
-            android:name=".BackupKeyDialogActivity"
-            android:theme="@style/AppTheme.Dialog"></activity>
+        <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
+        <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity"></activity>
     </application>
 
 </manifest>

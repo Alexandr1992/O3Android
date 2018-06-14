@@ -6,7 +6,6 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.support.constraint.ConstraintLayout
 import com.airbnb.lottie.LottieAnimationView
 import network.o3.o3wallet.R
 import android.support.v4.view.ViewPager
@@ -16,11 +15,12 @@ import android.widget.Toast
 import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.fabric.sdk.android.Fabric
+import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.BuildConfig
+import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
 import network.o3.o3wallet.SelectingBestNode
 import org.jetbrains.anko.*
-import org.jetbrains.anko.support.v4.onPageChangeListener
 
 class LandingActivity : AppCompatActivity() {
     private lateinit var pager: ViewPager
@@ -40,9 +40,8 @@ class LandingActivity : AppCompatActivity() {
         supportActionBar?.hide()
         setContentView(R.layout.onboarding_landing_activity)
         animationView = find(R.id.landing_animation_view)
-        //animationView.useHardwareAcceleration(true)
+        animationView.useHardwareAcceleration(true)
         pager = find(R.id.landingViewPager)
-
         initiateViewPager()
 
 
@@ -94,7 +93,7 @@ class LandingActivity : AppCompatActivity() {
     }
 
     fun animateForward() {
-        animationView.speed = 1.0f
+        animationView.speed = 1.3f
         animationView.setMinAndMaxProgress(currentPage.toFloat() / (maxPages.toFloat() - 1),
                 (currentPage + 1).toFloat() / (maxPages.toFloat() - 1) )
         animationView.playAnimation()
@@ -107,7 +106,7 @@ class LandingActivity : AppCompatActivity() {
     }
 
     fun animateBackward () {
-        animationView.speed = -1.0f
+        animationView.speed = -1.3f
         //animationView.setMinAndMaxProgress(0.0f, 0.2f)
         animationView.setMinAndMaxProgress((currentPage.toFloat() - 1) / (maxPages.toFloat() - 1),
                 (currentPage).toFloat() / (maxPages.toFloat() - 1) )
@@ -165,22 +164,13 @@ class LandingActivity : AppCompatActivity() {
 
     fun createWalletTapped() {
         val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        if (Account.isEncryptedWalletPresent()) {
-            alert (resources.getString(R.string.ONBOARDING_existing_key_detected)) {
-                yesButton {
-                    authenticateReplaceWallet()
-                }
-                noButton {
-
-                }
-            }.show()
-        } else if (!mKeyguardManager.isKeyguardSecure) {
-            // Show a message that the user hasn't set up a lock screen.
+        if (!mKeyguardManager.isKeyguardSecure) {
             Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
             return
         } else {
-            Account.createNewWallet()
-            val intent = Intent(this@LandingActivity, CreateWalletActivity::class.java)
+            val generatedWIF = Neoutils.newWallet().wif
+            val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
+            intent.putExtra("wif", generatedWIF)
             startActivity(intent)
         }
     }
