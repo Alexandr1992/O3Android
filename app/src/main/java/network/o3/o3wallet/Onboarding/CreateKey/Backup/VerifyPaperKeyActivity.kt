@@ -16,7 +16,7 @@ class VerifyPaperKeyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.onboarding_verify_paper_key_activity)
-        intent.getStringExtra("wif")
+        wif = intent.getStringExtra("wif")
 
         title = resources.getString(R.string.ONBOARDING_verify_private_key)
 
@@ -28,7 +28,7 @@ class VerifyPaperKeyActivity : AppCompatActivity() {
         if (editText.text.toString() == wif) {
             val paperDialog = DialogCompletedBackupFragment.newInstance()
             var args = Bundle()
-            args.putString("wif", "")
+            args.putString("wif", wif)
             args.putString("title", resources.getString(R.string.ONBOARDING_paper_dialog_title))
             args.putString("subtitle", resources.getString(R.string.ONBOARDING_paper_dialog_subtitle))
             args.putString("buttonTitle", resources.getString(R.string.ONBOARDING_paper_dialog_button))

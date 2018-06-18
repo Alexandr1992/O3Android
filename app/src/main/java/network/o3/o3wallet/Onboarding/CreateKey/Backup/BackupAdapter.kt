@@ -80,6 +80,14 @@ class BackupAdapter(context: Context, fragment: Fragment): BaseAdapter() {
 
     fun verifyPaperKey() {
         val intent = Intent(mContext, VerifyPaperKeyActivity::class.java)
+        intent.putExtra("wif", (mFragment.activity as CreateNewWalletActivity).wif)
+        (mFragment as BottomSheetDialogFragment).dismiss()
+        mContext.startActivity(intent)
+    }
+
+    fun encryptKeyWithNep2() {
+        val intent = Intent(mContext, Nep2BackupActivity::class.java)
+        intent.putExtra("wif", (mFragment.activity as CreateNewWalletActivity).wif)
         (mFragment as BottomSheetDialogFragment).dismiss()
         mContext.startActivity(intent)
     }
@@ -94,6 +102,7 @@ class BackupAdapter(context: Context, fragment: Fragment): BaseAdapter() {
         }
 
         if (position == EMAIL) {
+            view.setOnClickListener { encryptKeyWithNep2() }
             view.find<TextView>(R.id.securityLevelTextView).text = mContext.resources.getString(R.string.ONBOARDING_most_secure)
         } else {
             view.find<TextView>(R.id.securityLevelTextView).visibility = View.INVISIBLE
@@ -114,7 +123,9 @@ class BackupAdapter(context: Context, fragment: Fragment): BaseAdapter() {
         if (position == CLOSE) {
             view.find<ImageView>(R.id.backupOptionIcon).visibility = View.INVISIBLE
             view.find<TextView>(R.id.backupOptionTextView).textColor = mContext.resources.getColor(R.color.colorSubtitleGrey)
+            view.setOnClickListener { (mFragment as BottomSheetDialogFragment).dismiss() }
         }
+
 
 
         return view

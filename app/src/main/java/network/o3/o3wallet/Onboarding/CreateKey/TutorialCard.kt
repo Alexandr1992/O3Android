@@ -44,7 +44,6 @@ class TutorialCard : Fragment() {
         view.find<TextView>(R.id.tutorialSubInfoTextView).text = subinfos[position]
         view.find<TextView>(R.id.emphasisTextView).text = emphasises[position]
 
-        val pager = activity?.findViewById<ViewPager>(R.id.tutorialCardPager)
 
         view.find<Button>(R.id.tutorialBackButton).setOnClickListener {
             (activity as CreateNewWalletActivity).progressTutorialBackward()

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.airbnb.lottie.LottieAnimationView
-import network.o3.o3wallet.R
 import android.support.v4.view.ViewPager
 import android.widget.Button
 import android.widget.ImageView
@@ -16,10 +15,8 @@ import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.fabric.sdk.android.Fabric
 import neoutils.Neoutils
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.BuildConfig
+import network.o3.o3wallet.*
 import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
-import network.o3.o3wallet.SelectingBestNode
 import org.jetbrains.anko.*
 
 class LandingActivity : AppCompatActivity() {
@@ -53,9 +50,10 @@ class LandingActivity : AppCompatActivity() {
             createWalletTapped()
         }
 
-        autoPlayAnimation()
         if (Account.isEncryptedWalletPresent()) {
             authenticateEncryptedWallet()
+        } else {
+            autoPlayAnimation()
         }
     }
 
@@ -157,6 +155,8 @@ class LandingActivity : AppCompatActivity() {
         } else {
             val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
             if (intent != null) {
+                val passcodeRequestIntent = Intent(this, PasscodeRequestActivity::class.java)
+                startActivity(passcodeRequestIntent)
                 startActivityForResult(intent, 1)
             }
         }

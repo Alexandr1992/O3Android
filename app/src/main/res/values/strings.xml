@@ -104,6 +104,19 @@
     <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn\'t match</string>
     <string name="ONBOARDING_paper_key_no_match_description" comment="alert descripition when paper key doesn't match the expected value">Please double check your private key and try again</string>
 
+    <string name="ONBOARDING_enter_a_password" comment="title for entering a password for NEP-2 Encryption">Enter a password</string>
+    <string name="ONBOARDING_enter_a_password_description" comment="description for when entering a password">In order to keep your key safe and secure, we need to encrypt it with a password. You will need this password and the key in order to login. It needs to be a minimum of 8 characters in length</string>
+    <string name="ONBOARDING_password" comment="Place holder for password">Password</string>
+    <string name="ONBOARDING_generate_encrypted_key" comment="button to continue when encrypting the key">Generate encrypted key</string>
+    <string name="ONBOARDING_reenter_password" comment="title when reentering the password">Re-enter password</string>
+    <string name="ONBOARDING_reenter_description" comment="description when reentering the password">Please re-enter your password to confirm the encrypted key was generated correctly</string>
+    <string name="ONBOARDING_finish" comment="Finish nep-2 encryption">Finish</string>
+
+    <string name="ONBOARDING_password_length_error" comment="Error to display when password is not 8 characters">Oh no! you\'re password isn\'t long enough. It must be at least 8 characters</string>
+    <string name="ONBOARDING_password_mismatch_error" comment="Error to display when password don't match">Oh no! Looks like your passwords don\t match. Please double check them</string>
+
+    <string name="ONBOARDING_backup_email_body" comment="Full text for the email backup in body">Thank you for choosing the O3 Wallet!\n\n Here is the encrypted Private Key that you just created!\n\n You can use this key, along with the password that you created in O3 in the event that you are locked out of your wallet.\n\n%s\n\n To login follow these steps:\n\n1) Open the O3 App\n2) Select Login\n3) Either enter the text key or scan the attached QR Code\n4) Enter your password\n\nAnd you\'re in!\nThanks again for using O3!</string>
+    <string name="ONBOARDING_backup_email_subject" comment="Subject for backup email">O3 Wallet Encrypted Backup</string>
     <!-- Create Wallet Page -->
     <string name="ONBOARDING_Welcome" comment="Title for the welcome screen on the onboarding">Welcome!</string>
     <string name="ONBOARDING_your_public_address" comment="Title label for the generated address in the onboarding flow">Your Public Address</string>
@@ -115,6 +128,10 @@
     We will save an encrypted version on your device, but please make sure to write down the private key in another secure
         location so that you may retrieve your funds in case something happens to your device.</string>
     <string name="ONBOARDING_backup_warning_confirmation">I confirm that I have backed up my private key in another secure location</string>
+
+    <string name="ONBOARDING_encrypted_backup_dialog_title" comment="Dialog title for when succesffully backed up private key on nep 2">Encrypted Key Generated</string>
+    <string name="ONBOARDING_encrypted_backup_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on nep2">Double check that it arrived safely before continuing.</string>
+    <string name="ONBOARDING_encrypted_backup_dialog_button" comment="button title for paper backup dialog">Go to my wallet!</string>
 
     <!-- Login Page -->
     <string name="ONBOARDING_scan" comment="Title for scan button, allowing users to login by scanning private key">Scan</string>
@@ -360,4 +377,6 @@
     <string name="ONBOARDING_enter_nep2_pasword">Enter the password you used to secure this Private Key.</string>
     <string name="ONBOARDING_submit">Submit</string>
     <string name="ONBOARDING_decryption_in_progress">Verifying Private Key...</string>
+    <string name="ONBOARDING_logout">logout</string>
+    <string name="ONBOARDING_signin">Sign in to O3</string>
 </resources>

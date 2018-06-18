@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <paths>
-        <cache-path name="cache" path="/" />
-    </paths>
-</resources>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path path="/" name="allfiles" />
+    <files-path path="tmp/" name="tmp" />
+</paths>
