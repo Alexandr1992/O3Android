@@ -100,7 +100,7 @@ class Nep2BackupCardFragment : Fragment() {
 
         val fileImage = File(tmpDir, "o3wallet.png")
         val fout = FileOutputStream(fileImage)
-        val bitmap = QRCode.from(wif).withSize(2000, 2000).bitmap()
+        val bitmap = QRCode.from(nep2.encryptedKey).withSize(2000, 2000).bitmap()
         bitmap.compress(Bitmap.CompressFormat.PNG, 85, fout)
 
         val imageUri = FileProvider.getUriForFile(context!!, "network.o3.o3wallet", fileImage)

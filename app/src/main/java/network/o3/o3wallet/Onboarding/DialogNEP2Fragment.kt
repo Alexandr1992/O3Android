@@ -26,7 +26,6 @@ import network.o3.o3wallet.R
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.toast
 import java.lang.Exception
-import network.o3.o3wallet.SelectingBestNode
 
 
 // TODO: Rename parameter arguments, choose names that match

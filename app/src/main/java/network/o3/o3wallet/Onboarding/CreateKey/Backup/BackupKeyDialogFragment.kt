@@ -1,4 +1,4 @@
-package network.o3.o3wallet
+package network.o3.o3wallet.Onboarding.CreateKey.Backup
 
 
 import android.app.KeyguardManager
@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -15,7 +14,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
-import kotlinx.android.synthetic.main.dialog_backup_key_fragment.*
+import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor

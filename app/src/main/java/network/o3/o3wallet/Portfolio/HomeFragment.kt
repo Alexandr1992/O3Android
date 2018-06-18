@@ -20,6 +20,7 @@ import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.Onboarding.CreateKey.Backup.DialogBackupKeyFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
 

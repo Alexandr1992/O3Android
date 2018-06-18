@@ -13,6 +13,7 @@ import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.Onboarding.LandingFeatureScroll
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
+import org.jetbrains.anko.textColor
 
 class TutorialCard : Fragment() {
 
@@ -49,8 +50,9 @@ class TutorialCard : Fragment() {
             (activity as CreateNewWalletActivity).progressTutorialBackward()
         }
 
-        if (position == MAX_POSITION) {
+        if (position == MAX_POSITION - 1) {
             view.findViewById<Button>(R.id.tutorialForwardButton).text = activity?.getString(R.string.ONBOARDING_done_action)
+            view.find<TextView>(R.id.emphasisTextView).textColor = resources.getColor(R.color.colorGain)
         }
 
         view.find<Button>(R.id.tutorialForwardButton).setOnClickListener {

@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
-import network.o3.o3wallet.SelectingBestNode
+import network.o3.o3wallet.Onboarding.SelectingBestNode
 import org.jetbrains.anko.find
 
 

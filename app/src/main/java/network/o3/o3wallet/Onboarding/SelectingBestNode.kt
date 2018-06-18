@@ -1,4 +1,4 @@
-package network.o3.o3wallet
+package network.o3.o3wallet.Onboarding
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,10 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import neoutils.Neoutils.selectBestSeedNode
 import neoutils.SeedNodeResponse
+import network.o3.o3wallet.MainTabbedActivity
+import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.R
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.defaultSharedPreferences
 
@@ -67,7 +71,7 @@ class SelectingBestNode : AppCompatActivity() {
         } else if (PersistentStore.getNetworkType() == "Test") {
             nodes = testNetNodes
         } else {
-            nodes = privateNetNodes
+            nodes = mainNetNodes
         }
 
         async(UI) {

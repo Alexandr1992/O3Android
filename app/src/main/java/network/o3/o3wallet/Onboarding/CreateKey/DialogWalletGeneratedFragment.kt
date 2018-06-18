@@ -1,6 +1,5 @@
 package network.o3.o3wallet.Onboarding.CreateKey
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.airbnb.lottie.LottieAnimationView
 import network.o3.o3wallet.R
-import network.o3.o3wallet.SelectingBestNode
 import org.jetbrains.anko.find
 
 

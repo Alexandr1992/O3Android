@@ -55,7 +55,7 @@
         <item></item>
         <item>So, please make a copy!</item>
         <item></item>
-        <item>Your key gives full access to your account and funds.</item>
+        <item>You\'re ready to join the Smart Economy!</item>
     </string-array>
 
     <string name="ONBOARDING_continue_action" comment="This is a title for the continue action in the tutorial flow">Continue</string>
@@ -99,7 +99,7 @@
     <string name="ONBOARDING_verify_header" comment="Brief description when needing to verify">Sometimes people make a mistake when writing down their Private Key by hand. Please reenter so that you can be sure sure that your key is safe and sound</string>
     <string name="ONBOARDING_verify_and_continue" comment="Title for verify when performing paper wallet backup">Verify and Continue</string>
     <string name="ONBOARDING_paper_dialog_title" comment="Dialog title for when succesffully backed up private key on paper">Key Verified!</string>
-    <string name="ONBOARDING_paper_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on paper">Make sure to keep your paper backup safe, you'll need it in case your phone is ever lost or damaged.</string>
+    <string name="ONBOARDING_paper_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on paper">Make sure to keep your paper backup safe, you\'ll need it in case your phone is ever lost or damaged.</string>
     <string name="ONBOARDING_paper_dialog_button" comment="button title for paper backup dialog">Ok, got it!</string>
     <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn\'t match</string>
     <string name="ONBOARDING_paper_key_no_match_description" comment="alert descripition when paper key doesn't match the expected value">Please double check your private key and try again</string>

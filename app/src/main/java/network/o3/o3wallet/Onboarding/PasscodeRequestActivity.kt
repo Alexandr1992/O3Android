@@ -1,16 +1,16 @@
-package network.o3.o3wallet
+package network.o3.o3wallet.Onboarding
 
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.widget.Button
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.android.synthetic.main.onboarding_passcode_request_activity.*
-import network.o3.o3wallet.Onboarding.LandingActivity
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
