@@ -30,6 +30,8 @@ class PasscodeRequestActivity : AppCompatActivity() {
         find<Button>(R.id.signInButton).setOnClickListener {
             signinTapped()
         }
+
+        signinTapped()
     }
 
     fun logoutTapped() {
@@ -56,7 +58,6 @@ class PasscodeRequestActivity : AppCompatActivity() {
         } else {
             val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
             if (intent != null) {
-                val passcodeRequestIntent = Intent(this, PasscodeRequestActivity::class.java)
                 startActivityForResult(intent, 1)
             }
         }

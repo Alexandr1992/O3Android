@@ -153,12 +153,8 @@ class LandingActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG).show()
             return
         } else {
-            val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
-            if (intent != null) {
-                val passcodeRequestIntent = Intent(this, PasscodeRequestActivity::class.java)
-                startActivity(passcodeRequestIntent)
-                startActivityForResult(intent, 1)
-            }
+            val intent = Intent(this, PasscodeRequestActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -172,33 +168,6 @@ class LandingActivity : AppCompatActivity() {
             val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
             intent.putExtra("wif", generatedWIF)
             startActivity(intent)
-        }
-    }
-
-    fun authenticateReplaceWallet() {
-        val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        if (!mKeyguardManager.isKeyguardSecure) {
-            // Show a message that the user hasn't set up a lock screen.
-            Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
-            return
-        } else {
-            val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(resources.getString(R.string.ONBOARDING_Login_To_Existing), null)
-            if (intent != null) {
-                startActivityForResult(intent, 0)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents == null) {
-
-        } else {
-            if (resultCode == -1) {
-                Account.restoreWalletFromDevice()
-                val intent = Intent(this, SelectingBestNode::class.java)
-                startActivity(intent)
-            }
         }
     }
 
