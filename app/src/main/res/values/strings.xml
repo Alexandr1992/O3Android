@@ -2,12 +2,71 @@
     <string name="app_name">O3Wallet</string>
 
     <!-- Landing Page -->
-    <string-array name="ONBOARDING_image_titles" comment="These are the titles for each image in the onboarding">
-        <item>Add Watch Only Address</item>
-        <item>Send, Claim, and Recieve</item>
-        <item>Add Watch Only Address</item>
+    <string-array name="ONBOARDING_landing_titles" comment="These are the titles for each image in the onboarding">
+        <item>Welcome to O3</item>
+        <item>Built for the NEO Smart Economy</item>
+        <item>Secure &amp; safe</item>
+        <item>Stay up to date</item>
+        <item>Are you ready to get started?</item>
     </string-array>
+
+    <string name="ONBOARDING_wallet_generated_title" comment="Initial title when wallet is generate">Wallet generated!</string>
+    <string name="ONBOARDING_wallet_generated_subtitle" comment="Info to display after wallet is generated initially">Please take a moment to backup a copy of your Private Key.</string>
+
+    <string name="ONBOARDING_wallet_private_key_title" comment="Title for first private key card">My Private Key</string>
+    <string name="ONBOARDING_private_key_info" comment="Info about private key on first card page">This key is used to login to your wallet</string>
+    <string name="ONBOARDING_private_key_subinfo" comment="Subinfo avout private key on the first card page">Back it up or write it down and store it somewhere very safe</string>
+    <string name="ONBOARDING_learn_more" comment="Learn more button to start the tutorial">Learn More</string>
+
+    <string-array name="ONBOARDING_landing_subtitles" comment="These are the subtitles for each image in the onboarding">
+        <item>A simple, user-friendly smart wallet, designed for the smart economy</item>
+        <item>Send, receive, claim GAS &amp; manage NEP5 Tokens all in one place with ease.</item>
+        <item>With latest security features, you can be sure your assets are safe and sound.</item>
+        <item>Get the latest NEO news and discover new projects from right inside the app</item>
+        <item>Get started by setting up a new wallet or logging in with your private key</item>
+    </string-array>
+
+    <string-array name="ONBOARDING_tutorial_titles" comment="These are the subtitles for each image in the tutorial">
+        <item>Quick tips!</item>
+        <item>Your Private Key</item>
+        <item>Don\'t lose your key</item>
+        <item>Back it up!</item>
+        <item>For your eyes only</item>
+    </string-array>
+
+    <string-array name="ONBOARDING_tutorial_infos" comment="These are the first info pararaphs for each image in the tutorial">
+        <item>Your Private Key is very important to making sure your tokens are safe and sound.</item>
+        <item>O3 app uses your Private Key to access the blockchain where your tokens are stored.</item>
+        <item>If you log out, delete the app or lose your phone, the key will no longer be accessible in the app.</item>
+        <item>O3 recommends making a copy of your key and storing it somewhere safe from theft or damange, in multiple locations if possible.</item>
+        <item>Your key gives full access to your account and funds.</item>
+    </string-array>
+
+    <string-array name="ONBOARDING_tutorial_sub_infos" comment="These are the second info pararaphs for each image in the tutorial">
+        <item>Here are a few quick tips to help look after it.</item>
+        <item>The key is stored on your device locally. For security reasons, O3 does not have a copy of this key.</item>
+        <item>You will need this key to log back into your wallet again.</item>
+        <item></item>
+        <item>Never share this key with anyone or post it on the internet. If you do, then your funds can be stolen.</item>
+    </string-array>
+
+    <string-array name="ONBOARDING_tutorial_emphasis_texts" comment="These are the emphasis textx for each image in the tutorial">
+        <item></item>
+        <item></item>
+        <item>So, please make a copy!</item>
+        <item></item>
+        <item>You\'re ready to join the Smart Economy!</item>
+    </string-array>
+
+    <string name="ONBOARDING_continue_action" comment="This is a title for the continue action in the tutorial flow">Continue</string>
+    <string name="ONBOARDING_back_action" comment="This is a title for the back action in the tutorial flow">Back</string>
+    <string name="ONBOARDING_done_action" comment="This is a title for the done action in the tutorial flow">Done</string>
+
+
     <string name="ONBOARDING_login_action" comment="This is the title for the login action in the onboarding flow">Login</string>
+    <string name="ONBOARDING_login_with_key_action" comment="This is the title for the login action in the onboarding flow">Login With Private Key</string>
+    <string name="ONBOARDING_stylized_or" comment="A stylized or to seperate the login and create new wallet action">— OR —</string>
+
     <string name="ONBOARDING_new_wallet_question" comment="Informative text asking if the user is using O3 for the first time">New to O3?</string>
     <string name="ONBOARDING_create_new_wallet" comment="Text for the create new wallet action">Create a new wallet</string>
     <string name="ONBOARDING_existing_key_detected" comment="Warning the user that there is already a private key on this device">
@@ -15,10 +74,53 @@
         this device, are you sure you want to replace the current private key with a new one?
     </string>
 
+    <string-array name="ONBOARDING_backup_options" comment="These are the titles for each backup option">
+        <item>Send a backup email</item>
+        <item>I took a screenshot</item>
+        <item>Copy to clipboard</item>
+        <item>I wrote it down on paper</item>
+        <item>Go back to my key</item>
+    </string-array>
+
+    <string name="ONBOARDING_backup_options" comment="Title for backup options modal">Backup options</string>
+    <string name="ONBOARDING_most_secure" comment="Nep 2 encryption reccomennded via email">Most Secure</string>
+
+    <string name="ONBOARDING_screenshot_dialog_title" comment="Title for dialog when doing screenshot backup">Screenshot Secure?</string>
+    <string name="ONBOARDING_screenshot_dialog_subtitle" comment="Subtitle for dialog when doing screenshot backup">We reccomend that later on
+    you back it up in another secure location in case your device is damaged.</string>
+    <string name="ONBOARDING_screenshot_dialog_button" comment="button title for the screenshot dialog">Sounds good, I\'m ready!</string>
+
+    <string name="ONBOARDING_copy_dialog_title" comment="Title for dialog when doing copy clipboard backup">Copied to Clipboard</string>
+    <string name="ONBOARDING_copy_dialog_subtitle" comment="Subtitle for dialog when doing copy clipboard backup">Take a moment to paste this somewhere safe!</string>
+    <string name="ONBOARDING_COPY_dialog_button" comment="button title for the screenshot dialog">Sounds good, I\'m ready!</string>
+
+    <string name="ONBOARDING_verify_private_key" comment="Title for when verifying private key that was written on paper">Verify Private Key</string>
+    <string name="ONBOARDING_private_key" comment="Title above edit text for private key">Private Key</string>
+    <string name="ONBOARDING_verify_header" comment="Brief description when needing to verify">Sometimes people make a mistake when writing down their Private Key by hand. Please reenter so that you can be sure sure that your key is safe and sound</string>
+    <string name="ONBOARDING_verify_and_continue" comment="Title for verify when performing paper wallet backup">Verify and Continue</string>
+    <string name="ONBOARDING_paper_dialog_title" comment="Dialog title for when succesffully backed up private key on paper">Key Verified!</string>
+    <string name="ONBOARDING_paper_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on paper">Make sure to keep your paper backup safe, you\'ll need it in case your phone is ever lost or damaged.</string>
+    <string name="ONBOARDING_paper_dialog_button" comment="button title for paper backup dialog">Ok, got it!</string>
+    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn\'t match</string>
+    <string name="ONBOARDING_paper_key_no_match_description" comment="alert descripition when paper key doesn't match the expected value">Please double check your private key and try again</string>
+
+    <string name="ONBOARDING_enter_a_password" comment="title for entering a password for NEP-2 Encryption">Enter a password</string>
+    <string name="ONBOARDING_enter_a_password_description" comment="description for when entering a password">In order to keep your key safe and secure, we need to encrypt it with a password. You will need this password and the key in order to login. It needs to be a minimum of 8 characters in length</string>
+    <string name="ONBOARDING_password" comment="Place holder for password">Password</string>
+    <string name="ONBOARDING_generate_encrypted_key" comment="button to continue when encrypting the key">Generate encrypted key</string>
+    <string name="ONBOARDING_reenter_password" comment="title when reentering the password">Re-enter password</string>
+    <string name="ONBOARDING_reenter_description" comment="description when reentering the password">Please re-enter your password to confirm the encrypted key was generated correctly</string>
+    <string name="ONBOARDING_finish" comment="Finish nep-2 encryption">Finish</string>
+
+    <string name="ONBOARDING_password_length_error" comment="Error to display when password is not 8 characters">Oh no! you\'re password isn\'t long enough. It must be at least 8 characters</string>
+    <string name="ONBOARDING_password_mismatch_error" comment="Error to display when password don't match">Oh no! Looks like your passwords don\t match. Please double check them</string>
+
+    <string name="ONBOARDING_backup_email_body" comment="Full text for the email backup in body">Thank you for choosing the O3 Wallet!\n\n Here is the encrypted Private Key that you just created!\n\n You can use this key, along with the password that you created in O3 in the event that you are locked out of your wallet.\n\n%s\n\n To login follow these steps:\n\n1) Open the O3 App\n2) Select Login\n3) Either enter the text key or scan the attached QR Code\n4) Enter your password\n\nAnd you\'re in!\nThanks again for using O3!</string>
+    <string name="ONBOARDING_backup_email_subject" comment="Subject for backup email">O3 Wallet Encrypted Backup</string>
     <!-- Create Wallet Page -->
     <string name="ONBOARDING_Welcome" comment="Title for the welcome screen on the onboarding">Welcome!</string>
     <string name="ONBOARDING_your_public_address" comment="Title label for the generated address in the onboarding flow">Your Public Address</string>
-    <string name="ONBOARDING_your_private_key" comment="Title label for your private key">Your Private Key (WIF)</string>
+    <string name="ONBOARDING_your_private_key" comment="Title label for your private key">Your Private Key (WIF or Encrypted)</string>
     <string name="ONBOARDING_private_key_warning" comment="Warning for users to keep their private key secure">Never lose or share your private key with anyone, doing so will compromise
         the security of your funds.</string>
     <string name="ONBOARDING_start_action">Start</string>
@@ -27,12 +129,17 @@
         location so that you may retrieve your funds in case something happens to your device.</string>
     <string name="ONBOARDING_backup_warning_confirmation">I confirm that I have backed up my private key in another secure location</string>
 
+    <string name="ONBOARDING_encrypted_backup_dialog_title" comment="Dialog title for when succesffully backed up private key on nep 2">Encrypted Key Generated</string>
+    <string name="ONBOARDING_encrypted_backup_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on nep2">Double check that it arrived safely before continuing.</string>
+    <string name="ONBOARDING_encrypted_backup_dialog_button" comment="button title for paper backup dialog">Go to my wallet!</string>
+
     <!-- Login Page -->
     <string name="ONBOARDING_scan" comment="Title for scan button, allowing users to login by scanning private key">Scan</string>
-    <string name="ONBOARDING_login_footnote" comment="Footnote showing that the private key will be stored locally on the device">This private key will be stored on your device after logging in.</string>
+    <string name="ONBOARDING_login_footnote" comment="Footnote showing that the private key will be stored locally on the device">This Private Key will be stored on your device after logging in.</string>
     <string name="ONBOARDING_scan_prompt" comment="Prompt asking the user to scan their QR code in order to log ib">Scan the QR code of your private key</string>
     >
     <string name="ONBOARDING_Login_To_Existing" comment="Prompt when displaying passcode to login to existing wallet">Log in to your existing wallet</string>
+    <string name="ONBOARDING_decryption_failed" comment="Toast to show when decrypting nep2 key failure occurs">Decryption failed, check your password</string>
 
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
@@ -263,4 +370,13 @@
     <string name="DIALOG_performed_backup">All Done!</string>
     <string name="PORTFOLIO_pricing_not_available">No Pricing Data Available Yet</string>
     <string name="PORTFOLIO_pricing_not_available_description">Our source for pricing data (CoinCap) has not yet registered this token, check back soon!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ONBOARDING_nep2_detected">Encrypted Key Detected</string>
+    <string name="ONBOARDING_enter_nep2_pasword">Enter the password you used to secure this Private Key.</string>
+    <string name="ONBOARDING_submit">Submit</string>
+    <string name="ONBOARDING_decryption_in_progress">Verifying Private Key...</string>
+    <string name="ONBOARDING_logout">logout</string>
+    <string name="ONBOARDING_signin">Sign in to O3</string>
 </resources>

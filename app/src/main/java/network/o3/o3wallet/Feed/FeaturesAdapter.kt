@@ -1,22 +1,14 @@
 package network.o3.o3wallet.Feed
 
-import android.content.Context
-import android.media.Image
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import network.o3.o3wallet.API.O3.Feature
-import network.o3.o3wallet.API.O3.FeedData
 import network.o3.o3wallet.R
-import org.w3c.dom.Text
-import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.net.Uri
 import android.widget.Button
@@ -69,7 +61,7 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
 
         fun bindFeature(feature: Feature?) {
             this.feature = feature
-            view.findViewById<TextView>(R.id.featureTitle).text = feature?.title?.toUpperCase() ?: ""
+            view.findViewById<TextView>(R.id.featureSubtitle).text = feature?.title?.toUpperCase() ?: ""
             view.findViewById<TextView>(R.id.featureSubtitle).text = feature?.subtitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).text = feature?.actionTitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).setOnClickListener {

@@ -14,6 +14,6 @@ class LandingPagerAdapter(fragmentManager: FragmentManager): FragmentStatePagerA
     }
 
     override fun getCount(): Int {
-        return 3
+        return 5
     }
 }

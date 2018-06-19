@@ -32,7 +32,7 @@
         </provider>
 
         <activity
-            android:name=".Onboarding.MainActivity"
+            android:name=".Onboarding.LandingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,9 +44,6 @@
             android:name=".Onboarding.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Onboarding.CreateWalletActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".MainTabbedActivity"
             android:screenOrientation="portrait"
@@ -68,7 +65,6 @@
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
 
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -76,21 +72,16 @@
             android:name="io.fabric.ApiKey"
             android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
 
-        <activity android:name=".SelectingBestNode" />
-        <activity android:name=".Topup.TopupSendAmountActivity" />
-        <activity android:name=".Topup.TopupTutorial" />
-        <activity android:name=".Topup.TutorialPrivateKey" />
-        <activity android:name=".Topup.TopupKeyGeneration" />
-        <activity android:name=".Topup.TopupSecondFragmentInfo" />
-        <activity android:name=".Topup.TopupColdStorageBalanceActivity" />
+        <activity android:name=".Onboarding.SelectingBestNode" />
         <activity android:name=".TokenSales.TokenSalesActivity" />
         <activity android:name=".TokenSales.TokenSaleInfoActivity" />
         <activity android:name=".TokenSales.TokenSaleReviewActivity" />
         <activity android:name=".TokenSales.TokenSaleReceiptActivity" />
         <activity android:name=".Settings.AdvancedSettingsActivity" />
-        <activity android:name=".BackupKeyDialogActivity"
-            android:theme="@style/AppTheme.Dialog">
-        </activity>
+        <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
+        <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
+        <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
+        <activity android:name=".Onboarding.PasscodeRequestActivity"></activity>
     </application>
 
 </manifest>

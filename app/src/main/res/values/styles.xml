@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -11,6 +12,7 @@
     </style>
 
     <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light">
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
@@ -18,10 +20,15 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name = "AppTheme.NoTopBar" parent = "Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
 
 
     <style name="NoShadowActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:fontFamily">@font/muli_bold</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="elevation">0dp</item>
         <item name="titleTextStyle">@style/TitleTextStyle</item>
     </style>
@@ -85,6 +92,14 @@
         <item name="android:elevation">8dp</item>
     </style>
 
+
+    <style name="AlertButton" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:background">@color/colorGain</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:fontFamily">@font/muli_bold</item>
+    </style>
+
     <style name="BorderLessButton" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textSize">12dp</item>
@@ -110,6 +125,13 @@
         <item name="android:fontFamily">@font/muli</item>
     </style>
 
+    <style name="PrivateKeyText">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
+        <item name="android:letterSpacing">0.5</item>
+    </style>
+
     <style name="RegularText">
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">16dp</item>
@@ -119,6 +141,12 @@
     <style name="RegularText.Small">
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="RegularText.Bold">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
     <style name="RegularText.Small.Gray">
@@ -133,6 +161,10 @@
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
+    <style name="RegularText.Primary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <style name="RegularText.Gain">
         <item name="android:textColor">@color/colorGain</item>
     </style>
@@ -142,6 +174,10 @@
     </style>
 
     <style name="RegularText.Accent.Bold">
+        <item name="android:fontFamily">@font/muli_bold</item>
+    </style>
+
+    <style name="RegularText.Primary.Bold">
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
@@ -241,5 +277,19 @@
         <item name="android:textSize">16dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
+
+    <!-- set the rounded drawable as background to your bottom sheet -->
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:colorPrimaryDark">@color/zxing_transparent</item>
+        <item name="android:background">@drawable/bottom_sheet_rounded_bg</item>
+    </style>
+
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:colorPrimaryDark">@color/zxing_transparent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
 </resources>
