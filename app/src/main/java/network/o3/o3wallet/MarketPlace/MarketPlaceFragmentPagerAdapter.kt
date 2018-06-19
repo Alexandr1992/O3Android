@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import network.o3.o3wallet.MarketPlace.NEP5Tokens.TokensFragment
 import network.o3.o3wallet.MarketPlace.TokenSales.TokenSalesFragment
 import network.o3.o3wallet.Wallet.AccountFragment
 import network.o3.o3wallet.Wallet.TransactionHistory.TransactionHistoryFragment
@@ -21,7 +22,7 @@ class MarketPlaceFragmentPagerAdapter(fm: FragmentManager, context: Context) : F
 
     override fun getItem(position: Int): Fragment {
         if (position == 0) {
-            return TransactionHistoryFragment.newInstance()
+            return TokensFragment.newInstance()
         } else {
             return TokenSalesFragment.newInstance()
         }

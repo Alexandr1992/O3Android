@@ -1,5 +1,7 @@
 package network.o3.o3wallet
 
+import android.content.Context
+import android.content.res.Configuration
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -7,6 +9,12 @@ import android.text.Spanned
 import android.text.InputFilter
 import java.math.BigDecimal
 import java.util.regex.Pattern
+import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
+import android.content.res.Configuration.SCREENLAYOUT_SIZE_NORMAL
+import android.content.res.Configuration.SCREENLAYOUT_SIZE_SMALL
+import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
+
+
 
 
 /**
@@ -68,6 +76,8 @@ fun Date.intervaledString(interval: String): String {
     return "since " + dateFormatter.format(this)
 }
 
+
+
 class DecimalDigitsInputFilter(digitsBeforeZero: Int, digitsAfterZero: Int) : InputFilter {
 
     internal var mPattern: Pattern
@@ -90,3 +100,4 @@ inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDeci
     }
     return sum
 }
+

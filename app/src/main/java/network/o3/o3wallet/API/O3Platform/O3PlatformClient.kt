@@ -15,7 +15,9 @@ class O3PlatformClient {
     enum class Route {
         CLAIMABLEGAS,
         BALANCES,
+        NEP5,
         UTXO;
+
 
         fun routeName(): String {
             return this.name.toLowerCase(Locale.US)
@@ -97,6 +99,23 @@ class O3PlatformClient {
                 completion(Pair<TransferableAssets?, Error?>(TransferableAssets(balanceData.data), null))
             } else {
                 completion(Pair<TransferableAssets?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getTokenListings(completion: (Pair<TokenListings?, Error?>) -> Unit) {
+        val url = baseAPIURL + "/" + Route.NEP5.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString { _, _, result ->
+            val(data, error)  = result
+            if (error == null) {
+                val gson = Gson()
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val nep5Data = Gson().fromJson<TokenListingsData>(platformResponse.result)
+                completion(Pair<TokenListings?, Error?>(nep5Data.data, null))
+            } else {
+                completion(Pair<TokenListings?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

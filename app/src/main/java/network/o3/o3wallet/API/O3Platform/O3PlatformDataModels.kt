@@ -31,6 +31,20 @@ data class Claim(val claim: Int,
                  val txid: String,
                  val value: Int)
 
+
+data class TokenListingsData(val data: TokenListings)
+
+data class TokenListings(val nep5tokens: Array<TokenListing>)
+
+data class TokenListing(val logoURL: String,
+                        val logoSVG: String,
+                        val webURL: String,
+                        val tokenHash: String,
+                        val name: String,
+                        val symbol: String,
+                        val decimal: Int,
+                        val totalSupply: Int)
+
 data class ClaimData(val data: Claimable)
 
 data class Claimable(val gas: String, val claims: Array<UTXO>)
@@ -93,3 +107,5 @@ class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
         return TransferableAsset(balance, isToken)
     }
 }
+
+
