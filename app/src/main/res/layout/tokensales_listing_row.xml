@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="155dp"
-    tools:context="network.o3.o3wallet.TokenSales.TokenSaleListingRow"
+    tools:context="network.o3.o3wallet.MarketPlace.TokenSales.TokenSaleListingRow"
     tools:layout_editor_absoluteY="81dp">
 
     <!-- TODO: Update blank fragment layout -->

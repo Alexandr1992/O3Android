@@ -73,10 +73,10 @@
             android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
 
         <activity android:name=".Onboarding.SelectingBestNode" />
-        <activity android:name=".TokenSales.TokenSalesActivity" />
-        <activity android:name=".TokenSales.TokenSaleInfoActivity" />
-        <activity android:name=".TokenSales.TokenSaleReviewActivity" />
-        <activity android:name=".TokenSales.TokenSaleReceiptActivity" />
+        <activity android:name=".MarketPlace.TokenSales.TokenSalesFragment" />
+        <activity android:name=".MarketPlace.TokenSales.TokenSaleInfoActivity" />
+        <activity android:name=".MarketPlace.TokenSales.TokenSaleReviewActivity" />
+        <activity android:name=".MarketPlace.TokenSales.TokenSaleReceiptActivity" />
         <activity android:name=".Settings.AdvancedSettingsActivity" />
         <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
         <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />

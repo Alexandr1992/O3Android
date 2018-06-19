@@ -1,4 +1,4 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
 import android.net.Uri
@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.TextView
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.R
-import org.w3c.dom.Text
 import java.text.DecimalFormat
 import java.util.*
 

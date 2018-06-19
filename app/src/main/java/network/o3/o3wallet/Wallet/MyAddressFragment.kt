@@ -16,9 +16,10 @@ import android.widget.TextView
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 
 
-class MyAddressFragment : BottomSheetDialogFragment() {
+class MyAddressFragment : RoundedBottomSheetDialogFragment() {
 
     private lateinit var addressLabel: TextView
     private  lateinit var qrImageView: ImageView

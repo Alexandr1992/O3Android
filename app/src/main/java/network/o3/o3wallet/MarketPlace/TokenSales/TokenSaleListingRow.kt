@@ -1,4 +1,4 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.os.Bundle
 import android.app.Fragment

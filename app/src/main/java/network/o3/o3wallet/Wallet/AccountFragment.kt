@@ -15,13 +15,13 @@ import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.view.ViewCompat
-import com.github.clans.fab.FloatingActionButton
-import com.github.clans.fab.FloatingActionMenu
+import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
+import neoutils.Neoutils
 import network.o3.o3wallet.*
+import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.*
-import network.o3.o3wallet.TokenSales.TokenSalesActivity
 import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.find
@@ -33,10 +33,9 @@ import java.util.*
 
 class AccountFragment : Fragment() {
 
-    private lateinit var menuButton: FloatingActionMenu
-    private lateinit var myQrButton: FloatingActionButton
-    private lateinit var sendButton: FloatingActionButton
-    private lateinit var tokenSaleButton: FloatingActionButton
+    private lateinit var myQrButton: Button
+    private lateinit var sendButton: Button
+    private lateinit var scanButton: Button
     private lateinit var unclaimedGASTicker: TickerView
     private lateinit var syncButton: Button
     private lateinit var claimButton: Button
@@ -55,28 +54,15 @@ class AccountFragment : Fragment() {
         return inflater.inflate(R.layout.wallet_fragment_account, container, false)
     }
 
-    fun setupActionButton(view: View) {
-        menuButton = view.findViewById(R.id.menuActionButton)
-        myQrButton = view.findViewById(R.id.fab_my_address)
-        sendButton = view.findViewById(R.id.fab_send)
-        tokenSaleButton = view.findViewById(R.id.fab_token_sale)
+    fun setupActionButtons(view: View) {
+        myQrButton = view.findViewById(R.id.requestButton)
+        sendButton = view.findViewById(R.id.sendButton)
+        scanButton = view.findViewById(R.id.scanButton)
 
-        tokenSaleButton.colorNormal = resources.getColor(R.color.colorAccent)
-        tokenSaleButton.colorPressed = resources.getColor(R.color.colorAccentLight)
-        tokenSaleButton.setOnClickListener { showTokenSale() }
-
-        myQrButton.colorNormal = resources.getColor(R.color.colorAccent)
-        myQrButton.colorPressed = resources.getColor(R.color.colorAccentLight)
         myQrButton.setOnClickListener { showMyAddress() }
+        sendButton.setOnClickListener { sendButtonTapped("") }
+        scanButton.setOnClickListener { scanAddressTapped() }
 
-        sendButton.colorNormal = resources.getColor(R.color.colorAccent)
-        sendButton.colorPressed = resources.getColor(R.color.colorAccentLight)
-        sendButton.setOnClickListener { menuButtonTapped() }
-
-        menuButton.menuButtonColorNormal = resources.getColor(R.color.colorAccent)
-        menuButton.menuButtonColorPressed = resources.getColor(R.color.colorAccentLight)
-        menuButton.transitionName = "reveal"
-        menuButton.bringToFront()
     }
 
     fun reloadAllData() {
@@ -138,7 +124,7 @@ class AccountFragment : Fragment() {
             reloadAllData()
         }
 
-        setupActionButton(view)
+        setupActionButtons(view)
 
         unclaimedGASTicker.text = "0.00000000"
         unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
@@ -178,10 +164,6 @@ class AccountFragment : Fragment() {
         addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
     }
 
-    private fun showTokenSale() {
-        val tokenSaleIntent = Intent(context, TokenSalesActivity::class.java)
-        startActivity(tokenSaleIntent)
-    }
 
     private fun showAssets(data: TransferableAssets) {
         swipeContainer.isRefreshing = false
@@ -372,14 +354,29 @@ class AccountFragment : Fragment() {
         }
     }
 
-    private fun menuButtonTapped() {
-        val intent: Intent = Intent(
-                context,
-                SendActivity::class.java
-        )
+    fun scanAddressTapped() {
+        val integrator = IntentIntegrator(activity)
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+        integrator.setPrompt(resources.getString(R.string.SEND_scan_prompt_qr))
+        integrator.setOrientationLocked(false)
+        integrator.initiateScan()
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null && result.contents == null) {
+            Toast.makeText(this.context, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
+        } else {
+            sendButtonTapped(result.contents.trim())
+        }
+    }
+
+    private fun sendButtonTapped(payload: String) {
+        val intent = Intent(activity, SendActivity::class.java)
         intent.putExtra("address", "")
-        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this.activity!!, menuButton, ViewCompat.getTransitionName(menuButton))
-        ActivityCompat.startActivity(context!!, intent, option.toBundle())
+        intent.putExtra("payload", payload)
+        startActivity(intent)
     }
 
     companion object {

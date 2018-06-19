@@ -1,4 +1,4 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
