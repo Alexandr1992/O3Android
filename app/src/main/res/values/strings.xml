@@ -141,6 +141,9 @@
     <string name="ONBOARDING_Login_To_Existing" comment="Prompt when displaying passcode to login to existing wallet">Log in to your existing wallet</string>
     <string name="ONBOARDING_decryption_failed" comment="Toast to show when decrypting nep2 key failure occurs">Decryption failed, check your password</string>
 
+    <string name="MARKETPLACE_marketplace" comment="title for o3 marketplace">Marketplace</string>
+    <string name="MARKETPLACE_search_tokens" comment="title for search tokens in marketplace">Search Tokens</string>
+
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
@@ -224,6 +227,7 @@
     <string name="WALLET_to_O3_wallet" comment="label for when transaction goes to O3 wallet">To: O3 Wallet</string>
     <string name="WALLET_from_O3_wallet" comment="label for when transaction goes from O3 wallet">From: O3 Wallet</string>
     <string name="WALLET_block_number" comment="label for block number in transaction histoty">Block Number: %1$s</string>
+    <string name="WALLET_Request" comment="lavel for the request button">Request</string>
 
 
     <!-- Wallet Send -->

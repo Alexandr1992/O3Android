@@ -11,9 +11,21 @@ import network.o3.o3wallet.Portfolio.HomeFragment
 import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.Rect
+import android.view.View
+import android.view.ViewTreeObserver
+import android.widget.Toast
+import co.kyash.rkd.KeyboardDetector
+import co.kyash.rkd.KeyboardStatus
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
+import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.android.synthetic.main.tabbar_activity_main_tabbed.*
+import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
+import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 
@@ -23,7 +35,7 @@ class MainTabbedActivity : AppCompatActivity() {
     var activeTabID: Int? = 0
     var activeTabPosition: Int? = 0
     var fragments: Array<Fragment>? = arrayOf(HomeFragment.newInstance(),
-            TabbedAccount.newInstance(), NewsFeedFragment.newInstance(),
+            TabbedAccount.newInstance(), MarketplaceTabbedFragment.newInstance(), NewsFeedFragment.newInstance(),
             SettingsFragment.newInstance())
 
     override fun onBackPressed() {
@@ -32,6 +44,31 @@ class MainTabbedActivity : AppCompatActivity() {
             noButton {  }
         }.show()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //QR-Scanned Activitry
+        if (requestCode == 0x0000c0de) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null && result.contents == null) {
+                Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
+            } else {
+                val intent = Intent(this, SendActivity::class.java)
+                intent.putExtra("address", "")
+                intent.putExtra("payload", result.contents.trim())
+                startActivity(intent)
+            }
+        }
+    }
+
+    fun setupKeyboardDetector() {
+        KeyboardDetector(this).observe().subscribe({ status ->
+            when(status) {
+                KeyboardStatus.OPENED -> { find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.GONE}
+                KeyboardStatus.CLOSED -> {find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.VISIBLE}
+            }
+        })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tabbar_activity_main_tabbed)
@@ -41,6 +78,8 @@ class MainTabbedActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, selectedFragment, 0.toString())
         transaction.commit()
+
+        setupKeyboardDetector()
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -70,10 +109,16 @@ class MainTabbedActivity : AppCompatActivity() {
                         switchFragment(2)
                         activeTabID = item.itemId
                         activeTabPosition = 2
-                        tabName = "News"
+                        tabName = "Marketplace"
                     }
                     R.id.action_item4 -> {
-                        val settingsModal = fragments!!.get(3) as SettingsFragment
+                        switchFragment(3)
+                        activeTabID = item.itemId
+                        activeTabPosition = 3
+                        tabName = "News"
+                    }
+                    R.id.action_item5 -> {
+                        val settingsModal = fragments!!.get(4) as SettingsFragment
                         settingsModal.show(supportFragmentManager, settingsModal.tag)
                         tabName = "Settings"
                         Answers().logCustom(CustomEvent("Tab Tapped")
@@ -104,5 +149,7 @@ class MainTabbedActivity : AppCompatActivity() {
             (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
         }
     }
+
+
 
 }

@@ -22,6 +22,7 @@ import android.widget.*
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
+import com.google.zxing.integration.android.IntentResult
 import kotlinx.android.synthetic.main.wallet_activity_send.*
 import neoutils.Neoutils
 import neoutils.Neoutils.parseNEP9URI
@@ -88,6 +89,7 @@ class SendActivity: AppCompatActivity() {
 
         val extras = intent.extras
         val address = extras.getString("address")
+        val payload = extras.getString("payload")
         O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
             ownedAssets = it.first?.assets ?: arrayListOf()
         }
@@ -97,6 +99,10 @@ class SendActivity: AppCompatActivity() {
             amountTextView.requestFocus()
             showFoundContact(address)
         }
+        if (payload != "") {
+            parseQRPayload(payload)
+        }
+
     }
 
     fun showFoundContact(address: String) {
@@ -141,7 +147,7 @@ class SendActivity: AppCompatActivity() {
     }
 
     private fun verifyPassCode() {
-        val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        val mKeyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!mKeyguardManager.isKeyguardSecure) {
             // Show a message that the user hasn't set up a lock screen.
             Toast.makeText(this,
@@ -214,7 +220,7 @@ class SendActivity: AppCompatActivity() {
     private fun sendTokenAsset(address: String, amount: Double) {
         val wallet = Account.getWallet()
         val toast = baseContext.toastUntilCancel(resources.getString(R.string.SEND_sending_in_progress))
-        val gasIndex  = ownedAssets.indices.find { ownedAssets[it].name.toUpperCase() == "GAS"}
+        val gasIndex = ownedAssets.indices.find { ownedAssets[it].name.toUpperCase() == "GAS" }
         if (gasIndex == null || gasIndex == -1 || ownedAssets[gasIndex].value.toDouble() == 0.0) {
             baseContext.toast(resources.getString(R.string.SEND_Not_Enough_GAS_For_Token_Send))
             return
@@ -307,6 +313,35 @@ class SendActivity: AppCompatActivity() {
         integrator.initiateScan()
     }
 
+    fun parseQRPayload(payload: String) {
+        if (Neoutils.validateNEOAddress(payload)) {
+            addressTextView.text = payload
+        } else try {
+            val uri = parseNEP9URI(payload)
+            addressTextView.text = uri.to
+            amountTextView.text = uri.amount.toString()
+
+            if (uri.asset.contains(NeoNodeRPC.Asset.NEO.assetID()) || uri.asset.toLowerCase() == "neo") {
+                isNativeAsset = true
+                assetID = NeoNodeRPC.Asset.NEO.assetID()
+                shortName = "NEO"
+            } else if (uri.asset.contains(NeoNodeRPC.Asset.GAS.assetID()) || uri.asset.toLowerCase() == "gas") {
+                isNativeAsset = true
+                assetID = NeoNodeRPC.Asset.GAS.assetID()
+                shortName = "GAS"
+            } else {
+                isNativeAsset = false
+                assetID = uri.asset
+
+                val asset = ownedAssets.firstOrNull { it.id == uri.asset }
+                shortName = asset?.name ?: "GAS"
+            }
+
+            updateSelectedAsset()
+
+        } catch (e: Exception) {
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
@@ -322,32 +357,8 @@ class SendActivity: AppCompatActivity() {
         if (result != null) {
             if (result.contents == null) {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
-            } else if (Neoutils.validateNEOAddress(result.contents.trim())) {
-                addressTextView.text = result.contents.trim()
-            } else try {
-                val uri = parseNEP9URI(result.contents.trim())
-                addressTextView.text = uri.to
-                amountTextView.text = uri.amount.toString()
-
-                if (uri.asset.contains(NeoNodeRPC.Asset.NEO.assetID()) || uri.asset.toLowerCase() == "neo") {
-                    isNativeAsset = true
-                    assetID = NeoNodeRPC.Asset.NEO.assetID()
-                    shortName = "NEO"
-                } else if (uri.asset.contains(NeoNodeRPC.Asset.GAS.assetID())  || uri.asset.toLowerCase() == "gas") {
-                    isNativeAsset = true
-                    assetID = NeoNodeRPC.Asset.GAS.assetID()
-                    shortName = "GAS"
-                } else {
-                    isNativeAsset = false
-                    assetID = uri.asset
-
-                    val asset = ownedAssets.firstOrNull { it.id == uri.asset }
-                    shortName = asset?.name ?: "GAS"
-                }
-
-                updateSelectedAsset()
-
-            } catch (e: Exception) {
+            } else {
+                parseQRPayload(result.contents.trim())
             }
         }
     }

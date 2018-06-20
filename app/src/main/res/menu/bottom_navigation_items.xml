@@ -10,10 +10,14 @@
         android:title="@string/TABBAR_account" />
     <item
         android:id="@+id/action_item3"
+        android:icon="@drawable/ic_tab_marketplace"
+        android:title="@string/MARKETPLACE_marketplace" />
+    <item
+        android:id="@+id/action_item4"
         android:icon="@drawable/ic_tab_news"
         android:title="@string/TABBAR_news_feed" />
     <item
-        android:id="@+id/action_item4"
+        android:id="@+id/action_item5"
         android:icon="@drawable/ic_tab_settings"
         android:title="@string/SETTINGS_settings_title" />
 </menu>

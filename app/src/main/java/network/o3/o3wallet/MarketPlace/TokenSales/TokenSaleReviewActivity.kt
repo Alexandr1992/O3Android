@@ -1,8 +1,7 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
 import android.net.Uri
-import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -21,7 +20,6 @@ import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.yesButton
-import org.w3c.dom.Text
 import java.text.DecimalFormat
 
 class TokenSaleReviewActivity : AppCompatActivity() {

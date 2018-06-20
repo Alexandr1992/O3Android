@@ -1,8 +1,7 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
 import android.net.Uri
-import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton

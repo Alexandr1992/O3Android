@@ -1,21 +1,13 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import network.o3.o3wallet.API.O3.*
-import network.o3.o3wallet.Feed.NewsFeedFragment
 import network.o3.o3wallet.R
-import java.text.SimpleDateFormat
 
 /**
  * Created by drei on 4/17/18.

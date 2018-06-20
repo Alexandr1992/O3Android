@@ -1,4 +1,4 @@
-package network.o3.o3wallet.TokenSales
+package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
 import android.net.Uri
@@ -11,15 +11,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3.TokenSale
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import org.jetbrains.anko.textColor
-import android.graphics.Movie
-
 
 
 /**
@@ -62,7 +56,7 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
             return TokenSaleViewHolder(view)
         } else {
             val view = layoutInflater.inflate(R.layout.tokensales_listing_footer, parent, false)
-            return FooterViewHolder (view)
+            return FooterViewHolder(view)
         }
     }
 

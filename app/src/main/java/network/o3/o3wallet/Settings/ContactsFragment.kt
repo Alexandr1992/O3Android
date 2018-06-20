@@ -59,6 +59,7 @@ class ContactsFragment : BottomSheetDialogFragment() {
                 SendActivity::class.java
         )
         intent.putExtra("address", contact.address)
+        intent.putExtra("payload", "")
         ActivityCompat.startActivity(context!!, intent, null)
     }
 

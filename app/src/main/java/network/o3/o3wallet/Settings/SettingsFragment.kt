@@ -11,9 +11,10 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.widget.*
 import network.o3.o3wallet.R
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 
 
-class SettingsFragment : BottomSheetDialogFragment() {
+class SettingsFragment : RoundedBottomSheetDialogFragment() {
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
