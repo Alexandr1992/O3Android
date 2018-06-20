@@ -12,10 +12,15 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.view.ViewCompat
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
+import neoutils.Neoutils
 import network.o3.o3wallet.*
+import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.*
 import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.Send.SendActivity
