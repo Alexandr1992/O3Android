@@ -106,11 +106,15 @@ class AccountFragment : Fragment() {
             }
         }
 
+        //find<ConstraintLayout>(R.id.toolBarContainer).bringToFront()
+
         syncButton = view.findViewById(R.id.syncButton)
         claimButton = view.find(R.id.claimButton)
         learnMoreClaimButton = view.find(R.id.learnMoreClaimButton)
         unclaimedGASTicker = view.findViewById(R.id.unclaimedGasTicker)
         assetListView = view.findViewById(R.id.assetListView)
+
+
         unclaimedGASTicker.setCharacterList(TickerUtils.getDefaultNumberList())
 
         swipeContainer = view.findViewById(R.id.swipeContainer)
@@ -182,7 +186,9 @@ class AccountFragment : Fragment() {
         unclaimedGASTicker.text =  "%.8f".format(accountViewModel.getEstimatedGas(claims))
         claimAmount = amount
         //learnMoreClaimButton.visibility = View.VISIBLE
-        syncButton.visibility = View.VISIBLE
+        if (claimAmount > 0) {
+            syncButton.visibility = View.VISIBLE
+        }
 
         if (accountViewModel.getClaimingStatus()) {
             this.syncButton.isEnabled = false

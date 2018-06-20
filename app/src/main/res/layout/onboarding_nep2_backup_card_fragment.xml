@@ -47,6 +47,7 @@
                 android:ems="10"
                 android:hint="@string/ONBOARDING_password"
                 android:inputType="textVisiblePassword|textMultiLine|textNoSuggestions"
+                android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/nep2HeaderTextView" />

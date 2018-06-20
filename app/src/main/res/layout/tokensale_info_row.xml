@@ -3,29 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="35dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/infoLabelTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Info Label"
-        tools:ignore="HardcodedText"
         android:textAppearance="@style/RegularText.Small.Gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/infoDescriptionTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
         android:text="Info Description"
-        tools:ignore="HardcodedText"
+        android:textAlignment="textStart"
         android:textAppearance="@style/RegularText.Small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/infoLabelTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 </android.support.constraint.ConstraintLayout>
