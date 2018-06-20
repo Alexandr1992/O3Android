@@ -61,7 +61,7 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
 
         fun bindFeature(feature: Feature?) {
             this.feature = feature
-            view.findViewById<TextView>(R.id.featureSubtitle).text = feature?.title?.toUpperCase() ?: ""
+            view.findViewById<TextView>(R.id.featureTitle).text = feature?.title?.toUpperCase() ?: ""
             view.findViewById<TextView>(R.id.featureSubtitle).text = feature?.subtitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).text = feature?.actionTitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).setOnClickListener {

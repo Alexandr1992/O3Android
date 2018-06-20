@@ -12,22 +12,15 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.view.ViewCompat
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
-import neoutils.Neoutils
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.*
 import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
@@ -115,6 +108,8 @@ class AccountFragment : Fragment() {
         learnMoreClaimButton = view.find(R.id.learnMoreClaimButton)
         unclaimedGASTicker = view.findViewById(R.id.unclaimedGasTicker)
         assetListView = view.findViewById(R.id.assetListView)
+
+
         unclaimedGASTicker.setCharacterList(TickerUtils.getDefaultNumberList())
 
         swipeContainer = view.findViewById(R.id.swipeContainer)
@@ -186,7 +181,9 @@ class AccountFragment : Fragment() {
         unclaimedGASTicker.text =  "%.8f".format(accountViewModel.getEstimatedGas(claims))
         claimAmount = amount
         //learnMoreClaimButton.visibility = View.VISIBLE
-        syncButton.visibility = View.VISIBLE
+        if (claimAmount > 0) {
+            syncButton.visibility = View.VISIBLE
+        }
 
         if (accountViewModel.getClaimingStatus()) {
             this.syncButton.isEnabled = false
