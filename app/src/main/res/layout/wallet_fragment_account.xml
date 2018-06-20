@@ -275,6 +275,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/toolBarContainer"
             android:layout_width="match_parent"
             android:layout_height="70dp">
 
@@ -358,7 +359,7 @@
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false">
 
@@ -367,7 +368,7 @@
                 android:id="@+id/assetListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_margin="0dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:divider="@android:color/transparent"

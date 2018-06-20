@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.NEO.AssetType
@@ -14,6 +16,7 @@ import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import java.text.NumberFormat
 
@@ -50,14 +53,20 @@ class AccountAssetsAdapter(fragment: AccountFragment, context: Context, address:
         if (asset.id.contains(NeoNodeRPC.Asset.NEO.assetID())) {
             vh.assetNameTextView.text = NeoNodeRPC.Asset.NEO.name
             vh.assetAmountTextView.text = "%d".format(asset.value.toInt())
+            val imageURL = "https://cdn.o3.network/img/neo/NEO.png"
+            Glide.with(mContext).load(imageURL).into(vh.logoImageView)
         } else if (asset.id.contains(NeoNodeRPC.Asset.GAS.assetID())) {
             vh.assetNameTextView.text = NeoNodeRPC.Asset.GAS.name
             vh.assetAmountTextView.text = "%.8f".format(asset.value)
+            val imageURL = "https://cdn.o3.network/img/neo/GAS.png"
+            Glide.with(mContext).load(imageURL).into(vh.logoImageView)
         } else {
             vh.assetNameTextView.text = asset.symbol
             var formatter = NumberFormat.getNumberInstance()
             formatter.maximumFractionDigits = asset.decimals
             vh.assetAmountTextView.text = formatter.format(asset.value)
+            val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.symbol.toUpperCase())
+            Glide.with(mContext).load(imageURL).into(vh.logoImageView)
         }
     }
 
@@ -86,12 +95,14 @@ class AccountAssetsAdapter(fragment: AccountFragment, context: Context, address:
     }
 }
 
-class AccountAssetRow(row: View?) {
+class AccountAssetRow(row: View) {
     val assetNameTextView: TextView
     val assetAmountTextView: TextView
+    val logoImageView: ImageView
 
     init {
-        this.assetNameTextView = row?.findViewById<TextView>(R.id.assetName) as TextView
-        this.assetAmountTextView = row.findViewById<TextView>(R.id.assetAmount) as TextView
+        this.assetNameTextView = row.findViewById(R.id.assetName)
+        this.assetAmountTextView = row.findViewById(R.id.assetAmount)
+        this.logoImageView = row.find(R.id.coinLogoImageView)
     }
 }

@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.view.ViewCompat
@@ -26,6 +27,7 @@ import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
@@ -105,6 +107,8 @@ class AccountFragment : Fragment() {
                 tickupHandler.postDelayed(this, 15000)
             }
         }
+
+        //find<ConstraintLayout>(R.id.toolBarContainer).bringToFront()
 
         syncButton = view.findViewById(R.id.syncButton)
         claimButton = view.find(R.id.claimButton)
