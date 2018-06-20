@@ -12,13 +12,20 @@ import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Rect
+import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.Toast
+import co.kyash.rkd.KeyboardDetector
+import co.kyash.rkd.KeyboardStatus
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.android.synthetic.main.tabbar_activity_main_tabbed.*
 import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
 import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 
@@ -53,6 +60,15 @@ class MainTabbedActivity : AppCompatActivity() {
         }
     }
 
+    fun setupKeyboardDetector() {
+        KeyboardDetector(this).observe().subscribe({ status ->
+            when(status) {
+                KeyboardStatus.OPENED -> { find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.GONE}
+                KeyboardStatus.CLOSED -> {find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.VISIBLE}
+            }
+        })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tabbar_activity_main_tabbed)
@@ -62,6 +78,8 @@ class MainTabbedActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, selectedFragment, 0.toString())
         transaction.commit()
+
+        setupKeyboardDetector()
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -131,5 +149,7 @@ class MainTabbedActivity : AppCompatActivity() {
             (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
         }
     }
+
+
 
 }

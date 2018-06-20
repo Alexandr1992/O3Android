@@ -142,6 +142,7 @@
     <string name="ONBOARDING_decryption_failed" comment="Toast to show when decrypting nep2 key failure occurs">Decryption failed, check your password</string>
 
     <string name="MARKETPLACE_marketplace" comment="title for o3 marketplace">Marketplace</string>
+    <string name="MARKETPLACE_search_tokens" comment="title for search tokens in marketplace">Search Tokens</string>
 
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>

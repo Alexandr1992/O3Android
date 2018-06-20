@@ -27,7 +27,7 @@ class TokensViewModel: ViewModel() {
     }
 
     fun filteredTokens(query: String): List<TokenListing> {
-        val tokens = getListingData(false).value!!
+        val tokens = getListingData(false).value ?: arrayOf()
         val filteredTokens = tokens.filter { it.symbol.startsWith(query, true)
                 || it.name.startsWith(query, true) }
         return filteredTokens
