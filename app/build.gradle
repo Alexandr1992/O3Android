@@ -91,7 +91,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.github.Kyash:rx-keyboard-detector:0.1.2'
     implementation('com.airbnb.android:lottie:2.5.5') { exclude group: 'com.android.support' }
-    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true
     }
     implementation project(':neoutils')

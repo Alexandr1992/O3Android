@@ -54,7 +54,10 @@ data class UTXOS(val data: Array<UTXO>)
 data class UTXO(val asset: String, val index: Int, val txid: String, val value: String,  val createdAtBlock: Int)
 
 data class TransferableBalanceData(val data: TransferableBalances)
-data class TransferableBalances(val version: String, val address: String, val scriptHash: String, val assets: Array<TransferableBalance>, val nep5Tokens: Array<TransferableBalance>)
+data class TransferableBalances(val version: String, val address: String, val scriptHash: String, val assets: Array<TransferableBalance>,
+                                val nep5Tokens: Array<TransferableBalance>,
+                                val ontology: Array<TransferableBalance>)
+
 data class TransferableBalance(val id: String, val name: String, val value: String, val symbol: String, val decimals: Int)
 
 class TransferableAssets(private val balances: TransferableBalances) {
@@ -63,21 +66,25 @@ class TransferableAssets(private val balances: TransferableBalances) {
     var scriptHash: String
     var assets: ArrayList<TransferableAsset> = arrayListOf()
     var tokens: ArrayList<TransferableAsset> = arrayListOf()
+    var ontology: ArrayList<TransferableAsset> = arrayListOf()
 
     init {
         version = balances.version
         address = balances.address
         scriptHash = balances.scriptHash
         for (asset in balances.assets) {
-            assets.add(TransferableAsset(asset, false))
+            assets.add(TransferableAsset(asset))
         }
         for (token in balances.nep5Tokens) {
-            assets.add(TransferableAsset(token, true))
+            assets.add(TransferableAsset(token))
+        }
+        for (ontAsset in balances.ontology) {
+            assets.add(TransferableAsset(ontAsset))
         }
     }
 }
 
-class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
+class TransferableAsset(val asset: TransferableBalance) {
     var id: String
     var name: String
     var value: BigDecimal
@@ -90,21 +97,16 @@ class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
         decimals = asset.decimals
         symbol = asset.symbol
         value = BigDecimal(asset.value)
-        if (isToken) {
-            value = value.divide(BigDecimal(Math.pow(10.0, 8.0)), 8, BigDecimal.ROUND_HALF_UP)
-            print(value)
-        }
+        value = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
+        print(value)
+
     }
 
     fun deepCopy(): TransferableAsset {
         var copyValue: BigDecimal
-        if (isToken) {
-            copyValue = value.multiply(BigDecimal(Math.pow(10.0, 8.0)))
-        } else {
-            copyValue = value
-        }
+        copyValue = value.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble())))
         val balance = TransferableBalance(asset.id, asset.name, copyValue.toPlainString(), asset.symbol, asset.decimals)
-        return TransferableAsset(balance, isToken)
+        return TransferableAsset(balance)
     }
 }
 
