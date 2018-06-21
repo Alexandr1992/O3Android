@@ -78,7 +78,7 @@ class TransferableAssets(private val balances: TransferableBalances) {
         for (token in balances.nep5Tokens) {
             assets.add(TransferableAsset(token))
         }
-        for (ontAsset in balances.ontology) {
+       for (ontAsset in balances.ontology) {
             assets.add(TransferableAsset(ontAsset))
         }
     }
@@ -97,7 +97,9 @@ class TransferableAsset(val asset: TransferableBalance) {
         decimals = asset.decimals
         symbol = asset.symbol
         value = BigDecimal(asset.value)
-        value = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
+        if (asset.symbol.toUpperCase() != "GAS") {
+            value = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
+        }
         print(value)
 
     }
@@ -105,6 +107,9 @@ class TransferableAsset(val asset: TransferableBalance) {
     fun deepCopy(): TransferableAsset {
         var copyValue: BigDecimal
         copyValue = value.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble())))
+        if (asset.symbol.toUpperCase() == "GAS") {
+            copyValue = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
+        }
         val balance = TransferableBalance(asset.id, asset.name, copyValue.toPlainString(), asset.symbol, asset.decimals)
         return TransferableAsset(balance)
     }

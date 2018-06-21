@@ -12,10 +12,11 @@ import android.widget.TextView
 import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.R
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.Settings.SettingsAdapter
 import network.o3.o3wallet.Settings.SettingsFragment
 
-class AssetSelectionBottomSheet : BottomSheetDialogFragment() {
+class AssetSelectionBottomSheet : RoundedBottomSheetDialogFragment() {
     var assets: ArrayList<TransferableAsset> = arrayListOf()
 
     @SuppressLint("RestrictedApi")

@@ -383,4 +383,5 @@
     <string name="ONBOARDING_decryption_in_progress">Verifying Private Key...</string>
     <string name="ONBOARDING_logout">logout</string>
     <string name="ONBOARDING_signin">Sign in to O3</string>
+    <string name="SEND_select_asset">Select Asset</string>
 </resources>

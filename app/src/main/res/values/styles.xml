@@ -282,6 +282,8 @@
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
         <item name="android:colorPrimaryDark">@color/zxing_transparent</item>
         <item name="android:background">@drawable/bottom_sheet_rounded_bg</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
     </style>
 
     <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
