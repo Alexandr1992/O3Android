@@ -12,15 +12,19 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import com.robinhood.spark.SparkView
 import android.os.Handler
+import android.support.constraint.ConstraintLayout
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager.*
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.widget.*
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Onboarding.CreateKey.Backup.DialogBackupKeyFragment
+import network.o3.o3wallet.Settings.WatchAddressFragment
+import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
 
@@ -31,10 +35,13 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     var viewPager: ViewPager? = null
     var chartDataAdapter = PortfolioDataAdapter(FloatArray(0))
     var assetListAdapter: AssetListAdapter? = null
+    var sparkView: SparkView? = null
 
     val needReloadWatchAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             homeModel.watchAddresses = PersistentStore.getWatchAddresses()
+            homeModel.loadAssetsFromModel(false)
+
         }
     }
 
@@ -84,7 +91,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     }
 
     fun initiateGraph(view: View) {
-        val sparkView = view.findViewById<SparkView>(R.id.sparkview)
+        sparkView = view.findViewById(R.id.sparkview)
         sparkView?.sparkAnimator = MorphSparkAnimator()
         sparkView?.adapter = chartDataAdapter
         sparkView?.scrubListener = SparkView.OnScrubListener { value ->
@@ -143,6 +150,35 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         homeModel.loadPortfolioValue()
     }
 
+    fun setEmptyOrGraph() {
+        val emptyWalletView = view?.find<ConstraintLayout>(R.id.emptyWalletContainer)
+        val emptyPortfolioActionButton = view?.find<Button>(R.id.emptyPortfolioActionButton)
+        val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
+        if (homeModel.getCurrentPortfolioValue() == 0.0) {
+            sparkView?.visibility = View.INVISIBLE
+            emptyWalletView?.visibility = View.VISIBLE
+        } else {
+            sparkView?.visibility = View.VISIBLE
+            emptyWalletView?.visibility = View.INVISIBLE
+        }
+
+        if (homeModel.getDisplayType() == HomeViewModel.DisplayType.COLD) {
+            emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_add_watch_address)
+            emptyPortfolioTextView?.text = resources.getString(R.string.PORTFOLIO_no_watch_addresses)
+            emptyPortfolioActionButton?.setOnClickListener {
+                val watchAddressModal = WatchAddressFragment.newInstance()
+                watchAddressModal.show(activity!!.supportFragmentManager, watchAddressModal.tag)
+            }
+        } else {
+            emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_deposit_tokens)
+            emptyPortfolioTextView?.text = resources.getString(R.string.PORTOFOLIO_wallet_is_empty)
+            emptyPortfolioActionButton?.setOnClickListener {
+                val addressBottomSheet = MyAddressFragment()
+                addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
+            }
+        }
+    }
+
     override fun updatePortfolioData(portfolio: Portfolio) {
         onUiThread {
             view?.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh)?.isRefreshing = false
@@ -152,6 +188,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
             updateHeader(homeModel.getCurrentPortfolioValue().formattedCurrencyString(homeModel.getCurrency()),
                     homeModel.getPercentChange())
             chartDataAdapter.setData(homeModel.getPriceFloats())
+            setEmptyOrGraph()
             hideLoadingIndicator()
             if (PersistentStore.getFirstTokenAppeared() && homeModel.getCurrentPortfolioValue() != 0.0
                     && homeModel.getDisplayType() == HomeViewModel.DisplayType.HOT) {
