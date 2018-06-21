@@ -47,6 +47,7 @@ class MainTabbedActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //QR-Scanned Activitry
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0x0000c0de) {
             val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null && result.contents == null) {
