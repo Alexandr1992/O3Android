@@ -16,6 +16,7 @@ class O3PlatformClient {
         CLAIMABLEGAS,
         BALANCES,
         NEP5,
+        INBOX,
         UTXO;
 
 
@@ -116,6 +117,24 @@ class O3PlatformClient {
                 completion(Pair<TokenListings?, Error?>(nep5Data.data, null))
             } else {
                 completion(Pair<TokenListings?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getInbox(address: String, completion: (Pair<List<O3InboxItem>?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/" + Route.INBOX.routeName() + "/" + "AeNkbJdiMx49kBStQdDih7BzfDwyTNVRfb"/*address + networkQueryString()*/
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString {_, _, result ->
+            val(data, error) = result
+            if (error == null) {
+                val gson = Gson()
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val inboxData = Gson().fromJson<O3Inbox>(platformResponse.result)
+                val items: List<O3InboxItem> = inboxData.data
+                completion(Pair<List<O3InboxItem>?, Error?>(items, null))
+            } else {
+                completion(Pair<List<O3InboxItem>?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

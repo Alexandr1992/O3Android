@@ -15,9 +15,11 @@ import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.view.ViewCompat
+import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
+import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
@@ -26,7 +28,9 @@ import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
+import org.w3c.dom.Text
 import java.text.NumberFormat
 import java.util.*
 
@@ -65,6 +69,45 @@ class AccountFragment : Fragment() {
 
     }
 
+    fun setUpInboxData() {
+        accountViewModel.getInboxItem(true).observe(this, Observer<O3InboxItem?>{
+            if (it == null ){ } else {
+                tokenSwapCard.visibility = View.VISIBLE
+                find<TextView>(R.id.tokenSwapTitleView).text = it.title
+                find<TextView>(R.id.tokenSwapDescriptionView).text = it.description
+                find<TextView>(R.id.tokenSwapSubtitleLabel).text = it.subtitle
+                find<Button>(R.id.tokenSwapLearnmoreButton).text = it.readmoreTitle
+                find<Button>(R.id.tokenSwapActionButton).text = it.actionTitle
+
+                if (tokenSwapSubtitleLabel.text.isBlank()) {
+                    tokenSwapSubtitleLabel.visibility = View.GONE
+                } else {
+                    tokenSwapSubtitleLabel.visibility = View.VISIBLE
+                }
+
+                if (tokenSwapDescriptionView.text.isBlank()) {
+                    tokenSwapDescriptionView.visibility = View.GONE
+                } else {
+                    tokenSwapDescriptionView.visibility = View.VISIBLE
+                }
+                Glide.with(context).load(it.iconURL).into(find(R.id.tokenSwapLogoImageView))
+
+                val nep9 = it.actionURL
+                find<Button>(R.id.tokenSwapActionButton).setOnClickListener {
+                    sendButtonTapped(nep9)
+                }
+
+                val learnURL = it.readmoreURL
+                find<Button>(R.id.tokenSwapLearnmoreButton).setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setData(Uri.parse(learnURL))
+                    startActivity(intent)
+                }
+
+            }
+        })
+    }
+
     fun reloadAllData() {
         accountViewModel.getAssets(true).observe(this, Observer<TransferableAssets?> {
             if (it == null) {
@@ -98,7 +141,7 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         accountViewModel = AccountViewModel()
-
+        setUpInboxData()
         tickupRunnable = object : Runnable {
             override fun run() {
                 tickup()

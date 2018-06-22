@@ -31,6 +31,7 @@ import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
+import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
@@ -173,10 +174,41 @@ class SendActivity: AppCompatActivity() {
         }
 
         sendButton.isEnabled = false
+
         if (isNativeAsset) {
             sendNativeAsset(address, amount)
         } else {
-            sendTokenAsset(address, amount)
+            if (shortName == "ONG") {
+                sendOntologyAsset(address, amount)
+            }  else {
+                sendTokenAsset(address, amount)
+            }
+        }
+    }
+
+    private fun sendOntologyAsset(address: String, amount: Double) {
+        val wallet = Account.getWallet()
+        val toast = baseContext.toastUntilCancel(resources.getString(R.string.SEND_sending_in_progress))
+        var toSendAsset: OntologyClient.Asset
+        if ("ONG" == "ONG") {
+            toSendAsset = OntologyClient.Asset.ONG
+        } else {
+            toSendAsset = OntologyClient.Asset.ONG
+        }
+        val error = OntologyClient().sendOntologyAsset(toSendAsset.assetID(), address, amount)
+        if (error == null) {
+            baseContext!!.toast(resources.getString(R.string.SEND_sent_successfully))
+            Handler().postDelayed(Runnable {
+                finish()
+            }, 1000)
+        } else {
+            this.checkEnableSendButton()
+            val message = resources.getString(R.string.SEND_send_error)
+            val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+            snack.setAction("Close") {
+                finish()
+            }
+            snack.show()
         }
     }
 

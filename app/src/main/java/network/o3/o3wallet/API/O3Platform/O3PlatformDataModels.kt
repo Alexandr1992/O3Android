@@ -60,6 +60,10 @@ data class TransferableBalances(val version: String, val address: String, val sc
 
 data class TransferableBalance(val id: String, val name: String, val value: String, val symbol: String, val decimals: Int)
 
+data class O3Inbox(val data: List<O3InboxItem>)
+data class O3InboxItem(val title: String, val subtitle: String, val description: String,
+                       val actionTitle: String, val actionURL: String, val readmoreTitle: String, val readmoreURL: String, val iconURL: String)
+
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
     var address: String
