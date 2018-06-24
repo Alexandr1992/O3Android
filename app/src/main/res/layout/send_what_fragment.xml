@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SendFragmentWhat">
+
+
+    <View
+        android:id="@+id/view7"
+        android:layout_width="39dp"
+        android:layout_height="4dp"
+        android:background="@color/colorSubtitleGrey"
+        tools:layout_editor_absoluteX="197dp"
+        tools:layout_editor_absoluteY="60dp" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_blue_logo"
+        tools:layout_editor_absoluteX="248dp"
+        tools:layout_editor_absoluteY="52dp" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_blue_logo"
+        tools:layout_editor_absoluteX="171dp"
+        tools:layout_editor_absoluteY="52dp" />
+
+    <com.xw.repo.BubbleSeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:bsb_bubble_color="@color/colorAccentLight"
+        app:bsb_bubble_text_color="@color/colorPrimaryDark"
+        app:bsb_max="100"
+        app:bsb_min="0"
+        app:bsb_progress="0"
+        app:bsb_second_track_color="@color/colorAccent"
+        app:bsb_section_count="4"
+        app:bsb_section_text_position="bottom_sides"
+        app:bsb_show_progress_in_float="true"
+        app:bsb_show_section_mark="true"
+        app:bsb_show_section_text="true"
+        app:bsb_show_thumb_text="true"
+        app:bsb_track_color="@color/colorAccentLight"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="176dp" />
+
+    <Button
+        android:id="@+id/sendWhereButton"
+        style="@style/colo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="47dp"
+        android:layout_height="21dp"
+        android:layout_marginTop="16dp"
+        android:text="Send"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_blue_logo"
+        tools:layout_editor_absoluteX="76dp"
+        tools:layout_editor_absoluteY="52dp" />
+
+    <View
+        android:id="@+id/view6"
+        android:layout_width="39dp"
+        android:layout_height="4dp"
+        android:background="@color/colorSubtitleGrey"
+        tools:layout_editor_absoluteX="122dp"
+        tools:layout_editor_absoluteY="60dp" />
+
+</android.support.constraint.ConstraintLayout>

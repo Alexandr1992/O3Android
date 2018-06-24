@@ -101,7 +101,7 @@
     <string name="ONBOARDING_paper_dialog_title" comment="Dialog title for when succesffully backed up private key on paper">Key Verified!</string>
     <string name="ONBOARDING_paper_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on paper">Make sure to keep your paper backup safe, you\'ll need it in case your phone is ever lost or damaged.</string>
     <string name="ONBOARDING_paper_dialog_button" comment="button title for paper backup dialog">Ok, got it!</string>
-    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn\'t match</string>
+    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">Your paper backup doesn\'t match</string>
     <string name="ONBOARDING_paper_key_no_match_description" comment="alert descripition when paper key doesn't match the expected value">Please double check your private key and try again</string>
 
     <string name="ONBOARDING_enter_a_password" comment="title for entering a password for NEP-2 Encryption">Enter a password</string>
