@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
@@ -42,11 +43,20 @@ class MyAddressFragment : RoundedBottomSheetDialogFragment() {
         val bitmap = QRCode.from(wallet.address).withSize(1000, 1000).bitmap()
         qrImageView.setImageBitmap(bitmap)
 
-        copyButton.setOnClickListener{
+
+        qrImageView.setOnClickListener {
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet()!!.address)
             clipboard.primaryClip = clip
             context?.toast(resources.getString(R.string.WALLET_copied_address))
+        }
+
+        copyButton.setOnClickListener{
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Account.getWallet()!!.address)
+            shareIntent.type = "text/plain"
+            startActivity(shareIntent)
         }
         return view
     }

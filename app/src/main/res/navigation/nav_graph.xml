@@ -2,20 +2,28 @@
 <navigation xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/sendFragmentWhat">
+    app:startDestination="@id/sendWhereFragment">
     <fragment
         android:id="@+id/sendFragmentWhat"
-        android:name="network.o3.o3wallet.SendFragmentWhat"
+        android:name="network.o3.o3wallet.Wallet.SendV2.SendWhatFragment"
         android:label="send_what_fragment"
         tools:layout="@layout/send_what_fragment" >
         <action
-            android:id="@+id/action_sendFragmentWhat_to_sendWhereFragment"
-            app:destination="@id/sendWhereFragment"
-            app:enterAnim="@anim/fab_slide_in_from_right" />
+            android:id="@+id/action_sendWhatFragment_to_sendReviewFragment"
+            app:destination="@id/sendReviewFragment" />
     </fragment>
     <fragment
         android:id="@+id/sendWhereFragment"
-        android:name="network.o3.o3wallet.SendWhereFragment"
+        android:name="network.o3.o3wallet.Wallet.SendV2.SendWhereFragment"
         android:label="send_where_fragment"
-        tools:layout="@layout/send_where_fragment" />
+        tools:layout="@layout/send_where_fragment" >
+        <action
+            android:id="@+id/action_sendFragmentWhere_to_sendWhatFragment"
+            app:destination="@+id/sendFragmentWhat" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendReviewFragment"
+        android:name="network.o3.o3wallet.Wallet.SendV2.SendReviewFragment"
+        android:label="send_review_fragment"
+        tools:layout="@layout/send_review_fragment" />
 </navigation>

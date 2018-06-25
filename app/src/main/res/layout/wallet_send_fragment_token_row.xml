@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="54dp">
-    tools:context="network.o3.o3wallet.Wallet.Send.SendAssetRow">
+    tools:context="network.o3.o3wallet.Wallet.SendV2.SendAssetRow">
 
     <TextView
         android:id="@+id/assetShortNameTextView"

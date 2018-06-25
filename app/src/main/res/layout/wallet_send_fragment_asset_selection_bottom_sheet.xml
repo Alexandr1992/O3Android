@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="network.o3.o3wallet.Wallet.Send.AssetSelectionBottomSheet">
+    tools:context="network.o3.o3wallet.Wallet.SendV2.AssetSelectionBottomSheet">
 
     <ListView
         android:layout_marginTop="56dp"

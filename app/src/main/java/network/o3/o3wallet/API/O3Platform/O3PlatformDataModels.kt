@@ -64,6 +64,14 @@ data class O3Inbox(val data: List<O3InboxItem>)
 data class O3InboxItem(val title: String, val subtitle: String, val description: String,
                        val actionTitle: String, val actionURL: String, val readmoreTitle: String, val readmoreURL: String, val iconURL: String)
 
+data class VerifiedAddressData(val data: VerifiedAddress)
+data class VerifiedAddress(val address: String, val publicKey: String, val displayName: String)
+
+data class O3RealTimePriceData(val data: O3RealTimePrice)
+data class O3RealTimePrice(val symbol: String, val currency: String, val price: Double, val lastUpdate: Long)
+
+
+
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
     var address: String

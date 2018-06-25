@@ -5,7 +5,7 @@
     android:layout_height="28dp"
     android:background="@color/colorWeakGrayBackground"
     android:clipToPadding="true"
-    tools:context="network.o3.o3wallet.Wallet.Send.SendAssetRowHeader">
+    tools:context="network.o3.o3wallet.Wallet.SendV2.SendAssetRowHeader">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

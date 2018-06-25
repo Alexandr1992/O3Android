@@ -82,7 +82,7 @@
         <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
         <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
         <activity android:name=".Onboarding.PasscodeRequestActivity" />
-        <activity android:name=".SendV2Activity"></activity>
+        <activity android:name=".Wallet.SendV2.SendV2Activity"></activity>
     </application>
 
 </manifest>

@@ -17,6 +17,8 @@ class O3PlatformClient {
         BALANCES,
         NEP5,
         INBOX,
+        VERIFICATION,
+        PRICING,
         UTXO;
 
 
@@ -135,6 +137,42 @@ class O3PlatformClient {
                 completion(Pair<List<O3InboxItem>?, Error?>(items, null))
             } else {
                 completion(Pair<List<O3InboxItem>?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getVerifiedAddress(address: String, completion: (Pair<VerifiedAddress?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/" + Route.VERIFICATION.routeName() + "/"  + address
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString {_, _, result ->
+            val(data, error) = result
+            if (error == null) {
+                val gson = Gson()
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val verifiedAddressData = Gson().fromJson<VerifiedAddressData>(platformResponse.result)
+                val verifiedAddress: VerifiedAddress = verifiedAddressData.data
+                completion(Pair<VerifiedAddress?, Error?>(verifiedAddress, null))
+            } else {
+                completion(Pair<VerifiedAddress?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getRealTimePrice(token: String, currency: String, completion: (Pair<O3RealTimePrice?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token + "/" + currency
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString {_, _, result ->
+            val(data, error) = result
+            if (error == null) {
+                val gson = Gson()
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val realTimePricingData = Gson().fromJson<O3RealTimePriceData>(platformResponse.result)
+                val realTimePricing: O3RealTimePrice = realTimePricingData.data
+                completion(Pair<O3RealTimePrice?, Error?>(realTimePricing, null))
+            } else {
+                completion(Pair<O3RealTimePrice?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

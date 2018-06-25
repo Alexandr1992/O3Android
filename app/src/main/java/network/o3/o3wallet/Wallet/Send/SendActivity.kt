@@ -22,20 +22,16 @@ import android.widget.*
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
-import com.google.zxing.integration.android.IntentResult
-import kotlinx.android.synthetic.main.wallet_activity_send.*
 import neoutils.Neoutils
 import neoutils.Neoutils.parseNEP9URI
-import neoutils.Neoutils.validateNEOAddress
-import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.API.O3Platform.TransferableAssets
 import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.ContactsFragment
+import network.o3.o3wallet.Wallet.SendV2.AssetSelectionBottomSheet
 import network.o3.o3wallet.Wallet.toast
 import network.o3.o3wallet.Wallet.toastUntilCancel
 import org.jetbrains.anko.alert
@@ -124,7 +120,6 @@ class SendActivity: AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 
     private fun checkEnableSendButton() {
         showFoundContact(addressTextView.text.trim().toString())

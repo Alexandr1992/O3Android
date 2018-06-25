@@ -12,25 +12,19 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.view.ViewCompat
 import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
 import kotlinx.android.synthetic.main.wallet_fragment_account.*
-import neoutils.Neoutils
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.*
 import org.jetbrains.anko.support.v4.onUiThread
-import network.o3.o3wallet.Wallet.Send.SendActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
-import org.w3c.dom.Text
 import java.text.NumberFormat
 import java.util.*
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SendV2Activity">
+    tools:context=".Wallet.SendV2.SendV2Activity">
 
     <fragment
         android:layout_width="match_parent"

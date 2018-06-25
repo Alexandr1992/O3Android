@@ -15,6 +15,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.opengl.Visibility
 import network.o3.o3wallet.Wallet.Send.SendActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import network.o3.o3wallet.Wallet.toast
 
 
@@ -94,7 +95,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
         } else {
             optionButton.visibility = View.GONE
             view.setOnClickListener {
-                (mContext as SendActivity).addressTextView.text = subtitleTextView.text
+                (mContext as SendV2Activity).sendViewModel.setSelectedContact(getItem(position))
                 mFragment.dismiss()
             }
         }
