@@ -393,4 +393,5 @@
     <string name="SEND_Review">Review</string>
     <string name="SEND_contacts">Contacts</string>
     <string name="SEND_Neo_Address">Enter NEO Address</string>
+    <string name="SEND_please_review">Please carefully review your tramsaction details. Once sent, this transaction cannot be reversed.</string>
 </resources>

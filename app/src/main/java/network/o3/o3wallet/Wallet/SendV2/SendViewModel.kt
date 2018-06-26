@@ -25,6 +25,10 @@ class SendViewModel: ViewModel() {
     var verifiedAddress: MutableLiveData<VerifiedAddress?>? = null
     var realTimePrice: MutableLiveData<O3RealTimePrice>? = null
 
+    var toSendAmount: Double = 0.0
+
+    var isFiatEntryType = false
+
     fun getOwnedAssets(refresh: Boolean): LiveData<ArrayList<TransferableAsset>> {
         if (ownedAssets == null || refresh) {
             ownedAssets = MutableLiveData()
@@ -107,4 +111,22 @@ class SendViewModel: ViewModel() {
             verifiedAddress?.postValue(null)
         }
     }
+
+    fun getFiatEntryType(): Boolean {
+        return isFiatEntryType
+    }
+
+    fun toggleFiatEntryType(): Boolean {
+        isFiatEntryType = !isFiatEntryType
+        return isFiatEntryType
+    }
+
+    fun getSelectedSendAmount(): Double {
+        return toSendAmount
+    }
+
+    fun setSelectedSendAmount(amount: Double) {
+        toSendAmount = amount
+    }
+
 }
