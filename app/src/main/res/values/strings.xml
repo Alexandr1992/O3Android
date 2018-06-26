@@ -229,7 +229,6 @@
     <string name="WALLET_block_number" comment="label for block number in transaction histoty">Block Number: %1$s</string>
     <string name="WALLET_Request" comment="lavel for the request button">Request</string>
 
-
     <!-- Wallet Send -->
     <string name="SEND_send" comment="Send label in send screen">Send</string>
     <string name="SEND_to" comment="Send To address in send screen">To</string>
@@ -374,6 +373,8 @@
     <string name="DIALOG_performed_backup">All Done!</string>
     <string name="PORTFOLIO_pricing_not_available">No Pricing Data Available Yet</string>
     <string name="PORTFOLIO_pricing_not_available_description">Our source for pricing data (CoinCap) has not yet registered this token, check back soon!</string>
+    <string name="PORTFOLIO_no_watch_addresses" comment="No watch addresses added in portfolio">No watch addresses added</string>
+    <string name="PORTFOLIO_add_watch_address" comment="Add a watch address in portfolio screen">Add watch address</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -383,4 +384,7 @@
     <string name="ONBOARDING_decryption_in_progress">Verifying Private Key...</string>
     <string name="ONBOARDING_logout">logout</string>
     <string name="ONBOARDING_signin">Sign in to O3</string>
+    <string name="PORTFOLIO_deposit_tokens">Deposit Tokens</string>
+    <string name="PORTOFOLIO_wallet_is_empty">Your wallet is empty</string>
+    <string name="WALLET_share">Share</string>
 </resources>
