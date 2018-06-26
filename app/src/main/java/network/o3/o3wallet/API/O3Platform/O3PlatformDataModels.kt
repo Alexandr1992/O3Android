@@ -99,7 +99,7 @@ class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
     fun deepCopy(): TransferableAsset {
         var copyValue: BigDecimal
         if (isToken) {
-            copyValue = value.multiply(BigDecimal(Math.pow(10.0, 8.0)))
+            copyValue = value.multiply(BigDecimal(Math.pow(10.0, asset.decimals.toDouble())))
         } else {
             copyValue = value
         }
