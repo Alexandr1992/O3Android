@@ -3,6 +3,7 @@ package network.o3.o3wallet.API.O3Platform
 import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import java.util.*
 
@@ -38,7 +39,8 @@ class O3PlatformClient {
     fun getClaimableGAS(address: String, completion: (Pair<ClaimData?, Error?>) -> Unit) {
         val url = baseAPIURL + address + "/" + Route.CLAIMABLEGAS.routeName() + networkQueryString()
         var request = url.httpGet()
-        request.headers["User-Agent"] =  "O3Android"
+        request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
         request.responseString { _, _, result ->
             val (data, error) = result
 
@@ -57,7 +59,8 @@ class O3PlatformClient {
         val url = baseAPIURL + address + "/" + Route.CLAIMABLEGAS.routeName() + networkQueryString()
         var request = url.httpGet()
         request.timeoutInMillisecond = 5000
-        request.headers["User-Agent"] =  ""
+        request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
         val (_, _, result) = request.responseString()
         val (data, error) = result
         if (error == null) {
@@ -72,7 +75,8 @@ class O3PlatformClient {
     fun getUTXOS(address: String, completion: (Pair<UTXOS?, Error?>) -> Unit) {
         val url = baseAPIURL + address + "/" + Route.UTXO.routeName() + networkQueryString()
         var request = url.httpGet()
-        request.headers["User-Agent"] =  "O3Android"
+        request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
         request.timeout(600000).responseString { _, _, result ->
             val (data, error) = result
             if (error == null) {
@@ -89,7 +93,8 @@ class O3PlatformClient {
     fun getTransferableAssets(address: String, completion: (Pair<TransferableAssets?, Error?>) -> Unit) {
         val url = baseAPIURL + address + "/" + Route.BALANCES.routeName() + networkQueryString()
         var request = url.httpGet()
-        request.headers["User-Agent"] = ""
+        request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
         request.timeout(600000).responseString { _, _, result ->
             val (data, error) = result
             if (error == null) {
@@ -107,6 +112,7 @@ class O3PlatformClient {
         val url = baseAPIURL + "/" + Route.NEP5.routeName() + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
         request.timeout(600000).responseString { _, _, result ->
             val(data, error)  = result
             if (error == null) {
