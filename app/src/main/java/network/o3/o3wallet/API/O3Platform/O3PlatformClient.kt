@@ -122,7 +122,7 @@ class O3PlatformClient {
     }
 
     fun getInbox(address: String, completion: (Pair<List<O3InboxItem>?, Error?>) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/" + Route.INBOX.routeName() + "/" + "AeNkbJdiMx49kBStQdDih7BzfDwyTNVRfb"/*address + networkQueryString()*/
+        val url = "https://platform.o3.network/api/v1/" + Route.INBOX.routeName() + "/" + address + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.timeout(600000).responseString {_, _, result ->
