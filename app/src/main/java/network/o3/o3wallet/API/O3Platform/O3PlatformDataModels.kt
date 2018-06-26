@@ -91,7 +91,7 @@ class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
         symbol = asset.symbol
         value = BigDecimal(asset.value)
         if (isToken) {
-            value = value.divide(BigDecimal(Math.pow(10.0, 8.0)), 8, BigDecimal.ROUND_HALF_UP)
+            value = value.divide(BigDecimal(Math.pow(10.0, asset.decimals.toDouble())), 8, BigDecimal.ROUND_HALF_UP)
             print(value)
         }
     }
