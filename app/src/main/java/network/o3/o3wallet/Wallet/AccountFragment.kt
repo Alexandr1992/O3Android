@@ -71,8 +71,9 @@ class AccountFragment : Fragment() {
 
     fun setUpInboxData() {
         accountViewModel.getInboxItem(true).observe(this, Observer<O3InboxItem?>{
-            if (it == null ){ } else {
-                tokenSwapCard.visibility = View.VISIBLE
+            if (it == null ){
+                tokenSwapCard.visibility = View.GONE
+            } else {
                 find<TextView>(R.id.tokenSwapTitleView).text = it.title
                 find<TextView>(R.id.tokenSwapDescriptionView).text = it.description
                 find<TextView>(R.id.tokenSwapSubtitleLabel).text = it.subtitle
@@ -103,7 +104,6 @@ class AccountFragment : Fragment() {
                     intent.setData(Uri.parse(learnURL))
                     startActivity(intent)
                 }
-
             }
         })
     }
@@ -113,6 +113,15 @@ class AccountFragment : Fragment() {
             if (it == null) {
                 context?.toast(accountViewModel.getLastError().localizedMessage)
             } else {
+                //TODO: ONTOLOGY BETTER SUPPORT NEEDED HERE
+                if (it.tokens.find{it.symbol == "ONT"} == null) {
+                    tokenSwapCard.visibility = View.VISIBLE
+                } else {
+                    tokenSwapCard.visibility = View.VISIBLE
+                }
+                //TODO: BETTER WAY TO SHOW THE ONT
+                // MAKE IT VISIBLE NO MATTER WUT
+
                 showAssets(it)
                 accountViewModel.getBlock(true).observe(this, Observer<Int?> {
                     accountViewModel.getClaims(true).observe(this, Observer<ClaimData?> {

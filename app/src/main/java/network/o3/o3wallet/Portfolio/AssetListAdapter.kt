@@ -40,6 +40,11 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         assetData.assetName = assets.get(position).symbol
         assetData.assetAmount = assets.get(position).value.toDouble()
 
+        //TODO: HARDCODED FOR ONTOLOGY, FIND IMPROVED WAY TO DO THIS SOON
+        if (assets.get(position).id.contains("000000000000000")) {
+            assetData.assetName = assets.get(position).symbol + " (MainNet)"
+        }
+
         if (portfolio != null) {
             if (referenceCurrency == CurrencyType.FIAT) {
                 val latestPrice = portfolio!!.price[assets.get(position).symbol]?.averageUSD ?: 0.0
