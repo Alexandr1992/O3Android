@@ -112,8 +112,7 @@ class TransferableAsset(val asset: TransferableBalance) {
         var copyValue: BigDecimal
         copyValue = value.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble())))
         if (asset.symbol.toUpperCase() == "GAS") {
-            copyValue = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
-        }
+            copyValue = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)        }
         val balance = TransferableBalance(asset.id, asset.name, copyValue.toPlainString(), asset.symbol, asset.decimals)
         return TransferableAsset(balance)
     }
