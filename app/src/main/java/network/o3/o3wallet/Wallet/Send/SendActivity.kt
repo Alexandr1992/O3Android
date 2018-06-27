@@ -173,16 +173,17 @@ class SendActivity: AppCompatActivity() {
             return
         }
 
-        sendButton.isEnabled = false
+        if (assetID.contains("000000000000")) {
+            baseContext.toast("Sending assets on the Ontology Mainnet is currently not supported. " +
+                    "This feature will be implemented shortly")
+            return
+        }
 
+        sendButton.isEnabled = false
         if (isNativeAsset) {
             sendNativeAsset(address, amount)
         } else {
-            if (shortName == "ONG") {
-                sendOntologyAsset(address, amount)
-            }  else {
-                sendTokenAsset(address, amount)
-            }
+            sendTokenAsset(address, amount)
         }
     }
 
@@ -361,6 +362,10 @@ class SendActivity: AppCompatActivity() {
                 isNativeAsset = true
                 assetID = NeoNodeRPC.Asset.GAS.assetID()
                 shortName = "GAS"
+            }  else if (uri.asset.contains("ceab719b8baa2310f232ee0d277c061704541cfb")) {
+                isNativeAsset = false
+                assetID = uri.asset
+                shortName = "ONT"
             } else {
                 isNativeAsset = false
                 assetID = uri.asset
