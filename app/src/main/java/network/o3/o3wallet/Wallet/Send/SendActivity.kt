@@ -411,6 +411,7 @@ fun TextView.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
         override fun afterTextChanged(editable: Editable?) {
             afterTextChanged.invoke(editable.toString())
+            
         }
     })
 }
