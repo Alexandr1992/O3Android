@@ -6,6 +6,7 @@ import android.app.KeyguardManager
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -39,6 +40,7 @@ import network.o3.o3wallet.Settings.ContactsFragment
 import network.o3.o3wallet.Wallet.toast
 import network.o3.o3wallet.Wallet.toastUntilCancel
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.custom.onUiThread
 import org.jetbrains.anko.yesButton
 
 class SendActivity: AppCompatActivity() {
@@ -129,6 +131,17 @@ class SendActivity: AppCompatActivity() {
     private fun checkEnableSendButton() {
         showFoundContact(addressTextView.text.trim().toString())
         sendButton.isEnabled = (addressTextView.text.trim().count() > 0 && amountTextView.text.count() > 0)
+        if(Neoutils.validateNEOAddress(addressTextView.text.trim().toString())) {
+            O3PlatformClient().getVerifiedAddress(addressTextView.text.trim().toString()) {
+                if (it.first != null) {
+                    onUiThread {
+                        findViewById<ImageView>(R.id.verifiedImageView).visibility = View.VISIBLE
+                    }
+                }
+            }
+        } else {
+            findViewById<ImageView>(R.id.verifiedImageView).visibility = View.GONE
+        }
     }
 
     private fun displayAssets() {
@@ -372,6 +385,14 @@ class SendActivity: AppCompatActivity() {
 
                 val asset = ownedAssets.firstOrNull { it.id == uri.asset }
                 shortName = asset?.name ?: "GAS"
+            }
+
+            O3PlatformClient().getVerifiedAddress(uri.to) {
+                if (it.first != null) {
+                    onUiThread {
+                        findViewById<ImageView>(R.id.verifiedImageView).visibility = View.VISIBLE
+                    }
+                }
             }
 
             updateSelectedAsset()

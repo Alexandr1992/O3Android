@@ -1,5 +1,8 @@
 package network.o3.o3wallet.API.O3Platform
 
+import com.github.kittinunf.fuel.httpGet
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
 import com.google.gson.JsonElement
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -63,6 +66,9 @@ data class TransferableBalance(val id: String, val name: String, val value: Stri
 data class O3Inbox(val data: List<O3InboxItem>)
 data class O3InboxItem(val title: String, val subtitle: String, val description: String,
                        val actionTitle: String, val actionURL: String, val readmoreTitle: String, val readmoreURL: String, val iconURL: String)
+
+data class VerifiedAddressData(val data: VerifiedAddress)
+data class VerifiedAddress(val address: String, val publicKey: String, val displayName: String)
 
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
