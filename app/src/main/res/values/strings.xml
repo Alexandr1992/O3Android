@@ -387,4 +387,5 @@
     <string name="PORTFOLIO_deposit_tokens">Deposit Tokens</string>
     <string name="PORTOFOLIO_wallet_is_empty">Your wallet is empty</string>
     <string name="WALLET_share">Share</string>
+    <string name="title_activity_dapp_browser">DappBrowserActivity</string>
 </resources>

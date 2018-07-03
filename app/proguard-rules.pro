@@ -19,3 +19,24 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontwarn
+
+-keepattributes Signature
+-keepattributes SetJavaScriptEnabled
+-keepattributes JavascriptInterface
+-keepattributes InlinedApi
+-keepattributes SourceFile,LineNumberTable
+-keepattributes *Annotation*
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keepclassmembers class **.*$DappBrowserJSInterface {
+    *;
+}
+
+-keep public class **.*$DappBrowserJSInterface

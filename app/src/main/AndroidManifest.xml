@@ -19,6 +19,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}"
@@ -81,7 +87,12 @@
         <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
         <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
         <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
-        <activity android:name=".Onboarding.PasscodeRequestActivity"></activity>
+        <activity android:name=".Onboarding.PasscodeRequestActivity" />
+        <activity
+            android:name=".Dapp.DappBrowserActivity"
+            android:label="@string/title_activity_dapp_browser"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Dapp.DAppBrowserActivity"></activity>
     </application>
 
 </manifest>

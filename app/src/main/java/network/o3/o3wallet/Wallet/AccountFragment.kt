@@ -22,6 +22,7 @@ import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.*
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.find
@@ -164,8 +165,10 @@ class AccountFragment : Fragment() {
     }
 
     private fun showMyAddress() {
-        val addressBottomSheet = MyAddressFragment()
-        addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
+        val intent = Intent(activity, DAppBrowserActivity::class.java)
+        startActivity(intent)
+//        val addressBottomSheet = MyAddressFragment()
+//        addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
     }
 
 
