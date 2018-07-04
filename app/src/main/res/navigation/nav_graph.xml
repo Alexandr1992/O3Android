@@ -25,5 +25,14 @@
         android:id="@+id/sendReviewFragment"
         android:name="network.o3.o3wallet.Wallet.SendV2.SendReviewFragment"
         android:label="send_review_fragment"
-        tools:layout="@layout/send_review_fragment" />
+        tools:layout="@layout/send_review_fragment" >
+        <action
+            android:id="@+id/action_sendReviewFragment_to_sendSuccessFragment"
+            app:destination="@id/sendSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendSuccessFragment"
+        android:name="network.o3.o3wallet.Wallet.SendV2.SendSuccessFragment"
+        android:label="send_success_fragment"
+        tools:layout="@layout/send_success_fragment" />
 </navigation>

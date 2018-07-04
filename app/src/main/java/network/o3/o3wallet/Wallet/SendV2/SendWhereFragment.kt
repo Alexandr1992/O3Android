@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.InputType
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -42,6 +43,7 @@ class SendWhereFragment : Fragment() {
         continueToSendReviewButton = mView.find(R.id.continueToSendReviewButton)
         continueToSendReviewButton.setOnClickListener {
             mView.findNavController().navigate(R.id.action_sendFragmentWhere_to_sendWhatFragment)
+            (activity as SendV2Activity).sendViewModel.setSelectedAddress(addressEditText.text.toString().trim())
         }
 
         mView.find<Button>(R.id.contactsButton).setOnClickListener { showContactsModal() }
@@ -60,6 +62,7 @@ class SendWhereFragment : Fragment() {
     }
 
     fun setupAddressEditText() {
+        addressEditText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
         addressEditText.afterTextChanged { checkEnableSendButton() }
     }
 

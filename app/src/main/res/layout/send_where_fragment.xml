@@ -150,7 +150,6 @@
         android:backgroundTint="@color/colorSubtitleGrey"
         android:ems="10"
         android:hint="@string/SEND_Neo_Address"
-        android:inputType="text|textNoSuggestions"
         android:maxLength="34"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"

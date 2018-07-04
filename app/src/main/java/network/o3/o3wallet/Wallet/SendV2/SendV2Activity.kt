@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.widget.EditText
 import android.widget.Toast
+import androidx.navigation.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
 import network.o3.o3wallet.R
@@ -23,16 +24,20 @@ class SendV2Activity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null && result.contents != null) {
+            Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
+            return
+        } else if (requestCode == 1) {
+            sendViewModel.send()
+            return
+        }
+
         if (result != null && result.contents == null) {
             Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
-        } else if (result != null) {
-            if (result.contents == null) {
-                Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
-            } else {
-                if (Neoutils.validateNEOAddress(result.contents)) {
-                    find<EditText>(R.id.addressEntryEditText).text = SpannableStringBuilder(result.contents)
-                }
-            }
+            return
+        } else if (Neoutils.validateNEOAddress(result.contents)) {
+            find<EditText>(R.id.addressEntryEditText).text = SpannableStringBuilder(result.contents)
+            return
         }
     }
 }

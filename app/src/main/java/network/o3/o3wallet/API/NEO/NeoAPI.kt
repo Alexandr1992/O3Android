@@ -334,10 +334,10 @@ class NeoNodeRPC {
 
 
     private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String, contractAddress: String, attributes: Array<TransactionAttribute>? = null): ByteArray {
-        val inputData = getInputsNecessaryToSendAsset(NeoNodeRPC.Asset.GAS, 0.00000001, utxos)
+        val inputData = getInputsNecessaryToSendAsset(NeoNodeRPC.Asset.GAS, 0.0, utxos)
         val payloadPrefix = byteArrayOf(0xd1.toUByte(), 0x00.toUByte()) + script.hexStringToByteArray()
         var rawTransaction = packRawTransactionBytes(payloadPrefix, wallet, Asset.GAS,
-                inputData.payload!!, inputData.totalAmount!!, 0.00000001,
+                inputData.payload!!, inputData.totalAmount!!, 0.0,
                 Account.getWallet()?.address!!, attributes)
 
         val privateKeyHex = wallet.privateKey.toHex()

@@ -4,13 +4,12 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import neoutils.Neoutils
-import network.o3.o3wallet.API.O3.Feature
-import network.o3.o3wallet.API.O3.FeedData
-import network.o3.o3wallet.API.O3.O3API
+import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.VerifiedAddress
+import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Contact
 import network.o3.o3wallet.PersistentStore
@@ -24,6 +23,9 @@ class SendViewModel: ViewModel() {
 
     var verifiedAddress: MutableLiveData<VerifiedAddress?>? = null
     var realTimePrice: MutableLiveData<O3RealTimePrice>? = null
+
+    //var sendInProgress: MutableLiveData<Boolean>? = null
+    var sendResult: MutableLiveData<Boolean>? = MutableLiveData()
 
     var toSendAmount: Double = 0.0
 
@@ -52,6 +54,7 @@ class SendViewModel: ViewModel() {
         }
     }
 
+
     fun getSelectedAsset(): LiveData<TransferableAsset> {
         if (selectedAsset == null) {
             selectedAsset = MutableLiveData()
@@ -61,6 +64,7 @@ class SendViewModel: ViewModel() {
 
     fun setSelectedContact(contact: Contact) {
         selectedContact?.postValue(contact)
+        selectedAddress?.value = contact.address
     }
 
     fun getSelectedContact(): LiveData<Contact> {
@@ -129,4 +133,75 @@ class SendViewModel: ViewModel() {
         toSendAmount = amount
     }
 
+    fun sendOntAsset() {
+        val toSendAsset = selectedAsset!!.value!!
+        val recipientAddress = selectedAddress!!.value!!
+        val amount = getSelectedSendAmount()
+        val wallet = Account.getWallet()
+        val error = OntologyClient().sendOntologyAsset(toSendAsset.id, recipientAddress, amount)
+        if (error == null) {
+            sendResult?.postValue(true)
+        } else {
+            sendResult?.postValue(false)
+        }
+    }
+
+    fun sendNativeNeoAsset() {
+        val wallet = Account.getWallet()
+        var toSendAsset: NeoNodeRPC.Asset? = null
+        toSendAsset = if (selectedAsset!!.value!!.symbol.toUpperCase() == "NEO") {
+            NeoNodeRPC.Asset.NEO
+        } else {
+            NeoNodeRPC.Asset.GAS
+        }
+
+        val recipientAddress = selectedAddress!!.value!!
+        val amount = getSelectedSendAmount()
+        NeoNodeRPC(PersistentStore.getNodeURL()).
+                sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null) {
+            val error = it.second
+            val success = it.first
+            if (success == true) {
+                sendResult?.postValue(true)
+            } else {
+                sendResult?.postValue(false)
+            }
+        }
+    }
+
+    fun sendNeoTokenAsset() {
+        val wallet = Account.getWallet()
+        val toSendAsset = selectedAsset!!.value!!
+        val recipientAddress = selectedAddress!!.value!!
+        val amount = getSelectedSendAmount()
+
+        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, toSendAsset.id, wallet.address, recipientAddress, amount) {
+            val error = it.second
+            val success = it.first
+            if (success == true) {
+                sendResult?.postValue(true)
+            } else {
+                sendResult?.postValue(false)
+            }
+        }
+    }
+
+    fun getSendResult(): LiveData<Boolean> {
+        if (sendResult == null) {
+            sendResult = MutableLiveData()
+        }
+        return sendResult!!
+    }
+
+    fun send() {
+        val toSendAsset = selectedAsset!!.value!!
+        if (toSendAsset.id.contains("00000000")) {
+            sendOntAsset()
+        } else if (toSendAsset.symbol.toUpperCase() == "GAS"
+                || toSendAsset.symbol.toUpperCase() == "NEO") {
+            sendNativeNeoAsset()
+        } else {
+            sendNeoTokenAsset()
+        }
+    }
 }
