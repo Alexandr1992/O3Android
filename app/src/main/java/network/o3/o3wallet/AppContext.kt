@@ -14,10 +14,13 @@ class O3Wallet : Application() {
     override fun onCreate() {
         super.onCreate()
         O3Wallet.appContext = applicationContext
+        O3Wallet.version = applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0).versionName
     }
 
     companion object {
         var appContext: Context? = null
+            private set
+        var version: String? = null
             private set
     }
 }

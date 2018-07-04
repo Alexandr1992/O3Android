@@ -1,5 +1,8 @@
 package network.o3.o3wallet.API.O3Platform
 
+import com.github.kittinunf.fuel.httpGet
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
 import com.google.gson.JsonElement
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -120,8 +123,7 @@ class TransferableAsset(val asset: TransferableBalance) {
         var copyValue: BigDecimal
         copyValue = value.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble())))
         if (asset.symbol.toUpperCase() == "GAS") {
-            copyValue = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
-        }
+            copyValue = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)        }
         val balance = TransferableBalance(asset.id, asset.name, copyValue.toPlainString(), asset.symbol, asset.decimals)
         return TransferableAsset(balance)
     }

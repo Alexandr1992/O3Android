@@ -16,8 +16,8 @@ android {
         applicationId "network.o3.o3wallet"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 42
-        versionName "1.8.0"
+        versionCode 45
+        versionName "1.10.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

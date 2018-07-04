@@ -65,7 +65,9 @@ class AccountFragment : Fragment() {
 
     fun setUpInboxData() {
         accountViewModel.getInboxItem(true).observe(this, Observer<O3InboxItem?>{
-            if (it == null ){ } else {
+            if (it == null){
+                tokenSwapCard.visibility = View.GONE
+            } else {
                 tokenSwapCard.visibility = View.VISIBLE
                 find<TextView>(R.id.tokenSwapTitleView).text = it.title
                 find<TextView>(R.id.tokenSwapDescriptionView).text = it.description
@@ -97,7 +99,6 @@ class AccountFragment : Fragment() {
                     intent.setData(Uri.parse(learnURL))
                     startActivity(intent)
                 }
-
             }
         })
     }

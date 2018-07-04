@@ -6,6 +6,7 @@ import android.app.KeyguardManager
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -35,6 +36,7 @@ import network.o3.o3wallet.Wallet.SendV2.AssetSelectionBottomSheet
 import network.o3.o3wallet.Wallet.toast
 import network.o3.o3wallet.Wallet.toastUntilCancel
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.custom.onUiThread
 import org.jetbrains.anko.yesButton
 
 class SendActivity: AppCompatActivity() {
@@ -124,6 +126,17 @@ class SendActivity: AppCompatActivity() {
     private fun checkEnableSendButton() {
         showFoundContact(addressTextView.text.trim().toString())
         sendButton.isEnabled = (addressTextView.text.trim().count() > 0 && amountTextView.text.count() > 0)
+        if(Neoutils.validateNEOAddress(addressTextView.text.trim().toString())) {
+            O3PlatformClient().getVerifiedAddress(addressTextView.text.trim().toString()) {
+                if (it.first != null) {
+                    onUiThread {
+                        findViewById<ImageView>(R.id.verifiedImageView).visibility = View.VISIBLE
+                    }
+                }
+            }
+        } else {
+            findViewById<ImageView>(R.id.verifiedImageView).visibility = View.GONE
+        }
     }
 
     private fun displayAssets() {
@@ -168,16 +181,17 @@ class SendActivity: AppCompatActivity() {
             return
         }
 
-        sendButton.isEnabled = false
+        if (assetID.contains("000000000000")) {
+            baseContext.toast("Sending assets on the Ontology Mainnet is currently not supported. " +
+                    "This feature will be implemented shortly")
+            return
+        }
 
+        sendButton.isEnabled = false
         if (isNativeAsset) {
             sendNativeAsset(address, amount)
         } else {
-            if (shortName == "ONG") {
-                sendOntologyAsset(address, amount)
-            }  else {
-                sendTokenAsset(address, amount)
-            }
+            sendTokenAsset(address, amount)
         }
     }
 
@@ -356,12 +370,24 @@ class SendActivity: AppCompatActivity() {
                 isNativeAsset = true
                 assetID = NeoNodeRPC.Asset.GAS.assetID()
                 shortName = "GAS"
+            }  else if (uri.asset.contains("ceab719b8baa2310f232ee0d277c061704541cfb")) {
+                isNativeAsset = false
+                assetID = uri.asset
+                shortName = "ONT"
             } else {
                 isNativeAsset = false
                 assetID = uri.asset
 
                 val asset = ownedAssets.firstOrNull { it.id == uri.asset }
                 shortName = asset?.name ?: "GAS"
+            }
+
+            O3PlatformClient().getVerifiedAddress(uri.to) {
+                if (it.first != null) {
+                    onUiThread {
+                        findViewById<ImageView>(R.id.verifiedImageView).visibility = View.VISIBLE
+                    }
+                }
             }
 
             updateSelectedAsset()
@@ -401,6 +427,7 @@ fun TextView.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
         override fun afterTextChanged(editable: Editable?) {
             afterTextChanged.invoke(editable.toString())
+            
         }
     })
 }

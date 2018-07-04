@@ -128,7 +128,10 @@ class O3API {
             url = "https://platform.o3.network/api/v1/neo/tokensales?network=private"
         }
 
-        url.httpGet().responseString { request, response, result ->
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
+        request.responseString { request, response, result ->
             val (data, error) = result
             if (error == null) {
                 val gson = Gson()

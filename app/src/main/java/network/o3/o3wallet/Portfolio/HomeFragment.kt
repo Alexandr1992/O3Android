@@ -157,9 +157,11 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         if (homeModel.getCurrentPortfolioValue() == 0.0) {
             sparkView?.visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
+            emptyPortfolioActionButton?.visibility = View.VISIBLE
         } else {
             sparkView?.visibility = View.VISIBLE
             emptyWalletView?.visibility = View.INVISIBLE
+            emptyPortfolioActionButton?.visibility = View.INVISIBLE
         }
 
         if (homeModel.getDisplayType() == HomeViewModel.DisplayType.COLD) {
