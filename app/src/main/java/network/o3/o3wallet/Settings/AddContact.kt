@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.widget.Button
 import android.widget.EditText
 import network.o3.o3wallet.PersistentStore
@@ -29,6 +31,11 @@ class AddContact : AppCompatActivity() {
 
         val scanAddressButton = findViewById<Button>(R.id.scanAddressButton)
         val pasteAddressButton = findViewById<Button>(R.id.pasteAddressButton)
+
+        if (intent.extras != null) {
+            val address = intent.getStringExtra("address")
+            addressField.text = SpannableStringBuilder(address)
+        }
 
         scanAddressButton.setOnClickListener {
             val integrator = IntentIntegrator(this)

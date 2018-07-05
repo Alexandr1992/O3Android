@@ -54,9 +54,7 @@ class SendFailedFragment : Fragment() {
                     }
                 }
             }
-
             mView.find<Button>(R.id.failedMainActionButton).setOnClickListener { verifyPassCodeAndSend() }
-
         })
     }
 

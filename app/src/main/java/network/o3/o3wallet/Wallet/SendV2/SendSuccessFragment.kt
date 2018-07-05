@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.R
+import network.o3.o3wallet.Settings.AddContact
 import network.o3.o3wallet.formattedFiatString
 import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
@@ -22,6 +23,7 @@ import org.jetbrains.anko.support.v4.find
 
 class SendSuccessFragment : Fragment() {
     lateinit var mView: View
+    lateinit var addToContactCheckbox: CheckBox
 
     fun initateSelectedBalanceDetails() {
         mView.find<TextView>(R.id.receiptAmountTextView).text = (activity as SendV2Activity)
@@ -31,6 +33,7 @@ class SendSuccessFragment : Fragment() {
             val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
             mView.find<TextView>(R.id.receiptFiatAmountTextView).text = fiatAmount.formattedFiatString()
         })
+
     }
 
     fun initiateSelectedRecipientDetails() {
@@ -61,6 +64,11 @@ class SendSuccessFragment : Fragment() {
 
     fun initiateActionButtons() {
         mView.find<Button>(R.id.sendSuccessCloseButton).setOnClickListener {
+            if (addToContactCheckbox.isChecked) {
+                val contactIntent = Intent(context, AddContact::class.java)
+                contactIntent.putExtra("address", mView.find<TextView>(R.id.receiptSelectedAddressTextView).text)
+                startActivity(contactIntent)
+            }
             activity?.finish()
         }
 
@@ -76,6 +84,7 @@ class SendSuccessFragment : Fragment() {
         initiateSelectedRecipientDetails()
         initiateSelectedAssetDetails()
         initiateActionButtons()
+        addToContactCheckbox = mView.find(R.id.addToContactCheckbox)
         return mView
     }
 }

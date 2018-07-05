@@ -33,7 +33,8 @@ class SendReviewFragment : Fragment() {
         (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset!!.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.reviewAssetLogoImageView))
-            find<TextView>(R.id.reviewAssetSymbolTextView).text = selectedAsset.symbol
+            mView.find<TextView>(R.id.reviewAmountTextView).text = (activity as SendV2Activity)
+                    .sendViewModel.getSelectedSendAmount().removeTrailingZeros() + " " + selectedAsset.symbol
         })
     }
 
