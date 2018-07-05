@@ -20,6 +20,7 @@ class O3PlatformClient {
         INBOX,
         VERIFICATION,
         PRICING,
+        NODES,
         UTXO;
 
 
@@ -148,7 +149,7 @@ class O3PlatformClient {
     }
 
     fun getVerifiedAddress(address: String, completion: (Pair<VerifiedAddress?, Error?>) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/" + Route.VERIFICATION.routeName() + "/"  + address
+        val url = "https://platform.o3.network/api/v1/" + Route.VERIFICATION.routeName() + "/"  + address + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.timeout(600000).responseString {_, _, result ->
@@ -166,7 +167,7 @@ class O3PlatformClient {
     }
 
     fun getRealTimePrice(token: String, currency: String, completion: (Pair<O3RealTimePrice?, Error?>) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token + "/" + currency
+        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token + "/" + currency + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.timeout(600000).responseString {_, _, result ->
@@ -179,6 +180,23 @@ class O3PlatformClient {
                 completion(Pair<O3RealTimePrice?, Error?>(realTimePricing, null))
             } else {
                 completion(Pair<O3RealTimePrice?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getChainNetworks(completion: (Pair<ChainNetwork?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/" + Route.NODES.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString {_, _, result ->
+            val(data, error) = result
+            if (error == null) {
+                val platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val chainNetworkData = Gson().fromJson<ChainNetworkData>(platformResponse.result)
+                val chainNetwork = chainNetworkData.data
+                completion(Pair<ChainNetwork?, Error?>(chainNetwork, null))
+            } else {
+                completion(Pair<ChainNetwork?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

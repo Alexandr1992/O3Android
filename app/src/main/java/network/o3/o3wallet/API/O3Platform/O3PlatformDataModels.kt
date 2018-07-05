@@ -73,7 +73,9 @@ data class VerifiedAddress(val address: String, val publicKey: String, val displ
 data class O3RealTimePriceData(val data: O3RealTimePrice)
 data class O3RealTimePrice(val symbol: String, val currency: String, val price: Double, val lastUpdate: Long)
 
-
+data class ChainNetworkData(val data: ChainNetwork)
+data class ChainNetwork(val neo: NetworkStatus, val ontology: NetworkStatus)
+data class NetworkStatus(val blockcount: Int, val best: String, val nodes: List<String>)
 
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
