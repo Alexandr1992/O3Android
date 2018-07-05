@@ -187,9 +187,8 @@ class SendViewModel: ViewModel() {
     }
 
     fun getSendResult(): LiveData<Boolean> {
-        if (sendResult == null) {
-            sendResult = MutableLiveData()
-        }
+        //reset send result every time
+        sendResult = MutableLiveData()
         return sendResult!!
     }
 

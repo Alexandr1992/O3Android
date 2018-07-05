@@ -10,7 +10,8 @@
         tools:layout="@layout/send_what_fragment" >
         <action
             android:id="@+id/action_sendWhatFragment_to_sendReviewFragment"
-            app:destination="@id/sendReviewFragment" />
+            app:destination="@id/sendReviewFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
     </fragment>
     <fragment
         android:id="@+id/sendWhereFragment"
@@ -19,7 +20,8 @@
         tools:layout="@layout/send_where_fragment" >
         <action
             android:id="@+id/action_sendFragmentWhere_to_sendWhatFragment"
-            app:destination="@+id/sendFragmentWhat" />
+            app:destination="@+id/sendFragmentWhat"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
     </fragment>
     <fragment
         android:id="@+id/sendReviewFragment"
@@ -28,10 +30,12 @@
         tools:layout="@layout/send_review_fragment" >
         <action
             android:id="@+id/action_sendReviewFragment_to_sendSuccessFragment"
-            app:destination="@id/sendSuccessFragment" />
+            app:destination="@id/sendSuccessFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
         <action
             android:id="@+id/action_sendReviewFragment_to_sendFailedFragment"
-            app:destination="@id/sendFailedFragment" />
+            app:destination="@id/sendFailedFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
     </fragment>
     <fragment
         android:id="@+id/sendSuccessFragment"

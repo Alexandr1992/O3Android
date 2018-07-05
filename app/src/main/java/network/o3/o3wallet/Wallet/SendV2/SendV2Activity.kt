@@ -11,11 +11,12 @@ import androidx.navigation.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
 import network.o3.o3wallet.R
+import network.o3.o3wallet.Wallet.toastUntilCancel
 import org.jetbrains.anko.find
 
 class SendV2Activity : AppCompatActivity() {
     var sendViewModel: SendViewModel = SendViewModel()
-
+    var sendingToast: Toast? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.send_v2_activity)
@@ -28,6 +29,8 @@ class SendV2Activity : AppCompatActivity() {
             Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             return
         } else if (requestCode == 1) {
+            sendingToast = baseContext.toastUntilCancel(resources.getString(R.string.SEND_sending_in_progress))
+            sendingToast?.show()
             sendViewModel.send()
             return
         }

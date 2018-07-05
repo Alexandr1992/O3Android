@@ -36,7 +36,9 @@ class SendFailedFragment : Fragment() {
     }
 
     fun initiateSendResultListener() {
-        (activity as SendV2Activity).sendViewModel.getSendResult().observe(this, Observer { result ->
+        val sendActivity = activity as SendV2Activity
+        sendActivity.sendViewModel.getSendResult().observe(this, Observer { result ->
+            sendActivity.sendingToast?.cancel()
             if (result!!) {
                 mView.findNavController().navigate(R.id.action_sendFailedFragment_to_sendSuccessFragment)
             } else {
@@ -68,7 +70,7 @@ class SendFailedFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val mView = inflater.inflate(R.layout.send_failed_fragment, container, false)
+        mView = inflater.inflate(R.layout.send_failed_fragment, container, false)
         initiateFirstFailure()
         initiateSendResultListener()
         return mView

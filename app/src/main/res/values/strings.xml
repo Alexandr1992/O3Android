@@ -257,8 +257,12 @@
     <string name="SEND_try_again" comment="Try again action">Try again</string>
 
     <string name="SEND_neo_network_issue" comment="subheader after they've already tried once">There may be congestion on the blockchain.</string>
-    <string name="SEND_try_again_later" comment="try again later if there is an issue with sending">Please try again later.</string
+    <string name="SEND_try_again_later" comment="try again later if there is an issue with sending">Please try again later.</string>
     <string name="SEND_contact_support" comment="title to contact support when issue is discovered"> Contact O3 Support</string>
+
+    <string name="SEND_success" comment="title when successfully sent tranasction">Success!</string>
+    <string name="SEND_transaction_id" comment="label for transaction id after successfully complete transaction">Transaction ID:</string>
+    <string name="SEND_save_to_contacts" comment="check whether or not to save the recipient address to your contacts">Save this address to contacts</string>
 
 
     <!-- TokenSale -->

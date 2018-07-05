@@ -11,8 +11,9 @@
 
     <ImageView
         android:id="@+id/transactionFailedImageView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_sadrobot"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -35,28 +36,30 @@
 
     <TextView
         android:id="@+id/transactionFailedSubtitleOne"
-        android:layout_width="match_constrain"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="64dp"
         android:text="@string/SEND_something_went_wrong"
         android:textAlignment="center"
         android:textAppearance="@style/RegularText"
+        android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/transactionFailedTitle" />
 
     <TextView
         android:id="@+id/transactionFailedSubtitleTwo"
-        android:layout_width="match_constrain"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="27dp"
+        android:layout_marginEnd="64dp"
         android:text="@string/SEND_check_your_network"
         android:textAlignment="center"
         android:textAppearance="@style/RegularText"
+        android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

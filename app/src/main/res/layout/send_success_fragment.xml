@@ -34,16 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/receiptNicknameTextView" />
 
-    <TextView
-        android:id="@+id/receiptAmountTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAppearance="@style/RegularText"
-        app:layout_constraintEnd_toStartOf="@+id/receiptAssetLogoImageView"
-        app:layout_constraintTop_toBottomOf="@+id/successSendTitle" />
-
     <ImageView
         android:id="@+id/downArrowImageView"
         android:layout_width="40dp"
@@ -57,16 +47,6 @@
         app:layout_constraintTop_toBottomOf="@+id/receiptFiatAmountTextView" />
 
     <TextView
-        android:id="@+id/receiptAssetSymbolTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:textAppearance="@style/RegularText"
-        app:layout_constraintStart_toEndOf="@+id/receiptAssetLogoImageView"
-        app:layout_constraintTop_toBottomOf="@+id/successSendTitle" />
-
-    <TextView
         android:id="@+id/receiptFiatAmountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,21 +54,9 @@
         android:text="TextView"
         android:textAppearance="@style/SubtitleText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/receiptAmountTextView" />
-
-    <ImageView
-        android:id="@+id/receiptAssetLogoImageView"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="8dp"
-        android:src="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/reviewAmountTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/successSendTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <TextView
         android:id="@+id/receiptNicknameTextView"
@@ -122,11 +90,12 @@
         android:text="TextView"
         android:textAppearance="@style/PrimaryTitle"
         android:textColor="@color/colorGain"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/animatedSendSuccessAnimationView"
-        tools:text="@string/SEND_sent_successfully" />
+        tools:text="@string/SEND_success" />
 
     <TextView
         android:id="@+id/transactionIdTitleLabel"
@@ -168,17 +137,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/sendEmailReceiptButton"
-        style="@style/BorderLessButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/TOKENSALE_Email_Receipt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addToContactCheckbox" />
-
     <CheckBox
         android:id="@+id/addToContactCheckbox"
         android:layout_width="wrap_content"
@@ -190,5 +148,40 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/successSendTitle">
+
+        <TextView
+            android:id="@+id/receiptAmountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/RegularText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/receiptAssetLogoImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/receiptAssetLogoImageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/receiptAmountTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.09" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
