@@ -29,10 +29,22 @@
         <action
             android:id="@+id/action_sendReviewFragment_to_sendSuccessFragment"
             app:destination="@id/sendSuccessFragment" />
+        <action
+            android:id="@+id/action_sendReviewFragment_to_sendFailedFragment"
+            app:destination="@id/sendFailedFragment" />
     </fragment>
     <fragment
         android:id="@+id/sendSuccessFragment"
         android:name="network.o3.o3wallet.Wallet.SendV2.SendSuccessFragment"
         android:label="send_success_fragment"
         tools:layout="@layout/send_success_fragment" />
+    <fragment
+        android:id="@+id/sendFailedFragment"
+        android:name="network.o3.o3wallet.Wallet.SendV2.SendFailedFragment"
+        android:label="send_failed_fragment"
+        tools:layout="@layout/send_failed_fragment" >
+        <action
+            android:id="@+id/action_sendFailedFragment_to_sendSuccessFragment"
+            app:destination="@id/sendSuccessFragment" />
+    </fragment>
 </navigation>

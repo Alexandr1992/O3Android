@@ -90,7 +90,7 @@ class SendReviewFragment : Fragment() {
             if (result!!) {
                 mView.findNavController().navigate(R.id.action_sendReviewFragment_to_sendSuccessFragment)
             } else {
-                toast("Send Failed")
+                mView.findNavController().navigate(R.id.action_sendReviewFragment_to_sendFailedFragment)
             }
         })
     }

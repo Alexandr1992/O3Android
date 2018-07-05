@@ -249,6 +249,17 @@
     <string name="SEND_native_assets_header" comment="Section header for Native Assets(NEO/GAS) when selecting what asset to send">Native Assets</string>
     <string name="SEND_token_assets_header" comment="Section header for Token utxos when selecting what asset to send">Tokens</string>
 
+    <!-- SendV2 -->
+    <string name="SEND_transaction_failed" comment="Title for error screen when transaction fails">Transaction Failed</string>
+
+    <string name="SEND_something_went_wrong" comment="title for when something went wrong on send">Something went wrong with your transaction.</string>
+    <string name="SEND_check_your_network" comment="subheader for when transaction fails">Please check your network connection and try again.</string>
+    <string name="SEND_try_again" comment="Try again action">Try again</string>
+
+    <string name="SEND_neo_network_issue" comment="subheader after they've already tried once">There may be congestion on the blockchain.</string>
+    <string name="SEND_try_again_later" comment="try again later if there is an issue with sending">Please try again later.</string
+    <string name="SEND_contact_support" comment="title to contact support when issue is discovered"> Contact O3 Support</string>
+
 
     <!-- TokenSale -->
     <string name="TOKENSALE_Live_Status" comment="Text showing that the token sale is currently live">• LIVE</string>
