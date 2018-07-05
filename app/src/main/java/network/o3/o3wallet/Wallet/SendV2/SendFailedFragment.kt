@@ -15,6 +15,8 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.findNavController
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 
@@ -32,7 +34,6 @@ class SendFailedFragment : Fragment() {
             intent.data = data
             ContextCompat.startActivity(context!!, intent, null)
         }
-        //TODO: GET BEST NODE
     }
 
     fun initiateSendResultListener() {
@@ -40,10 +41,22 @@ class SendFailedFragment : Fragment() {
         sendActivity.sendViewModel.getSendResult().observe(this, Observer { result ->
             sendActivity.sendingToast?.cancel()
             if (result!!) {
+                sendActivity.sendingToast?.cancel()
                 mView.findNavController().navigate(R.id.action_sendFailedFragment_to_sendSuccessFragment)
             } else {
-                updatePageForSecondFailure()
+                O3PlatformClient().getChainNetworks {
+                    updatePageForSecondFailure()
+                    sendActivity.sendingToast?.cancel()
+                    if (it.first == null) {
+                        return@getChainNetworks
+                    } else {
+                        PersistentStore.setNodeURL(it.first!!.neo.best)
+                    }
+                }
             }
+
+            mView.find<Button>(R.id.failedMainActionButton).setOnClickListener { verifyPassCodeAndSend() }
+
         })
     }
 
