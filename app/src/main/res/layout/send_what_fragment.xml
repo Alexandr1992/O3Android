@@ -101,7 +101,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:text="Button"
+        android:text="@string/WALLET_send_action_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bubbleSeekBar" />
@@ -196,7 +196,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/muli_bold"
-        android:text="TextView"
         android:textAppearance="@style/RegularText"
         app:layout_constraintBottom_toBottomOf="@+id/swapFiatEntryType"
         app:layout_constraintEnd_toEndOf="parent"
@@ -224,5 +223,20 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+
+    <TextView
+        android:id="@+id/sendPricingUnavailableTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="53dp"
+        android:text="@string/PORTFOLIO_pricing_not_available"
+        android:textAppearance="@style/SubtitleText"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/otherAmountTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/otherAmountTextView" />
 
 </android.support.constraint.ConstraintLayout>

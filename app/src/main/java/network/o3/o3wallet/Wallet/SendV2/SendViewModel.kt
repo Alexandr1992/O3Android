@@ -50,6 +50,8 @@ class SendViewModel: ViewModel() {
         O3PlatformClient().getRealTimePrice(transferableAsset.symbol, PersistentStore.getCurrency()) {
             if (it.first != null) {
                 realTimePrice?.postValue(it.first)
+            } else {
+                realTimePrice?.postValue(null)
             }
         }
     }
@@ -99,8 +101,8 @@ class SendViewModel: ViewModel() {
         return verifiedAddress!!
     }
 
-    fun getRealTimePrice(): LiveData<O3RealTimePrice> {
-        if (realTimePrice == null) {
+    fun getRealTimePrice(forceRefresh: Boolean): LiveData<O3RealTimePrice> {
+        if (realTimePrice == null || forceRefresh) {
             realTimePrice = MutableLiveData()
         }
         return realTimePrice!!

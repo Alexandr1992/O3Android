@@ -22,6 +22,7 @@ import network.o3.o3wallet.formattedFiatString
 import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.w3c.dom.Text
 
@@ -63,9 +64,11 @@ class SendReviewFragment : Fragment() {
         mView.find<TextView>(R.id.reviewAmountTextView).text = (activity as SendV2Activity)
                 .sendViewModel.getSelectedSendAmount().removeTrailingZeros()
 
-        (activity as SendV2Activity).sendViewModel.getRealTimePrice().observe(this, Observer { realTimePrice ->
-            val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
-            mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
+        (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
+           onUiThread {
+               val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
+               mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
+           }
         })
     }
 

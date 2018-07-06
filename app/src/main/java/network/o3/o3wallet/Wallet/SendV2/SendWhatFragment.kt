@@ -25,6 +25,7 @@ import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.API.O3Platform.TransferableBalance
 import org.jetbrains.anko.sdk15.coroutines.textChangedListener
 import org.jetbrains.anko.support.v4.find
 import org.w3c.dom.Text
@@ -37,6 +38,8 @@ class SendWhatFragment : Fragment() {
     private lateinit var amountCurrencyEditText: EditText
     private lateinit var otherAmountTextView: TextView
     private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
+    var currentAssetFilters: Array<InputFilter>? = null
+    var currentAssetInputType =  (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
 
     var ownedAssets: ArrayList<TransferableAsset> = arrayListOf()
     var enteredCurrencyDouble = 0.0
@@ -44,6 +47,8 @@ class SendWhatFragment : Fragment() {
 
     fun setupFiatEntrySwap() {
         otherAmountTextView = mView.find<TextView>(R.id.otherAmountTextView)
+        otherAmountTextView.text = 0.0.formattedFiatString()
+
         mView.find<ImageButton>(R.id.swapFiatEntryType).setOnClickListener {
             val isFiatEntry = (activity as SendV2Activity).sendViewModel.toggleFiatEntryType()
             //revert the values back to zero on flip for ease of use
@@ -51,6 +56,22 @@ class SendWhatFragment : Fragment() {
             val currentSubEditText = otherAmountTextView.text
             amountEditText.text = SpannableStringBuilder(currentSubEditText)
             otherAmountTextView.text = currentEditText
+            if(!isFiatEntry) {
+                amountEditText.inputType = currentAssetInputType
+                amountEditText.filters = currentAssetFilters
+            } else {
+                amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                amountEditText.filters = arrayOf()
+            }
+
+
+            if (currentEditText == "") {
+                if (!isFiatEntry) {
+                    otherAmountTextView.text = 0.0.formattedFiatString()
+                } else {
+                    otherAmountTextView.text = 0.0.toString()
+                }
+            }
         }
     }
 
@@ -70,7 +91,13 @@ class SendWhatFragment : Fragment() {
             override fun onProgressChanged(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float, fromUser: Boolean) {
                 (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(activity!!, Observer { selectedAsset ->
                     var ratio = progressFloat / 100
-                    amountEditText.text = SpannableStringBuilder((ratio * selectedAsset!!.value.toDouble()).toString())
+                    val cryptoAmount = ratio * selectedAsset!!.value.toDouble()
+                    if ( (activity as SendV2Activity).sendViewModel.isFiatEntryType) {
+                        val amountFiat = cryptoAmount * pricingData.price
+                        amountEditText.text = SpannableStringBuilder(amountFiat.formattedFiatString())
+                    } else {
+                        amountEditText.text = SpannableStringBuilder((ratio * cryptoAmount).toString())
+                    }
                 })
             }
 
@@ -86,7 +113,15 @@ class SendWhatFragment : Fragment() {
         val assetContainer = mView.find<ConstraintLayout>(R.id.assetSelectorContainer)
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", "NEO")
         Glide.with(this).load(imageURL).into(mView.find(R.id.assetLogoImageView))
-
+        var formatter = NumberFormat.getNumberInstance()
+        (activity as SendV2Activity).sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
+            val neoAsset = ownedAssets?.find { it.symbol.toUpperCase() == "NEO" }
+            formatter.maximumFractionDigits = 0
+            find<TextView>(R.id.assetBalanceTextView).text = formatter.format(neoAsset?.value ?: 0)
+            if (neoAsset != null) {
+                (activity as SendV2Activity).sendViewModel.setSelectedAsset(neoAsset)
+            }
+        })
         assetContainer.setOnClickListener {
             val assetSelectorSheet = AssetSelectionBottomSheet()
             (activity as SendV2Activity).sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
@@ -96,25 +131,23 @@ class SendWhatFragment : Fragment() {
         }
 
         (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
-            var formatter = NumberFormat.getNumberInstance()
             formatter.maximumFractionDigits = selectedAsset!!.decimals
             find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset.value)
             find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
-
-
-
             if ((activity as SendV2Activity).sendViewModel.isFiatEntryType) {
-                 //do domething with the yen conversion
+                amountEditText.filters = null
             } else {
-
                 var displayedDecimals = selectedAsset.decimals
                 if (selectedAsset.decimals == 0) {
-                    amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
-                    amountEditText.filters = arrayOf<InputFilter>()
+                    currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
+                    currentAssetFilters = arrayOf<InputFilter>()
                 } else {
-                    amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
-                    amountEditText.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(8, displayedDecimals))
+                    currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                    currentAssetFilters = arrayOf<InputFilter>(DecimalDigitsInputFilter(8, displayedDecimals))
                 }
+                amountEditText.inputType = currentAssetInputType
+                amountEditText.filters = currentAssetFilters
+                amountEditText.text.clear()
             }
 
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol)
@@ -123,26 +156,66 @@ class SendWhatFragment : Fragment() {
     }
 
     fun listenForNewPricingData() {
-        (activity as SendV2Activity).sendViewModel.getRealTimePrice().observe(this, Observer { realTimePrice ->
-            pricingData = realTimePrice!!
+        (activity as SendV2Activity).sendViewModel.getRealTimePrice(true).observe(this, Observer { realTimePrice ->
+            if (realTimePrice == null) {
+                if((activity as SendV2Activity).sendViewModel.isFiatEntryType) {
+                    (activity as SendV2Activity).sendViewModel.toggleFiatEntryType()
+                }
+
+                pricingData = O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
+                mView.find<ImageButton>(R.id.swapFiatEntryType).visibility = View.INVISIBLE
+                otherAmountTextView.visibility = View.INVISIBLE
+                mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.VISIBLE
+            } else {
+                pricingData = realTimePrice!!
+                mView.find<ImageButton>(R.id.swapFiatEntryType).visibility = View.VISIBLE
+                otherAmountTextView.visibility = View.VISIBLE
+                mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
+            }
+            amountEditText.text.clear()
+            otherAmountTextView.text = 0.0.formattedFiatString()
         })
     }
 
     fun calculateAndDisplaySendAmount() {
+        val displayedString = amountEditText.text.toString()
         if ((activity as SendV2Activity).sendViewModel.isFiatEntryType) {
-            //Do somethung to calculate
+            if (displayedString == "") {
+                amountEditText.text = SpannableStringBuilder(0.0.formattedFiatString())
+                otherAmountTextView.text = 0.0.toString()
+                return
+            }
+
+            if (displayedString.length == 1) {
+                otherAmountTextView.text = 0.0.toString()
+                return
+            }
+
+            val regex = Regex("[^0-9.]")
+            val cleanString = displayedString.replace(regex, "")
+            val doubleValue = cleanString.toDouble()
+            var cryptoAmount = 0.0
+            if (pricingData.price != 0.0 && doubleValue != 0.0 ) {
+                cryptoAmount = doubleValue / pricingData.price
+                (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(cryptoAmount)
+                otherAmountTextView.text = cryptoAmount.removeTrailingZeros()
+            } else {
+                (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(0.0)
+                otherAmountTextView.text = cryptoAmount.removeTrailingZeros()
+            }
         } else {
-            if (amountEditText.text.toString() == "") {
+            if (displayedString == "") {
                 otherAmountTextView.text = 0.0.formattedFiatString()
                 enteredCurrencyDouble = 0.0
                 return
             }
-            val amount = pricingData.price *  amountEditText.text.toString().toDouble()
-            (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(amountEditText.text.toString().toDouble())
+            val amount = pricingData.price *  displayedString.toDouble()
+            (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(displayedString.toDouble())
             enteredCurrencyDouble = amount
             mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
         }
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

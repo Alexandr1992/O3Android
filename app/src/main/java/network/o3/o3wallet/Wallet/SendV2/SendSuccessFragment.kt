@@ -29,7 +29,7 @@ class SendSuccessFragment : Fragment() {
         mView.find<TextView>(R.id.receiptAmountTextView).text = (activity as SendV2Activity)
                 .sendViewModel.getSelectedSendAmount().removeTrailingZeros()
 
-        (activity as SendV2Activity).sendViewModel.getRealTimePrice().observe(this, Observer { realTimePrice ->
+        (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
             val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
             mView.find<TextView>(R.id.receiptFiatAmountTextView).text = fiatAmount.formattedFiatString()
         })
