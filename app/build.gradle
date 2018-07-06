@@ -96,12 +96,50 @@ dependencies {
         transitive = true
     }
     implementation project(':neoutils')
-//    implementation project(':channel')
+    api(name: 'channel', ext: 'aar')
+
+    api 'info.guardianproject.netcipher:netcipher:1.2'
+//    api  'com.google.code.gson:gson:2.6.2'
+    api  'com.squareup.retrofit2:retrofit:2.3.0'
+    api  'com.squareup.retrofit2:converter-gson:2.3.0'
+    api  'com.squareup.okio:okio:1.6.0'
+    api  'com.squareup.okhttp3:okhttp:3.9.0'
+    api  'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    api  'org.jboss.netty:netty:3.2.10.Final'
+    api  "org.slf4j:slf4j-api:1.7.22"
+//Picasso
+    api "com.squareup.picasso:picasso:2.5.2"
+//ImageViews
+    api "de.hdodenhof:circleimageview:2.1.0"
+// image picker
+    api 'com.github.jkwiecien:EasyImage:1.3.1'
+// dialog required
+    api 'com.afollestad.material-dialogs:core:0.9.0.2'
+// chatkit required
+    api 'com.google.android:flexbox:0.2.5'
+
+    api 'com.github.siyamed:android-shape-imageview:0.9.3'
+//Utils
+    api 'me.relex:circleindicator:1.2.2@aar'
+
+
+
+
+
+    api 'com.github.jkwiecien:EasyImage:1.3.1'
+    api 'com.afollestad.material-dialogs:core:0.9.0.2'
+    api 'com.google.android:flexbox:0.2.5'
+    api 'com.android.support:appcompat-v7:27+'
+    api 'com.android.support:cardview-v7:27+'
+    api 'com.android.support:design:27+'
+    api 'com.github.siyamed:android-shape-imageview:0.9.3'
+    //Utils
+    api 'me.relex:circleindicator:1.2.2@aar'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     androidTestImplementation 'com.agoda.kakao:kakao:1.3.0'
-    androidTestImplementation "com.nhaarman:mockito-kotlin:1.5.0"
+    androidTestImplementation 'com.nhaarman:mockito-kotlin:1.5.0'
 
 }
 

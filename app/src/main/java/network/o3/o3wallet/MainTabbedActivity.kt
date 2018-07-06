@@ -13,12 +13,13 @@ import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.Intent
 import android.view.View
 import android.widget.Toast
-//import co.getchannel.channel.Channel
-//import co.getchannel.channel.callback.ChannelCallback
+import co.getchannel.channel.Channel
+import co.getchannel.channel.callback.ChannelCallback
 import co.kyash.rkd.KeyboardDetector
 import co.kyash.rkd.KeyboardStatus
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
 import network.o3.o3wallet.Wallet.Send.SendActivity
@@ -73,23 +74,30 @@ class MainTabbedActivity : AppCompatActivity() {
 
     fun setupChannel() {
 
-//        Channel.setupApplicationContextWithApplicationKey(O3Wallet.appContext, "app_gUHDmimXT8oXRSpJvCxrz5DZvUisko_mliB61uda9iY", object: ChannelCallback {
-//            override fun onSuccess() {
-//                Channel.subscribeToTopic(Account.getWallet()!!.address.toString(), object : ChannelCallback {
-//                    override fun onSuccess() {
-//
-//                    }
-//
-//                    override fun onFail(message: String) {
-//
-//                    }
-//                })
-//            }
-//
-//            override fun onFail(message: String) {
-//
-//            }
-//        })
+        Channel.setupApplicationContextWithApplicationKey(O3Wallet.appContext, "app_gUHDmimXT8oXRSpJvCxrz5DZvUisko_mliB61uda9iY", object: ChannelCallback {
+            override fun onSuccess() {
+    val refreshedToken = FirebaseInstanceId.getInstance().token
+                        Channel.saveDeviceToken(refreshedToken, object : ChannelCallback {
+            override fun onSuccess() {}
+
+            override fun onFail(message: String) {}
+        })
+
+                Channel.subscribeToTopic(Account.getWallet()!!.address.toString(), object : ChannelCallback {
+                    override fun onSuccess() {
+
+                    }
+
+                    override fun onFail(message: String) {
+
+                    }
+                })
+            }
+
+            override fun onFail(message: String) {
+
+            }
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
