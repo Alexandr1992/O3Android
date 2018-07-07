@@ -66,8 +66,8 @@ class SendReviewFragment : Fragment() {
 
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
            onUiThread {
-               val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
-               mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
+               //val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
+               //mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
            }
         })
     }

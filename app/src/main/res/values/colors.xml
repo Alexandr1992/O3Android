@@ -13,6 +13,8 @@
     <color name="colorSubtleGrey">#FAFAFA</color>
     <color name="colorDisabledButton">#1a4f4f4f</color>
 
+    <color name="colorGhostWhite">#f8f9fa</color>
+
 </resources>
 
 

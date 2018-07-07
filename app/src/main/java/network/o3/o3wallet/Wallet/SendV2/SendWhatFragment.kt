@@ -20,6 +20,7 @@ import org.jetbrains.anko.find
 import com.xw.repo.BubbleSeekBar
 import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import kotlinx.android.synthetic.main.send_what_fragment.*
+import kotlinx.android.synthetic.main.tabbar_activity_main_tabbed.*
 import kotlinx.coroutines.experimental.channels.Send
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
@@ -27,6 +28,7 @@ import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableBalance
 import org.jetbrains.anko.sdk15.coroutines.textChangedListener
+import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.find
 import org.w3c.dom.Text
 import java.text.NumberFormat
@@ -185,7 +187,6 @@ class SendWhatFragment : Fragment() {
                 otherAmountTextView.text = 0.0.toString()
                 return
             }
-
             if (displayedString.length == 1) {
                 otherAmountTextView.text = 0.0.toString()
                 return
@@ -205,10 +206,12 @@ class SendWhatFragment : Fragment() {
             }
         } else {
             if (displayedString == "") {
+                amountEditText.isCursorVisible = false
                 otherAmountTextView.text = 0.0.formattedFiatString()
                 enteredCurrencyDouble = 0.0
                 return
             }
+            amountEditText.isCursorVisible = true
             val amount = pricingData.price *  displayedString.toDouble()
             (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(displayedString.toDouble())
             enteredCurrencyDouble = amount

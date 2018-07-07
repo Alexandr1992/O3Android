@@ -19,7 +19,7 @@ class SendViewModel: ViewModel() {
     var selectedAsset: MutableLiveData<TransferableAsset>? = null
 
     var selectedAddress: MutableLiveData<String>? = null
-    var selectedContact: MutableLiveData<Contact>? = null
+    var selectedContact: MutableLiveData<Contact>? = MutableLiveData()
 
     var verifiedAddress: MutableLiveData<VerifiedAddress?>? = null
     var realTimePrice: MutableLiveData<O3RealTimePrice>? = null
@@ -82,6 +82,7 @@ class SendViewModel: ViewModel() {
         if (foundContact != null) {
             setSelectedContact(foundContact)
         } else {
+            selectedContact?.value = null
             selectedAddress?.postValue(address)
         }
     }

@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Wallet.SendV2
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.SpannableString
@@ -25,7 +26,7 @@ class SendV2Activity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents != null) {
+        if (result != null && result.contents == null) {
             Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             return
         } else if (requestCode == 1) {
