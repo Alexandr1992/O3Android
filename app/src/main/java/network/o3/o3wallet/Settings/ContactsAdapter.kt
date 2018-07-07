@@ -50,11 +50,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
     }
 
     override fun getCount(): Int {
-        if (mCanAddAddress) {
-            return contacts.count() + 1
-        } else {
-            return contacts.count()
-        }
+        return contacts.count() + 1
     }
 
     fun setOptionMenu(optionButton: ImageButton, position: Int) {
@@ -116,7 +112,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
         val layoutInflater = LayoutInflater.from(mContext)
-        if (position != count - 1 || !mCanAddAddress) {
+        if (position != count - 1) {
             return getAddressView(layoutInflater, position, viewGroup)
         } else {
             return getAddView(layoutInflater, viewGroup)
