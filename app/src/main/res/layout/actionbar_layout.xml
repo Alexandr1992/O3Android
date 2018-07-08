@@ -11,6 +11,7 @@
         android:layout_gravity="center"
         android:text="@string/WALLET_send_action_label"
         android:textAppearance="@style/PrimaryTitle"
-        android:textColor="@color/colorBlack" />
+        android:textColor="@color/colorBlack"
+        android:textSize="24dp" />
 
 </LinearLayout>

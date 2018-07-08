@@ -43,6 +43,7 @@ class SendSuccessFragment : Fragment() {
             mView.find<TextView>(R.id.receiptNicknameTextView).text = contact.nickname
         } else {
             val address = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
+            mView.find<TextView>(R.id.receiptNicknameTextView).visibility = View.INVISIBLE
             mView.find<TextView>(R.id.receiptSelectedAddressTextView).text = address
             (activity as SendV2Activity).sendViewModel.getVerifiedAddress(true, address).observe(this, Observer { verifiedAddress ->
                 if (verifiedAddress != null) {

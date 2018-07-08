@@ -29,7 +29,9 @@ import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableBalance
 import org.jetbrains.anko.sdk15.coroutines.textChangedListener
 import org.jetbrains.anko.support.v4.act
+import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.textColor
 import org.w3c.dom.Text
 import java.text.NumberFormat
 
@@ -39,6 +41,7 @@ class SendWhatFragment : Fragment() {
     private lateinit var amountEditText: EditText
     private lateinit var amountCurrencyEditText: EditText
     private lateinit var otherAmountTextView: TextView
+    private lateinit var reviewButton: Button
     private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
     var currentAssetFilters: Array<InputFilter>? = null
     var currentAssetInputType =  (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
@@ -50,31 +53,6 @@ class SendWhatFragment : Fragment() {
     fun setupFiatEntrySwap() {
         otherAmountTextView = mView.find<TextView>(R.id.otherAmountTextView)
         otherAmountTextView.text = 0.0.formattedFiatString()
-
-        mView.find<ImageButton>(R.id.swapFiatEntryType).setOnClickListener {
-            val isFiatEntry = (activity as SendV2Activity).sendViewModel.toggleFiatEntryType()
-            //revert the values back to zero on flip for ease of use
-            val currentEditText = amountEditText.text.toString()
-            val currentSubEditText = otherAmountTextView.text
-            amountEditText.text = SpannableStringBuilder(currentSubEditText)
-            otherAmountTextView.text = currentEditText
-            if(!isFiatEntry) {
-                amountEditText.inputType = currentAssetInputType
-                amountEditText.filters = currentAssetFilters
-            } else {
-                amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
-                amountEditText.filters = arrayOf()
-            }
-
-
-            if (currentEditText == "") {
-                if (!isFiatEntry) {
-                    otherAmountTextView.text = 0.0.formattedFiatString()
-                } else {
-                    otherAmountTextView.text = 0.0.toString()
-                }
-            }
-        }
     }
 
     fun setUpSeekBar() {
@@ -94,12 +72,7 @@ class SendWhatFragment : Fragment() {
                 (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(activity!!, Observer { selectedAsset ->
                     var ratio = progressFloat / 100
                     val cryptoAmount = ratio * selectedAsset!!.value.toDouble()
-                    if ( (activity as SendV2Activity).sendViewModel.isFiatEntryType) {
-                        val amountFiat = cryptoAmount * pricingData.price
-                        amountEditText.text = SpannableStringBuilder(amountFiat.formattedFiatString())
-                    } else {
-                        amountEditText.text = SpannableStringBuilder((ratio * cryptoAmount).toString())
-                    }
+                    amountEditText.text = SpannableStringBuilder((cryptoAmount).toString())
                 })
             }
 
@@ -136,21 +109,17 @@ class SendWhatFragment : Fragment() {
             formatter.maximumFractionDigits = selectedAsset!!.decimals
             find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset.value)
             find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
-            if ((activity as SendV2Activity).sendViewModel.isFiatEntryType) {
-                amountEditText.filters = null
+            var displayedDecimals = selectedAsset.decimals
+            if (selectedAsset.decimals == 0) {
+                currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
+                currentAssetFilters = arrayOf<InputFilter>()
             } else {
-                var displayedDecimals = selectedAsset.decimals
-                if (selectedAsset.decimals == 0) {
-                    currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
-                    currentAssetFilters = arrayOf<InputFilter>()
-                } else {
-                    currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
-                    currentAssetFilters = arrayOf<InputFilter>(DecimalDigitsInputFilter(8, displayedDecimals))
-                }
-                amountEditText.inputType = currentAssetInputType
-                amountEditText.filters = currentAssetFilters
-                amountEditText.text.clear()
+                currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                currentAssetFilters = arrayOf<InputFilter>(DecimalDigitsInputFilter(8, displayedDecimals))
             }
+            amountEditText.inputType = currentAssetInputType
+            amountEditText.filters = currentAssetFilters
+            amountEditText.text.clear()
 
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.assetLogoImageView))
@@ -160,17 +129,11 @@ class SendWhatFragment : Fragment() {
     fun listenForNewPricingData() {
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(true).observe(this, Observer { realTimePrice ->
             if (realTimePrice == null) {
-                if((activity as SendV2Activity).sendViewModel.isFiatEntryType) {
-                    (activity as SendV2Activity).sendViewModel.toggleFiatEntryType()
-                }
-
                 pricingData = O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
-                mView.find<ImageButton>(R.id.swapFiatEntryType).visibility = View.INVISIBLE
                 otherAmountTextView.visibility = View.INVISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.VISIBLE
             } else {
                 pricingData = realTimePrice!!
-                mView.find<ImageButton>(R.id.swapFiatEntryType).visibility = View.VISIBLE
                 otherAmountTextView.visibility = View.VISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
@@ -181,42 +144,26 @@ class SendWhatFragment : Fragment() {
 
     fun calculateAndDisplaySendAmount() {
         val displayedString = amountEditText.text.toString()
-        if ((activity as SendV2Activity).sendViewModel.isFiatEntryType) {
-            if (displayedString == "") {
-                amountEditText.text = SpannableStringBuilder(0.0.formattedFiatString())
-                otherAmountTextView.text = 0.0.toString()
-                return
-            }
-            if (displayedString.length == 1) {
-                otherAmountTextView.text = 0.0.toString()
-                return
-            }
-
-            val regex = Regex("[^0-9.]")
-            val cleanString = displayedString.replace(regex, "")
-            val doubleValue = cleanString.toDouble()
-            var cryptoAmount = 0.0
-            if (pricingData.price != 0.0 && doubleValue != 0.0 ) {
-                cryptoAmount = doubleValue / pricingData.price
-                (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(cryptoAmount)
-                otherAmountTextView.text = cryptoAmount.removeTrailingZeros()
-            } else {
-                (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(0.0)
-                otherAmountTextView.text = cryptoAmount.removeTrailingZeros()
-            }
-        } else {
-            if (displayedString == "") {
-                amountEditText.isCursorVisible = false
-                otherAmountTextView.text = 0.0.formattedFiatString()
-                enteredCurrencyDouble = 0.0
-                return
-            }
-            amountEditText.isCursorVisible = true
-            val amount = pricingData.price *  displayedString.toDouble()
-            (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(displayedString.toDouble())
-            enteredCurrencyDouble = amount
-            mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
+        if (displayedString == "") {
+            amountEditText.isCursorVisible = false
+            otherAmountTextView.text = 0.0.formattedFiatString()
+            enteredCurrencyDouble = 0.0
+            reviewButton.isEnabled = false
+            return
         }
+        reviewButton.isEnabled  = true
+        amountEditText.isCursorVisible = true
+        val amount = pricingData.price *  displayedString.toDouble()
+        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(displayedString.toDouble())
+        enteredCurrencyDouble = amount
+        if (displayedString.toDouble() > assetBalanceTextView.text.toString().toDouble()) {
+            assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
+            reviewButton.isEnabled = false
+        } else {
+            assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            reviewButton.isEnabled = true
+        }
+        mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
     }
 
 
@@ -224,12 +171,13 @@ class SendWhatFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.send_what_fragment, container, false)
         amountEditText = mView.find(R.id.amountEditText)
-        mView.find<Button>(R.id.sendWhereButton).setOnClickListener {
+        reviewButton = mView.find(R.id.sendWhereButton)
+        reviewButton.isEnabled = false
+        reviewButton.setOnClickListener {
             mView.findNavController().navigate(R.id.action_sendWhatFragment_to_sendReviewFragment)
         }
         listenForNewPricingData()
         mView.find<EditText>(R.id.amountEditText).afterTextChanged { calculateAndDisplaySendAmount() }
-
         setupFiatEntrySwap()
         initiateAssetSelector()
         setUpSeekBar()

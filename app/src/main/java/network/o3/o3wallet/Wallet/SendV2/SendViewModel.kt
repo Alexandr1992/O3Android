@@ -29,8 +29,6 @@ class SendViewModel: ViewModel() {
 
     var toSendAmount: Double = 0.0
 
-    var isFiatEntryType = false
-
     fun getOwnedAssets(refresh: Boolean): LiveData<ArrayList<TransferableAsset>> {
         if (ownedAssets == null || refresh) {
             ownedAssets = MutableLiveData()
@@ -117,15 +115,6 @@ class SendViewModel: ViewModel() {
         } else {
             verifiedAddress?.postValue(null)
         }
-    }
-
-    fun getFiatEntryType(): Boolean {
-        return isFiatEntryType
-    }
-
-    fun toggleFiatEntryType(): Boolean {
-        isFiatEntryType = !isFiatEntryType
-        return isFiatEntryType
     }
 
     fun getSelectedSendAmount(): Double {

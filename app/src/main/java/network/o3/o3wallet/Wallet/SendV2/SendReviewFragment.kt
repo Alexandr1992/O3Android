@@ -66,8 +66,8 @@ class SendReviewFragment : Fragment() {
 
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
            onUiThread {
-               //val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
-               //mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
+               val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
+               mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
            }
         })
     }
@@ -79,6 +79,7 @@ class SendReviewFragment : Fragment() {
             mView.find<TextView>(R.id.reviewNicknameTextView).text = contact.nickname
         } else {
             val address = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
+            mView.find<TextView>(R.id.reviewNicknameTextView).visibility = View.INVISIBLE
             mView.find<TextView>(R.id.reviewSelectedAddressTextView).text = address
             (activity as SendV2Activity).sendViewModel.getVerifiedAddress(true, address).observe(this, Observer { verifiedAddress ->
                 if (verifiedAddress != null) {

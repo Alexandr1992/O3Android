@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:bsb_auto_adjust_section_mark="true"
         app:bsb_hide_bubble="true"
@@ -44,7 +44,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/WALLET_send_action_label"
+        android:background="@drawable/disable_accent_button"
+        android:text="@string/SEND_Review"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -54,14 +55,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="36dp"
+        android:backgroundTint="@color/zxing_transparent"
         android:ems="10"
         android:hint="0"
         android:inputType="numberDecimal"
         android:textAlignment="center"
         android:textAppearance="@style/RegularText"
-        android:textSize="30dp"
+        android:textSize="32dp"
         app:layout_constraintEnd_toStartOf="@+id/assetSelectorContainer"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/whatTopCard" />
 
@@ -78,77 +81,69 @@
             android:id="@+id/assetLogoImageView"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
             android:src="@color/zxing_transparent"
             app:layout_constraintBottom_toBottomOf="@+id/assetNameTextView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/assetNameTextView" />
+            app:layout_constraintEnd_toStartOf="@+id/assetNameTextView" />
 
         <TextView
             android:id="@+id/assetNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="NEO"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView10"
-            app:layout_constraintStart_toEndOf="@+id/assetLogoImageView"
-            app:layout_constraintTop_toTopOf="@+id/imageView10" />
+            android:textAppearance="@style/RegularText"
+            app:layout_constraintEnd_toStartOf="@+id/imageView10"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/assetBalanceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/SubtitleText"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/assetLogoImageView" />
 
         <ImageView
             android:id="@+id/imageView10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/ic_dropdown"
-            app:layout_constraintStart_toEndOf="@+id/assetNameTextView"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/assetNameTextView" />
     </android.support.constraint.ConstraintLayout>
 
     <TextView
         android:id="@+id/otherAmountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/muli_bold"
-        android:textAppearance="@style/RegularText"
-        app:layout_constraintBottom_toBottomOf="@+id/swapFiatEntryType"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="12dp"
+        android:textAppearance="@style/SubtitleText"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/amountEditText"
+        app:layout_constraintStart_toStartOf="@+id/amountEditText"
         app:layout_constraintTop_toBottomOf="@+id/amountEditText" />
-
-    <ImageButton
-        android:id="@+id/swapFiatEntryType"
-        android:layout_width="40dp"
-        android:layout_height="38dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/zxing_transparent"
-        android:src="@drawable/ic_swap_currency"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/assetSelectorContainer" />
 
     <TextView
         android:id="@+id/sendPricingUnavailableTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="53dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/PORTFOLIO_pricing_not_available"
         android:textAppearance="@style/SubtitleText"
+        android:textSize="14dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/otherAmountTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/otherAmountTextView" />
+        app:layout_constraintEnd_toEndOf="@+id/otherAmountTextView"
+        app:layout_constraintStart_toStartOf="@+id/otherAmountTextView"
+        app:layout_constraintTop_toBottomOf="@+id/otherAmountTextView"
+        app:layout_constraintVertical_bias="0.543" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/whatTopCard"
@@ -253,5 +248,16 @@
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
+
+    <View
+        android:id="@+id/view9"
+        android:layout_width="0dp"
+        android:layout_height="0.25dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorSubtitleGrey"
+        android:backgroundTint="@color/colorSubtitleGrey"
+        app:layout_constraintEnd_toStartOf="@+id/assetSelectorContainer"
+        app:layout_constraintStart_toStartOf="@+id/amountEditText"
+        app:layout_constraintTop_toBottomOf="@+id/assetSelectorContainer" />
 
 </android.support.constraint.ConstraintLayout>
