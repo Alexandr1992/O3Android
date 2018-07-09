@@ -158,15 +158,18 @@ class SendWhatFragment : Fragment() {
         val amount = pricingData.price *  displayedString.toDouble()
         (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(displayedString))
         enteredCurrencyDouble = amount
-        val balance= NumberFormat.getInstance().parse(assetBalanceTextView.text.toString()).toDouble()
-        if (displayedString.toDouble() > balance) {
-            assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
-            reviewButton.isEnabled = false
-        } else {
-            assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
-            reviewButton.isEnabled = true
+        var assetBalance = find<TextView>(R.id.assetBalanceTextView).text.toString()
+        if (assetBalance.isNotEmpty()) {
+            val balance = NumberFormat.getInstance().parse(assetBalanceTextView.text.toString()).toDouble()
+            if (displayedString.toDouble() > balance) {
+                assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
+                reviewButton.isEnabled = false
+            } else {
+                assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+                reviewButton.isEnabled = true
+            }
+            mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
         }
-        mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
     }
 
 
@@ -184,6 +187,10 @@ class SendWhatFragment : Fragment() {
         setupFiatEntrySwap()
         initiateAssetSelector()
         setUpSeekBar()
+        val toSendAmount = (activity as SendV2Activity).sendViewModel.toSendAmount
+        if (toSendAmount != BigDecimal.ZERO) {
+            mView.find<EditText>(R.id.amountEditText).text = SpannableStringBuilder(toSendAmount.toDouble().toString())
+        }
         return mView
     }
 }

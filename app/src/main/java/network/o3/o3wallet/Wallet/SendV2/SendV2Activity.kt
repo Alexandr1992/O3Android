@@ -42,11 +42,13 @@ class SendV2Activity : AppCompatActivity() {
             val toAddress = uri.to
             val amount = uri.amount
             val assetID = uri.asset
-            if (amount == 0.0 && assetID == "") {
+            if (toAddress != "") {
                 sendViewModel.setSelectedAddress(toAddress)
-            } else if (amount != 0.0) {
-                sendViewModel.setSelectedSendAmount(BigDecimal(amount))
             }
+            if (amount == 0.0) {
+                sendViewModel.setSelectedSendAmount(BigDecimal(2.0))
+            }
+            //if(assetID !=)
         }
     }
 
