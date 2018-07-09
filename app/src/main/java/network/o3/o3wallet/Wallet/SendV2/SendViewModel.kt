@@ -45,6 +45,10 @@ class SendViewModel: ViewModel() {
     }
 
     fun setSelectedAsset(transferableAsset: TransferableAsset) {
+        if (selectedAsset == null) {
+            selectedAsset = MutableLiveData()
+        }
+        selectedAsset?.value = transferableAsset
         selectedAsset?.postValue(transferableAsset)
         O3PlatformClient().getRealTimePrice(transferableAsset.symbol, PersistentStore.getCurrency()) {
             if (it.first != null) {

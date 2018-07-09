@@ -46,6 +46,7 @@ class SendWhatFragment : Fragment() {
     private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
     var currentAssetFilters: Array<InputFilter>? = null
     var currentAssetInputType =  (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
+    var firstLoad = true
 
     var ownedAssets: ArrayList<TransferableAsset> = arrayListOf()
     var enteredCurrencyDouble = 0.0
@@ -85,19 +86,27 @@ class SendWhatFragment : Fragment() {
         }
     }
 
+    fun changedAsset() {
+
+    }
+
+
     fun initiateAssetSelector() {
         val assetContainer = mView.find<ConstraintLayout>(R.id.assetSelectorContainer)
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", "NEO")
         Glide.with(this).load(imageURL).into(mView.find(R.id.assetLogoImageView))
         var formatter = NumberFormat.getNumberInstance()
-        (activity as SendV2Activity).sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
-            val neoAsset = ownedAssets?.find { it.symbol.toUpperCase() == "NEO" }
-            formatter.maximumFractionDigits = 0
-            find<TextView>(R.id.assetBalanceTextView).text = formatter.format(neoAsset?.value ?: 0)
-            if (neoAsset != null) {
-                (activity as SendV2Activity).sendViewModel.setSelectedAsset(neoAsset)
+        (activity as SendV2Activity).sendViewModel.getOwnedAssets(true).observe ( this, Observer { ownedAssets ->
+            if((activity as SendV2Activity).sendViewModel.selectedAsset?.value == null) {
+                val neoAsset = ownedAssets?.find { it.symbol.toUpperCase() == "NEO" }
+                formatter.maximumFractionDigits = 0
+                find<TextView>(R.id.assetBalanceTextView).text = formatter.format(neoAsset?.value ?: 0)
+                if (neoAsset != null) {
+                    (activity as SendV2Activity).sendViewModel.setSelectedAsset(neoAsset)
+                }
             }
         })
+
         assetContainer.setOnClickListener {
             val assetSelectorSheet = AssetSelectionBottomSheet()
             (activity as SendV2Activity).sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
@@ -120,7 +129,16 @@ class SendWhatFragment : Fragment() {
             }
             amountEditText.inputType = currentAssetInputType
             amountEditText.filters = currentAssetFilters
-            amountEditText.text.clear()
+            if (firstLoad) {
+                if((activity as SendV2Activity).sendViewModel.selectedAsset?.value != null) {
+                    (activity as SendV2Activity).sendViewModel.setSelectedAsset((activity as SendV2Activity).sendViewModel.selectedAsset?.value!!)
+                }
+                val toSendAmount = (activity as SendV2Activity).sendViewModel.toSendAmount
+                if (toSendAmount != BigDecimal.ZERO) {
+                    mView.find<EditText>(R.id.amountEditText).text = SpannableStringBuilder(toSendAmount.toDouble().toString())
+                }
+                firstLoad = false
+            }
 
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.assetLogoImageView))
@@ -131,6 +149,11 @@ class SendWhatFragment : Fragment() {
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(true).observe(this, Observer { realTimePrice ->
             if (realTimePrice == null) {
                 pricingData = O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
+                val preloadedAsset = (activity as SendV2Activity).sendViewModel.getSelectedAsset().value?.symbol?.toUpperCase()
+                if (preloadedAsset != null) {
+                   pricingData = O3RealTimePrice(preloadedAsset, PersistentStore.getCurrency(), 0.0, 0)
+                }
+
                 otherAmountTextView.visibility = View.INVISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.VISIBLE
             } else {
@@ -138,13 +161,15 @@ class SendWhatFragment : Fragment() {
                 otherAmountTextView.visibility = View.VISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
-            amountEditText.text.clear()
             assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
             otherAmountTextView.text = 0.0.formattedFiatString()
         })
     }
 
     fun calculateAndDisplaySendAmount() {
+        if (activity == null) {
+            return
+        }
         val displayedString = amountEditText.text.toString()
         if (displayedString == "" || displayedString.isEmpty() || BigDecimal(displayedString) == BigDecimal.ZERO) {
             amountEditText.isCursorVisible = false
@@ -156,11 +181,10 @@ class SendWhatFragment : Fragment() {
         reviewButton.isEnabled  = true
         amountEditText.isCursorVisible = true
         val amount = pricingData.price *  displayedString.toDouble()
-        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(displayedString))
         enteredCurrencyDouble = amount
         var assetBalance = find<TextView>(R.id.assetBalanceTextView).text.toString()
         if (assetBalance.isNotEmpty()) {
-            val balance = NumberFormat.getInstance().parse(assetBalanceTextView.text.toString()).toDouble()
+            val balance = NumberFormat.getInstance().parse(assetBalance).toDouble()
             if (displayedString.toDouble() > balance) {
                 assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
                 reviewButton.isEnabled = false
@@ -170,6 +194,7 @@ class SendWhatFragment : Fragment() {
             }
             mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
         }
+        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(displayedString))
     }
 
 
@@ -187,10 +212,7 @@ class SendWhatFragment : Fragment() {
         setupFiatEntrySwap()
         initiateAssetSelector()
         setUpSeekBar()
-        val toSendAmount = (activity as SendV2Activity).sendViewModel.toSendAmount
-        if (toSendAmount != BigDecimal.ZERO) {
-            mView.find<EditText>(R.id.amountEditText).text = SpannableStringBuilder(toSendAmount.toDouble().toString())
-        }
+
         return mView
     }
 }

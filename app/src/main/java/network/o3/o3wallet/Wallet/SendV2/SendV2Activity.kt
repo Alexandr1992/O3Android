@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Wallet.SendV2
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
@@ -28,6 +29,8 @@ class SendV2Activity : AppCompatActivity() {
             val uri = intent.getStringExtra("uri")
             if (uri != "") {
                 parseQRPayload(uri)
+                //give sometime to load eveything up
+                Thread.sleep(2000)
             }
         }
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
@@ -45,10 +48,26 @@ class SendV2Activity : AppCompatActivity() {
             if (toAddress != "") {
                 sendViewModel.setSelectedAddress(toAddress)
             }
-            if (amount == 0.0) {
-                sendViewModel.setSelectedSendAmount(BigDecimal(2.0))
+            if (amount != 0.0) {
+                sendViewModel.setSelectedSendAmount(BigDecimal(amount))
             }
-            //if(assetID !=)
+            if(assetID != "") {
+                runOnUiThread {
+                    sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
+                        if (assetID == "neo" || assetID == "gas") {
+                            val nativeAsset = ownedAssets?.find { it.symbol.toUpperCase() == assetID.toUpperCase() }
+                            if (nativeAsset != null) {
+                                sendViewModel.setSelectedAsset(nativeAsset)
+                            }
+                        } else {
+                            val tokenAsset = ownedAssets?.find { it.id == assetID }
+                            if (tokenAsset != null) {
+                                sendViewModel.setSelectedAsset(tokenAsset)
+                            }
+                        }
+                    })
+                }
+            }
         }
     }
 
