@@ -33,6 +33,7 @@ import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
 import org.w3c.dom.Text
+import java.math.BigDecimal
 import java.text.NumberFormat
 
 
@@ -138,13 +139,14 @@ class SendWhatFragment : Fragment() {
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
             amountEditText.text.clear()
+            assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
             otherAmountTextView.text = 0.0.formattedFiatString()
         })
     }
 
     fun calculateAndDisplaySendAmount() {
         val displayedString = amountEditText.text.toString()
-        if (displayedString == "") {
+        if (displayedString == "" || displayedString.isEmpty() || BigDecimal(displayedString) == BigDecimal.ZERO) {
             amountEditText.isCursorVisible = false
             otherAmountTextView.text = 0.0.formattedFiatString()
             enteredCurrencyDouble = 0.0
@@ -154,9 +156,10 @@ class SendWhatFragment : Fragment() {
         reviewButton.isEnabled  = true
         amountEditText.isCursorVisible = true
         val amount = pricingData.price *  displayedString.toDouble()
-        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(displayedString.toDouble())
+        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(displayedString))
         enteredCurrencyDouble = amount
-        if (displayedString.toDouble() > assetBalanceTextView.text.toString().toDouble()) {
+        val balance= NumberFormat.getInstance().parse(assetBalanceTextView.text.toString()).toDouble()
+        if (displayedString.toDouble() > balance) {
             assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
             reviewButton.isEnabled = false
         } else {

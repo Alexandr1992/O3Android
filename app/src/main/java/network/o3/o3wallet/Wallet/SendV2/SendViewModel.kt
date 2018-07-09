@@ -13,6 +13,7 @@ import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Contact
 import network.o3.o3wallet.PersistentStore
+import java.math.BigDecimal
 
 class SendViewModel: ViewModel() {
     var ownedAssets: MutableLiveData<ArrayList<TransferableAsset>>? = null
@@ -27,7 +28,7 @@ class SendViewModel: ViewModel() {
     //var sendInProgress: MutableLiveData<Boolean>? = null
     var sendResult: MutableLiveData<Boolean>? = MutableLiveData()
 
-    var toSendAmount: Double = 0.0
+    var toSendAmount: BigDecimal = BigDecimal.ZERO
 
     fun getOwnedAssets(refresh: Boolean): LiveData<ArrayList<TransferableAsset>> {
         if (ownedAssets == null || refresh) {
@@ -75,12 +76,18 @@ class SendViewModel: ViewModel() {
     }
 
     fun setSelectedAddress(address: String) {
+        if (selectedAddress == null) {
+            selectedAddress = MutableLiveData()
+        }
+
         val contacts = PersistentStore.getContacts()
         val foundContact = contacts.find { it.address == address }
+
         if (foundContact != null) {
             setSelectedContact(foundContact)
         } else {
             selectedContact?.value = null
+            selectedAddress?.value = address
             selectedAddress?.postValue(address)
         }
     }
@@ -117,18 +124,18 @@ class SendViewModel: ViewModel() {
         }
     }
 
-    fun getSelectedSendAmount(): Double {
+    fun getSelectedSendAmount(): BigDecimal {
         return toSendAmount
     }
 
-    fun setSelectedSendAmount(amount: Double) {
+    fun setSelectedSendAmount(amount: BigDecimal) {
         toSendAmount = amount
     }
 
     fun sendOntAsset() {
         val toSendAsset = selectedAsset!!.value!!
         val recipientAddress = selectedAddress!!.value!!
-        val amount = getSelectedSendAmount()
+        val amount = getSelectedSendAmount().toDouble()
         val wallet = Account.getWallet()
         val error = OntologyClient().sendOntologyAsset(toSendAsset.id, recipientAddress, amount)
         if (error == null) {
@@ -167,7 +174,7 @@ class SendViewModel: ViewModel() {
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount()
 
-        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, toSendAsset.id, wallet.address, recipientAddress, amount) {
+        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, toSendAsset.id, wallet.address, recipientAddress, amount, toSendAsset.decimals) {
             val error = it.second
             val success = it.first
             if (success == true) {

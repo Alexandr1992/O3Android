@@ -417,11 +417,8 @@ class AccountFragment : Fragment() {
     }
 
     private fun sendButtonTapped(payload: String) {
-        /*val intent = Intent(activity, SendActivity::class.java)
-        intent.putExtra("address", "")
-        intent.putExtra("payload", payload)
-        startActivity(intent)*/
         val intent = Intent(activity, SendV2Activity::class.java)
+        intent.putExtra("uri", payload)
         startActivity(intent)
     }
 

@@ -35,7 +35,7 @@ class SendReviewFragment : Fragment() {
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset!!.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.reviewAssetLogoImageView))
             mView.find<TextView>(R.id.reviewAmountTextView).text = (activity as SendV2Activity)
-                    .sendViewModel.getSelectedSendAmount().removeTrailingZeros() + " " + selectedAsset.symbol
+                    .sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros() + " " + selectedAsset.symbol
         })
     }
 
@@ -62,13 +62,13 @@ class SendReviewFragment : Fragment() {
 
     fun initateSelectedBalanceDetails() {
         mView.find<TextView>(R.id.reviewAmountTextView).text = (activity as SendV2Activity)
-                .sendViewModel.getSelectedSendAmount().removeTrailingZeros()
+                .sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros()
 
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
-           onUiThread {
-               val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
-               mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
-           }
+               if (realTimePrice != null) {
+                   val fiatAmount = realTimePrice.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount().toDouble()
+                   mView.find<TextView>(R.id.reviewFiatAmountTextView).text = fiatAmount.formattedFiatString()
+               }
         })
     }
 

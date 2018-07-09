@@ -21,7 +21,7 @@
         <action
             android:id="@+id/action_sendFragmentWhere_to_sendWhatFragment"
             app:destination="@+id/sendFragmentWhat"
-            app:enterAnim="@anim/fab_slide_in_from_right" />
+            app:enterAnim="@anim/fab_slide_in_from_right" /><deepLink app:uri="03.com"/>
     </fragment>
     <fragment
         android:id="@+id/sendReviewFragment"

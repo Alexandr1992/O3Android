@@ -41,7 +41,7 @@ import org.jetbrains.anko.yesButton
 
 class SendActivity: AppCompatActivity() {
 
-    lateinit var addressTextView: TextView
+    /*lateinit var addressTextView: TextView
     lateinit var amountTextView: TextView
     lateinit var selectedAssetTextView: TextView
     lateinit var sendButton: Button
@@ -429,10 +429,10 @@ fun TextView.afterTextChanged(afterTextChanged: (String) -> Unit) {
             afterTextChanged.invoke(editable.toString())
             
         }
-    })
+    })*/
 }
 
-
+/*
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -444,4 +444,4 @@ fun Fragment.hideKeyboard() {
 
 fun Activity.hideKeyboard() {
     hideKeyboard(if (currentFocus == null) View(this) else currentFocus)
-}
+}*/

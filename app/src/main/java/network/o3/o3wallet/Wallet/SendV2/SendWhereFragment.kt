@@ -23,7 +23,7 @@ import kotlinx.coroutines.experimental.channels.Send
 import neoutils.Neoutils
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.ContactsFragment
-import network.o3.o3wallet.Wallet.Send.afterTextChanged
+import network.o3.o3wallet.afterTextChanged
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.support.v4.act
@@ -64,6 +64,9 @@ class SendWhereFragment : Fragment() {
     fun setupAddressEditText() {
         addressEditText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
         addressEditText.afterTextChanged { checkEnableSendButton() }
+        if ((activity as SendV2Activity).sendViewModel.selectedAddress?.value != null) {
+            addressEditText.text = SpannableStringBuilder((activity as SendV2Activity).sendViewModel.selectedAddress?.value!!)
+        }
     }
 
     fun checkEnableSendButton() {

@@ -53,6 +53,19 @@ fun Double.removeTrailingZeros(): String {
    // return doubleString
 }
 
+fun String.toSafeDecimal(): BigDecimal {
+    return BigDecimal(this)
+}
+
+fun BigDecimal.fromSafeMemory(decimals: Int): BigDecimal {
+    return this.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
+}
+
+fun BigDecimal.toSafeMemory(decimals: Int): Long {
+    return this.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble()))).toLong()
+}
+
+
 
 enum class CurrencyType {
     BTC, FIAT

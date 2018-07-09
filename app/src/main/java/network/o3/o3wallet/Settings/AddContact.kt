@@ -16,7 +16,7 @@ import android.widget.Toast
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
-import network.o3.o3wallet.Wallet.Send.afterTextChanged
+import network.o3.o3wallet.afterTextChanged
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
 

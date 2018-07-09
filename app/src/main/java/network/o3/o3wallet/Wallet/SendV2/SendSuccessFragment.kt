@@ -27,11 +27,13 @@ class SendSuccessFragment : Fragment() {
 
     fun initateSelectedBalanceDetails() {
         mView.find<TextView>(R.id.receiptAmountTextView).text = (activity as SendV2Activity)
-                .sendViewModel.getSelectedSendAmount().removeTrailingZeros()
+                .sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros()
 
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
-            val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount()
-            mView.find<TextView>(R.id.receiptFiatAmountTextView).text = fiatAmount.formattedFiatString()
+            if (realTimePrice != null) {
+                val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount().toDouble()
+                mView.find<TextView>(R.id.receiptFiatAmountTextView).text = fiatAmount.formattedFiatString()
+            }
         })
 
     }
@@ -59,7 +61,7 @@ class SendSuccessFragment : Fragment() {
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset!!.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.receiptAssetLogoImageView))
             mView.find<TextView>(R.id.receiptAmountTextView).text = (activity as SendV2Activity)
-                    .sendViewModel.getSelectedSendAmount().removeTrailingZeros() + " " + selectedAsset.symbol
+                    .sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros() + " " + selectedAsset.symbol
         })
     }
 
