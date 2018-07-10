@@ -166,11 +166,11 @@ class SendViewModel: ViewModel() {
             val error = it.second
             val txid = it.first
             if (txid != null) {
-                sendResult?.postValue(txid)
                 txID = txid
+                sendResult?.postValue(txid)
             } else {
-                sendResult?.postValue(null)
                 txID = ""
+                sendResult?.postValue(null)
             }
         }
     }
@@ -186,10 +186,8 @@ class SendViewModel: ViewModel() {
             val txid = it.first
             if (txid != null) {
                 sendResult?.postValue(txid)
-                txID = txID
             } else {
                 sendResult?.postValue(null)
-                txID = ""
             }
         }
     }
