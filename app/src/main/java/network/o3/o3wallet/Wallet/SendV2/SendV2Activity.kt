@@ -73,15 +73,15 @@ class SendV2Activity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents == null) {
-            Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
-            return
-        } else if (requestCode == 1) {
+        if (requestCode == 1 && resultCode == -1) {
             runOnUiThread {
                 sendingToast = baseContext.toastUntilCancel(resources.getString(R.string.SEND_sending_in_progress))
                 sendingToast?.show()
             }
             sendViewModel.send()
+            return
+        } else if (requestCode == 1 && resultCode == 0) {
+            Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             return
         }
 
