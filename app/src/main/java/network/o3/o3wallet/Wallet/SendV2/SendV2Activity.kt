@@ -88,8 +88,10 @@ class SendV2Activity : AppCompatActivity() {
         if (result != null && result.contents == null) {
             Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             return
-        } else if (Neoutils.validateNEOAddress(result.contents)) {
-            find<EditText>(R.id.addressEntryEditText).text = SpannableStringBuilder(result.contents)
+        } else {
+            parseQRPayload(result.contents)
+            //give sometime to load eveything up
+            Thread.sleep(2000)
             return
         }
     }

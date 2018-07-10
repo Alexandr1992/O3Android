@@ -94,7 +94,7 @@ class SendReviewFragment : Fragment() {
         val sendActivity = activity as SendV2Activity
         sendActivity.sendViewModel.getSendResult().observe(this, Observer { result ->
             sendActivity.sendingToast?.cancel()
-            if (result!!) {
+            if (result != null) {
                 mView.findNavController().navigate(R.id.action_sendReviewFragment_to_sendSuccessFragment)
             } else {
                 mView.findNavController().navigate(R.id.action_sendReviewFragment_to_sendFailedFragment)

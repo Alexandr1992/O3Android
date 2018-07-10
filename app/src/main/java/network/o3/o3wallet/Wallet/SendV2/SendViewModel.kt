@@ -26,9 +26,10 @@ class SendViewModel: ViewModel() {
     var realTimePrice: MutableLiveData<O3RealTimePrice>? = null
 
     //var sendInProgress: MutableLiveData<Boolean>? = null
-    var sendResult: MutableLiveData<Boolean>? = MutableLiveData()
+    var sendResult: MutableLiveData<String?>? = MutableLiveData()
 
     var toSendAmount: BigDecimal = BigDecimal.ZERO
+    var txID = ""
 
     fun getOwnedAssets(refresh: Boolean): LiveData<ArrayList<TransferableAsset>> {
         if (ownedAssets == null || refresh) {
@@ -143,9 +144,9 @@ class SendViewModel: ViewModel() {
         val wallet = Account.getWallet()
         val error = OntologyClient().sendOntologyAsset(toSendAsset.id, recipientAddress, amount)
         if (error == null) {
-            sendResult?.postValue(true)
+            sendResult?.postValue("")
         } else {
-            sendResult?.postValue(false)
+            sendResult?.postValue(null)
         }
     }
 
@@ -163,11 +164,13 @@ class SendViewModel: ViewModel() {
         NeoNodeRPC(PersistentStore.getNodeURL()).
                 sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null) {
             val error = it.second
-            val success = it.first
-            if (success == true) {
-                sendResult?.postValue(true)
+            val txid = it.first
+            if (txid != null) {
+                sendResult?.postValue(txid)
+                txID = txid
             } else {
-                sendResult?.postValue(false)
+                sendResult?.postValue(null)
+                txID = ""
             }
         }
     }
@@ -180,16 +183,18 @@ class SendViewModel: ViewModel() {
 
         NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, toSendAsset.id, wallet.address, recipientAddress, amount, toSendAsset.decimals) {
             val error = it.second
-            val success = it.first
-            if (success == true) {
-                sendResult?.postValue(true)
+            val txid = it.first
+            if (txid != null) {
+                sendResult?.postValue(txid)
+                txID = txID
             } else {
-                sendResult?.postValue(false)
+                sendResult?.postValue(null)
+                txID = ""
             }
         }
     }
 
-    fun getSendResult(): LiveData<Boolean> {
+    fun getSendResult(): LiveData<String?> {
         //reset send result every time
         sendResult = MutableLiveData()
         return sendResult!!

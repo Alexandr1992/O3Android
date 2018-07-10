@@ -40,7 +40,7 @@ class SendFailedFragment : Fragment() {
         val sendActivity = activity as SendV2Activity
         sendActivity.sendViewModel.getSendResult().observe(this, Observer { result ->
             sendActivity.sendingToast?.cancel()
-            if (result!!) {
+            if (result != null) {
                 sendActivity.sendingToast?.cancel()
                 mView.findNavController().navigate(R.id.action_sendFailedFragment_to_sendSuccessFragment)
             } else {

@@ -82,7 +82,9 @@ class SendSuccessFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
         mView = inflater.inflate(R.layout.send_success_fragment, container, false)
+        mView.find<TextView>(R.id.transactionIdSubtitleLabel).text = (activity as SendV2Activity).sendViewModel.txID.toLowerCase()
         initateSelectedBalanceDetails()
         initiateSelectedRecipientDetails()
         initiateSelectedAssetDetails()

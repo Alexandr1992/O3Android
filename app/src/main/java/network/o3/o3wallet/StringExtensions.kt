@@ -13,8 +13,7 @@ import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_NORMAL
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_SMALL
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
-
-
+import java.security.MessageDigest
 
 
 /**
@@ -76,6 +75,17 @@ fun Double.formattedCurrencyString(currency: CurrencyType): String {
         CurrencyType.BTC -> this.formattedBTCString()
         CurrencyType.FIAT -> this.formattedFiatString()
     }
+}
+
+fun String.transactionToID(): String {
+    val firstHash = this.hexStringToByteArray().Hash256().hexStringToByteArray().toHex()
+    return firstHash.hexStringToByteArray().Hash256().hexStringToByteArray().reversedArray().toHex()
+}
+
+fun ByteArray.Hash256(): String {
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(this)
+    return digest.fold("", { str, it -> str + "%02x".format(it) })
 }
 
 fun Date.intervaledString(interval: String): String {

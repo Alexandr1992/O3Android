@@ -173,7 +173,7 @@ class AccountViewModel: ViewModel() {
 
         NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(Account.getWallet()!!,
                 NeoNodeRPC.Asset.NEO, neoBalance!!.toBigDecimal(), Account.getWallet()!!.address, null) {
-            if (it.second != null || it.first == false) {
+            if (it.second != null || it.first == null) {
                 completion(false)
             } else {
                 checkSyncComplete {
