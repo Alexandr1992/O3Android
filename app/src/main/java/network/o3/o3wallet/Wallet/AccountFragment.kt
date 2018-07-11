@@ -165,10 +165,10 @@ class AccountFragment : Fragment() {
     }
 
     private fun showMyAddress() {
-        val intent = Intent(activity, DAppBrowserActivity::class.java)
-        startActivity(intent)
-//        val addressBottomSheet = MyAddressFragment()
-//        addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
+        // val intent = Intent(activity, DAppBrowserActivity::class.java)
+        // startActivity(intent)
+        val addressBottomSheet = MyAddressFragment()
+        addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
     }
 
 
