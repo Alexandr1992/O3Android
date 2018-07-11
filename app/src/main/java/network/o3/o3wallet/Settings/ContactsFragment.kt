@@ -15,7 +15,7 @@ import network.o3.o3wallet.Contact
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
-import network.o3.o3wallet.Wallet.Send.SendActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onRefresh
@@ -67,10 +67,9 @@ class ContactsFragment : RoundedBottomSheetDialogFragment() {
     fun sendToAddress(contact: Contact) {
         val intent: Intent = Intent(
                 context,
-                SendActivity::class.java
+                SendV2Activity::class.java
         )
-        intent.putExtra("address", contact.address)
-        intent.putExtra("payload", "")
+        intent.putExtra("uri", contact.address)
         ActivityCompat.startActivity(context!!, intent, null)
     }
 

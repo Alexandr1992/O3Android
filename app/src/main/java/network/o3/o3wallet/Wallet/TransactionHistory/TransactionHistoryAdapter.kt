@@ -135,11 +135,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             val blockTextView = view.find<TextView>(R.id.blockNumberTextView)
 
             val isTokenAsset = setTokenName(tx)
-            val amountToDisplay = if(isTokenAsset) {
-                tx.amount / 100000000
-            } else {
-                tx.amount
-            }
+            val amountToDisplay = tx.amount
 
             var toNickname = PersistentStore.getContacts().find { it.address == tx.address_to }?.nickname
             if (toNickname == null) {

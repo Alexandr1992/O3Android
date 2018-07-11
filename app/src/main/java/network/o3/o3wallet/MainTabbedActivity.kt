@@ -23,7 +23,6 @@ import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.tabbar_activity_main_tabbed.*
 import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
-import network.o3.o3wallet.Wallet.Send.SendActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
