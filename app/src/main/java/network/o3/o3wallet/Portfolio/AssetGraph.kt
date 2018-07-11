@@ -13,6 +13,8 @@ import android.widget.ProgressBar
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.PriceHistory
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.yesButton
 
 /**
  * Created by drei on 12/8/17.
@@ -114,19 +116,26 @@ class AssetGraph : AppCompatActivity() {
         val percentView = findViewById<TextView>(R.id.percentChangeTextView)
         val progress = findViewById<ProgressBar>(R.id.progressBar)
         progress?.visibility = View.VISIBLE
-        assetGraphModel?.getHistoryFromModel(symbol!!, refresh)?.observe(this, Observer<PriceHistory> { data ->
-            progress?.visibility = View.GONE
-            chartDataAdapter.setData(assetGraphModel?.getPriceFloats())
-            priceView.text = assetGraphModel?.getLatestPriceFormattedString()
+        assetGraphModel?.getHistoryFromModel(symbol!!, refresh)?.observe(this, Observer<PriceHistory?> { data ->
+            if (data != null) {
+                progress?.visibility = View.GONE
+                chartDataAdapter.setData(assetGraphModel?.getPriceFloats())
+                priceView.text = assetGraphModel?.getLatestPriceFormattedString()
 
-            val percentChange = assetGraphModel?.getPercentChange()
-            if (percentChange!! < 0) {
-                percentView?.setTextColor(ContextCompat.getColor(applicationContext,R.color.colorLoss))
+                val percentChange = assetGraphModel?.getPercentChange()
+                if (percentChange!! < 0) {
+                    percentView?.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorLoss))
+                } else {
+                    percentView?.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorGain))
+                }
+                percentView.text = percentChange.formattedPercentString() +
+                        " " + assetGraphModel?.getInitialDate()?.intervaledString(assetGraphModel?.getInterval()
+                        ?: "24H")
             } else {
-                percentView?.setTextColor(ContextCompat.getColor(applicationContext,R.color.colorGain))
+                this.alert (resources.getString(R.string.PORTFOLIO_pricing_not_available_description)) {
+                    positiveButton(resources.getString(R.string.ALERT_OK_Confirm_Button))
+                    { finish() }}.show()
             }
-            percentView.text = percentChange.formattedPercentString() +
-                    " " +  assetGraphModel?.getInitialDate()?.intervaledString(assetGraphModel?.getInterval() ?: "24H")
         })
     }
 

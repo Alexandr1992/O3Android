@@ -67,6 +67,9 @@ class AccountAssetsAdapter(fragment: AccountFragment, context: Context, address:
             vh.assetAmountTextView.text = formatter.format(asset.value)
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.symbol.toUpperCase())
             Glide.with(mContext).load(imageURL).into(vh.logoImageView)
+            if (asset.id.contains("000000000000")) {
+                vh.assetNameTextView.text = asset.symbol + " (MainNet)"
+            }
         }
     }
 

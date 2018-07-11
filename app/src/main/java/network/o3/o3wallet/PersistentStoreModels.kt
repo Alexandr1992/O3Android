@@ -126,6 +126,17 @@ object PersistentStore {
         settingPref.apply()
     }
 
+    fun getOntologyNodeURL(): String {
+        return  PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("ONTOLOGY_NODE_URL", "http://dappnode2.ont.io:20336")
+    }
+
+    fun setOntologyNodeURL(url: String) {
+        val settingPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+        settingPref.putString("ONTOLOGY_NODE_URL", url)
+        settingPref.apply()
+    }
+
     fun getNodeURL(): String {
         return  PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
                 .getString("NODE_URL", "http://seed2.neo.org:10332")

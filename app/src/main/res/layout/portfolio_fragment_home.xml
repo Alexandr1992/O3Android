@@ -48,8 +48,9 @@
                 android:id="@+id/emptyWalletContainer"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/intervalButtonLayout"
                 app:layout_constraintTop_toTopOf="@+id/graphLayout">
 

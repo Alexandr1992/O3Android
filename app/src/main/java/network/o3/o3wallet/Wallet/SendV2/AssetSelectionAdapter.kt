@@ -1,4 +1,4 @@
-package network.o3.o3wallet.Wallet.Send
+package network.o3.o3wallet.Wallet.SendV2
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import network.o3.o3wallet.API.NEO.AccountAsset
+import androidx.navigation.fragment.NavHostFragment
+import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.R
-import org.jetbrains.anko.find
+import java.text.NumberFormat
 
 /**
  * Created by drei on 1/18/18.
@@ -36,7 +37,7 @@ class AssetSelectorAdapter(context: Context, fragment: AssetSelectionBottomSheet
     override fun getItem(position: Int): TransferableAsset? {
         return when(position) {
             0 ->  null
-            1,2 -> mAssets[position - 1]
+                1,2 -> mAssets[position - 1]
             3 -> null
             else -> mAssets[position - 2]
         }
@@ -61,28 +62,29 @@ class AssetSelectorAdapter(context: Context, fragment: AssetSelectionBottomSheet
             }
             1, 2 -> {
                 val view = inflator.inflate(R.layout.wallet_send_fragment_native_asset_row, parent, false)
+                val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", item!!.symbol)
+                Glide.with(mContext).load(imageURL).into(view.findViewById(R.id.logoImageView))
                 view.findViewById<TextView>(R.id.nativeAssetName).text = item!!.name
                 view.findViewById<TextView>(R.id.assetAmountTextView).text = item.value.toString()
-                setListenerForRow(view, item.id, true, item.symbol)
+                setListenerForRow(view, item)
                 return view
             } else -> {
                 val view = inflator.inflate(R.layout.wallet_send_fragment_token_row, parent, false)
                 view.findViewById<TextView>(R.id.assetShortNameTextView).text = item!!.symbol
-                view.findViewById<TextView>(R.id.assetLongNameTextView).text = item.name
-                view.findViewById<TextView>(R.id.assetAmountTextView).text = item.value.toString()
-                setListenerForRow(view, item.id, false, item.symbol)
+                val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", item!!.symbol)
+                Glide.with(mContext).load(imageURL).into(view.findViewById(R.id.logoImageView))
+                var formatter = NumberFormat.getNumberInstance()
+                formatter.maximumFractionDigits = item.decimals
+                view.findViewById<TextView>(R.id.assetAmountTextView).text = formatter.format(item.value)
+                setListenerForRow(view, item)
                 return view
             }
         }
     }
 
-     private fun setListenerForRow(view: View, assetID: String, isNativeAsset: Boolean, shortName: String) {
+     private fun setListenerForRow(view: View, asset: TransferableAsset) {
         view.setOnClickListener {
-            val sendScreen = mFragment.activity as SendActivity
-            sendScreen.isNativeAsset = isNativeAsset
-            sendScreen.assetID = assetID
-            sendScreen.shortName = shortName
-            sendScreen.updateSelectedAsset()
+            (mContext as SendV2Activity).sendViewModel.setSelectedAsset(asset)
             mFragment.dismiss()
         }
     }

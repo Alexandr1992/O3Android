@@ -6,14 +6,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.ActivityCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.*
 import android.widget.ListView
 import android.widget.TextView
+import kotlinx.android.synthetic.main.settings_fragment_contacts.*
 import network.o3.o3wallet.Contact
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.Wallet.Send.SendActivity
+import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.yesButton
 
 
@@ -21,7 +26,7 @@ import org.jetbrains.anko.yesButton
  * Created by drei on 12/11/17.
  */
 
-class ContactsFragment : BottomSheetDialogFragment() {
+class ContactsFragment : RoundedBottomSheetDialogFragment() {
     var adapter: ContactsAdapter? = null
 
     @SuppressLint("RestrictedApi")
@@ -41,6 +46,12 @@ class ContactsFragment : BottomSheetDialogFragment() {
 
         adapter = ContactsAdapter(this.context!!, this, arguments!!["canAddAddress"] as Boolean)
         listView?.adapter = adapter
+
+        view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).setColorSchemeResources(R.color.colorPrimary)
+        view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).onRefresh {
+            adapter?.updateData()
+            view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).isRefreshing = false
+        }
         return view
     }
 
@@ -63,10 +74,10 @@ class ContactsFragment : BottomSheetDialogFragment() {
         ActivityCompat.startActivity(context!!, intent, null)
     }
 
-    val RELOAD_DATA = 1
+    val RELOAD_DATA = 5
     fun addNewAddress() {
         val intent = Intent(context, AddContact::class.java)
-        startActivityForResult(intent,RELOAD_DATA)
+        startActivityForResult(intent, RELOAD_DATA)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
