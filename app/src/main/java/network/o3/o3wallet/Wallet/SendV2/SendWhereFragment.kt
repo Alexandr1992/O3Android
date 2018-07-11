@@ -100,6 +100,10 @@ class SendWhereFragment : Fragment() {
         (activity as SendV2Activity).sendViewModel.getSelectedAddress().observe(this, Observer { address ->
             nicknameField.text = ""
             nicknameBadge.visibility = View.GONE
+            if(addressEditText.text.toString() != address) {
+                addressEditText.text = SpannableStringBuilder(address)
+            }
+
             (activity as SendV2Activity).sendViewModel.getVerifiedAddress(true, address!!).observe(this, Observer { verifiedAddress ->
                 if (verifiedAddress == null) {
 

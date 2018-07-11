@@ -42,6 +42,7 @@ class SelectingBestNode : AppCompatActivity() {
             if (it.first == null) {
                 getBestNode()
             } else {
+                PersistentStore.setOntologyNodeURL(it.first!!.ontology.best)
                 gotBestNode(it.first!!.neo.best)
             }
         }

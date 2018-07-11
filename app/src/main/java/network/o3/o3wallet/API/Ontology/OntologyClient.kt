@@ -27,20 +27,10 @@ class OntologyClient {
         }
     }
 
-    val testNetNodes = "http://polaris1.ont.io:20336," +
-            "http://polaris2.ont.io:20336," +
-            "http://polaris3.ont.io:20336," +
-            "http://polaris4.ont.io:20336"
-
-    //TODO: SWAP THESE OUT FOR THE MAINNET NODES
-    val mainNetNodes = "http://polaris1.ont.io:20336," +
-            "http://polaris2.ont.io:20336," +
-            "http://polaris3.ont.io:20336," +
-            "http://polaris4.ont.io:20336"
-
-    fun transferOntology(node: SeedNodeResponse, assetID: String, toAddress: String, amount: Double): Error? {
+    fun transferOntology(assetID: String, toAddress: String, amount: Double): Error? {
         try {
-            Neoutils.ontologyTransfer(node.url, Account.getWallet()!!.wif, assetID, toAddress, amount)
+            Neoutils.ontologyTransfer(PersistentStore.getOntologyNodeURL(),
+                    Account.getWallet()!!.wif, assetID, toAddress, amount)
             return null
         } catch (e: Exception) {
             return Error("Transfer Failed")
@@ -49,12 +39,6 @@ class OntologyClient {
     }
 
     fun sendOntologyAsset(assetID: String, toAddress: String, amount: Double): Error? {
-        if (PersistentStore.getNetworkType() == "Main") {
-            val seedResponse = Neoutils.selectBestSeedNode(mainNetNodes)
-            return transferOntology(seedResponse, assetID, toAddress, amount)
-        } else {
-            val seedResponse = Neoutils.selectBestSeedNode(testNetNodes)
-            return transferOntology(seedResponse, assetID, toAddress, amount)
-        }
+        return transferOntology(assetID, toAddress, amount)
     }
 }

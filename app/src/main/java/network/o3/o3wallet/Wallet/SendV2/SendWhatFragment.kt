@@ -2,6 +2,7 @@ package network.o3.o3wallet.Wallet.SendV2
 
 
 import android.arch.lifecycle.Observer
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.renderscript.ScriptGroup
 import android.support.constraint.ConstraintLayout
@@ -27,6 +28,8 @@ import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableBalance
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.sdk15.coroutines.textChangedListener
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.alert
@@ -138,6 +141,8 @@ class SendWhatFragment : Fragment() {
                     mView.find<EditText>(R.id.amountEditText).text = SpannableStringBuilder(toSendAmount.toDouble().toString())
                 }
                 firstLoad = false
+            } else {
+                amountEditText.text.clear()
             }
 
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol)
@@ -185,11 +190,14 @@ class SendWhatFragment : Fragment() {
         var assetBalance = find<TextView>(R.id.assetBalanceTextView).text.toString()
         if (assetBalance.isNotEmpty()) {
             val balance = NumberFormat.getInstance().parse(assetBalance).toDouble()
+            val underlineVuew = mView.find<View>(R.id.underlineView)
             if (displayedString.toDouble() > balance) {
                 assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
+                amountEditText.textColor = resources.getColor(R.color.colorLoss)
                 reviewButton.isEnabled = false
             } else {
                 assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+                amountEditText.textColor = resources.getColor(R.color.colorBlack)
                 reviewButton.isEnabled = true
             }
             mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
@@ -212,6 +220,7 @@ class SendWhatFragment : Fragment() {
         setupFiatEntrySwap()
         initiateAssetSelector()
         setUpSeekBar()
+        amountEditText.isCursorVisible = false
 
         return mView
     }

@@ -104,6 +104,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:textAppearance="@style/SubtitleText"
+            android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/assetLogoImageView" />
 
@@ -250,7 +251,7 @@
     </android.support.v7.widget.CardView>
 
     <View
-        android:id="@+id/view9"
+        android:id="@+id/underlineView"
         android:layout_width="0dp"
         android:layout_height="0.25dp"
         android:layout_marginTop="8dp"

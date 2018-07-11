@@ -51,6 +51,7 @@ class SendFailedFragment : Fragment() {
                         return@getChainNetworks
                     } else {
                         PersistentStore.setNodeURL(it.first!!.neo.best)
+                        PersistentStore.setOntologyNodeURL(it.first!!.ontology.best)
                     }
                 }
             }

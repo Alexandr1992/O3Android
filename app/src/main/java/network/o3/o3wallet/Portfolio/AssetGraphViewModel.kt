@@ -16,7 +16,7 @@ import java.util.*
  */
 
 class AssetGraphViewModel: ViewModel() {
-    private var history: MutableLiveData<PriceHistory>? = null
+    private var history: MutableLiveData<PriceHistory?>? = null
     private var symbol = "NEO"
     private var interval = O3Wallet.appContext!!.resources.getString(R.string.PORTFOLIO_one_day)
     private var currency = CurrencyType.FIAT
@@ -78,7 +78,7 @@ class AssetGraphViewModel: ViewModel() {
         return this.interval
     }
 
-    fun getHistoryFromModel(s:String, refresh: Boolean): LiveData<PriceHistory> {
+    fun getHistoryFromModel(s:String, refresh: Boolean): LiveData<PriceHistory?> {
         if (history == null || refresh) {
             symbol = s
             history = MutableLiveData()
@@ -102,10 +102,13 @@ class AssetGraphViewModel: ViewModel() {
 
     private fun loadHistory() {
         O3API().getPriceHistory(symbol, interval) {
-            if (it.second != null) return@getPriceHistory
+            if (it.second != null) {
+                history?.postValue(it.first)
+                return@getPriceHistory
+            }
             latestPrice = it.first?.data?.first()!!
             initialPrice = it.first?.data?.last()!!
-            history?.postValue(it.first!!)
+            history?.postValue(it.first)
         }
     }
 }

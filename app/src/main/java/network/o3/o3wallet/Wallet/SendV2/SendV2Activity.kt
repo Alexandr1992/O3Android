@@ -72,6 +72,7 @@ class SendV2Activity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == -1) {
             runOnUiThread {
@@ -85,8 +86,7 @@ class SendV2Activity : AppCompatActivity() {
             return
         }
 
-        if (result != null && result.contents == null) {
-            Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
+        if (result == null || result.contents == null) {
             return
         } else {
             parseQRPayload(result.contents)
