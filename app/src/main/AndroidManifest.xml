@@ -19,12 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".MyFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}"
@@ -77,7 +71,13 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
-
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_notification" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
         <activity android:name=".Onboarding.SelectingBestNode" />
         <activity android:name=".MarketPlace.TokenSales.TokenSalesFragment" />
         <activity android:name=".MarketPlace.TokenSales.TokenSaleInfoActivity" />
