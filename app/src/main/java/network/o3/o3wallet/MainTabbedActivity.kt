@@ -149,12 +149,10 @@ class MainTabbedActivity : AppCompatActivity() {
                         tabName = "News"
                     }
                     R.id.action_item5 -> {
-                        val settingsModal = fragments!!.get(4) as SettingsFragment
-                        settingsModal.show(supportFragmentManager, settingsModal.tag)
-                        tabName = "Settings"
-                        Answers().logCustom(CustomEvent("Tab Tapped")
-                                .putCustomAttribute("Tab Name", tabName))
-                        return false
+                        switchFragment(4)
+                        activeTabID = item.itemId
+                        activeTabPosition = 4
+                        tabName = ""
                     }
                 }
                 Answers().logCustom(CustomEvent("Tab Tapped")

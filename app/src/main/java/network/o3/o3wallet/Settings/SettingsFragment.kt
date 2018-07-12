@@ -7,21 +7,22 @@ import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.*
+import net.glxn.qrgen.android.QRCode
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
+import network.o3.o3wallet.Wallet.toast
+import org.jetbrains.anko.find
 
 
-class SettingsFragment : RoundedBottomSheetDialogFragment() {
-    @SuppressLint("RestrictedApi")
-    override fun setupDialog(dialog: Dialog, style: Int) {
-        super.setupDialog(dialog, style)
-        val contentView = View.inflate(context, R.layout.settings_fragment_menu, null)
-        dialog.setContentView(contentView)
-    }
-
+class SettingsFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 0) {
             // Credentials entered successfully!
@@ -44,6 +45,31 @@ class SettingsFragment : RoundedBottomSheetDialogFragment() {
 
         val basicAdapter = SettingsAdapter(this.context!!, this)
         listView.adapter = basicAdapter
+
+        val addressLabel = view.findViewById<TextView>(R.id.addressLabel)
+        val qrImageView = view.findViewById<ImageView>(R.id.addressQRCodeImageView)
+
+        val wallet = Account.getWallet()!!
+        addressLabel.text = wallet.address
+
+        val bitmap = QRCode.from(wallet.address).withSize(1000, 1000).bitmap()
+        qrImageView.setImageBitmap(bitmap)
+
+        view.find<ImageButton>(R.id.shareButton).setOnClickListener{
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Account.getWallet()!!.address)
+            shareIntent.type = "text/plain"
+            startActivity(shareIntent)
+        }
+
+        qrImageView.setOnClickListener{
+            val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet()!!.address)
+            clipboard.primaryClip = clip
+            context?.toast(resources.getString(R.string.WALLET_copied_address))
+        }
+
         return view
     }
 

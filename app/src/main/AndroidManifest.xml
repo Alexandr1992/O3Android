@@ -58,9 +58,6 @@
             android:name=".Portfolio.AssetGraph"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Wallet.Send.SendActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Wallet.SendV2.SendV2Activity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
