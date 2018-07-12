@@ -19,6 +19,7 @@ import com.robinhood.ticker.TickerView
 import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.*
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
@@ -202,6 +203,8 @@ class AccountFragment : Fragment() {
     }
 
     private fun showMyAddress() {
+        // val intent = Intent(activity, DAppBrowserActivity::class.java)
+        // startActivity(intent)
         val addressBottomSheet = MyAddressFragment()
         addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
     }
