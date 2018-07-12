@@ -30,6 +30,7 @@ class AccountViewModel: ViewModel() {
     private var claimInfoUpdated: MutableLiveData<Boolean>? = null
     private var claims: MutableLiveData<ClaimData>? = null
     private var currentBlock: MutableLiveData<Int?>? = null
+    private var swapInfo: MutableLiveData<O3InboxItem?>? = null
 
     private var lastDataLoadError: Error? = null
     private var claimError: Error? = null
@@ -64,6 +65,26 @@ class AccountViewModel: ViewModel() {
             }
             assets!!.postValue(it.first)
         }
+    }
+
+    private fun loadInboxItem() {
+        O3PlatformClient().getInbox(Account.getWallet()!!.address) {
+            if (it.second != null) {
+                swapInfo!!.postValue(null)
+            } else if (it.first != null && it.first!!.isNotEmpty()){
+                swapInfo!!.postValue(it.first!![0])
+            } else {
+                swapInfo!!.postValue(null)
+            }
+        }
+    }
+
+    fun getInboxItem(refresh: Boolean): LiveData<O3InboxItem?> {
+        if (swapInfo == null || refresh) {
+            swapInfo = MutableLiveData()
+            loadInboxItem()
+        }
+        return swapInfo!!
     }
 
     fun getClaims(refresh: Boolean): LiveData<ClaimData> {
@@ -151,8 +172,8 @@ class AccountViewModel: ViewModel() {
         }
 
         NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(Account.getWallet()!!,
-                NeoNodeRPC.Asset.NEO, neoBalance!!.toDouble(), Account.getWallet()!!.address, null) {
-            if (it.second != null || it.first == false) {
+                NeoNodeRPC.Asset.NEO, neoBalance!!.toBigDecimal(), Account.getWallet()!!.address, null) {
+            if (it.second != null || it.first == null) {
                 completion(false)
             } else {
                 checkSyncComplete {

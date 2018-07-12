@@ -15,13 +15,11 @@ import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.TextView
 import network.o3.o3wallet.*
-import network.o3.o3wallet.Wallet.Send.SendActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
 import android.support.v4.content.LocalBroadcastManager
-
-
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 
 
 /**
@@ -65,9 +63,9 @@ class WatchAddressFragment : BottomSheetDialogFragment() {
     fun sendToAddress(address: WatchAddress) {
         val intent: Intent = Intent(
                 context,
-                SendActivity::class.java
+                SendV2Activity::class.java
         )
-        intent.putExtra("address",address.address)
+        intent.putExtra("uri",address.address)
         ActivityCompat.startActivity(context!!, intent, null)
     }
 

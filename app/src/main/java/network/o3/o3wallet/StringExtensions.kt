@@ -13,8 +13,7 @@ import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_NORMAL
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_SMALL
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
-
-
+import java.security.MessageDigest
 
 
 /**
@@ -53,6 +52,19 @@ fun Double.removeTrailingZeros(): String {
    // return doubleString
 }
 
+fun String.toSafeDecimal(): BigDecimal {
+    return BigDecimal(this)
+}
+
+fun BigDecimal.fromSafeMemory(decimals: Int): BigDecimal {
+    return this.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
+}
+
+fun BigDecimal.toSafeMemory(decimals: Int): Long {
+    return this.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble()))).toLong()
+}
+
+
 
 enum class CurrencyType {
     BTC, FIAT
@@ -63,6 +75,17 @@ fun Double.formattedCurrencyString(currency: CurrencyType): String {
         CurrencyType.BTC -> this.formattedBTCString()
         CurrencyType.FIAT -> this.formattedFiatString()
     }
+}
+
+fun String.transactionToID(): String {
+    val firstHash = this.hexStringToByteArray().Hash256().hexStringToByteArray().toHex()
+    return firstHash.hexStringToByteArray().Hash256().hexStringToByteArray().reversedArray().toHex()
+}
+
+fun ByteArray.Hash256(): String {
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(this)
+    return digest.fold("", { str, it -> str + "%02x".format(it) })
 }
 
 fun Date.intervaledString(interval: String): String {

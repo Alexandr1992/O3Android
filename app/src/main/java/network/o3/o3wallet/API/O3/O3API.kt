@@ -3,9 +3,11 @@ package network.o3.o3wallet.API.O3
 import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.NEO.NEP5Token
 import network.o3.o3wallet.API.NEO.NEP5Tokens
+import network.o3.o3wallet.API.O3Platform.PlatformResponse
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
@@ -106,13 +108,19 @@ class O3API {
     }
 
     fun getFeatures(completion: (Pair<Array<Feature>?, Error?>) -> Unit) {
-        val url = "https://cdn.o3.network/data/featured.json"
+        var url = "https://platform.o3.network/api/v1/neo/news/featured"
+        if (PersistentStore.getNetworkType() == "Test") {
+            url = "https://platform.o3.network/api/v1/neo/news/featured?network=test"
+        } else if (PersistentStore.getNetworkType() == "Private") {
+            url = "https://platform.o3.network/api/v1/neo/news/featured?network=private"
+        }
         url.httpGet().responseString {request, response, result ->
             val (data, error) = result
             if (error == null) {
                 val gson = Gson()
-                val featureFeed = gson.fromJson<FeatureFeed>(data!!)
-                completion(Pair(featureFeed.features, null))
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val featureFeedData = gson.fromJson<FeatureFeedData>(platformResponse.result)
+                completion(Pair(featureFeedData.data.features, null))
             } else {
                 completion(Pair(null, Error(error.localizedMessage)))
             }

@@ -11,7 +11,19 @@
         <item name="actionBarStyle">@style/NoShadowActionBar</item>
     </style>
 
-    <style name="AppTheme.Dialog" parent="Theme.AppCompat.Light">
+    <style name="AppTheme.White" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorWhite</item>
+        <item name="android:colorPrimaryDark">@color/colorGhostWhite</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="actionBarStyle">@style/NoShadowActionBar</item>
+    </style>
+
+    <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light">
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -24,6 +36,12 @@
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="WhiteActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:fontFamily">@font/muli_bold</item>
+        <item name="elevation">0dp</item>
+        <item name="titleTextStyle">@style/WhiteActionBarTitleTextStyle</item>
+    </style>
+
 
     <style name="NoShadowActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:fontFamily">@font/muli_bold</item>
@@ -34,6 +52,11 @@
 
     <style name="TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:fontFamily">@font/muli_bold</item>
+    </style>
+
+    <style name="WhiteActionBarTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:fontFamily">@font/muli_bold</item>
+        <item name="android:textColor">@color/colorBlack</item>
     </style>
 
     <style name="noTitle" parent="Theme.AppCompat.Light.NoActionBar">
@@ -82,6 +105,10 @@
         <item name="android:textSize">14dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
         <item name="android:elevation">8dp</item>
+    </style>
+
+    <style name="AccentButton.Rounded" parent="AccentButton">
+        <item name="android:background">@drawable/rounded_button_accent</item>
     </style>
 
     <style name="PrimaryButton" parent="Base.Widget.AppCompat.Button">

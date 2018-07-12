@@ -1,21 +1,17 @@
-package network.o3.o3wallet.Wallet.Send
+package network.o3.o3wallet.Wallet.SendV2
 
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
-import android.widget.TextView
-import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.R
-import network.o3.o3wallet.Settings.SettingsAdapter
-import network.o3.o3wallet.Settings.SettingsFragment
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 
-class AssetSelectionBottomSheet : BottomSheetDialogFragment() {
+class AssetSelectionBottomSheet : RoundedBottomSheetDialogFragment() {
     var assets: ArrayList<TransferableAsset> = arrayListOf()
 
     @SuppressLint("RestrictedApi")

@@ -3,15 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="network.o3.o3wallet.Wallet.Send.AssetSelectionBottomSheet">
+    tools:context="network.o3.o3wallet.Wallet.SendV2.AssetSelectionBottomSheet">
 
     <ListView
+        android:layout_marginTop="56dp"
         android:id="@+id/assetListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@color/colorWeakGrayBackground"
+        android:dividerHeight="0.5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/SEND_select_asset"
+        android:textAppearance="@style/BoldText" />
 
 </FrameLayout>

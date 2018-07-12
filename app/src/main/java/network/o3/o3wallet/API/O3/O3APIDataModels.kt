@@ -35,6 +35,7 @@ data class FeedItem(val title: String,
                     val source: String,
                     val images: Array<NewsImage>)
 
+data class FeatureFeedData(val data: FeatureFeed)
 data class FeatureFeed(val features: Array<Feature>)
 
 data class Feature(val category: String,

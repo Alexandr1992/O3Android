@@ -139,11 +139,11 @@ class NeoNodeRPC {
         completion(kotlin.Pair<kotlin.Boolean?, Error?>(valid, null))
     }
 
-    private fun sendRawTransaction(data: ByteArray, completion: (Pair<Boolean?, Error?>) -> Unit) {
+    private fun sendRawTransaction(finalPayload: ByteArray, unsignedPayload: ByteArray, completion: (Pair<String?, Error?>) -> Unit) {
         val dataJson = jsonObject(
                 "jsonrpc" to "2.0",
                 "method" to RPC.SENDRAWTRANSACTION.methodName(),
-                "params" to jsonArray(data.toHex()),
+                "params" to jsonArray(finalPayload.toHex()),
                 "id" to 3
         )
 
@@ -155,12 +155,16 @@ class NeoNodeRPC {
                 val gson = Gson()
                 try {
                     val nodeResponse = gson.fromJson<SendRawTransactionResponse>(data!!)
-                    completion(Pair<Boolean?, Error?>(nodeResponse.result, null))
+                    if (nodeResponse.result == false) {
+                        completion(Pair<String?, Error?>(null, Error("Transaction failed")))
+                    } else {
+                        completion(Pair<String?, Error?>(unsignedPayload.toHex().transactionToID(), null))
+                    }
                 } catch (error: Error) {
-                    completion(kotlin.Pair<kotlin.Boolean?, Error?>(null, Error(error.localizedMessage)))
+                    completion(kotlin.Pair<String?, Error?>(null, Error(error.localizedMessage)))
                 }
             } else {
-                completion(Pair<Boolean?, Error?>(null, Error(error.localizedMessage)))
+                completion(Pair<String?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }
@@ -174,35 +178,47 @@ class NeoNodeRPC {
                     completion(Pair<Boolean?, Error?>(false, error))
                 } else {
                     val payload = generateClaimTransactionPayload(wallet, claims!!)
-                    sendRawTransaction(payload) {
-                        var success = it.first
+                    sendRawTransaction(payload, payload) {
+                        var txid = it.first
                         var error = it.second
-                        completion(Pair<Boolean?, Error?>(success, error))
+                        if (txid == null) {
+                            completion(Pair<Boolean?, Error?>(false, Error("Transaction failed")))
+                        } else {
+                            completion(Pair<Boolean?, Error?>(true, null))
+                        }
                     }
                 }
             }
         } else {
             val payload = generateClaimTransactionPayload(wallet, storedClaims!!)
-            sendRawTransaction(payload) {
-                var success = it.first
+            sendRawTransaction(payload, payload) {
+                var txid = it.first
                 var error = it.second
-                completion(Pair<Boolean?, Error?>(success, error))
+                if (txid == null) {
+                    completion(Pair<Boolean?, Error?>(false, Error("Transaction failed")))
+                } else {
+                    completion(Pair<Boolean?, Error?>(true, null))
+                }
             }
         }
     }
 
-    fun sendNativeAssetTransaction(wallet: Wallet, asset: Asset, amount: Double, toAddress: String, attributes: Array<TransactionAttribute>?, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+    fun sendNativeAssetTransaction(wallet: Wallet, asset: Asset, amount: BigDecimal, toAddress: String, attributes: Array<TransactionAttribute>?, completion: (Pair<String?, Error?>) -> (Unit)) {
         O3PlatformClient().getUTXOS(wallet.address) {
             var assets = it.first
             var error = it.second
             if (error != null) {
-                completion(Pair<Boolean?, Error?>(false, error))
+                completion(Pair<String?, Error?>(null, error))
             } else {
-                val payload = generateSendTransactionPayload(wallet, asset, amount, toAddress, assets!!, attributes)
-                sendRawTransaction(payload) {
-                    var success = it.first
+                val txData = generateSendTransactionPayload(wallet, asset, amount, toAddress, assets!!, attributes)
+                sendRawTransaction(txData.first, txData.second) {
+                    var txid = it.first
                     var error = it.second
-                    completion(Pair<Boolean?, Error?>(success, error))
+                    if (txid == null) {
+                        completion(Pair<String?, Error?>(null, Error("Transaction Failed")))
+                    }  else {
+                        completion(Pair<String?, Error?>(txid, error))
+                    }
                 }
             }
         }
@@ -216,7 +232,7 @@ class NeoNodeRPC {
         return ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(value).array()
     }
 
-    data class SendAssetReturn(val totalAmount: Double?, val payload: ByteArray?, val error: Error?)
+    data class SendAssetReturn(val totalAmount: BigDecimal?, val payload: ByteArray?, val error: Error?)
 
     private fun getSortedUnspents(asset: Asset, utxos: Array<UTXO>): List<UTXO> {
         if (asset == Asset.NEO) {
@@ -228,24 +244,28 @@ class NeoNodeRPC {
         }
     }
 
-    private fun getInputsNecessaryToSendAsset(asset: Asset, amount: Double, utxos: UTXOS?): SendAssetReturn {
+    private fun getInputsNecessaryToSendAsset(asset: Asset, amount: BigDecimal, utxos: UTXOS?): SendAssetReturn {
         if (utxos == null) {
-            return SendAssetReturn(0.0, byteArrayOf(0.toByte()), null)
+            return SendAssetReturn(BigDecimal.ZERO, byteArrayOf(0.toByte()), null)
         }
 
         var sortedUnspents  = getSortedUnspents(asset, utxos.data)
         var neededForTransaction: MutableList<UTXO> = arrayListOf()
-        if (sortedUnspents.sumByDouble { it.value.toDouble() } <  amount) {
+        var decimalSum: BigDecimal = BigDecimal(0)
+        for (utxo in sortedUnspents) {
+            decimalSum += (utxo.value.toSafeDecimal())
+        }
+        if (decimalSum < amount) {
             return SendAssetReturn(null, null, Error("insufficient balance"))
         }
 
-        var runningAmount = 0.0
+        var runningAmount = BigDecimal(0.0)
         var index = 0
         var count: Int = 0
         //Assume we always have enough balance to do this, prevent the check for bal
         while (runningAmount < amount) {
             neededForTransaction.add(sortedUnspents[index])
-            runningAmount += sortedUnspents[index].value.toDouble()
+            runningAmount += (sortedUnspents[index].value.toSafeDecimal())
             index += 1
             count += 1
         }
@@ -259,7 +279,7 @@ class NeoNodeRPC {
     }
 
     private fun packRawTransactionBytes(payloadPrefix: ByteArray, wallet: Wallet, asset: Asset, inputData: ByteArray,
-                                        runningAmount: Double, toSendAmount: Double, toAddress: String,
+                                        runningAmount: BigDecimal, toSendAmount: BigDecimal, toAddress: String,
                                         attributes: Array<TransactionAttribute>?): ByteArray {
         var inputDataBytes = inputData
         val needsTwoOutputTransactions = runningAmount != toSendAmount
@@ -279,7 +299,7 @@ class NeoNodeRPC {
         var payload: ByteArray = payloadPrefix + byteArrayOf(numberOfAttributes.toUByte())
         payload = payload + attributesPayload + inputDataBytes
         //assetless send
-        if(runningAmount == 0.0) {
+        if(runningAmount == BigDecimal.ZERO) {
             payload += byteArrayOf(0.toUByte())
             return payload
         }
@@ -288,26 +308,26 @@ class NeoNodeRPC {
         if (needsTwoOutputTransactions) {
             //Transaction To Reciever
             payload = payload + byteArrayOf(0x02.toByte()) + asset.assetID().hexStringToByteArray().reversedArray()
-            val amountToSendInMemory: Long = (toSendAmount * 100000000).toLong()
+            val amountToSendInMemory: Long = toSendAmount.toSafeMemory(8)
             payload += to8BytesArray(amountToSendInMemory)
             //reciever addressHash
             payload += toAddress.hashFromAddress().hexStringToByteArray()
             //Transaction To Sender
             payload += asset.assetID().hexStringToByteArray().reversedArray()
-            val amountToGetBackInMemory = (runningAmount * 100000000).toLong() - (toSendAmount * 100000000).toLong()
+            val amountToGetBackInMemory = runningAmount.toSafeMemory(8) - toSendAmount.toSafeMemory(8)
             payload += to8BytesArray(amountToGetBackInMemory)
             payload += wallet.hashedSignature
 
         } else {
             payload = payload + byteArrayOf(0x01.toByte()) + asset.assetID().hexStringToByteArray().reversedArray()
-            val amountToSendInMemory = (toSendAmount * 100000000).toLong()
+            val amountToSendInMemory = toSendAmount.toSafeMemory(8)
             payload += to8BytesArray(amountToSendInMemory)
             payload += toAddress.hashFromAddress().hexStringToByteArray()
         }
         return payload
     }
 
-    private fun generateSendTransactionPayload(wallet: Wallet, asset: Asset, amount: Double, toAddress: String, utxos: UTXOS, attributes: Array<TransactionAttribute>?): ByteArray {
+    private fun generateSendTransactionPayload(wallet: Wallet, asset: Asset, amount: BigDecimal, toAddress: String, utxos: UTXOS, attributes: Array<TransactionAttribute>?): Pair<ByteArray, ByteArray> {
         var error: Error?
         val inputData = getInputsNecessaryToSendAsset(asset, amount, utxos)
         val payloadPrefix = byteArrayOf(0x80.toUByte(), 0x00.toByte())
@@ -318,7 +338,7 @@ class NeoNodeRPC {
         val signatureData = sign(rawTransaction, privateKeyHex)
         val finalPayload = concatenatePayloadData(wallet, rawTransaction, signatureData)
         Log.d("PAYLAOD:", finalPayload.toHex())
-        return finalPayload
+        return Pair<ByteArray, ByteArray>(finalPayload, rawTransaction)
     }
 
     /*
@@ -333,18 +353,20 @@ class NeoNodeRPC {
     }*/
 
 
-    private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String, contractAddress: String, attributes: Array<TransactionAttribute>? = null): ByteArray {
-        val inputData = getInputsNecessaryToSendAsset(NeoNodeRPC.Asset.GAS, 0.00000001, utxos)
+    private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String,
+                                                 contractAddress: String,
+                                                 attributes: Array<TransactionAttribute>? = null): Pair<ByteArray, ByteArray> {
+        val inputData = getInputsNecessaryToSendAsset(NeoNodeRPC.Asset.GAS, BigDecimal.ZERO, utxos)
         val payloadPrefix = byteArrayOf(0xd1.toUByte(), 0x00.toUByte()) + script.hexStringToByteArray()
         var rawTransaction = packRawTransactionBytes(payloadPrefix, wallet, Asset.GAS,
-                inputData.payload!!, inputData.totalAmount!!, 0.00000001,
+                inputData.payload!!, inputData.totalAmount!!, BigDecimal.ZERO,
                 Account.getWallet()?.address!!, attributes)
 
         val privateKeyHex = wallet.privateKey.toHex()
         val signature = sign(rawTransaction, privateKeyHex)
         var finalPayload = concatenatePayloadData(wallet, rawTransaction, signature)
         finalPayload = finalPayload + contractAddress.hexStringToByteArray()
-        return finalPayload
+        return Pair(finalPayload, rawTransaction)
 
     }
 
@@ -484,8 +506,8 @@ class NeoNodeRPC {
         }
     }
 
-    fun buildNEP5TransferScript(scriptHash: String, fromAddress: String, toAddress: String, amount: Double): ByteArray {
-        val amountToSendInMemory: Long = (amount * 100000000).toLong()
+    fun buildNEP5TransferScript(scriptHash: String, fromAddress: String, toAddress: String, amount: BigDecimal, decimals: Int): ByteArray {
+        val amountToSendInMemory: Long = amount.toSafeMemory(decimals)
         val fromAddressHash = fromAddress.hashFromAddress()
         val toAddressHash = toAddress.hashFromAddress()
         val scriptBuilder = ScriptBuilder()
@@ -500,21 +522,25 @@ class NeoNodeRPC {
     // fromAddress -> Address of Sender
     // toAddress -> Address of Recipient
     // transfer amount *
-    fun sendNEP5Token(wallet: Wallet, tokenContractHash: String, fromAddress: String, toAddress: String, amount: Double,
-                      completion: (Pair<Boolean?, Error?>) -> Unit) {
+    fun sendNEP5Token(wallet: Wallet, tokenContractHash: String, fromAddress: String, toAddress: String, amount: BigDecimal, decimals: Int,
+                      completion: (Pair<String?, Error?>) -> Unit) {
         val attributes = arrayOf<TransactionAttribute>(
             TransactionAttribute().scriptAttribute(fromAddress.hashFromAddress()),
             TransactionAttribute().remarkAttribute(String.format("O3X%s", Date().time.toString())),
             TransactionAttribute().hexDescriptionAttribute(tokenContractHash))
 
-        val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount)
+        val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount, decimals)
         val scriptBytesString = scriptBytes.toHex()
         val finalPayload = generateInvokeTransactionPayload(wallet, null, scriptBytes.toHex(), tokenContractHash, attributes)
-        val finalPayloadString = finalPayload.toHex()
-        sendRawTransaction(finalPayload) {
-            var success = it.first
+        val finalPayloadString = finalPayload.first.toHex()
+        sendRawTransaction(finalPayload.first, finalPayload.second) {
+            var txid = it.first
             var error = it.second
-            completion(Pair<Boolean?, Error?>(success, error))
+            if (txid == null) {
+                completion(Pair<String?, Error?>(null, Error("Transaction Failed")))
+            }  else {
+                completion(Pair<String?, Error?>(txid, error))
+            }
         }
     }
 
@@ -538,10 +564,10 @@ class NeoNodeRPC {
             return
         }
         Log.d("MINT TRANSACTION ID: ", finalPayload.txid )
-        sendRawTransaction(finalPayload.data) {
-            var success = it.first
+        sendRawTransaction(finalPayload.data, finalPayload.data) {
+            var txid = it.first
             var error = it.second
-            if (success == false) {
+            if (txid == null) {
                 error = Error("Transaction Failed")
             }
             completion(Pair (finalPayload.txid, error))

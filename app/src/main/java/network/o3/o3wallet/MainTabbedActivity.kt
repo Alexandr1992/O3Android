@@ -22,7 +22,7 @@ import com.crashlytics.android.answers.CustomEvent
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
-import network.o3.o3wallet.Wallet.Send.SendActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
@@ -51,9 +51,8 @@ class MainTabbedActivity : AppCompatActivity() {
             if (result != null && result.contents == null) {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             } else {
-                val intent = Intent(this, SendActivity::class.java)
-                intent.putExtra("address", "")
-                intent.putExtra("payload", result.contents.trim())
+                val intent = Intent(this, SendV2Activity::class.java)
+                intent.putExtra("uri", result.contents)
                 startActivity(intent)
             }
         }
