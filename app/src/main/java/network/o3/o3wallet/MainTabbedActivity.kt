@@ -11,7 +11,11 @@ import network.o3.o3wallet.Portfolio.HomeFragment
 import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.Intent
+import android.support.v7.app.ActionBar
+import android.text.Layout
+import android.view.Gravity
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import co.getchannel.channel.Channel
 import co.getchannel.channel.callback.ChannelCallback
@@ -111,6 +115,9 @@ class MainTabbedActivity : AppCompatActivity() {
 
         setupKeyboardDetector()
         setupChannel()
+        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -129,30 +136,36 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabID = item.itemId
                         activeTabPosition = 0
                         tabName = "Home"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
+
                     }
                     R.id.action_item2 -> {
                         switchFragment(1)
                         activeTabID = item.itemId
                         activeTabPosition = 1
                         tabName = "Wallet"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_my_o3_wallet)
                     }
                     R.id.action_item3 -> {
                         switchFragment(2)
                         activeTabID = item.itemId
                         activeTabPosition = 2
                         tabName = "Marketplace"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.MARKETPLACE_marketplace)
                     }
                     R.id.action_item4 -> {
                         switchFragment(3)
                         activeTabID = item.itemId
                         activeTabPosition = 3
                         tabName = "News"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_news_feed)
                     }
                     R.id.action_item5 -> {
                         switchFragment(4)
                         activeTabID = item.itemId
                         activeTabPosition = 4
                         tabName = ""
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.SETTINGS_more)
                     }
                 }
                 Answers().logCustom(CustomEvent("Tab Tapped")
