@@ -47,7 +47,7 @@
         <activity
             android:name=".MainTabbedActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/noTitle" />
+            android:theme="@style/AppTheme.White" />
         <activity
             android:name=".Settings.AddWatchAddress"
             android:screenOrientation="portrait" />
@@ -56,9 +56,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Portfolio.AssetGraph"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Wallet.Send.SendActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Wallet.SendV2.SendV2Activity"

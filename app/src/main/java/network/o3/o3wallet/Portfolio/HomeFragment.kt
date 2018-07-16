@@ -79,7 +79,6 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setOnRefreshListener {
             homeModel.loadPortfolioValue()
         }
-
     }
 
     override fun onDestroy() {

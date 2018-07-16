@@ -159,6 +159,7 @@
     </string-array>
     <!-- This string exists in order to allow for proper formatting-->
     <string name="SETTINGS_version" comment="A title for the version label in the settings menu">Version: %1$s</string>
+    <string name="SETTINGS_more" comment="Title for more stuff tab">More...</string>
 
 
     <!-- Settings: Private Key -->

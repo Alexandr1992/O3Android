@@ -123,6 +123,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {
                 yesButton {
                     Account.deleteKeyFromDevice()
+                    mFragment.activity?.finish()
                     val intent = Intent(mContext, LandingActivity::class.java)
                     startActivity(mContext, intent, null)
                 }

@@ -49,6 +49,11 @@ class O3API {
 
     fun getPortfolio(assets: ArrayList<TransferableAsset>, interval: String, completion: (Pair<Portfolio?, Error?>) -> Unit) {
         var queryString = String.format(Locale.US, "?i=%s", interval)
+        if(assets.isEmpty()) {
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", "NEO", 0.0)
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", "GAS", 0.0)
+        }
+
         for (asset in assets) {
             queryString = queryString + String.format(Locale.US, "&%s=%.8f", asset.symbol, asset.value)
         }
