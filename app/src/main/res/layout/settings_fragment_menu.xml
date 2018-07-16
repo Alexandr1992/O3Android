@@ -134,7 +134,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_add_attachment"
+                android:src="@drawable/ic_share_alt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
