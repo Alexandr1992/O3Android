@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
@@ -90,7 +91,8 @@ class TokenSaleReviewActivity : AppCompatActivity() {
         if (!whitelisted) {
             whiteListFloatingActionButton.visibility = View.VISIBLE
             whiteListFloatingActionButton.setOnClickListener {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(tokenSaleWebURL))
+                val browserIntent = Intent(this, DAppBrowserActivity::class.java)
+                browserIntent.putExtra("url", tokenSaleWebURL)
                 startActivity(browserIntent)
             }
             whiteListErrorTextView.text = resources.getString(R.string.TOKENSALE_Not_Whitelisted)

@@ -20,6 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
 import com.crashlytics.android.answers.CustomEvent
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import java.text.SimpleDateFormat
 
 
@@ -73,8 +74,11 @@ class NewsFeedAdapter(context: Context, fragment: NewsFeedFragment): BaseAdapter
                     .putContentType("NEO News Today")
                     .putContentId(feedItem.title)
                     .putContentName("NewsFeed Item View"))
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(feedItem.link))
-            startActivity(mContext, browserIntent, null)
+
+            val url = feedItem.link
+            val i = Intent(view.context, DAppBrowserActivity::class.java)
+            i.putExtra("url", url)
+            view.context.startActivity(i)
         }
         return view
     }

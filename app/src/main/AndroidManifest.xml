@@ -100,10 +100,9 @@
         <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
         <activity android:name=".Onboarding.PasscodeRequestActivity" />
         <activity
-            android:name=".Dapp.DappBrowserActivity"
+            android:name=".Dapp.DAppBrowserActivity"
             android:label="@string/title_activity_dapp_browser"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Dapp.DAppBrowserActivity"></activity>
+            android:theme="@style/AppTheme.White" />
     </application>
 
 </manifest>

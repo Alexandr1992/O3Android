@@ -14,6 +14,7 @@ import android.net.Uri
 import android.widget.Button
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 
 
 /**
@@ -50,7 +51,8 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
                         .putContentType(feature?.category )
                         .putContentId(feature?.title)
                         .putContentName("Featured Item View"))
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(feature?.actionURL))
+                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                browserIntent.putExtra("url", feature?.actionURL)
                 view.context.startActivity(browserIntent)
             }
         }
@@ -65,7 +67,8 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
             view.findViewById<TextView>(R.id.featureSubtitle).text = feature?.subtitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).text = feature?.actionTitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).setOnClickListener {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(feature?.actionURL))
+                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                browserIntent.putExtra("url", feature?.actionURL)
                 view.context.startActivity(browserIntent)
             }
             val imageView = view.findViewById<ImageView>(R.id.featuredImage)

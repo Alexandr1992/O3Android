@@ -150,7 +150,6 @@
         <item>My Private Key</item>
         <item>Currency</item>
         <item>Watch Only Address</item>
-        <item>Network</item>
         <item>Support</item>
         <item>Contact</item>
         <item>Logout</item>
@@ -404,7 +403,7 @@
     <string name="PORTFOLIO_deposit_tokens">Deposit Tokens</string>
     <string name="PORTOFOLIO_wallet_is_empty">Your wallet is empty</string>
     <string name="WALLET_share">Share</string>
-    <string name="title_activity_dapp_browser">DappBrowserActivity</string>
+    <string name="title_activity_dapp_browser">O3 Web Browser</string>
     <string name="SEND_What">What?</string>
     <string name="SEND_Where">Where?</string>
     <string name="SEND_Review">Review</string>

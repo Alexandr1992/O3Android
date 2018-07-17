@@ -254,7 +254,12 @@ class AccountFragment : Fragment() {
 
     fun showReadyToClaim() {
         onUiThread {
-            unclaimedGASTicker.text = accountViewModel.getStoredClaims().data.gas
+            if (accountViewModel.getStoredClaims() != null) {
+                unclaimedGASTicker.text = accountViewModel.getStoredClaims()!!.data.gas
+                claimButton.visibility = View.VISIBLE
+            } else {
+                claimButton.visibility = View.INVISIBLE
+            }
             unclaimedGASTicker.textColor = resources.getColor(R.color.colorBlack)
             //learnMoreClaimButton.visibility = View.GONE
             syncButton.visibility = View.GONE
@@ -270,7 +275,7 @@ class AccountFragment : Fragment() {
 
             view?.find<TextView>(R.id.claimableGasHeader)?.visibility = View.VISIBLE
             view?.find<TickerView>(R.id.unclaimedGasTicker)?.visibility = View.VISIBLE
-            claimButton.visibility = View.VISIBLE
+
         }
     }
 

@@ -31,10 +31,10 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_settingsprivatekeyicon, R.drawable.ic_dollar_sign,
-            R.drawable.ic_settingswatchonlyaddressicon, R.drawable.ic_settingsnetworkicon,
+    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_currency,
+            R.drawable.ic_settingswatchonlyaddressicon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
-            R.drawable.ic_settings_logout, R.drawable.ic_mobile_android, R.drawable.ic_bug)
+            R.drawable.ic_settings_logout, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
     init {
         mContext = context
         mFragment = fragment
@@ -42,8 +42,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
 
     enum class CellType {
         PRIVATEKEY, CURRENCY,
-        WATCHADRESS, NETWORK,
-        SUPPORT, CONTACT, LOGOUT,
+        WATCHADRESS, SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
 
     }
@@ -57,9 +56,9 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     override fun getCount(): Int {
-       // if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             return settingsTitles.count()
-        //}
+        }
         return settingsTitles.count() - 1
     }
 
@@ -81,22 +80,6 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
         return view
     }
 
-    private fun setLocale(locale: Locale) {
-        val resources = mContext.resources
-        val configuration = resources.configuration
-        val displayMetrics = resources.displayMetrics
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLocale(locale)
-        } else {
-            configuration.locale = locale
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mContext.applicationContext.createConfigurationContext(configuration)
-        } else {
-            resources.updateConfiguration(configuration, displayMetrics)
-        }
-    }
-
     fun getClickListenerForPosition(position: Int) {
         if (position == CellType.CURRENCY.ordinal  ) {
             val currencyModal = CurrencyFragment.newInstance()
@@ -105,10 +88,6 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
         } else if (position == CellType.WATCHADRESS.ordinal) {
             val watchAddressModal = WatchAddressFragment.newInstance()
             watchAddressModal.show((mContext as AppCompatActivity).supportFragmentManager, watchAddressModal.tag)
-            return
-        } else if (position == CellType.NETWORK.ordinal) {
-            val networkModal = NetworkFragment.newInstance()
-            networkModal.show((mContext as AppCompatActivity).supportFragmentManager, networkModal.tag)
             return
         } else if (position == CellType.SUPPORT.ordinal) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))
