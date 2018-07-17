@@ -19,6 +19,7 @@ import android.content.Intent
 import android.net.Uri
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TokenListing
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 
 
 /**
@@ -176,7 +177,8 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
 
             view.setOnClickListener {
                 val url = "https://neoscan.io/transaction/" + tx.txid
-                val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val i = Intent(view.context, DAppBrowserActivity::class.java)
+                i.putExtra("url", url)
                 view.context.startActivity(i)
             }
         }

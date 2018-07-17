@@ -205,7 +205,7 @@ class AccountViewModel: ViewModel() {
         return lastDataLoadError ?: Error()
     }
 
-    fun getStoredClaims(): ClaimData {
-        return storedClaims!!
+    fun getStoredClaims(): ClaimData? {
+        return storedClaims
     }
 }

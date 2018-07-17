@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import network.o3.o3wallet.API.O3.TokenSale
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 
@@ -105,8 +106,9 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
         fun bindFooter(subscribeURL: String) {
             val subscribe = view.findViewById<Button>(R.id.subscribeNewsletterButton)
             subscribe.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(subscribeURL))
-                view.context.startActivity(intent)
+                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                browserIntent.putExtra("url", subscribeURL)
+                view.context.startActivity(browserIntent)
             }
         }
     }

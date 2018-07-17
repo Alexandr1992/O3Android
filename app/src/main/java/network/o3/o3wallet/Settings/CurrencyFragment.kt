@@ -11,10 +11,11 @@ import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.TextView
 import network.o3.o3wallet.R
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 
-class CurrencyFragment : BottomSheetDialogFragment() {
+class CurrencyFragment : RoundedBottomSheetDialogFragment() {
 
-    val supportedCurrencies = arrayOf("usd", "jpy", "eur", "krw", "cny", "aud", "gbp", "rub", "cad")
+    val supportedCurrencies = arrayOf("usd", "jpy", "eur", "krw", "cny", "aud", "gbp", "rub", "cad", "myr")
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {

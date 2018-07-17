@@ -23,7 +23,8 @@ class DAppBrowserActivity : AppCompatActivity() {
 
         view = findViewById<View>(R.id.dapp_browser_root_layout)
         webView = view.findViewById(R.id.dapp_browser_webview)
-        webView.loadUrl("https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/____dapp/example/index.html")
+        val url = intent.getStringExtra("url")
+        webView.loadUrl(url)
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
         webView!!.addJavascriptInterface(DappBrowserJSInterface(this, webView),"O3AndroidInterface")

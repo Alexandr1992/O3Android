@@ -28,6 +28,7 @@ import java.text.DecimalFormat
 import network.o3.o3wallet.DecimalDigitsInputFilter
 import android.text.InputFilter
 import android.view.Gravity
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 
 
 class TokenSaleInfoActivity : AppCompatActivity() {
@@ -264,7 +265,9 @@ class TokenSaleInfoActivity : AppCompatActivity() {
 
     fun initiateActionButton() {
         val fab = headerView.findViewById<FloatingActionButton>(R.id.websiteActionButton)
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(tokenSale.webURL))
+        val browserIntent = Intent(this, DAppBrowserActivity::class.java)
+        browserIntent.putExtra("url", tokenSale.webURL)
+        startActivity(browserIntent)
         fab.setOnClickListener {
             startActivity(browserIntent)
         }

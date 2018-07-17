@@ -26,7 +26,7 @@ import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
  * Created by drei on 12/8/17.
  */
 
-class WatchAddressFragment : BottomSheetDialogFragment() {
+class WatchAddressFragment : RoundedBottomSheetDialogFragment() {
     var adapter: WatchAddressAdapter? = null
 
     @SuppressLint("RestrictedApi")
