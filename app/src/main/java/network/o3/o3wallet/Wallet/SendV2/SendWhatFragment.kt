@@ -175,7 +175,14 @@ class SendWhatFragment : Fragment() {
         if (activity == null) {
             return
         }
-        val displayedString = amountEditText.text.toString()
+        var displayedString = amountEditText.text.toString()
+        if (displayedString == ".") {
+            amountEditText.isCursorVisible = true
+            amountEditText.text = SpannableStringBuilder("0.")
+            amountEditText.setSelection(amountEditText.text.length)
+            return
+        }
+
         if (displayedString == "" || displayedString.isEmpty() || BigDecimal(displayedString) == BigDecimal.ZERO) {
             amountEditText.isCursorVisible = false
             otherAmountTextView.text = 0.0.formattedFiatString()
