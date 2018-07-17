@@ -92,26 +92,6 @@ class O3API {
         }
     }
 
-    fun getAvailableNEP5Tokens(completion: (Pair<Array<NEP5Token>?, Error?>) -> Unit) {
-        var url = "https://o3.network/settings/nep5.json"
-        val isPrivateNet =  O3Wallet.appContext!!.defaultSharedPreferences.getBoolean("USING_PRIVATE_NET", false)
-        if (PersistentStore.getNetworkType() == "Test") {
-            url = "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/data/nep5.test.json"
-        } else if (PersistentStore.getNetworkType() == "Private") {
-            url = "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/data/nep5.private.json"
-        }
-        url.httpGet().responseString { request, response, result ->
-            val (data, error) = result
-            if (error == null) {
-                val gson = Gson()
-                val tokens = gson.fromJson<NEP5Tokens>(data!!)
-                completion(Pair(tokens.nep5tokens, null))
-            } else {
-                completion(Pair(null, Error(error.localizedMessage)))
-            }
-        }
-    }
-
     fun getFeatures(completion: (Pair<Array<Feature>?, Error?>) -> Unit) {
         var url = "https://platform.o3.network/api/v1/neo/news/featured"
         if (PersistentStore.getNetworkType() == "Test") {
