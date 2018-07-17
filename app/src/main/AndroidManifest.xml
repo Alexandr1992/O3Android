@@ -88,7 +88,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
-        <activity android:name=".Onboarding.SelectingBestNode" />
+        <activity android:name=".Onboarding.SelectingBestNode"
+            android:theme="@style/AppTheme.White"
+            />
         <activity android:name=".MarketPlace.TokenSales.TokenSaleInfoActivity" />
         <activity android:name=".MarketPlace.TokenSales.TokenSaleReviewActivity" />
         <activity android:name=".MarketPlace.TokenSales.TokenSaleReceiptActivity" />
