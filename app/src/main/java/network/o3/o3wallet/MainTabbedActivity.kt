@@ -10,25 +10,27 @@ import network.o3.o3wallet.Feed.NewsFeedFragment
 import network.o3.o3wallet.Portfolio.HomeFragment
 import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
-import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Rect
+import android.support.v7.app.ActionBar
+import android.text.Layout
+import android.view.Gravity
 import android.view.View
-import android.view.ViewTreeObserver
+import android.widget.TextView
 import android.widget.Toast
+import co.getchannel.channel.Channel
+import co.getchannel.channel.callback.ChannelCallback
 import co.kyash.rkd.KeyboardDetector
 import co.kyash.rkd.KeyboardStatus
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.android.synthetic.main.tabbar_activity_main_tabbed.*
 import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
-import network.o3.o3wallet.Wallet.Send.SendActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
-
 
 class MainTabbedActivity : AppCompatActivity() {
 
@@ -39,9 +41,9 @@ class MainTabbedActivity : AppCompatActivity() {
             SettingsFragment.newInstance())
 
     override fun onBackPressed() {
-        alert (resources.getString(R.string.TABBAR_logout_warning)) {
+        alert(resources.getString(R.string.TABBAR_logout_warning)) {
             yesButton { super.onBackPressed() }
-            noButton {  }
+            noButton { }
         }.show()
     }
 
@@ -53,9 +55,8 @@ class MainTabbedActivity : AppCompatActivity() {
             if (result != null && result.contents == null) {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             } else {
-                val intent = Intent(this, SendActivity::class.java)
-                intent.putExtra("address", "")
-                intent.putExtra("payload", result.contents.trim())
+                val intent = Intent(this, SendV2Activity::class.java)
+                intent.putExtra("uri", result.contents)
                 startActivity(intent)
             }
         }
@@ -63,9 +64,41 @@ class MainTabbedActivity : AppCompatActivity() {
 
     fun setupKeyboardDetector() {
         KeyboardDetector(this).observe().subscribe({ status ->
-            when(status) {
-                KeyboardStatus.OPENED -> { find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.GONE}
-                KeyboardStatus.CLOSED -> {find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.VISIBLE}
+            when (status) {
+                KeyboardStatus.OPENED -> {
+                    find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.GONE
+                }
+                KeyboardStatus.CLOSED -> {
+                    find<BottomNavigationView>(R.id.bottom_navigation).visibility = View.VISIBLE
+                }
+            }
+        })
+    }
+
+    fun setupChannel() {
+
+        Channel.setupApplicationContextWithApplicationKey(O3Wallet.appContext, "app_gUHDmimXT8oXRSpJvCxrz5DZvUisko_mliB61uda9iY", object: ChannelCallback {
+            override fun onSuccess() {
+    val refreshedToken = FirebaseInstanceId.getInstance().token
+                        Channel.saveDeviceToken(refreshedToken, object : ChannelCallback {
+            override fun onSuccess() {}
+
+            override fun onFail(message: String) {}
+        })
+
+                Channel.subscribeToTopic(Account.getWallet()!!.address.toString(), object : ChannelCallback {
+                    override fun onSuccess() {
+
+                    }
+
+                    override fun onFail(message: String) {
+
+                    }
+                })
+            }
+
+            override fun onFail(message: String) {
+
             }
         })
     }
@@ -81,6 +114,10 @@ class MainTabbedActivity : AppCompatActivity() {
         transaction.commit()
 
         setupKeyboardDetector()
+        setupChannel()
+        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -99,32 +136,36 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabID = item.itemId
                         activeTabPosition = 0
                         tabName = "Home"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
+
                     }
                     R.id.action_item2 -> {
                         switchFragment(1)
                         activeTabID = item.itemId
                         activeTabPosition = 1
                         tabName = "Wallet"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_my_o3_wallet)
                     }
                     R.id.action_item3 -> {
                         switchFragment(2)
                         activeTabID = item.itemId
                         activeTabPosition = 2
                         tabName = "Marketplace"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.MARKETPLACE_marketplace)
                     }
                     R.id.action_item4 -> {
                         switchFragment(3)
                         activeTabID = item.itemId
                         activeTabPosition = 3
                         tabName = "News"
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_news_feed)
                     }
                     R.id.action_item5 -> {
-                        val settingsModal = fragments!!.get(4) as SettingsFragment
-                        settingsModal.show(supportFragmentManager, settingsModal.tag)
-                        tabName = "Settings"
-                        Answers().logCustom(CustomEvent("Tab Tapped")
-                                .putCustomAttribute("Tab Name", tabName))
-                        return false
+                        switchFragment(4)
+                        activeTabID = item.itemId
+                        activeTabPosition = 4
+                        tabName = ""
+                        find<TextView>(R.id.mytext).text = resources.getString(R.string.SETTINGS_more)
                     }
                 }
                 Answers().logCustom(CustomEvent("Tab Tapped")
@@ -146,11 +187,10 @@ class MainTabbedActivity : AppCompatActivity() {
         transaction.hide(fragments!!.get(activeTabPosition!!))
         transaction.show(fragments!!.get(index))
         transaction.commit()
-        if(index == 0) {
+        if (index == 0) {
             (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
         }
     }
-
 
 
 }

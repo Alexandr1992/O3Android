@@ -57,9 +57,9 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     override fun getCount(): Int {
-        if (BuildConfig.DEBUG) {
+       // if (BuildConfig.DEBUG) {
             return settingsTitles.count()
-        }
+        //}
         return settingsTitles.count() - 1
     }
 
@@ -123,6 +123,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {
                 yesButton {
                     Account.deleteKeyFromDevice()
+                    mFragment.activity?.finish()
                     val intent = Intent(mContext, LandingActivity::class.java)
                     startActivity(mContext, intent, null)
                 }

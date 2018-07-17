@@ -1,5 +1,8 @@
 package network.o3.o3wallet.API.O3Platform
 
+import com.github.kittinunf.fuel.httpGet
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
 import com.google.gson.JsonElement
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -54,8 +57,25 @@ data class UTXOS(val data: Array<UTXO>)
 data class UTXO(val asset: String, val index: Int, val txid: String, val value: String,  val createdAtBlock: Int)
 
 data class TransferableBalanceData(val data: TransferableBalances)
-data class TransferableBalances(val version: String, val address: String, val scriptHash: String, val assets: Array<TransferableBalance>, val nep5Tokens: Array<TransferableBalance>)
+data class TransferableBalances(val version: String, val address: String, val scriptHash: String, val assets: Array<TransferableBalance>,
+                                val nep5Tokens: Array<TransferableBalance>,
+                                val ontology: Array<TransferableBalance>)
+
 data class TransferableBalance(val id: String, val name: String, val value: String, val symbol: String, val decimals: Int)
+
+data class O3Inbox(val data: List<O3InboxItem>)
+data class O3InboxItem(val title: String, val subtitle: String, val description: String,
+                       val actionTitle: String, val actionURL: String, val readmoreTitle: String, val readmoreURL: String, val iconURL: String)
+
+data class VerifiedAddressData(val data: VerifiedAddress)
+data class VerifiedAddress(val address: String, val publicKey: String, val displayName: String)
+
+data class O3RealTimePriceData(val data: O3RealTimePrice)
+data class O3RealTimePrice(val symbol: String, val currency: String, val price: Double, val lastUpdate: Long)
+
+data class ChainNetworkData(val data: ChainNetwork)
+data class ChainNetwork(val neo: NetworkStatus, val ontology: NetworkStatus)
+data class NetworkStatus(val blockcount: Int, val best: String, val nodes: List<String>)
 
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
@@ -63,21 +83,25 @@ class TransferableAssets(private val balances: TransferableBalances) {
     var scriptHash: String
     var assets: ArrayList<TransferableAsset> = arrayListOf()
     var tokens: ArrayList<TransferableAsset> = arrayListOf()
+    var ontology: ArrayList<TransferableAsset> = arrayListOf()
 
     init {
         version = balances.version
         address = balances.address
         scriptHash = balances.scriptHash
         for (asset in balances.assets) {
-            assets.add(TransferableAsset(asset, false))
+            assets.add(TransferableAsset(asset))
         }
         for (token in balances.nep5Tokens) {
-            assets.add(TransferableAsset(token, true))
+            assets.add(TransferableAsset(token))
+        }
+       for (ontAsset in balances.ontology) {
+            assets.add(TransferableAsset(ontAsset))
         }
     }
 }
 
-class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
+class TransferableAsset(val asset: TransferableBalance) {
     var id: String
     var name: String
     var value: BigDecimal
@@ -90,21 +114,21 @@ class TransferableAsset(val asset: TransferableBalance, val isToken: Boolean) {
         decimals = asset.decimals
         symbol = asset.symbol
         value = BigDecimal(asset.value)
-        if (isToken) {
-            value = value.divide(BigDecimal(Math.pow(10.0, asset.decimals.toDouble())), 8, BigDecimal.ROUND_HALF_UP)
-            print(value)
+        if (asset.symbol.toUpperCase() != "GAS") {
+            value = value.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
         }
+        print(value)
+
     }
 
     fun deepCopy(): TransferableAsset {
         var copyValue: BigDecimal
-        if (isToken) {
-            copyValue = value.multiply(BigDecimal(Math.pow(10.0, asset.decimals.toDouble())))
-        } else {
-            copyValue = value
+        copyValue = value.multiply(BigDecimal(Math.pow(10.0, decimals.toDouble())))
+        if (asset.symbol.toUpperCase() == "GAS") {
+            copyValue = copyValue.divide(BigDecimal(Math.pow(10.0, decimals.toDouble())), decimals, BigDecimal.ROUND_HALF_UP)
         }
         val balance = TransferableBalance(asset.id, asset.name, copyValue.toPlainString(), asset.symbol, asset.decimals)
-        return TransferableAsset(balance, isToken)
+        return TransferableAsset(balance)
     }
 }
 

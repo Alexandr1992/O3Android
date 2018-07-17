@@ -101,7 +101,7 @@
     <string name="ONBOARDING_paper_dialog_title" comment="Dialog title for when succesffully backed up private key on paper">Key Verified!</string>
     <string name="ONBOARDING_paper_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on paper">Make sure to keep your paper backup safe, you\'ll need it in case your phone is ever lost or damaged.</string>
     <string name="ONBOARDING_paper_dialog_button" comment="button title for paper backup dialog">Ok, got it!</string>
-    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">You're paper backup doesn\'t match</string>
+    <string name="ONBOARDING_paper_key_no_match_title" comment="alert title for when the paper key backup title does not match">Your paper backup doesn\'t match</string>
     <string name="ONBOARDING_paper_key_no_match_description" comment="alert descripition when paper key doesn't match the expected value">Please double check your private key and try again</string>
 
     <string name="ONBOARDING_enter_a_password" comment="title for entering a password for NEP-2 Encryption">Enter a password</string>
@@ -159,6 +159,7 @@
     </string-array>
     <!-- This string exists in order to allow for proper formatting-->
     <string name="SETTINGS_version" comment="A title for the version label in the settings menu">Version: %1$s</string>
+    <string name="SETTINGS_more" comment="Title for more stuff tab">More...</string>
 
 
     <!-- Settings: Private Key -->
@@ -248,6 +249,21 @@
 
     <string name="SEND_native_assets_header" comment="Section header for Native Assets(NEO/GAS) when selecting what asset to send">Native Assets</string>
     <string name="SEND_token_assets_header" comment="Section header for Token utxos when selecting what asset to send">Tokens</string>
+
+    <!-- SendV2 -->
+    <string name="SEND_transaction_failed" comment="Title for error screen when transaction fails">Transaction Failed</string>
+
+    <string name="SEND_something_went_wrong" comment="title for when something went wrong on send">Something went wrong with your transaction.</string>
+    <string name="SEND_check_your_network" comment="subheader for when transaction fails">Please check your network connection and try again.</string>
+    <string name="SEND_try_again" comment="Try again action">Try again</string>
+
+    <string name="SEND_neo_network_issue" comment="subheader after they've already tried once">There may be congestion on the blockchain.</string>
+    <string name="SEND_try_again_later" comment="try again later if there is an issue with sending">Please try again later.</string>
+    <string name="SEND_contact_support" comment="title to contact support when issue is discovered"> Contact O3 Support</string>
+
+    <string name="SEND_success" comment="title when successfully sent tranasction">Success!</string>
+    <string name="SEND_transaction_id" comment="label for transaction id after successfully complete transaction">Transaction ID:</string>
+    <string name="SEND_save_to_contacts" comment="check whether or not to save the recipient address to your contacts">Save this address to contacts</string>
 
 
     <!-- TokenSale -->
@@ -384,7 +400,15 @@
     <string name="ONBOARDING_decryption_in_progress">Verifying Private Key...</string>
     <string name="ONBOARDING_logout">logout</string>
     <string name="ONBOARDING_signin">Sign in to O3</string>
+    <string name="SEND_select_asset">Select Asset</string>
     <string name="PORTFOLIO_deposit_tokens">Deposit Tokens</string>
     <string name="PORTOFOLIO_wallet_is_empty">Your wallet is empty</string>
     <string name="WALLET_share">Share</string>
+    <string name="title_activity_dapp_browser">DappBrowserActivity</string>
+    <string name="SEND_What">What?</string>
+    <string name="SEND_Where">Where?</string>
+    <string name="SEND_Review">Review</string>
+    <string name="SEND_contacts">Contacts</string>
+    <string name="SEND_Neo_Address">Enter NEO Address</string>
+    <string name="SEND_please_review">Please carefully review your transaction details. Once sent, this transaction cannot be reversed.</string>
 </resources>

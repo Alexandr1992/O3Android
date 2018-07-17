@@ -3,21 +3,21 @@
     <item
         android:id="@+id/action_item1"
         android:icon="@drawable/ic_tab_portfolio"
-        android:title="@string/TABBAR_portfolio" />
+        android:title="" />
     <item
         android:id="@+id/action_item2"
         android:icon="@drawable/ic_tab_account"
-        android:title="@string/TABBAR_account" />
+        android:title="" />
     <item
         android:id="@+id/action_item3"
         android:icon="@drawable/ic_tab_marketplace"
-        android:title="@string/MARKETPLACE_marketplace" />
+        android:title="" />
     <item
         android:id="@+id/action_item4"
         android:icon="@drawable/ic_tab_news"
-        android:title="@string/TABBAR_news_feed" />
+        android:title="" />
     <item
         android:id="@+id/action_item5"
         android:icon="@drawable/ic_tab_settings"
-        android:title="@string/SETTINGS_settings_title" />
+        android:title="" />
 </menu>

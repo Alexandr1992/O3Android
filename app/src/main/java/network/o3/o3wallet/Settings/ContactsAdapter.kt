@@ -14,7 +14,7 @@ import network.o3.o3wallet.R
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.opengl.Visibility
-import network.o3.o3wallet.Wallet.Send.SendActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import network.o3.o3wallet.Wallet.toast
 
 
@@ -49,11 +49,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
     }
 
     override fun getCount(): Int {
-        if (mCanAddAddress) {
-            return contacts.count() + 1
-        } else {
-            return contacts.count()
-        }
+        return contacts.count() + 1
     }
 
     fun setOptionMenu(optionButton: ImageButton, position: Int) {
@@ -94,7 +90,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
         } else {
             optionButton.visibility = View.GONE
             view.setOnClickListener {
-                (mContext as SendActivity).addressTextView.text = subtitleTextView.text
+                (mContext as SendV2Activity).sendViewModel.setSelectedContact(getItem(position))
                 mFragment.dismiss()
             }
         }
@@ -115,7 +111,7 @@ class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddres
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
         val layoutInflater = LayoutInflater.from(mContext)
-        if (position != count - 1 || !mCanAddAddress) {
+        if (position != count - 1) {
             return getAddressView(layoutInflater, position, viewGroup)
         } else {
             return getAddView(layoutInflater, viewGroup)

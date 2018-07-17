@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
+    android:background="@color/zxing_transparent"
+    android:clipToPadding="true"
     android:maxHeight="48dp"
     android:minHeight="48dp">
 
@@ -17,7 +18,7 @@
         android:includeFontPadding="false"
         android:text="@string/SETTINGS_available_nodes"
         android:textColor="@android:color/black"
-        android:textSize="24sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

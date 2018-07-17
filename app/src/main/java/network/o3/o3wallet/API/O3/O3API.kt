@@ -3,9 +3,11 @@ package network.o3.o3wallet.API.O3
 import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.NEO.NEP5Token
 import network.o3.o3wallet.API.NEO.NEP5Tokens
+import network.o3.o3wallet.API.O3Platform.PlatformResponse
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
@@ -47,6 +49,11 @@ class O3API {
 
     fun getPortfolio(assets: ArrayList<TransferableAsset>, interval: String, completion: (Pair<Portfolio?, Error?>) -> Unit) {
         var queryString = String.format(Locale.US, "?i=%s", interval)
+        if(assets.isEmpty()) {
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", "NEO", 0.0)
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", "GAS", 0.0)
+        }
+
         for (asset in assets) {
             queryString = queryString + String.format(Locale.US, "&%s=%.8f", asset.symbol, asset.value)
         }
@@ -85,34 +92,20 @@ class O3API {
         }
     }
 
-    fun getAvailableNEP5Tokens(completion: (Pair<Array<NEP5Token>?, Error?>) -> Unit) {
-        var url = "https://o3.network/settings/nep5.json"
-        val isPrivateNet =  O3Wallet.appContext!!.defaultSharedPreferences.getBoolean("USING_PRIVATE_NET", false)
-        if (PersistentStore.getNetworkType() == "Test") {
-            url = "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/data/nep5.test.json"
-        } else if (PersistentStore.getNetworkType() == "Private") {
-            url = "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/data/nep5.private.json"
-        }
-        url.httpGet().responseString { request, response, result ->
-            val (data, error) = result
-            if (error == null) {
-                val gson = Gson()
-                val tokens = gson.fromJson<NEP5Tokens>(data!!)
-                completion(Pair(tokens.nep5tokens, null))
-            } else {
-                completion(Pair(null, Error(error.localizedMessage)))
-            }
-        }
-    }
-
     fun getFeatures(completion: (Pair<Array<Feature>?, Error?>) -> Unit) {
-        val url = "https://cdn.o3.network/data/featured.json"
+        var url = "https://platform.o3.network/api/v1/neo/news/featured"
+        if (PersistentStore.getNetworkType() == "Test") {
+            url = "https://platform.o3.network/api/v1/neo/news/featured?network=test"
+        } else if (PersistentStore.getNetworkType() == "Private") {
+            url = "https://platform.o3.network/api/v1/neo/news/featured?network=private"
+        }
         url.httpGet().responseString {request, response, result ->
             val (data, error) = result
             if (error == null) {
                 val gson = Gson()
-                val featureFeed = gson.fromJson<FeatureFeed>(data!!)
-                completion(Pair(featureFeed.features, null))
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val featureFeedData = gson.fromJson<FeatureFeedData>(platformResponse.result)
+                completion(Pair(featureFeedData.data.features, null))
             } else {
                 completion(Pair(null, Error(error.localizedMessage)))
             }

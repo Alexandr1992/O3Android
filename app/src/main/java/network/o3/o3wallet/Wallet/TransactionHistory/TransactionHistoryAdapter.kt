@@ -17,6 +17,8 @@ import org.jetbrains.anko.textColor
 import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.net.Uri
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.API.O3Platform.TokenListing
 
 
 /**
@@ -29,14 +31,14 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
     val LOADING_FOOTER_VIEW = 1
     private var mContext = context
     private var isLoadingAdded = false
-    private var availableTokens:Array<NEP5Token> = arrayOf()
+    private var availableTokens:Array<TokenListing> = arrayOf()
 
     init {
-        O3API().getAvailableNEP5Tokens {
+        O3PlatformClient().getTokenListings {
             if (it.second != null) {
-                return@getAvailableNEP5Tokens
+                return@getTokenListings
             } else {
-                availableTokens = it.first!!
+                availableTokens = it.first!!.nep5tokens
             }
         }
     }
@@ -102,7 +104,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
 
     class TransactionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private var view = v
-        private var supportedTokens: Array<NEP5Token> = arrayOf()
+        private var supportedTokens: Array<TokenListing> = arrayOf()
 
         companion object {
             private val TRANSACTION_KEY = "TRANSACTION_KEY"
@@ -126,7 +128,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             }
         }
 
-        fun bindTransaction(tx: NeoScanTransactionEntry, tokens: Array<NEP5Token>) {
+        fun bindTransaction(tx: NeoScanTransactionEntry, tokens: Array<TokenListing>) {
             supportedTokens = tokens
 
             val toTextView = view.find<TextView>(R.id.toTextView)
@@ -135,11 +137,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             val blockTextView = view.find<TextView>(R.id.blockNumberTextView)
 
             val isTokenAsset = setTokenName(tx)
-            val amountToDisplay = if(isTokenAsset) {
-                tx.amount / 100000000
-            } else {
-                tx.amount
-            }
+            val amountToDisplay = tx.amount
 
             var toNickname = PersistentStore.getContacts().find { it.address == tx.address_to }?.nickname
             if (toNickname == null) {
