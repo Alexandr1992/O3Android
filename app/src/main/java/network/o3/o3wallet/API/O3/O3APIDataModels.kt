@@ -63,7 +63,7 @@ data class TokenSale(val name: String,
                      val footer: Array<FooterRow>)
 
 data class AcceptingAsset(val asset: String,
-                          val basicRate: Long,
+                          val basicRate: Double,
                           val min: Double,
                           val max: Double)
 

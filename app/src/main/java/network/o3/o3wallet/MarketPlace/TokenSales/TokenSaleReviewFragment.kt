@@ -1,29 +1,32 @@
 package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
-import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton
 import java.text.DecimalFormat
 
-class TokenSaleReviewActivity : AppCompatActivity() {
+class TokenSaleReviewFragment : Fragment() {
 
     private lateinit var bannerURL: String
     private lateinit var assetSendSymbol: String
@@ -40,18 +43,19 @@ class TokenSaleReviewActivity : AppCompatActivity() {
     private lateinit var participateButton: Button
     private lateinit var loadingConstraintView: ConstraintLayout
     private lateinit var mainConstraintView: ConstraintLayout
+    private lateinit var mView: View
 
     fun initiateViews(whitelisted: Boolean) {
-        val sendAmountView = findViewById<TextView>(R.id.tokenSaleReviewSendAmountTextView)
-        val receiveAmountTextView = findViewById<TextView>(R.id.tokenSaleReviewReceiveAmountTextView)
-        val priorityTextView = findViewById<TextView>(R.id.tokenSaleReviewPriorityTextView)
-        val whiteListFloatingActionButton = findViewById<FloatingActionButton>(R.id.whiteListFloatingActionButton)
-        val whiteListErrorTextView = findViewById<TextView>(R.id.whiteListErrorTextView)
-        val issuerAgreementCheckbox = findViewById<CheckBox>(R.id.issuerDisclaimerCheckbox)
-        val o3AgreementCheckbox = findViewById<CheckBox>(R.id.o3DisclaimerCheckbox)
+        val sendAmountView = mView.findViewById<TextView>(R.id.tokenSaleReviewSendAmountTextView)
+        val receiveAmountTextView = mView.findViewById<TextView>(R.id.tokenSaleReviewReceiveAmountTextView)
+        val priorityTextView = mView.findViewById<TextView>(R.id.tokenSaleReviewPriorityTextView)
+        val whiteListFloatingActionButton = mView.findViewById<FloatingActionButton>(R.id.whiteListFloatingActionButton)
+        val whiteListErrorTextView = mView.findViewById<TextView>(R.id.whiteListErrorTextView)
+        val issuerAgreementCheckbox = mView.findViewById<CheckBox>(R.id.issuerDisclaimerCheckbox)
+        val o3AgreementCheckbox = mView.findViewById<CheckBox>(R.id.o3DisclaimerCheckbox)
 
-        mainConstraintView = findViewById<ConstraintLayout>(R.id.tokenSaleReviewConstraintView)
-        loadingConstraintView = findViewById<ConstraintLayout>(R.id.tokenSaleLoadingConstraintView)
+        mainConstraintView = mView.findViewById<ConstraintLayout>(R.id.tokenSaleReviewConstraintView)
+        loadingConstraintView = mView.findViewById<ConstraintLayout>(R.id.tokenSaleLoadingConstraintView)
 
 
         val df = DecimalFormat()
@@ -91,7 +95,7 @@ class TokenSaleReviewActivity : AppCompatActivity() {
         if (!whitelisted) {
             whiteListFloatingActionButton.visibility = View.VISIBLE
             whiteListFloatingActionButton.setOnClickListener {
-                val browserIntent = Intent(this, DAppBrowserActivity::class.java)
+                val browserIntent = Intent(context, DAppBrowserActivity::class.java)
                 browserIntent.putExtra("url", tokenSaleWebURL)
                 startActivity(browserIntent)
             }
@@ -105,16 +109,17 @@ class TokenSaleReviewActivity : AppCompatActivity() {
     }
 
     fun moveToReceipt(txId: String) {
-        val intent = Intent(this, TokenSaleReceiptActivity::class.java)
-        intent.putExtra("assetSendSymbol", assetSendSymbol)
-        intent.putExtra("assetSendAmount", assetSendAmount)
-        intent.putExtra("assetReceiveSymbol", assetReceiveSymbol)
-        intent.putExtra("assetReceiveAmount", assetReceiveAmount)
-        intent.putExtra("priorityEnabled", priorityEnabled)
-        intent.putExtra("transactionID", txId)
-        intent.putExtra("tokenSaleName", tokenSaleName)
-        intent.putExtra("tokenSaleWebURL", tokenSaleWebURL)
-        startActivity(intent)
+        val intent = Intent(context, TokenSaleReceiptFragment::class.java)
+        val bundle = Bundle()
+        bundle.putString("assetSendSymbol", assetSendSymbol)
+        bundle.putDouble("assetSendAmount", assetSendAmount)
+        bundle.putString("assetReceiveSymbol", assetReceiveSymbol)
+        bundle.putDouble("assetReceiveAmount", assetReceiveAmount)
+        bundle.putBoolean("priorityEnabled", priorityEnabled)
+        bundle.putString("transactionID", txId)
+        bundle.putString("tokenSaleName", tokenSaleName)
+        bundle.putString("tokenSaleWebURL", tokenSaleWebURL)
+        mView.findNavController().navigate(R.id.action_tokenSaleReviewFragment_to_tokenSaleReceiptFragment, bundle)
     }
 
     fun performMinting() {
@@ -123,7 +128,7 @@ class TokenSaleReviewActivity : AppCompatActivity() {
         if (priorityEnabled) { fee = 0.0011 }
         NeoNodeRPC(PersistentStore.getNodeURL()).participateTokenSales(assetReceiveContractHash, assetSendId,
                 assetSendAmount, remark, fee) {
-            runOnUiThread {
+            onUiThread {
                 if (it.second != null) {
                     loadingConstraintView.visibility = View.GONE
                     mainConstraintView.visibility = View.VISIBLE
@@ -154,29 +159,30 @@ class TokenSaleReviewActivity : AppCompatActivity() {
         }
     }
 
-    fun parseIntent() {
-        bannerURL = intent.getStringExtra("bannerURL")
-        assetSendSymbol = intent.getStringExtra("assetSendSymbol")
-        assetSendAmount = intent.getDoubleExtra("assetSendAmount", 0.0)
-        assetSendId = intent.getStringExtra("assetSendId")
-        assetReceiveSymbol = intent.getStringExtra("assetReceiveSymbol")
-        assetReceiveContractHash = intent.getStringExtra("assetReceiveContractHash")
-        assetReceiveAmount = intent.getDoubleExtra("assetReceiveAmount", 0.0)
-        priorityEnabled = intent.getBooleanExtra("priorityEnabled", false)
-        tokenSaleName = intent.getStringExtra("tokenSaleName")
-        tokenSaleWebURL = intent.getStringExtra("tokenSaleWebURL")
+    fun parseBundle() {
+        val bundle = arguments!!
+        bannerURL = bundle.getString("bannerURL")
+        assetSendSymbol = bundle.getString("assetSendSymbol")
+        assetSendAmount = bundle.getDouble("assetSendAmount", 0.0)
+        assetSendId = bundle.getString("assetSendId")
+        assetReceiveSymbol = bundle.getString("assetReceiveSymbol")
+        assetReceiveContractHash = bundle.getString("assetReceiveContractHash")
+        assetReceiveAmount = bundle.getDouble("assetReceiveAmount", 0.0)
+        priorityEnabled = bundle.getBoolean("priorityEnabled", false)
+        tokenSaleName = bundle.getString("tokenSaleName")
+        tokenSaleWebURL = bundle.getString("tokenSaleWebURL")
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        parseIntent()
-        setContentView(R.layout.tokensale_review_activity)
-        val bannerView = findViewById<ImageView>(R.id.tokenSaleReviewBannerImageView)
-        participateButton = findViewById<Button>(R.id.tokenSaleReviewParticipateButton)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        mView = inflater.inflate(R.layout.tokensale_review_fragment, container, false)
+        parseBundle()
+        val bannerView = mView.findViewById<ImageView>(R.id.tokenSaleReviewBannerImageView)
+        participateButton = mView.findViewById<Button>(R.id.tokenSaleReviewParticipateButton)
         Glide.with(this).load(bannerURL).into(bannerView)
         NeoNodeRPC(PersistentStore.getNodeURL()).getWhiteListStatus(assetReceiveContractHash, Account.getWallet()?.address!!) {
-            runOnUiThread {
+            onUiThread{
                 if (it.second != null) {
                     initiateViews(false)
                     initiateParticipateButton()
@@ -187,5 +193,6 @@ class TokenSaleReviewActivity : AppCompatActivity() {
                 }
             }
         }
+        return mView
     }
 }

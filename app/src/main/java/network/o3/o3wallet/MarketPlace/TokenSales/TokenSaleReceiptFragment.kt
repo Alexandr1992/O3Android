@@ -4,14 +4,18 @@ import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.R
+import org.jetbrains.anko.find
 import java.text.DecimalFormat
 import java.util.*
 
-class TokenSaleReceiptActivity : AppCompatActivity() {
+class TokenSaleReceiptFragment : Fragment() {
     private lateinit var tokenSaleName: String
     private lateinit var txID: String
     private lateinit var assetSendSymbol: String
@@ -20,55 +24,45 @@ class TokenSaleReceiptActivity : AppCompatActivity() {
     private lateinit var assetSendString: String
     private lateinit var assetReceiveString: String
 
-
     private var assetSendAmount: Double = 0.0
     private var assetReceiveAmount: Double = 0.0
     private var priorityEnabled: Boolean = false
+
+    lateinit var mView: View
 
 
     fun setRecieptValues() {
         val df = DecimalFormat()
         df.maximumFractionDigits = 8
 
-        val txidview = findViewById<TextView>(R.id.receiptTxIdValueTextView)
+        val txidview = mView.find<TextView>(R.id.receiptTxIdValueTextView)
         txidview.text = txID
 
-        val tokenSaleTextView = findViewById<TextView>(R.id.receiptSaleNameValueTextView)
+        val tokenSaleTextView = mView.find<TextView>(R.id.receiptSaleNameValueTextView)
         tokenSaleTextView.text = tokenSaleName
 
         if (assetSendSymbol == "NEO") { df.maximumFractionDigits = 0 }
-        val assetSendTextView = findViewById<TextView>(R.id.receiptSendingValueTextView)
+        val assetSendTextView = mView.find<TextView>(R.id.receiptSendingValueTextView)
         assetSendString = df.format(assetSendAmount) + " " + assetSendSymbol
         assetSendTextView.text = assetSendString
 
         df.maximumFractionDigits = 8
-        val assetReceiveTextView = findViewById<TextView>(R.id.receiptForValueTextView)
+        val assetReceiveTextView = mView.find<TextView>(R.id.receiptForValueTextView)
         assetReceiveString = df.format(assetReceiveAmount) + " " + assetReceiveSymbol
         assetReceiveTextView.text = assetReceiveString
 
-        val dateTextView = findViewById<TextView>(R.id.receiptDateValueTextView)
+        val dateTextView = mView.find<TextView>(R.id.receiptDateValueTextView)
         dateString = Date().toString()
         dateTextView.text = dateString
 
         if (!priorityEnabled) {
-            findViewById<TextView>(R.id.receiptPriorityValueTextView).visibility = View.INVISIBLE
-            findViewById<TextView>(R.id.receiptPriorityLabelTextView).visibility = View.INVISIBLE
+            mView.find<TextView>(R.id.receiptPriorityValueTextView).visibility = View.INVISIBLE
+            mView.find<TextView>(R.id.receiptPriorityLabelTextView).visibility = View.INVISIBLE
         }
     }
 
-    override fun onBackPressed() {
-        returnToMain()
-        super.onBackPressed()
-    }
-
-    fun returnToMain() {
-        intent = Intent(this, MainTabbedActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        startActivity(intent)
-    }
-
     fun initiateReceiptEmail() {
-        val emailTextView = findViewById<TextView>(R.id.tokenSaleEmailReceiptTextView)
+        val emailTextView = mView.find<TextView>(R.id.tokenSaleEmailReceiptTextView)
         emailTextView.setOnClickListener {
 
 
@@ -85,26 +79,29 @@ class TokenSaleReceiptActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.tokensale_receipt_activity)
+        mView = inflater.inflate(R.layout.tokensale_receipt_activity, container, false)
 
-        assetSendSymbol = intent.getStringExtra("assetSendSymbol")
-        assetSendAmount = intent.getDoubleExtra("assetSendAmount", 0.0)
-        assetReceiveSymbol = intent.getStringExtra("assetReceiveSymbol")
-        assetReceiveAmount = intent.getDoubleExtra("assetReceiveAmount", 0.0)
-        priorityEnabled = intent.getBooleanExtra("priorityEnabled", false)
-        txID = intent.getStringExtra("transactionID")
-        tokenSaleName = intent.getStringExtra("tokenSaleName")
+        val args = arguments!!
+        assetSendSymbol = args.getString("assetSendSymbol")
+        assetSendAmount = args.getDouble("assetSendAmount", 0.0)
+        assetReceiveSymbol = args.getString("assetReceiveSymbol")
+        assetReceiveAmount = args.getDouble("assetReceiveAmount", 0.0)
+        priorityEnabled = args.getBoolean("priorityEnabled", false)
+        txID = args.getString("transactionID")
+        tokenSaleName = args.getString("tokenSaleName")
 
 
-        val returnButton = findViewById<TextView>(R.id.returnToMainButton)
+        val returnButton = mView.find<TextView>(R.id.returnToMainButton)
         returnButton.setOnClickListener {
-            returnToMain()
+            activity?.finish()
         }
 
         setRecieptValues()
         initiateReceiptEmail()
+        return mView
 
     }
 }
