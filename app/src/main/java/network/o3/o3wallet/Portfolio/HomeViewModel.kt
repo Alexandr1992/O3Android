@@ -183,6 +183,7 @@ class HomeViewModel {
     }
 
     private fun loadAssetsForAllAddresses() {
+        bg {
         balanceCountDownLatch = CountDownLatch(1 + watchAddresses.size)
         loadAssetsFor(Account.getWallet()?.address!!, false)
         for (address in watchAddresses) {
@@ -190,6 +191,7 @@ class HomeViewModel {
         }
         balanceCountDownLatch?.await()
         delegate.updateBalanceData(getSortedAssets())
+        }
     }
 
     fun loadAssetsFor(address: String, isReadOnly: Boolean) {

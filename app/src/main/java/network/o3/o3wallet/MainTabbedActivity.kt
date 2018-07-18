@@ -189,6 +189,9 @@ class MainTabbedActivity : AppCompatActivity() {
         transaction.hide(fragments!!.get(activeTabPosition!!))
         transaction.show(fragments!!.get(index))
         transaction.commit()
+        if (index == 0) {
+            (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
+        }
     }
 
 
