@@ -60,7 +60,13 @@ data class TokenSale(val name: String,
                      val endTime: Long,
                      val acceptingAssets: Array<AcceptingAsset>,
                      val info: Array<InfoRow>,
-                     val footer: Array<FooterRow>)
+                     val footer: Array<FooterRow>,
+                     val companyID: String,
+                     val address: String,
+                     val kycStatus: KycStatus)
+
+data class KycStatus(val address: String,
+                     val verified: Boolean)
 
 data class AcceptingAsset(val asset: String,
                           val basicRate: Double,
