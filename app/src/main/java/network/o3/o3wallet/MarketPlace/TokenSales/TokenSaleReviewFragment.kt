@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
+import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.PersistentStore
@@ -24,6 +25,7 @@ import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton
+import java.math.BigDecimal
 import java.text.DecimalFormat
 
 class TokenSaleReviewFragment : Fragment() {
@@ -35,6 +37,9 @@ class TokenSaleReviewFragment : Fragment() {
     private lateinit var assetReceiveContractHash: String
     private lateinit var tokenSaleName: String
     private lateinit var tokenSaleWebURL: String
+    private lateinit var tokenSaleAddress: String
+    private lateinit var tokenSaleCompanyID: String
+    private var isVerified: Boolean = false
 
     private var assetSendAmount: Double = 0.0
     private var assetReceiveAmount: Double = 0.0
@@ -123,22 +128,49 @@ class TokenSaleReviewFragment : Fragment() {
     }
 
     fun performMinting() {
-        val remark = String.format("O3X%s", tokenSaleName)
+        val remark = String.format("O3X%s", tokenSaleCompanyID)
         var fee: Double = 0.0
         if (priorityEnabled) { fee = 0.0011 }
-        NeoNodeRPC(PersistentStore.getNodeURL()).participateTokenSales(assetReceiveContractHash, assetSendId,
-                assetSendAmount, remark, fee) {
-            onUiThread {
-                if (it.second != null) {
-                    loadingConstraintView.visibility = View.GONE
-                    mainConstraintView.visibility = View.VISIBLE
-                    alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
-                } else if (it.first == null) {
-                    loadingConstraintView.visibility = View.GONE
-                    mainConstraintView.visibility = View.VISIBLE
-                    alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
-                } else {
-                   moveToReceipt(it.first!!)
+
+
+        //Smart Contract Based Participation
+        if (tokenSaleAddress == "") {
+            NeoNodeRPC(PersistentStore.getNodeURL()).participateTokenSales(assetReceiveContractHash, assetSendId,
+                    assetSendAmount, remark, fee) {
+                onUiThread {
+                    if (it.second != null) {
+                        loadingConstraintView.visibility = View.GONE
+                        mainConstraintView.visibility = View.VISIBLE
+                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                    } else if (it.first == null) {
+                        loadingConstraintView.visibility = View.GONE
+                        mainConstraintView.visibility = View.VISIBLE
+                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                    } else {
+                       moveToReceipt(it.first!!)
+                    }
+                }
+            }
+        } else {
+            var asset = NeoNodeRPC.Asset.NEO
+            if (assetSendSymbol.toUpperCase() == "GAS") {
+                asset = NeoNodeRPC.Asset.GAS
+            }
+            val attributes = arrayOf(TransactionAttribute().remarkAttribute(remark))
+            NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(
+                    Account.getWallet()!!, asset, BigDecimal(assetSendAmount), tokenSaleAddress, null) {
+                onUiThread {
+                    if (it.second != null) {
+                        loadingConstraintView.visibility = View.GONE
+                        mainConstraintView.visibility = View.VISIBLE
+                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                    } else if (it.first == null) {
+                        loadingConstraintView.visibility = View.GONE
+                        mainConstraintView.visibility = View.VISIBLE
+                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                    } else {
+                        moveToReceipt(it.first!!)
+                    }
                 }
             }
         }
@@ -171,6 +203,9 @@ class TokenSaleReviewFragment : Fragment() {
         priorityEnabled = bundle.getBoolean("priorityEnabled", false)
         tokenSaleName = bundle.getString("tokenSaleName")
         tokenSaleWebURL = bundle.getString("tokenSaleWebURL")
+        isVerified = bundle.getBoolean("verified")
+        tokenSaleAddress = bundle.getString("tokenSaleAddress")
+        tokenSaleCompanyID = bundle.getString("tokenSaleCompanyID")
     }
 
 
@@ -181,18 +216,8 @@ class TokenSaleReviewFragment : Fragment() {
         val bannerView = mView.findViewById<ImageView>(R.id.tokenSaleReviewBannerImageView)
         participateButton = mView.findViewById<Button>(R.id.tokenSaleReviewParticipateButton)
         Glide.with(this).load(bannerURL).into(bannerView)
-        NeoNodeRPC(PersistentStore.getNodeURL()).getWhiteListStatus(assetReceiveContractHash, Account.getWallet()?.address!!) {
-            onUiThread{
-                if (it.second != null) {
-                    initiateViews(false)
-                    initiateParticipateButton()
-
-                } else {
-                    initiateViews(it.first!!)
-                    initiateParticipateButton()
-                }
-            }
-        }
+        initiateViews(isVerified)
+        initiateParticipateButton()
         return mView
     }
 }

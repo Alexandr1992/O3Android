@@ -162,6 +162,11 @@ class TokenSaleInfoFragment : Fragment() {
 
     fun initiatePriority() {
         val priorityCheckbox = footerView.findViewById<CheckBox>(R.id.tokenSalePriorityCheckbox)
+        val whatIsPriority = footerView.findViewById<TextView>(R.id.priorityInfoTextView)
+        if (tokenSale.address != "") {
+            priorityCheckbox.visibility = View.GONE
+            whatIsPriority.visibility = View.GONE
+        }
         priorityCheckbox.setOnClickListener {
             priorityEnabled = !priorityEnabled
         }
@@ -187,6 +192,8 @@ class TokenSaleInfoFragment : Fragment() {
             val bundle = Bundle()
             val sendAssetAmount = amountEditText.text.toString().toDouble()
             bundle.putString("bannerURL", tokenSale.imageURL)
+            bundle.putString("tokenSaleCompanyID", tokenSale.companyID)
+            bundle.putString("tokenSaleAddress", tokenSale.address)
             bundle.putDouble("assetSendAmount", sendAssetAmount)
             bundle.putString("assetSendSymbol", selectedAsset.asset.toUpperCase())
             val assetID = if (selectedAsset.asset.toUpperCase() == "NEO") {
@@ -200,6 +207,7 @@ class TokenSaleInfoFragment : Fragment() {
             bundle.putDouble("assetReceiveAmount", sendAssetAmount * selectedAsset.basicRate)
             bundle.putString("assetReceiveContractHash", tokenSale.scriptHash)
             bundle.putBoolean("withPriority", priorityEnabled)
+            bundle.putBoolean("verified", tokenSale.kycStatus.verified)
             bundle.putString("tokenSaleName", tokenSale.name)
             bundle.putString("tokenSaleWebURL", tokenSale.webURL)
             view?.findNavController()?.navigate(R.id.action_tokenSaleInfoFragment_to_tokenSaleReviewFragment, bundle)
