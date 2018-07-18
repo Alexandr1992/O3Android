@@ -11,6 +11,7 @@ import network.o3.o3wallet.Portfolio.HomeFragment
 import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.Intent
+import android.support.design.bottomnavigation.LabelVisibilityMode
 import android.support.v7.app.ActionBar
 import android.text.Layout
 import android.view.Gravity
@@ -121,6 +122,7 @@ class MainTabbedActivity : AppCompatActivity() {
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED)
         bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var selectedFragment: Fragment? = null
