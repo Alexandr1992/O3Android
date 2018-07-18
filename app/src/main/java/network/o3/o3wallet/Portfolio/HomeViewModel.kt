@@ -170,6 +170,7 @@ class HomeViewModel {
 
     //@Synchronized
     fun loadAssetsFromModel(useCached: Boolean) {
+        delegate.showLoadingIndicator()
         if (balanceCountDownLatch != null && balanceCountDownLatch?.count?.toInt() != 0) {
             return
         }
