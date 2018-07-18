@@ -32,8 +32,8 @@ class CurrencyAdapter(context: Context, fragment: CurrencyFragment): BaseAdapter
 
     private val mContext: Context
     private val mFragment: CurrencyFragment
-    private val supportedCurrencies = arrayOf("usd", "jpy", "eur", "krw", "cny", "aud", "gbp", "rub", "cad", "myr")
-    private val supportedSymbols = arrayOf("($)", "(¥)", "(€)", "(₩)", "(¥)", "($)", "(£)", "(\u20BD)", "($)", "(RM)" )
+    private val supportedCurrencies = arrayOf("usd", "jpy", "eur", "krw", "cny", "aud", "gbp", "rub", "cad", "myr", "inr")
+    private val supportedSymbols = arrayOf("($)", "(¥)", "(€)", "(₩)", "(¥)", "($)", "(£)", "(\u20BD)", "($)", "(RM)", "(₹)")
 
 
     init {

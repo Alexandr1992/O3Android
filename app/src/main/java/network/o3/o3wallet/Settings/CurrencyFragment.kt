@@ -15,7 +15,7 @@ import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 
 class CurrencyFragment : RoundedBottomSheetDialogFragment() {
 
-    val supportedCurrencies = arrayOf("usd", "jpy", "eur", "krw", "cny", "aud", "gbp", "rub", "cad", "myr")
+    val supportedCurrencies = arrayOf("usd", "jpy", "eur", "krw", "cny", "aud", "gbp", "rub", "cad", "myr", "inr")
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
