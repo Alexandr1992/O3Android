@@ -201,7 +201,7 @@ abstract class PaginationScrollListener(internal var layoutManager: LinearLayout
     var isLoading: Boolean = false
     protected abstract fun loadMoreItems()
 
-    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
         val visibleItemCount = layoutManager.childCount
