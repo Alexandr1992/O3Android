@@ -178,10 +178,12 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
         if (portfolio.data.first().averageBTC == 0.0) {
             sparkView?.visibility = View.INVISIBLE
+            view?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
             emptyPortfolioActionButton?.visibility = View.VISIBLE
         } else {
             sparkView?.visibility = View.VISIBLE
+            view?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.VISIBLE
             emptyWalletView?.visibility = View.INVISIBLE
             emptyPortfolioActionButton?.visibility = View.INVISIBLE
         }
