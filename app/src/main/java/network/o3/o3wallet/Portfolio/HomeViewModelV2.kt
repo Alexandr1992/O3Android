@@ -141,7 +141,11 @@ class HomeViewModelV2: ViewModel() {
             latch.await()
             PersistentStore.setLatestWatchAddressBalances(assetsReadOnlyIntermediate)
             assetsReadOnly = assetsReadOnlyIntermediate
-            displayedAssets?.postValue(assetsReadOnlyIntermediate)
+            if (displayType == DisplayType.COMBINED) {
+                combineReadOnlyAndWritable()
+            } else if (displayType == DisplayType.COLD) {
+                displayedAssets?.postValue(assetsReadOnlyIntermediate)
+            }
             delegate.hideAssetLoadingIndicator()
         }
     }
