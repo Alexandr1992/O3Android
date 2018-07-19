@@ -190,9 +190,7 @@ class MainTabbedActivity : AppCompatActivity() {
         transaction.show(fragments!!.get(index))
         transaction.commit()
         if (index == 0) {
-            (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
+           (fragments!!.get(index) as HomeFragment).homeModel.getDisplayedAssets(false)
         }
     }
-
-
 }

@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Portfolio
 
+import android.arch.lifecycle.Observer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -16,44 +17,51 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager.*
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.widget.*
+import com.airbnb.lottie.LottieAnimationView
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
-import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Onboarding.CreateKey.Backup.DialogBackupKeyFragment
 import network.o3.o3wallet.Settings.WatchAddressFragment
 import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.onUiThread
 
+interface HomeViewModelProtocol {
+    fun showPortfolioLoadingIndicator()
+    fun hidePortfolioLoadingIndicator()
+    fun hideAssetLoadingIndicator()
+    fun updatePortfolioData(portfolio: Portfolio)
+}
 
 class HomeFragment : Fragment(), HomeViewModelProtocol {
     var selectedButton: Button? = null
-    lateinit var homeModel: HomeViewModel
+    lateinit var homeModel: HomeViewModelV2
     var viewPager: ViewPager? = null
     var chartDataAdapter = PortfolioDataAdapter(FloatArray(0))
     var assetListAdapter: AssetListAdapter? = null
     var sparkView: SparkView? = null
 
+    lateinit var mView: View
+
     val needReloadWatchAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            homeModel.watchAddresses = PersistentStore.getWatchAddresses()
-            homeModel.loadAssetsFromModel(false)
-
+           homeModel.reloadDisplayedAssets()
         }
     }
 
     val needReloadPortfolioReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            homeModel.loadPortfolioValue()
+            homeModel.loadPortfolioValue(assetListAdapter?.assets ?: arrayListOf())
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeModel = HomeViewModel()
+        homeModel = HomeViewModelV2()
+        homeModel.delegate = this
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -62,22 +70,45 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
                 IntentFilter("need-update-watch-address-event"))
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadPortfolioReciever,
                 IntentFilter("need-update-currency-event"))
-        return inflater.inflate(R.layout.portfolio_fragment_home, container, false)
+        mView =  inflater.inflate(R.layout.portfolio_fragment_home, container, false)
+        return mView
+    }
+
+    fun initiateBalanceListeners() {
+        homeModel.getPortfolio().observe(this, Observer { portfolio ->
+            hidePortfolioLoadingIndicator()
+            updatePortfolioData(portfolio!!)
+        })
+
+        homeModel.getDisplayedAssets(false).observe(this, Observer { displayedAssets ->
+            //This is a hack to force an update where the displayed assets are the same
+            //but we are on a different page
+            val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
+            val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader?
+            val amountView = header?.view?.findViewById<TextView>(R.id.fundAmountTextView)
+            //
+
+            if (displayedAssets?.equals(assetListAdapter?.assets) == false || amountView?.text == "") {
+                assetListAdapter?.assets = displayedAssets!!
+                assetListAdapter?.notifyDataSetChanged()
+                homeModel.loadPortfolioValue(displayedAssets)
+            }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         assetListAdapter = AssetListAdapter(this.context!!, this)
-        homeModel.delegate = this
-        homeModel.loadAssetsFromModel(false)
+        initiateBalanceListeners()
         view.findViewById<ListView>(R.id.assetListView).adapter = assetListAdapter
-        initiateGraph(view)
+        initiateGraph()
         initiateViewPager(view)
         initiateIntervalButtons(view)
         view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setColorSchemeResources(R.color.colorPrimary)
-        view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setOnRefreshListener {
-            homeModel.loadPortfolioValue()
+        view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).onRefresh {
+            view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).isRefreshing = true
+            homeModel.getDisplayedAssets(true)
         }
     }
 
@@ -89,8 +120,9 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         super.onDestroy()
     }
 
-    fun initiateGraph(view: View) {
-        sparkView = view.findViewById(R.id.sparkview)
+    fun initiateGraph() {
+
+        sparkView = mView.findViewById(R.id.sparkview)
         sparkView?.sparkAnimator = MorphSparkAnimator()
         sparkView?.adapter = chartDataAdapter
         sparkView?.scrubListener = SparkView.OnScrubListener { value ->
@@ -113,7 +145,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
                     percentView?.setTextColor(resources.getColor(R.color.colorGain))
                 }
                 percentView?.text = percentChange.formattedPercentString() +
-                        " " +  homeModel.getInitialDate().intervaledString(homeModel.getInterval())
+                      " " +  homeModel.getInitialDate().intervaledString(homeModel.getInterval())
                 amountView?.text = scrubbedAmount.formattedCurrencyString(homeModel.getCurrency())
             }
         }
@@ -126,44 +158,37 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         viewPager?.addOnPageChangeListener(object : SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 val displayType = when {
-                    position == 0 -> HomeViewModel.DisplayType.HOT
-                    position == 1 -> HomeViewModel.DisplayType.COMBINED
-                    position == 2 -> HomeViewModel.DisplayType.COLD
+                    position == 0 -> HomeViewModelV2.DisplayType.HOT
+                    position == 1 -> HomeViewModelV2.DisplayType.COLD
+                    position == 2 -> HomeViewModelV2.DisplayType.COMBINED
                     else -> return
                 }
 
-                // This delay allows for the scroll to complete before the UI thread gets blocked
                 Handler().postDelayed({
                     homeModel.setDisplayType(displayType)
-                    homeModel.loadAssetsFromModel(true)
                 }, 200)
+
             }
         })
     }
 
-    override fun updateBalanceData(assets: ArrayList<TransferableAsset>) {
-        onUiThread {
-            assetListAdapter?.assets = assets
-            assetListAdapter?.notifyDataSetChanged()
-        }
-        homeModel.loadPortfolioValue()
-    }
-
-    fun setEmptyOrGraph() {
+    fun setEmptyOrGraph(portfolio: Portfolio) {
         val emptyWalletView = view?.find<ConstraintLayout>(R.id.emptyWalletContainer)
         val emptyPortfolioActionButton = view?.find<Button>(R.id.emptyPortfolioActionButton)
         val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
-        if (homeModel.getCurrentPortfolioValue() == 0.0) {
+        if (portfolio.data.first().averageBTC == 0.0) {
             sparkView?.visibility = View.INVISIBLE
+            view?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
             emptyPortfolioActionButton?.visibility = View.VISIBLE
         } else {
             sparkView?.visibility = View.VISIBLE
+            view?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.VISIBLE
             emptyWalletView?.visibility = View.INVISIBLE
             emptyPortfolioActionButton?.visibility = View.INVISIBLE
         }
 
-        if (homeModel.getDisplayType() == HomeViewModel.DisplayType.COLD) {
+        if (homeModel.getDisplayType() == HomeViewModelV2.DisplayType.COLD) {
             emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_add_watch_address)
             emptyPortfolioTextView?.text = resources.getString(R.string.PORTFOLIO_no_watch_addresses)
             emptyPortfolioActionButton?.setOnClickListener {
@@ -182,17 +207,15 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
 
     override fun updatePortfolioData(portfolio: Portfolio) {
         onUiThread {
-            view?.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh)?.isRefreshing = false
             assetListAdapter?.portfolio = portfolio
             assetListAdapter?.referenceCurrency = homeModel.getCurrency()
             assetListAdapter?.notifyDataSetChanged()
+            chartDataAdapter.setData(homeModel.getPriceFloats())
+            setEmptyOrGraph(portfolio)
             updateHeader(homeModel.getCurrentPortfolioValue().formattedCurrencyString(homeModel.getCurrency()),
                     homeModel.getPercentChange())
-            chartDataAdapter.setData(homeModel.getPriceFloats())
-            setEmptyOrGraph()
-            hideLoadingIndicator()
             if (PersistentStore.getFirstTokenAppeared() && homeModel.getCurrentPortfolioValue() != 0.0
-                    && homeModel.getDisplayType() == HomeViewModel.DisplayType.HOT) {
+                    && homeModel.getDisplayType() == HomeViewModelV2.DisplayType.HOT) {
                 val backupKeyCheck = DialogBackupKeyFragment.newInstance()
                 backupKeyCheck.show(this.fragmentManager, "backupkey")
                 PersistentStore.setFirstTokenAppeared(false)
@@ -223,7 +246,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         button.setTextAppearance(R.style.IntervalButtonText_Selected)
         selectedButton = button
         homeModel.setInterval(button.tag.toString())
-        homeModel.loadPortfolioValue()
+        homeModel.loadPortfolioValue(assetListAdapter?.assets ?: arrayListOf())
     }
 
     fun updateHeader(amount: String, percentChange: Double) {
@@ -233,15 +256,23 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         header.setHeaderInfo(amount, percentChange, homeModel.getInterval(), homeModel.getInitialDate())
     }
 
-    override fun showLoadingIndicator() {
+    override fun showPortfolioLoadingIndicator() {
         onUiThread {
-            view?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.VISIBLE
+            sparkView?.visibility = View.INVISIBLE
+            view?.findViewById<LottieAnimationView>(R.id.progressBar)?.visibility = View.VISIBLE
         }
     }
 
-    override fun hideLoadingIndicator() {
+    override fun hidePortfolioLoadingIndicator() {
         onUiThread {
-            view?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.GONE
+            sparkView?.visibility = View.VISIBLE
+            view?.findViewById<LottieAnimationView>(R.id.progressBar)?.visibility = View.GONE
+        }
+    }
+
+    override fun hideAssetLoadingIndicator() {
+        onUiThread {
+            view?.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh)?.isRefreshing = false
         }
     }
 
