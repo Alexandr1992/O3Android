@@ -33,6 +33,7 @@ interface HomeViewModelProtocol {
     fun showPortfolioLoadingIndicator()
     fun hidePortfolioLoadingIndicator()
     fun hideAssetLoadingIndicator()
+    fun updatePortfolioData(portfolio: Portfolio)
 }
 
 class HomeFragment : Fragment(), HomeViewModelProtocol {
@@ -202,7 +203,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         }
     }
 
-    fun updatePortfolioData(portfolio: Portfolio) {
+    override fun updatePortfolioData(portfolio: Portfolio) {
         onUiThread {
             assetListAdapter?.portfolio = portfolio
             assetListAdapter?.referenceCurrency = homeModel.getCurrency()

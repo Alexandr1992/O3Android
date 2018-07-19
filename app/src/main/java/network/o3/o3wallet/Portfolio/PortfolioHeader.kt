@@ -63,6 +63,7 @@ class PortfolioHeader:Fragment() {
             } else {
                 pFragment.homeModel.setCurrency(CurrencyType.FIAT)
             }
+            pFragment.homeModel.loadPortfolioValue(pFragment.assetListAdapter?.assets ?: arrayListOf())
         }
 
         if (position > 0) {

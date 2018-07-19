@@ -100,11 +100,30 @@ class HomeViewModelV2: ViewModel() {
         }
     }
 
+    fun combineReadOnlyAndWritable(){
+        var assets = arrayListOf<TransferableAsset>()
+        for (asset in assetsWritable ?: arrayListOf()) {
+            assets.add(asset.deepCopy())
+        }
+
+        //var assets = assetsWritable
+        for (asset in assetsReadOnly ?: arrayListOf()) {
+            val index = assets.indices.find { assets[it].name == asset.name } ?: -1
+            if (index == -1) {
+                assets.add(asset)
+            } else {
+                assets[index] = assets[index]
+                assets[index].value += asset.value
+            }
+        }
+        displayedAssets?.postValue(assets)
+    }
 
     fun loadAssetsReadOnly() {
         bg {
             val cachedAssets = PersistentStore.getLatestWatchAddressBalances()
             if (cachedAssets != null) {
+                assetsReadOnly = cachedAssets
                 displayedAssets!!.postValue(cachedAssets)
             }
             val addresses = PersistentStore.getWatchAddresses()
@@ -121,6 +140,7 @@ class HomeViewModelV2: ViewModel() {
             }
             latch.await()
             PersistentStore.setLatestWatchAddressBalances(assetsReadOnlyIntermediate)
+            assetsReadOnly = assetsReadOnlyIntermediate
             displayedAssets?.postValue(assetsReadOnlyIntermediate)
             delegate.hideAssetLoadingIndicator()
         }
@@ -129,12 +149,14 @@ class HomeViewModelV2: ViewModel() {
     fun loadAssetsWritable() {
         val cachedAssets = PersistentStore.getLatestBalances()
         if (cachedAssets != null) {
+            assetsWritable = (cachedAssets.assets + cachedAssets.tokens).toCollection(ArrayList())
             displayedAssets!!.postValue((cachedAssets.assets + cachedAssets.tokens).toCollection(ArrayList()))
         }
         O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
             PersistentStore.setLatestBalances(it.first)
             val tokens = it.first?.tokens ?: arrayListOf()
             val assets = it.first?.assets ?: arrayListOf()
+            assetsWritable = (assets + tokens).toCollection(ArrayList())
             displayedAssets?.postValue((assets + tokens).toCollection(ArrayList()))
             delegate.hideAssetLoadingIndicator()
         }
@@ -144,7 +166,7 @@ class HomeViewModelV2: ViewModel() {
         when (displayType) {
             DisplayType.HOT -> getAssetsWritable(true)
             DisplayType.COLD -> getAssetsReadOnly(true)
-            DisplayType.COMBINED -> getAssetsReadOnly(true)
+            DisplayType.COMBINED -> combineReadOnlyAndWritable()
         }
     }
 
@@ -155,7 +177,7 @@ class HomeViewModelV2: ViewModel() {
         when (displayType) {
             DisplayType.HOT -> getAssetsWritable(refresh)
             DisplayType.COLD -> getAssetsReadOnly(refresh)
-            DisplayType.COMBINED -> getAssetsReadOnly(refresh)
+            DisplayType.COMBINED -> combineReadOnlyAndWritable()
         }
         return displayedAssets!!
     }
@@ -185,7 +207,7 @@ class HomeViewModelV2: ViewModel() {
         for (i in data.indices) {
             floats[i] = data[i].toFloat()
         }
-        latestPrices = floats
+        latestPrices = floats.reversedArray()
     }
 
     fun getCurrentPortfolioValue(): Double {
