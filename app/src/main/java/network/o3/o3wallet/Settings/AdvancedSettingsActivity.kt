@@ -1,21 +1,20 @@
 package network.o3.o3wallet.Settings
 
-import android.content.Context
+
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
-import network.o3.o3wallet.BuildConfig
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.toast
 
 class AdvancedSettingsActivity : AppCompatActivity() {
 
@@ -24,6 +23,8 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         setContentView(R.layout.settings_advanced_activity)
         val editText = findViewById<EditText>(R.id.customEndpointEditText)
         val setCustomButton = findViewById<Button>(R.id.connectButton)
+
+        val browserButton = findViewById<Button>(R.id.browserButton)
 
         val mainnet = findViewById<CheckBox>(R.id.checkBoxMainNet)
         val testnet = findViewById<CheckBox>(R.id.checkBoxTestNet)
@@ -61,6 +62,14 @@ class AdvancedSettingsActivity : AppCompatActivity() {
             } else {
                 PersistentStore.setNetworkType("Private")
             }
+            toast("Network Changed. Close the App Fully, and Restart to Reconnect")
+        }
+
+        browserButton.setOnClickListener {
+            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/____dapp/example/app.html"
+            val intent = Intent(this, DAppBrowserActivity::class.java)
+            intent.putExtra("url", url)
+            startActivity(intent)
         }
     }
 }

@@ -191,6 +191,4 @@ class MainTabbedActivity : AppCompatActivity() {
             (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
         }
     }
-
-
 }

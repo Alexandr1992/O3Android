@@ -410,4 +410,6 @@
     <string name="SEND_contacts">Contacts</string>
     <string name="SEND_Neo_Address">Enter NEO Address</string>
     <string name="SEND_please_review">Please carefully review your transaction details. Once sent, this transaction cannot be reversed.</string>
+    <string name="DAPP_connection_request">%s want\'s to coonect to your O3 app. Allow?</string>
+    <string name="DAPP_allow">Allow</string>
 </resources>
