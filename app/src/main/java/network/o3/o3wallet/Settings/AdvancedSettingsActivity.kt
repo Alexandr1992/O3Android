@@ -66,7 +66,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         }
 
         browserButton.setOnClickListener {
-            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/____dapp/example/app.html"
+            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/____dapp/example/index.html"
             val intent = Intent(this, DAppBrowserActivity::class.java)
             intent.putExtra("url", url)
             startActivity(intent)
