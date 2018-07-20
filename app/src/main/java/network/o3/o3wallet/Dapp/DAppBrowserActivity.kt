@@ -89,7 +89,7 @@ class DAppBrowserActivity : AppCompatActivity() {
             if (resultCode == -1) {
                 jsInterface.executePendingTransaction()
             } else {
-                jsInterface.clearPendingTransaction()]
+                jsInterface.clearPendingTransaction()
             }
         }
     }
