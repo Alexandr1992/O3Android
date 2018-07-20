@@ -11,12 +11,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "network.o3.o3wallet"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 47
+        versionCode 48
         versionName "1.11.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -110,13 +110,13 @@ dependencies {
 
     api 'info.guardianproject.netcipher:netcipher:1.2'
 //    api  'com.google.code.gson:gson:2.6.2'
-    api  'com.squareup.retrofit2:retrofit:2.3.0'
-    api  'com.squareup.retrofit2:converter-gson:2.3.0'
-    api  'com.squareup.okio:okio:1.6.0'
-    api  'com.squareup.okhttp3:okhttp:3.9.0'
-    api  'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    api  'org.jboss.netty:netty:3.2.10.Final'
-    api  "org.slf4j:slf4j-api:1.7.22"
+    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.squareup.retrofit2:converter-gson:2.3.0'
+    api 'com.squareup.okio:okio:1.6.0'
+    api 'com.squareup.okhttp3:okhttp:3.9.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    api 'org.jboss.netty:netty:3.2.10.Final'
+    api "org.slf4j:slf4j-api:1.7.22"
 //Picasso
     api "com.squareup.picasso:picasso:2.5.2"
 //ImageViews
@@ -139,9 +139,9 @@ dependencies {
     api 'com.github.jkwiecien:EasyImage:1.3.1'
     api 'com.afollestad.material-dialogs:core:0.9.0.2'
     api 'com.google.android:flexbox:0.2.5'
-    api 'com.android.support:appcompat-v7:27+'
-    api 'com.android.support:cardview-v7:27+'
-    api 'com.android.support:design:27+'
+    api 'com.android.support:appcompat-v7:28+'
+    api 'com.android.support:cardview-v7:28+'
+    api 'com.android.support:design:28+'
     api 'com.github.siyamed:android-shape-imageview:0.9.3'
     //Utils
     api 'me.relex:circleindicator:1.2.2@aar'

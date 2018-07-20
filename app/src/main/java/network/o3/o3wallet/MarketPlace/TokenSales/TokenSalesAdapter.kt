@@ -1,7 +1,6 @@
 package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -71,7 +70,7 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
 
         override fun onClick(v: View) {
             if (tokenSale != null) {
-                val tokenSaleInfoIntent = Intent(view.context, TokenSaleInfoActivity::class.java)
+                val tokenSaleInfoIntent = Intent(view.context, TokenSaleRootActivity::class.java)
                 tokenSaleInfoIntent.putExtra("TOKENSALE_JSON", Gson().toJson(tokenSale!!))
                 view.context.startActivity(tokenSaleInfoIntent)
             }

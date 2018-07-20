@@ -85,6 +85,16 @@ class TransferableAssets(private val balances: TransferableBalances) {
     var tokens: ArrayList<TransferableAsset> = arrayListOf()
     var ontology: ArrayList<TransferableAsset> = arrayListOf()
 
+    override fun equals(other: Any?): Boolean {
+        other as TransferableAssets
+        for (asset in assets) {
+            if(other.assets.contains(asset) == false) {
+                return false
+            }
+        }
+        return true
+    }
+
     init {
         version = balances.version
         address = balances.address
@@ -107,6 +117,18 @@ class TransferableAsset(val asset: TransferableBalance) {
     var value: BigDecimal
     var symbol: String
     var decimals: Int
+
+    override fun equals(other: Any?): Boolean {
+        other as TransferableAsset
+        if (other.id == this.id && other.value == this.value) {
+            return true
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 
     init {
         id = asset.id

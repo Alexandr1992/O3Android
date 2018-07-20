@@ -7,6 +7,7 @@ import network.o3.o3wallet.API.O3.Feature
 import network.o3.o3wallet.API.O3.FeedData
 import network.o3.o3wallet.API.O3.O3API
 import network.o3.o3wallet.API.O3.TokenSales
+import network.o3.o3wallet.Account
 
 /**
  * Created by drei on 4/17/18.
@@ -24,7 +25,7 @@ class TokenSalesViewModel: ViewModel() {
     }
 
     fun loadTokenSalesData() {
-        O3API().getTokenSales {
+        O3API().getTokenSales(Account.getWallet()!!.address) {
             if (it.second != null) return@getTokenSales
             tokenSales?.postValue(it.first!!)
         }

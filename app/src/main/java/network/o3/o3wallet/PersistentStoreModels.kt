@@ -6,6 +6,8 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import network.o3.o3wallet.API.NEO.NEP5Token
 import network.o3.o3wallet.API.O3.O3Response
+import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.API.O3Platform.TransferableAssets
 
 /**
  * Created by drei on 11/29/17.
@@ -173,5 +175,45 @@ object PersistentStore {
     fun getCurrency(): String {
         return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
                 .getString("CURRENCY", "usd")
+    }
+
+    fun setLatestBalances(assets: TransferableAssets?) {
+        if (assets == null) {
+            return
+        }
+        val settingsPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+        val assets = Gson().toJson(assets)
+        settingsPref.putString("BALANCES", assets)
+        settingsPref.apply()
+    }
+
+    fun getLatestBalances(): TransferableAssets? {
+        val assetsJson = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("BALANCES", "")
+        if (assetsJson == "") {
+            return null
+        } else {
+            return Gson().fromJson(assetsJson)
+        }
+    }
+
+    fun setLatestWatchAddressBalances(assets: ArrayList<TransferableAsset>?) {
+        if (assets == null) {
+            return
+        }
+        val settingsPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+        val assetsJson = Gson().toJson(assets)
+        settingsPref.putString("WATCH_BALANCES", assetsJson)
+        settingsPref.apply()
+    }
+
+    fun getLatestWatchAddressBalances(): ArrayList<TransferableAsset>? {
+        val assetsJson = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("WATCH_BALANCES", "")
+        if (assetsJson == "") {
+            return null
+        } else {
+            return Gson().fromJson(assetsJson)
+        }
     }
 }

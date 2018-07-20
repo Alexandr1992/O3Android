@@ -1,10 +1,9 @@
 package network.o3.o3wallet.MarketPlace.TokenSales
 
 import android.content.Intent
-import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
 import android.text.InputType
 import android.text.SpannableStringBuilder
@@ -20,18 +19,20 @@ import network.o3.o3wallet.API.O3.AcceptingAsset
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.afterTextChanged
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.textColor
-import org.jetbrains.anko.yesButton
 import java.text.DecimalFormat
 import network.o3.o3wallet.DecimalDigitsInputFilter
 import android.text.InputFilter
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.findNavController
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import org.jetbrains.anko.*
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.onUiThread
 
 
-class TokenSaleInfoActivity : AppCompatActivity() {
+class TokenSaleInfoFragment : Fragment() {
     lateinit var tokenSale: TokenSale
     lateinit var gasInfo: AcceptingAsset
     lateinit var neoInfo: AcceptingAsset
@@ -57,7 +58,7 @@ class TokenSaleInfoActivity : AppCompatActivity() {
             var gasAsset = it.first!!.balances.find { it.asset.contains(NeoNodeRPC.Asset.GAS.assetID()) }
             gasBalance = gasAsset?.value ?: 0.0
             neoBalance = (neoAsset?.value ?: 0.0).toInt()
-            runOnUiThread {
+            onUiThread {
                 gasCardBalanceTextView.text =  String.format(resources.getString(R.string.TOKENSALE_Balance), gasBalance.toString())
                 neoCardBalanceTextView.text = String.format(resources.getString(R.string.TOKENSALE_Balance), neoBalance.toString())
             }
@@ -161,6 +162,11 @@ class TokenSaleInfoActivity : AppCompatActivity() {
 
     fun initiatePriority() {
         val priorityCheckbox = footerView.findViewById<CheckBox>(R.id.tokenSalePriorityCheckbox)
+        val whatIsPriority = footerView.findViewById<TextView>(R.id.priorityInfoTextView)
+        if (tokenSale.address != "") {
+            priorityCheckbox.visibility = View.GONE
+            whatIsPriority.visibility = View.GONE
+        }
         priorityCheckbox.setOnClickListener {
             priorityEnabled = !priorityEnabled
         }
@@ -182,26 +188,29 @@ class TokenSaleInfoActivity : AppCompatActivity() {
             if (!validateEditText()) {
                 return@setOnClickListener
             }
-
-            val tokenSaleReviewIntent = Intent(this, TokenSaleReviewActivity::class.java)
+            val action = TokenSaleReviewFragment()
+            val bundle = Bundle()
             val sendAssetAmount = amountEditText.text.toString().toDouble()
-            tokenSaleReviewIntent.putExtra("bannerURL", tokenSale.imageURL)
-            tokenSaleReviewIntent.putExtra("assetSendAmount", sendAssetAmount)
-            tokenSaleReviewIntent.putExtra("assetSendSymbol", selectedAsset.asset.toUpperCase())
+            bundle.putString("bannerURL", tokenSale.imageURL)
+            bundle.putString("tokenSaleCompanyID", tokenSale.companyID)
+            bundle.putString("tokenSaleAddress", tokenSale.address)
+            bundle.putDouble("assetSendAmount", sendAssetAmount)
+            bundle.putString("assetSendSymbol", selectedAsset.asset.toUpperCase())
             val assetID = if (selectedAsset.asset.toUpperCase() == "NEO") {
                 NeoNodeRPC.Asset.NEO.assetID()
             } else {
                 NeoNodeRPC.Asset.GAS.assetID()
             }
 
-            tokenSaleReviewIntent.putExtra("assetSendId", assetID)
-            tokenSaleReviewIntent.putExtra("assetReceiveSymbol", tokenSale.symbol.toUpperCase())
-            tokenSaleReviewIntent.putExtra("assetReceiveAmount", sendAssetAmount * selectedAsset.basicRate)
-            tokenSaleReviewIntent.putExtra("assetReceiveContractHash", tokenSale.scriptHash)
-            tokenSaleReviewIntent.putExtra("withPriority", priorityEnabled)
-            tokenSaleReviewIntent.putExtra("tokenSaleName", tokenSale.name)
-            tokenSaleReviewIntent.putExtra("tokenSaleWebURL", tokenSale.webURL)
-            startActivity(tokenSaleReviewIntent)
+            bundle.putString("assetSendId", assetID)
+            bundle.putString("assetReceiveSymbol", tokenSale.symbol.toUpperCase())
+            bundle.putDouble("assetReceiveAmount", sendAssetAmount * selectedAsset.basicRate)
+            bundle.putString("assetReceiveContractHash", tokenSale.scriptHash)
+            bundle.putBoolean("withPriority", priorityEnabled)
+            bundle.putBoolean("verified", tokenSale.kycStatus.verified)
+            bundle.putString("tokenSaleName", tokenSale.name)
+            bundle.putString("tokenSaleWebURL", tokenSale.webURL)
+            view?.findNavController()?.navigate(R.id.action_tokenSaleInfoFragment_to_tokenSaleReviewFragment, bundle)
         }
     }
 
@@ -265,31 +274,31 @@ class TokenSaleInfoActivity : AppCompatActivity() {
 
     fun initiateActionButton() {
         val fab = headerView.findViewById<FloatingActionButton>(R.id.websiteActionButton)
-        val browserIntent = Intent(this, DAppBrowserActivity::class.java)
+        val browserIntent = Intent(context, DAppBrowserActivity::class.java)
         browserIntent.putExtra("url", tokenSale.webURL)
-        startActivity(browserIntent)
         fab.setOnClickListener {
             startActivity(browserIntent)
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.tokensale_info_activity)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.tokensale_info_fragment, container, false)
+        //NEED DUMMY JSON HERE
 
-        val tokenJSON = intent.getStringExtra("TOKENSALE_JSON")
+        val tokenJSON = activity!!.intent.getStringExtra("TOKENSALE_JSON")
         tokenSale = Gson().fromJson(tokenJSON)
-        gasInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "GAS" } ?: AcceptingAsset("GAS", 0,0.0,0.0)
+        gasInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "GAS" } ?: AcceptingAsset("GAS", 0.0,0.0,0.0)
         neoInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "NEO" }!!
 
-        val listView = findViewById<ListView>(R.id.tokenInfoListView)
-        listView.adapter = TokenSaleInfoAdapter(this)
+        val listView = view.findViewById<ListView>(R.id.tokenInfoListView)
+        listView.adapter = TokenSaleInfoAdapter(this.context!!)
         (listView.adapter as TokenSaleInfoAdapter).setData(tokenSale)
 
-        headerView = layoutInflater.inflate(R.layout.tokensale_info_header, null)
+        headerView = inflater.inflate(R.layout.tokensale_info_header, null)
         val bannerImageView = headerView.findViewById<ImageView>(R.id.tokensaleBannerView)
         Glide.with(this).load(tokenSale.imageURL).into(bannerImageView)
-        footerView = layoutInflater.inflate(R.layout.tokensale_info_footer, null)
+        footerView = inflater.inflate(R.layout.tokensale_info_footer, null)
 
         amountEditText = footerView.findViewById<EditText>(R.id.tokenSaleParticipationAmountEditText)
         footerView.findViewById<TextView>(R.id.tokenSaleRecieveAmountTextView).text = "0 " + tokenSale.symbol
@@ -302,6 +311,6 @@ class TokenSaleInfoActivity : AppCompatActivity() {
         loadBalance()
         listView.addHeaderView(headerView)
         listView.addFooterView(footerView)
-
+        return view
     }
 }

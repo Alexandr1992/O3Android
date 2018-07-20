@@ -40,7 +40,12 @@ class SendViewModel: ViewModel() {
     }
 
     fun loadOwnedAssets() {
+        val cachedAssets = PersistentStore.getLatestBalances()
+        if (cachedAssets != null) {
+            ownedAssets!!.postValue(cachedAssets.assets)
+        }
         O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
+            PersistentStore.setLatestBalances(it.first)
             ownedAssets?.postValue(it.first?.assets ?: arrayListOf())
         }
     }

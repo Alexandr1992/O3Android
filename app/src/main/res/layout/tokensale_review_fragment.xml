@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="network.o3.o3wallet.MarketPlace.TokenSales.TokenSaleReviewActivity"
+    tools:context="network.o3.o3wallet.MarketPlace.TokenSales.TokenSaleReviewFragment"
     tools:layout_editor_absoluteY="81dp">
 
     <android.support.constraint.ConstraintLayout

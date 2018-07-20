@@ -331,8 +331,8 @@
 
     <string-array name="PORTFOLIO_headers">
         <item>O3 WALLET</item>
-        <item>COMBINED</item>
         <item>COLD STORAGE</item>
+        <item>COMBINED</item>
     </string-array>
 
     <string name="PORTFOLIO_six_hours" comment="six hour porfolio interval">6H</string>

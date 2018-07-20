@@ -75,7 +75,7 @@ class TransactionHistoryFragment : Fragment() {
             }
         }
 
-        recyclerView.addOnScrollListener(paginator)
+        recyclerView.addOnScrollListener(paginator as PaginationScrollListener)
         loadFirstPage()
         return view
     }

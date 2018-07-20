@@ -54,6 +54,11 @@ class AccountViewModel: ViewModel() {
     }
 
     private fun loadAssets() {
+        val cachedAssets = PersistentStore.getLatestBalances()
+        if (cachedAssets != null) {
+            assets!!.postValue(cachedAssets)
+        }
+
         O3PlatformClient().getTransferableAssets(Account.getWallet()!!.address) {
             lastDataLoadError = it.second
             it.first?.assets?.let {
@@ -63,6 +68,7 @@ class AccountViewModel: ViewModel() {
                     }
                 }
             }
+            PersistentStore.setLatestBalances(it.first)
             assets!!.postValue(it.first)
         }
     }
