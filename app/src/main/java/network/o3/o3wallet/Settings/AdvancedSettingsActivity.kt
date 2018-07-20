@@ -69,6 +69,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
             val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/____dapp/example/index.html"
             val intent = Intent(this, DAppBrowserActivity::class.java)
             intent.putExtra("url", url)
+            intent.putExtra("allowSearch", true)
             startActivity(intent)
         }
     }
