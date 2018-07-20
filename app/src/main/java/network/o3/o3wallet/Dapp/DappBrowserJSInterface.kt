@@ -84,7 +84,31 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
                 callback(message.command, JsonObject(), it.second!!.localizedMessage, true)
             } else {
                 val balancesJson = JsonObject()
-                val assetsArrayList = arrayListOf<TransferableAsset>()
+                val assetsArrayList = arrayListOf<JsonObject>()
+                for (asset in it.first!!.assets) {
+                    val jsonObject = jsonObject(
+                            "name" to asset.name,
+                            "symbol" to asset.symbol,
+                            "decimals" to asset.decimals,
+                            "value" to asset.value.toPlainString(),
+                            "id" to asset.id
+                            )
+                    assetsArrayList.add(jsonObject)
+                }
+                for (token in it.first!!.tokens) {
+                    val jsonObject = jsonObject(
+                            "name" to token.name,
+                            "symbol" to token.symbol,
+                            "decimals" to token.decimals,
+                            "value" to token.value.toPlainString(),
+                            "id" to token.id
+                    )
+                    assetsArrayList.add(jsonObject)
+                }
+                val balances = JsonObject()
+                balances.put("balances" to assetsArrayList.toJsonArray())
+                balances.put("account" to currentAccount())
+                callback(message.command, balances, null, true)
             }
         }
     }
@@ -104,12 +128,18 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     fun handleRequestToSign(message: O3Message) {
         val unsignedTx = message.data.toString()
         if (unsignedTx.length < 2) {
-            callback("requestToSign", JsonObject(), "invalid unsigned raw transaction", true)
+            callback(message.command, JsonObject(), "invalid unsigned raw transaction", true)
         }
 
         val unsignedHex = unsignedTx.hexStringToByteArray()
         try {
             val signed = Neoutils.sign(unsignedHex, Account.getWallet()!!.privateKey.toHex())
+            val signedTxJson = jsonObject (
+                    "signatureData" to signed.toHex(),
+                    "account" to currentAccount()
+            )
+            callback(message.command, signedTxJson, null, true)
+
         } catch (e: Exception) {
             callback("requestToSign", JsonObject(), e.localizedMessage, true)
         }
@@ -125,18 +155,28 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         val availableCommands = arrayOf("init", "requestToConnect", "getPlatform", "getAccounts",
                 "getBalances", "isAppAvailable", "requestToSign", "getDeviceInfo", "verifySession")
         if (!availableCommands.contains(message.command)) {
-            //Unsupported Commands
+            callback(message.command, JsonObject(), "Unsupported command", false)
+            return
         }
 
         //No login necessary
         when(message.command) {
-            "init" -> handleInit(message)
-            "requestToConnect" -> handleRequestToConnect(message)
-            "verifySession" -> handleVerifySession(message)
+            "init" -> {
+                handleInit(message)
+                return
+            }
+            "requestToConnect" -> {
+                handleRequestToConnect(message)
+                return
+            }
+            "verifySession" -> {
+                handleVerifySession(message)
+                return
+            }
         }
 
         if (!userAuthenticatedApp) {
-            //handle user not being authenticated
+            callback(message.command, JsonObject(), "User Has Not Authenticated this request", false)
             return
         }
 
