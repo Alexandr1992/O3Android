@@ -21,6 +21,7 @@ class O3PlatformClient {
         VERIFICATION,
         PRICING,
         NODES,
+        UNBOUNDONG,
         UTXO;
 
 
@@ -197,6 +198,26 @@ class O3PlatformClient {
                 completion(Pair<ChainNetwork?, Error?>(chainNetwork, null))
             } else {
                 completion(Pair<ChainNetwork?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getOntologyCalculatedGas(completion: (Pair<OntologyClaimableGas?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/" + Route.UNBOUNDONG.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString { _, _, result ->
+            val(data, error) = result
+            if (error == null) {
+                val (data, error) = result
+                if (error == null) {
+                    val platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                    val calculatedGasData = Gson().fromJson<OntologyClaimableGasData>(data)
+                    val calculatedGas = calculatedGasData.data
+                    completion(Pair<OntologyClaimableGas?, Error?>(calculatedGas, null))
+                } else {
+                    completion(Pair<OntologyClaimableGas?, Error>(null, Error(error.localizedMessage)))
+                }
             }
         }
     }

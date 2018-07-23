@@ -5,6 +5,7 @@ import android.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import neoutils.Neoutils
 import network.o3.o3wallet.R
 
 
