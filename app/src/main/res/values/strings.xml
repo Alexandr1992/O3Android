@@ -413,4 +413,5 @@
     <string name="DAPP_connection_request">%s want\'s to coonect to your O3 app. Allow?</string>
     <string name="DAPP_transaction_signing_request">The app is requesting that you accept the transaction. Allow?</string>
     <string name="DAPP_allow">Allow</string>
+    <string name="Send_Network_Fee_Label">Network Fee: %s</string>
 </resources>

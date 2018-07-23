@@ -156,13 +156,15 @@ class HomeViewModelV2: ViewModel() {
             assetsWritable = (cachedAssets.assets + cachedAssets.tokens).toCollection(ArrayList())
             displayedAssets!!.postValue((cachedAssets.assets + cachedAssets.tokens).toCollection(ArrayList()))
         }
-        O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
-            PersistentStore.setLatestBalances(it.first)
-            val tokens = it.first?.tokens ?: arrayListOf()
-            val assets = it.first?.assets ?: arrayListOf()
-            assetsWritable = (assets + tokens).toCollection(ArrayList())
-            displayedAssets?.postValue((assets + tokens).toCollection(ArrayList()))
-            delegate.hideAssetLoadingIndicator()
+        bg {
+            O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
+                PersistentStore.setLatestBalances(it.first)
+                val tokens = it.first?.tokens ?: arrayListOf()
+                val assets = it.first?.assets ?: arrayListOf()
+                assetsWritable = (assets + tokens).toCollection(ArrayList())
+                displayedAssets?.postValue((assets + tokens).toCollection(ArrayList()))
+                delegate.hideAssetLoadingIndicator()
+            }
         }
     }
 
@@ -251,14 +253,16 @@ class HomeViewModelV2: ViewModel() {
 
     fun loadPortfolioValue(assets: ArrayList<TransferableAsset>) {
         delegate.showPortfolioLoadingIndicator()
-        O3API().getPortfolio(assets, this.interval) {
-            if (it.second != null) {
-                return@getPortfolio
+        bg {
+            O3API().getPortfolio(assets, this.interval) {
+                if (it.second != null) {
+                    return@getPortfolio
+                }
+                updatePriceFloats(it.first!!)
+                initialPrice = it.first!!.data.last()
+                latestPrice = it.first!!.data.first()
+                portfolio?.postValue(it.first!!)
             }
-            updatePriceFloats(it.first!!)
-            initialPrice = it.first!!.data.last()
-            latestPrice = it.first!!.data.first()
-            portfolio?.postValue(it.first!!)
         }
     }
 }

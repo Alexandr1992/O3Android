@@ -15,8 +15,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.send_review_fragment.*
 import network.o3.o3wallet.R
+import kotlinx.android.synthetic.main.send_review_fragment.*
+import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.format
 import network.o3.o3wallet.formattedFiatString
 import network.o3.o3wallet.removeTrailingZeros
@@ -103,6 +104,22 @@ class SendReviewFragment : Fragment() {
         })
     }
 
+    fun initiateFeeCalculator() {
+        val networkLabel = mView.find<TextView>(R.id.networkFeeLabel)
+        val sendActivity = activity as SendV2Activity
+        if (!sendActivity.sendViewModel.isOntAsset()) {
+            networkLabel.visibility = View.VISIBLE
+            networkLabel.text =
+                    resources.getString(R.string.Send_Network_Fee_Label,  "0")
+        } else {
+            sendActivity.sendViewModel.getOntologyNetworkFee().observe(this, Observer { result ->
+                networkLabel.visibility = View.VISIBLE
+                networkLabel.text = resources.getString(R.string.Send_Network_Fee_Label,
+                                (result!! / OntologyClient().DecimalDivisor).toString() ) + " ONG"
+            })
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -112,6 +129,7 @@ class SendReviewFragment : Fragment() {
         initiateSelectedRecipientDetails()
         initiateSendButton()
         initiateSendResultListener()
+        initiateFeeCalculator()
         return mView
     }
 }

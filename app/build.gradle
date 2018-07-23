@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.github.kenglxn.QRGen:android:2.3.0'
-    implementation 'com.github.kittinunf.fuel:fuel:1.13.0'
+    implementation 'com.github.kittinunf.fuel:fuel:1.14.0'
     implementation 'com.github.salomonbrys.kotson:kotson:2.5.0'
     implementation 'com.robinhood.spark:spark:1.2.0'
     implementation 'com.android.support:cardview-v7:27.1.1'
@@ -104,7 +104,6 @@ dependencies {
     // use -ktx for Kotlin
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha02" // use -ktx for Kotlin
     // optional - Test helpers
-
     implementation project(':neoutils')
     api(name: 'channel', ext: 'aar')
 
