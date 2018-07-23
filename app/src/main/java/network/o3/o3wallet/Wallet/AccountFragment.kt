@@ -1,6 +1,4 @@
 package network.o3.o3wallet.Wallet
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.ViewGroup
@@ -12,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
@@ -19,12 +18,13 @@ import com.robinhood.ticker.TickerView
 import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.*
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.API.Ontology.OntologyClient
 import org.jetbrains.anko.support.v4.onUiThread
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.textColor
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
@@ -38,9 +38,12 @@ class AccountFragment : Fragment() {
     private lateinit var unclaimedGASTicker: TickerView
     private lateinit var syncButton: Button
     private lateinit var claimButton: Button
-    private lateinit var learnMoreClaimButton: Button
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var assetListView: ListView
+
+    //Ontology stuff
+    private lateinit var ontologyTicker: TickerView
+
     private lateinit var accountViewModel: AccountViewModel
     private var claimAmount: Double = 0.0
     private var firstLoad = true
@@ -61,7 +64,6 @@ class AccountFragment : Fragment() {
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
         scanButton.setOnClickListener { scanAddressTapped() }
-
     }
 
     fun setUpInboxData() {
@@ -104,7 +106,16 @@ class AccountFragment : Fragment() {
         })
     }
 
+    fun setupOntologyClaimListener() {
+        accountViewModel.getOntologyClaims().observe(this, Observer<OntologyClaimableGas?> {
+            val doubleValue = it!!.ong.toLong() / OntologyClient().DecimalDivisor
+            ontologyTicker.text = "%.8f".format(doubleValue)
+            ontologyTicker.textColor = resources.getColor(R.color.colorBlack)
+        })
+    }
+
     fun reloadAllData() {
+        accountViewModel.loadOntologyClaims()
         accountViewModel.getAssets(true).observe(this, Observer<TransferableAssets?> {
             if (it == null) {
                 context?.toast(accountViewModel.getLastError().localizedMessage)
@@ -149,9 +160,14 @@ class AccountFragment : Fragment() {
 
         syncButton = view.findViewById(R.id.syncButton)
         claimButton = view.find(R.id.claimButton)
-        learnMoreClaimButton = view.find(R.id.learnMoreClaimButton)
         unclaimedGASTicker = view.findViewById(R.id.unclaimedGasTicker)
         assetListView = view.findViewById(R.id.assetListView)
+
+        //Ontology stuff
+        ontologyTicker = view.find(R.id.unclaimedGasTickerOntology)
+        ontologyTicker.setCharacterList(TickerUtils.getDefaultNumberList())
+        ontologyTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
+        setupOntologyClaimListener()
 
 
         unclaimedGASTicker.setCharacterList(TickerUtils.getDefaultNumberList())
@@ -177,11 +193,6 @@ class AccountFragment : Fragment() {
 
         claimButton.setOnClickListener {
             claimTapped()
-        }
-
-        learnMoreClaimButton.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"))
-            startActivity(browserIntent)
         }
 
         activity?.title = "Account"
@@ -224,9 +235,10 @@ class AccountFragment : Fragment() {
 
         unclaimedGASTicker.text =  "%.8f".format(accountViewModel.getEstimatedGas(claims))
         claimAmount = amount
-        //learnMoreClaimButton.visibility = View.VISIBLE
         if (claimAmount > 0) {
             syncButton.visibility = View.VISIBLE
+            view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.GONE
+
         }
 
         if (accountViewModel.getClaimingStatus()) {
@@ -238,16 +250,10 @@ class AccountFragment : Fragment() {
 
     fun showSyncingInProgress() {
         onUiThread {
-            view?.find<ImageView>(R.id.syncingProgress)?.visibility = View.VISIBLE
-            view?.find<TextView>(R.id.syncingSubtitle)?.visibility = View.VISIBLE
-            view?.find<TextView>(R.id.syncingTitle)?.visibility = View.VISIBLE
-            view?.find<View>(R.id.gasClaimDivider)?.visibility = View.GONE
+            view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.VISIBLE
+            view?.find<TextView>(R.id.gasStateTitle)?.text = resources.getString(R.string.WALLET_syncing_title)
 
-            view?.find<TextView>(R.id.gasStateTitle)?.visibility = View.GONE
-            view?.find<TextView>(R.id.claimableGasHeader)?.visibility = View.GONE
-            view?.find<TickerView>(R.id.unclaimedGasTicker)?.visibility = View.GONE
-            view?.find<ImageView>(R.id.claimableGasImageView)?.visibility = View.GONE
-            //learnMoreClaimButton.visibility = View.GONE
+
             syncButton.visibility = View.GONE
         }
     }
@@ -261,17 +267,14 @@ class AccountFragment : Fragment() {
                 claimButton.visibility = View.INVISIBLE
             }
             unclaimedGASTicker.textColor = resources.getColor(R.color.colorBlack)
-            //learnMoreClaimButton.visibility = View.GONE
             syncButton.visibility = View.GONE
 
-            view?.find<ImageView>(R.id.syncingProgress)?.visibility = View.GONE
-            view?.find<TextView>(R.id.syncingSubtitle)?.visibility = View.GONE
-            view?.find<TextView>(R.id.syncingTitle)?.visibility = View.GONE
+            view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.GONE
             view?.find<View>(R.id.gasClaimDivider)?.visibility = View.VISIBLE
 
             view?.find<ImageView>(R.id.claimableGasImageView)?.visibility = View.VISIBLE
             view?.find<TextView>(R.id.gasStateTitle)?.visibility = View.VISIBLE
-            view?.find<TextView>(R.id.gasStateTitle)?.text = getString(R.string.WALLET_confirmed_gas)
+            view?.find<TextView>(R.id.gasStateTitle)?.text = getString(R.string.WALLET_ready_to_claim_gas)
 
             view?.find<TextView>(R.id.claimableGasHeader)?.visibility = View.VISIBLE
             view?.find<TickerView>(R.id.unclaimedGasTicker)?.visibility = View.VISIBLE
@@ -281,6 +284,17 @@ class AccountFragment : Fragment() {
 
     fun showClaimSucceeded() {
         onUiThread {
+            gasStateTitle.textColor = resources.getColor(R.color.colorGain)
+            view?.find<LottieAnimationView>(R.id.neoGasSuccess)?.visibility = View.VISIBLE
+            view?.find<LottieAnimationView>(R.id.neoGasSuccess)?.playAnimation()
+            Handler().postDelayed(Runnable{
+                view?.find<TextView>(R.id.gasStateTitle)?.text = getString(R.string.WALLET_estimated_gas)
+                view?.find<TextView>(R.id.gasStateTitle)?.textColor = resources.getColor(R.color.colorSubtitleGrey)
+                view?.find<LottieAnimationView>(R.id.neoGasSuccess)?.visibility = View.GONE
+                reloadAllData()
+            }, 60000)
+
+            /*
             view?.find<TextView>(R.id.gasStateTitle)?.visibility = View.GONE
             view?.find<TextView>(R.id.claimableGasHeader)?.visibility = View.GONE
             view?.find<TickerView>(R.id.unclaimedGasTicker)?.visibility = View.GONE
@@ -293,16 +307,12 @@ class AccountFragment : Fragment() {
             view?.find<TextView>(R.id.successfulClaimSubtitle)?.visibility = View.VISIBLE
             view?.find<TextView>(R.id.successfulClaimAmountTextView)?.text = unclaimedGASTicker.text
             view?.find<ImageView>(R.id.coinsImageView)?.visibility = View.VISIBLE
-
-
-            unclaimedGASTicker.text = "0.00000000"
-            progressBarBegin(60000, true)
-
+        */
         }
     }
 
     fun progressBarBegin(millis: Long, claimComplete: Boolean) {
-        val progressBar = view?.find<ProgressBar>(R.id.canClaimAgainProgress)
+        /*val progressBar = view?.find<ProgressBar>(R.id.canClaimAgainProgress)
         progressBar?.visibility = View.VISIBLE
 
         progressBar?.max = 10000
@@ -331,7 +341,7 @@ class AccountFragment : Fragment() {
                 }
             }
         })
-        animation.start()
+        animation.start()*/
     }
 
     fun showUnsyncedClaim(reload: Boolean) {
@@ -340,14 +350,11 @@ class AccountFragment : Fragment() {
             return
         }
         onUiThread {
-            view?.find<ImageView>(R.id.syncingProgress)?.visibility = View.GONE
-            view?.find<TextView>(R.id.syncingSubtitle)?.visibility = View.GONE
-            view?.find<TextView>(R.id.syncingTitle)?.visibility = View.GONE
-            view?.find<TextView>(R.id.successfulClaimAmountTextView)?.visibility = View.GONE
+            view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.GONE
+            /*view?.find<TextView>(R.id.successfulClaimAmountTextView)?.visibility = View.GONE
             view?.find<TextView>(R.id.successfulClaimTitleTextView)?.visibility = View.GONE
-            view?.find<TextView>(R.id.successfulClaimSubtitle)?.visibility = View.GONE
+            view?.find<TextView>(R.id.successfulClaimSubtitle)?.visibility = View.GONE*/
             view?.find<ImageView>(R.id.coinsImageView)?.visibility = View.GONE
-            view?.find<ProgressBar>(R.id.canClaimAgainProgress)?.visibility = View.GONE
 
             view?.find<TextView>(R.id.gasStateTitle)?.visibility = View.VISIBLE
             view?.find<TextView>(R.id.gasStateTitle)?.text = getString(R.string.WALLET_estimated_gas)
@@ -356,7 +363,6 @@ class AccountFragment : Fragment() {
             view?.find<ImageView>(R.id.claimableGasImageView)?.visibility = View.VISIBLE
             view?.find<View>(R.id.gasClaimDivider)?.visibility = View.VISIBLE
             unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
-           // learnMoreClaimButton.visibility = View.VISIBLE
             syncButton.visibility = View.VISIBLE
 
             if (reload) {
@@ -372,9 +378,6 @@ class AccountFragment : Fragment() {
         showSyncingInProgress()
         progressBarBegin(45000, false)
         accountViewModel.syncChain {
-            onUiThread {
-                view?.find<ProgressBar>(R.id.canClaimAgainProgress)?.visibility = View.GONE
-            }
             if (it) {
                 showReadyToClaim()
             } else {
@@ -389,9 +392,13 @@ class AccountFragment : Fragment() {
     }
 
     fun claimTapped() {
+        view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.VISIBLE
+        view?.find<Button>(R.id.claimButton)?.visibility = View.GONE
         accountViewModel.performClaim { succeeded, error ->
             if (error != null || succeeded == false) {
                 onUiThread {
+                    view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.GONE
+                    view?.find<Button>(R.id.claimButton)?.visibility = View.VISIBLE
                     alert (getString(R.string.WALLET_claim_error)) {
                         yesButton { getString(R.string.ALERT_OK_Confirm_Button) }
                     }.show()

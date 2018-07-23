@@ -208,7 +208,7 @@
     <string name="WALLET_my_o3_wallet" comment="A title for the wallet page where all utxos are listed">My O3 Wallet</string>
     <string name="WALLET_assets" comment="A title for the utxos tab on the wallet page">Assets</string>
     <string name="WALLET_transactions" comment="A title for the transactions tab in the wallet page">Transactions</string>
-    <string name="WALLET_claim" comment="A title for a claim in the transaction history">CLAIM</string>
+    <string name="WALLET_claim" comment="A title for a claim in the transaction history">Claim</string>
     <string name="WALLET_my_address" comment="Header for my address page">My Address</string>
     <string name="WALLET_copy_address_my_address" comment="Copy Address action when looking at my address qr">COPY ADDRESS</string>
 
@@ -368,9 +368,10 @@
 
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="WALLET_sync">sync now</string>
+    <string name="WALLET_sync">Sync Now</string>
     <string name="WALLET_estimated_gas">Estimated</string>
-    <string name="WALLET_confirmed_gas">Confirmed</string>
+    <string name="WALLET_confirmed_gas">Claim successful. It will appear in your account soon</string>
+    <string name="WALLET_ready_to_claim_gas">Your gas is ready to claim!</string>
     <string name="WALLET_Claimable_GAS">Claimable GAS</string>
     <string name="WALLET_learn_more_claim">Learn More</string>
     <string name="WALLET_syncing_title">Fetching transaction records...</string>

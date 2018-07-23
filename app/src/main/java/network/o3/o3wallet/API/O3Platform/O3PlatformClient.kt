@@ -202,8 +202,8 @@ class O3PlatformClient {
         }
     }
 
-    fun getOntologyCalculatedGas(completion: (Pair<OntologyClaimableGas?, Error?>) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/" + Route.UNBOUNDONG.routeName() + networkQueryString()
+    fun getOntologyCalculatedGas(address: String, completion: (Pair<OntologyClaimableGas?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/ont/" + address + "/" + Route.UNBOUNDONG.routeName() + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.timeout(600000).responseString { _, _, result ->
@@ -212,7 +212,7 @@ class O3PlatformClient {
                 val (data, error) = result
                 if (error == null) {
                     val platformResponse = Gson().fromJson<PlatformResponse>(data!!)
-                    val calculatedGasData = Gson().fromJson<OntologyClaimableGasData>(data)
+                    val calculatedGasData = Gson().fromJson<OntologyClaimableGasData>(platformResponse.result)
                     val calculatedGas = calculatedGasData.data
                     completion(Pair<OntologyClaimableGas?, Error?>(calculatedGas, null))
                 } else {

@@ -114,12 +114,12 @@
             android:id="@+id/cardView3"
             style="@style/CardViewStyle"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_height="160dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginRight="8dp"
             android:clipToPadding="false"
-            app:cardElevation="1dp"
+            app:cardElevation="2dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -132,158 +132,181 @@
                 android:paddingLeft="0dp"
                 android:paddingRight="0dp">
 
-                <TextView
-                    android:id="@+id/syncingTitle"
+                <Button
+                    android:id="@+id/claimButtonOntology"
+                    style="@style/GasClaimButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/WALLET_syncing_title"
-                    android:textAppearance="@style/SubtitleText"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/ic_claim_now"
+                    android:drawablePadding="8dp"
+                    android:elevation="0dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="12dp"
+                    android:text="@string/WALLET_claim"
+                    android:textSize="16dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@+id/syncingProgress"
-                    fab:layout_constraintEnd_toEndOf="parent"
-                    fab:layout_constraintHorizontal_bias="0.5"
-                    fab:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="@+id/gasStateTitleOntology"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <TextView
-                    android:id="@+id/syncingSubtitle"
+                    android:id="@+id/gasStateTitleOntology"
+                    style="@style/SubtitleText"
                     android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:text="@string/WALLET_syncing_subtitle"
-                    android:textAppearance="@style/SubtitleText"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@+id/syncingTitle"
-                    fab:layout_constraintEnd_toEndOf="parent"
-                    fab:layout_constraintHorizontal_bias="0.5"
-                    fab:layout_constraintStart_toStartOf="parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="4dp"
+                    android:includeFontPadding="false"
+                    android:text="ONG claiming is coming soon to O3"
+                    android:textSize="10sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/claimableGasImageViewOntology" />
+
+                <ImageView
+                    android:id="@+id/claimableGasImageViewOntology"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_ong"
+                    fab:layout_constraintStart_toStartOf="parent"
+                    fab:layout_constraintTop_toBottomOf="@+id/gasStateTitle" />
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@+id/unclaimedGasTickerOntology"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="right"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp"
+                    app:layout_constraintStart_toEndOf="@+id/claimableGasImageViewOntology"
+                    app:layout_constraintTop_toBottomOf="@+id/gasStateTitle" />
 
                 <View
                     android:id="@+id/gasClaimDivider"
                     android:layout_width="match_parent"
                     android:layout_height="0.25dp"
-                    android:layout_marginBottom="42dp"
+                    android:layout_marginTop="40dp"
                     android:background="@color/colorSubtitleGrey"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/gasStateTitle"
                     style="@style/SubtitleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="4dp"
                     android:includeFontPadding="false"
                     android:text="@string/WALLET_estimated_gas"
-                    app:layout_constraintStart_toEndOf="@+id/claimableGasImageView"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="10sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/claimableGasImageView" />
 
                 <com.robinhood.ticker.TickerView
                     android:id="@+id/unclaimedGasTicker"
                     android:layout_width="0dp"
                     android:layout_height="35dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="right"
                     android:includeFontPadding="false"
                     android:textColor="@color/colorBlack"
-                    android:textSize="26dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/claimableGasHeader"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-                <Button
-                    android:id="@+id/learnMoreClaimButton"
-                    style="@style/BorderLessButton.Accent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:drawablePadding="0dp"
-                    android:includeFontPadding="false"
-                    android:paddingHorizontal="0dp"
-                    android:paddingVertical="0dp"
-                    android:text="@string/WALLET_learn_more_claim"
-                    android:textAlignment="textStart"
-                    android:textSize="10dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:textSize="24sp"
+                    app:layout_constraintStart_toEndOf="@+id/claimableGasImageView"
                     app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider" />
+
 
                 <Button
                     android:id="@+id/syncButton"
-                    style="@style/BorderLessButton.Accent"
+                    style="@style/GasSyncButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="24dp"
+                    android:layout_height="36dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="6dp"
                     android:layout_weight="1"
-                    android:drawablePadding="0dp"
-                    android:includeFontPadding="false"
-                    android:paddingHorizontal="0dp"
-                    android:paddingVertical="0dp"
+                    android:drawableLeft="@drawable/ic_sync_now"
+                    android:drawablePadding="8dp"
+                    android:elevation="0dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingHorizontal="8dp"
                     android:text="@string/WALLET_sync"
-                    android:textAlignment="textEnd"
                     android:textSize="16dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider"
-                    fab:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/gasStateTitle"
                     fab:layout_constraintEnd_toEndOf="parent" />
 
                 <Button
                     android:id="@+id/claimButton"
-                    style="@style/BorderLessButton.Accent"
+                    style="@style/GasClaimButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="6dp"
                     android:layout_weight="1"
-                    android:drawablePadding="0dp"
-                    android:includeFontPadding="false"
-                    android:paddingHorizontal="0dp"
-                    android:paddingVertical="0dp"
+                    android:drawableLeft="@drawable/ic_claim_now"
+                    android:drawablePadding="8dp"
+                    android:elevation="0dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="12dp"
                     android:text="@string/WALLET_claim"
+
                     android:textSize="16dp"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider" />
+                    app:layout_constraintBottom_toBottomOf="@+id/gasStateTitle"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
 
                 <TextView
                     android:id="@+id/claimableGasHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/WALLET_Claimable_GAS"
-                    android:textAppearance="@style/RegularText"
-                    app:layout_constraintStart_toEndOf="@+id/claimableGasImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/gasStateTitle" />
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/muli_bold"
+                    android:text="@string/WALLET_claim"
+                    android:textAppearance="@style/RegularText.Small"
+                    app:layout_constraintBottom_toTopOf="@+id/gasClaimDivider"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/syncingProgress"
-                    android:layout_width="53dp"
+                    android:id="@+id/neoGasProgress"
+                    android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginTop="24dp"
-                    android:scaleX="-1"
-                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/loader_running" />
+                    app:lottie_rawRes="@raw/loader_portfolio" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/neoGasSuccess"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider"
+                    app:lottie_autoPlay="false"
+                    app:lottie_rawRes="@raw/claim_success" />
 
                 <ImageView
                     android:id="@+id/claimableGasImageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_token_gas"
-                    app:layout_constraintBottom_toBottomOf="@+id/claimableGasHeader"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_gas"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider" />
 
                 <ImageView
                     android:id="@+id/coinsImageView"
@@ -292,60 +315,32 @@
                     android:layout_marginTop="8dp"
                     android:src="@drawable/coins"
                     android:visibility="gone"
-                    app:layout_constraintStart_toEndOf="@+id/successfulClaimTitleTextView"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/successfulClaimAmountTextView"
+                    android:id="@+id/textView9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:fontFamily="@font/muli_medium"
-                    android:textAppearance="@style/BoldText"
-                    android:textSize="30dp"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/successfulClaimTitleTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/WALLET_successful_claim_title"
+                    android:layout_marginStart="8dp"
+                    android:text="GAS"
                     android:textAppearance="@style/RegularText"
-                    android:textColor="@color/colorGain"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/successfulClaimAmountTextView" />
+                    app:layout_constraintBottom_toBottomOf="@+id/claimableGasImageView"
+                    app:layout_constraintStart_toEndOf="@+id/unclaimedGasTicker" />
 
                 <TextView
-                    android:id="@+id/successfulClaimSubtitle"
+                    android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/WALLET_successful_claim_subtitle"
-                    android:textAppearance="@style/SubtitleText"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/successfulClaimTitleTextView" />
-
-                <ProgressBar
-                    android:id="@+id/canClaimAgainProgress"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="4dp"
-                    android:indeterminate="false"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginStart="8dp"
+                    android:text="ONG"
+                    android:textAppearance="@style/RegularText"
+                    app:layout_constraintBottom_toBottomOf="@+id/claimableGasImageViewOntology"
+                    app:layout_constraintStart_toEndOf="@+id/unclaimedGasTickerOntology" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 
-        <FrameLayout
+    <android.support.constraint.ConstraintLayout
             android:id="@+id/frameLayout7"
             android:layout_width="0dp"
             android:layout_height="64dp"
@@ -353,6 +348,20 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView3">
+
+        <android.support.v7.widget.CardView
+            style="@style/CardViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardElevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -407,8 +416,8 @@
                     android:id="@+id/view4"
                     android:layout_width="0.25dp"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="4dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@color/colorSubtitleGrey"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/scanButton"
@@ -421,8 +430,8 @@
                     android:id="@+id/view5"
                     android:layout_width="0.25dp"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="4dp"
                     android:layout_marginTop="9dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@color/colorSubtitleGrey"
                     app:layout_constraintEnd_toStartOf="@+id/requestButton"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -432,7 +441,9 @@
                     fab:layout_constraintVertical_bias="0.0" />
 
             </android.support.constraint.ConstraintLayout>
-        </FrameLayout>
+        </android.support.v7.widget.CardView>
+        </android.support.constraint.ConstraintLayout>
+
 
         <ScrollView
             android:layout_width="0dp"
@@ -461,11 +472,12 @@
                     android:layout_marginTop="8dp"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="0dp"
+                    android:divider="@color/colorSubtitleGrey"
+                    android:dividerHeight="0.25dp"
                     android:footerDividersEnabled="false"
                     android:headerDividersEnabled="false" />
             </android.support.v4.widget.SwipeRefreshLayout>
         </ScrollView>
     </android.support.constraint.ConstraintLayout>
+
 </FrameLayout>
