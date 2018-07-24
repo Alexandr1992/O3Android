@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
@@ -22,7 +24,7 @@ import java.text.NumberFormat
  */
 
 class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() {
-    data class TableCellData(var assetName: String, var assetAmount: Double,
+    data class TableCellData(var assetName: String, var assetSymbol: String, var assetAmount: Double,
                              var assetPrice: Double, var totalValue: Double, var percentChange: Double)
 
     private val mContext: Context
@@ -36,10 +38,10 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
     }
 
     override fun getItem(position: Int): TableCellData {
-        var assetData = TableCellData("", 0.0, 0.0, 0.0, 0.0)
+        var assetData = TableCellData("", "",  0.0, 0.0, 0.0, 0.0)
         assetData.assetName = assets.get(position).symbol
         assetData.assetAmount = assets.get(position).value.toDouble()
-
+        assetData.assetSymbol = assets.get(position).symbol
         //TODO: HARDCODED FOR ONTOLOGY, FIND IMPROVED WAY TO DO THIS SOON
         if (assets.get(position).id.contains("000000000000000")) {
             assetData.assetName = assets.get(position).symbol + " (MainNet)"
@@ -77,19 +79,19 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         val view = layoutInflater.inflate(R.layout.portfolio_asset_card, viewGroup, false)
         val asset = getItem(position)
         val assetNameView = view.findViewById<TextView>(R.id.assetNameTextView)
-        val assetPriceView = view.findViewById<TextView>(R.id.assetPriceTextView)
         val assetAmountView = view.findViewById<TextView>(R.id.assetAmountTextView)
         val assetTotalValueView = view.findViewById<TextView>(R.id.totalValueTextView)
         val assetPercentChangeView = view.findViewById<TextView>(R.id.percentChangeTextView)
+        val logoView = view.find<ImageView>(R.id.portfolioAssetLogoView)
 
         assetNameView.text = asset.assetName
-        assetPriceView.text = asset.assetPrice.formattedCurrencyString(referenceCurrency)
         assetTotalValueView.text = asset.totalValue.formattedCurrencyString(referenceCurrency)
         assetPercentChangeView.text = asset.percentChange.formattedPercentString()
+        val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.assetSymbol)
+        Glide.with(mContext).load(imageURL).into(logoView)
 
         if (asset.assetPrice == 0.0 && portfolio?.price?.get(assets.get(position).symbol)?.averageUSD != null) {
             assetPercentChangeView.visibility = View.GONE
-            assetPriceView.visibility = View.GONE
             view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.VISIBLE
             view.setOnClickListener {
                 mfragment.activity?.alert (
@@ -99,7 +101,6 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
             }
         } else {
             assetPercentChangeView.visibility = View.VISIBLE
-            assetPriceView.visibility = View.VISIBLE
             view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.GONE
             view.setOnClickListener {
                 val intent = Intent(mfragment.activity, AssetGraph::class.java)

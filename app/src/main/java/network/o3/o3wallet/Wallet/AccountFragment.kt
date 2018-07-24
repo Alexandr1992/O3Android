@@ -293,21 +293,6 @@ class AccountFragment : Fragment() {
                 view?.find<LottieAnimationView>(R.id.neoGasSuccess)?.visibility = View.GONE
                 reloadAllData()
             }, 60000)
-
-            /*
-            view?.find<TextView>(R.id.gasStateTitle)?.visibility = View.GONE
-            view?.find<TextView>(R.id.claimableGasHeader)?.visibility = View.GONE
-            view?.find<TickerView>(R.id.unclaimedGasTicker)?.visibility = View.GONE
-            view?.find<ImageView>(R.id.claimableGasImageView)?.visibility = View.GONE
-            view?.find<View>(R.id.gasClaimDivider)?.visibility = View.GONE
-            claimButton.visibility = View.GONE
-
-            view?.find<TextView>(R.id.successfulClaimAmountTextView)?.visibility = View.VISIBLE
-            view?.find<TextView>(R.id.successfulClaimTitleTextView)?.visibility = View.VISIBLE
-            view?.find<TextView>(R.id.successfulClaimSubtitle)?.visibility = View.VISIBLE
-            view?.find<TextView>(R.id.successfulClaimAmountTextView)?.text = unclaimedGASTicker.text
-            view?.find<ImageView>(R.id.coinsImageView)?.visibility = View.VISIBLE
-        */
         }
     }
 
@@ -351,10 +336,6 @@ class AccountFragment : Fragment() {
         }
         onUiThread {
             view?.find<LottieAnimationView>(R.id.neoGasProgress)?.visibility = View.GONE
-            /*view?.find<TextView>(R.id.successfulClaimAmountTextView)?.visibility = View.GONE
-            view?.find<TextView>(R.id.successfulClaimTitleTextView)?.visibility = View.GONE
-            view?.find<TextView>(R.id.successfulClaimSubtitle)?.visibility = View.GONE*/
-            view?.find<ImageView>(R.id.coinsImageView)?.visibility = View.GONE
 
             view?.find<TextView>(R.id.gasStateTitle)?.visibility = View.VISIBLE
             view?.find<TextView>(R.id.gasStateTitle)?.text = getString(R.string.WALLET_estimated_gas)

@@ -26,7 +26,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:visibility="gone"
-            app:cardElevation="1dp"
+            app:cardElevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frameLayout7">
@@ -307,15 +307,6 @@
                     android:src="@drawable/ic_gas"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider" />
-
-                <ImageView
-                    android:id="@+id/coinsImageView"
-                    android:layout_width="224dp"
-                    android:layout_height="183dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/coins"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView9"
