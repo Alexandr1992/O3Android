@@ -34,8 +34,8 @@ import org.jetbrains.anko.support.v4.onUiThread
 
 class TokenSaleInfoFragment : Fragment() {
     lateinit var tokenSale: TokenSale
-    lateinit var gasInfo: AcceptingAsset
-    lateinit var neoInfo: AcceptingAsset
+    var gasInfo: AcceptingAsset? = null
+    var neoInfo: AcceptingAsset? = null
     lateinit var selectedAsset: AcceptingAsset
     private lateinit var footerView: View
     private lateinit var headerView: View
@@ -69,7 +69,7 @@ class TokenSaleInfoFragment : Fragment() {
         val gasCard = footerView.findViewById<CardView>(R.id.gasAssetCardView)
         val neoCard = footerView.findViewById<CardView>(R.id.neoAssetCardView)
 
-        if (gasInfo.basicRate.toInt() == 0) {
+        if (gasInfo == null) {
             gasCard.visibility = View.GONE
             neoCard.foregroundGravity = Gravity.CENTER_HORIZONTAL
         }
@@ -86,8 +86,8 @@ class TokenSaleInfoFragment : Fragment() {
 
         val gasCardDescriptionTextView = footerView.findViewById<TextView>(R.id.gasCardDecriptionTextView)
         val neoCardDescriptionTextView = footerView.findViewById<TextView>(R.id.neoCardDescriptionTextView)
-        gasCardDescriptionTextView.text = "1 GAS = " + gasInfo.basicRate + " " + tokenSale.symbol
-        neoCardDescriptionTextView.text = "1 NEO = " + neoInfo.basicRate + " " + tokenSale.symbol
+        gasCardDescriptionTextView.text = "1 GAS = " + gasInfo?.basicRate + " " + tokenSale.symbol
+        neoCardDescriptionTextView.text = "1 NEO = " + neoInfo?.basicRate + " " + tokenSale.symbol
 
         neoCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
         neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
@@ -97,34 +97,38 @@ class TokenSaleInfoFragment : Fragment() {
         gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
         gasCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
 
-        selectedAsset = neoInfo
+        selectedAsset = neoInfo!!
 
-        gasCard.setOnClickListener {
-            gasCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
-            gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
-            gasCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
+        if (gasInfo != null) {
+            gasCard.setOnClickListener {
+                gasCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
+                gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
+                gasCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
 
-            neoCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-            neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-            neoCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                neoCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                neoCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
 
-            selectedAsset = gasInfo
-            amountEditText.text = SpannableStringBuilder("")
-            amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                selectedAsset = gasInfo!!
+                amountEditText.text = SpannableStringBuilder("")
+                amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
+            }
         }
 
-        neoCard.setOnClickListener {
-            neoCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
-            neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
-            neoCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
+        if (neoInfo != null) {
+            neoCard.setOnClickListener {
+                neoCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
+                neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
+                neoCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
 
-            gasCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-            gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-            gasCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                gasCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                gasCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
 
-            selectedAsset = neoInfo
-            amountEditText.text = SpannableStringBuilder("")
-            amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
+                selectedAsset = neoInfo!!
+                amountEditText.text = SpannableStringBuilder("")
+                amountEditText.inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
+            }
         }
     }
 
@@ -229,11 +233,11 @@ class TokenSaleInfoFragment : Fragment() {
                 alert(String.format(resources.getString(R.string.TOKENSALE_Error_Not_Enough_Balance), "NEO")) {
                     yesButton {resources.getString(R.string.ALERT_OK_Confirm_Button)} }.show()
                 return false
-            } else if(doubleValue.toInt() > neoInfo.max) {
+            } else if(doubleValue.toInt() > neoInfo!!.max) {
                 alert(String.format(resources.getString(R.string.TOKENSALE_Error_Max_Contribution), "NEO")) {
                     yesButton {resources.getString(R.string.ALERT_OK_Confirm_Button)} }.show()
                 return false
-            } else if (doubleValue < neoInfo.min) {
+            } else if (doubleValue < neoInfo!!.min) {
                 alert(String.format(resources.getString(R.string.TOKENSALE_Error_Min_Contribution), "NEO")) {
                     yesButton {resources.getString(R.string.ALERT_OK_Confirm_Button)} }.show()
                 return false
@@ -254,11 +258,11 @@ class TokenSaleInfoFragment : Fragment() {
                 alert(String.format(resources.getString(R.string.TOKENSALE_Error_Not_Enough_Balance), "GAS")) {
                     yesButton {resources.getString(R.string.ALERT_OK_Confirm_Button)} }.show()
                 return false
-            } else if (doubleValue > gasInfo.max) {
+            } else if (doubleValue > gasInfo?.max ?: 0.0) {
                 alert(String.format(resources.getString(R.string.TOKENSALE_Error_Max_Contribution), "GAS")) {
                     yesButton {resources.getString(R.string.ALERT_OK_Confirm_Button)} }.show()
                 return false
-            } else if (doubleValue < gasInfo.min) {
+            } else if (doubleValue < gasInfo?.min ?: 0.0) {
                 alert(String.format(resources.getString(R.string.TOKENSALE_Error_Min_Contribution), "GAS")) {
                     yesButton {resources.getString(R.string.ALERT_OK_Confirm_Button)} }.show()
                 return false
@@ -288,8 +292,8 @@ class TokenSaleInfoFragment : Fragment() {
 
         val tokenJSON = activity!!.intent.getStringExtra("TOKENSALE_JSON")
         tokenSale = Gson().fromJson(tokenJSON)
-        gasInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "GAS" } ?: AcceptingAsset("GAS", 0.0,0.0,0.0)
-        neoInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "NEO" }!!
+        gasInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "GAS" }
+        neoInfo = tokenSale.acceptingAssets.find { it.asset.toUpperCase() == "NEO" }
 
         val listView = view.findViewById<ListView>(R.id.tokenInfoListView)
         listView.adapter = TokenSaleInfoAdapter(this.context!!)

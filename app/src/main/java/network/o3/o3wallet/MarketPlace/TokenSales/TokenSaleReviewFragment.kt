@@ -15,18 +15,27 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
+import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
+import network.o3.o3wallet.API.O3.O3API
+import network.o3.o3wallet.API.O3.TokenSaleLog
+import network.o3.o3wallet.API.O3.TokenSaleLogSigned
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import network.o3.o3wallet.toHex
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
 
 class TokenSaleReviewFragment : Fragment() {
 
@@ -127,52 +136,74 @@ class TokenSaleReviewFragment : Fragment() {
         mView.findNavController().navigate(R.id.action_tokenSaleReviewFragment_to_tokenSaleReceiptFragment, bundle)
     }
 
-    fun performMinting() {
+    fun performMintingViaSmartContract() {
         val remark = String.format("O3X%s", tokenSaleCompanyID)
         var fee: Double = 0.0
         if (priorityEnabled) { fee = 0.0011 }
+        NeoNodeRPC(PersistentStore.getNodeURL()).participateTokenSales(assetReceiveContractHash, assetSendId,
+                assetSendAmount, remark, fee) {
+            onUiThread {
+                if (it.second != null) {
+                    loadingConstraintView.visibility = View.GONE
+                    mainConstraintView.visibility = View.VISIBLE
+                    alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                } else if (it.first == null) {
+                    loadingConstraintView.visibility = View.GONE
+                    mainConstraintView.visibility = View.VISIBLE
+                    alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                } else {
+                    moveToReceipt(it.first!!)
+                }
+            }
+        }
+    }
 
+    fun submitTransactionLog(txid: String) {
+        val saleInfo = (activity as TokenSaleRootActivity).tokenSale
+        val asset = saleInfo.acceptingAssets.find { it.asset.toUpperCase() == assetSendSymbol.toUpperCase() }!!
+        var formatter = NumberFormat.getNumberInstance(Locale.US)
+        formatter.maximumFractionDigits = 8
+        formatter.isGroupingUsed = false
+        val txLog = TokenSaleLog(formatter.format(assetSendAmount), asset, txid)
+        val signature = Neoutils.sign(Gson().toJson(txLog).toByteArray(), Account.getWallet()!!.privateKey.toHex())
+        val txLogSigned = TokenSaleLogSigned(txLog, signature.toHex(), Account.getWallet()!!.publicKey.toHex())
+        O3PlatformClient().postTokenSaleLog(Account.getWallet()?.address!!,saleInfo.companyID, txLogSigned) {
 
+        }
+    }
+
+    fun performMintingViaAddress() {
+        val remark = String.format("O3X%s", tokenSaleCompanyID)
+        var asset = NeoNodeRPC.Asset.NEO
+        if (assetSendSymbol.toUpperCase() == "GAS") {
+            asset = NeoNodeRPC.Asset.GAS
+        }
+        val attributes = arrayOf(TransactionAttribute().remarkAttribute(remark))
+        NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(
+                Account.getWallet()!!, asset, BigDecimal(assetSendAmount), tokenSaleAddress, null) {
+            onUiThread {
+                if (it.second != null) {
+                    loadingConstraintView.visibility = View.GONE
+                    mainConstraintView.visibility = View.VISIBLE
+                    alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                } else if (it.first == null) {
+                    loadingConstraintView.visibility = View.GONE
+                    mainConstraintView.visibility = View.VISIBLE
+                    alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
+                } else {
+                    submitTransactionLog(it.first!!)
+                    moveToReceipt(it.first!!)
+                }
+            }
+        }
+    }
+
+    fun performMinting() {
         //Smart Contract Based Participation
         if (tokenSaleAddress == "") {
-            NeoNodeRPC(PersistentStore.getNodeURL()).participateTokenSales(assetReceiveContractHash, assetSendId,
-                    assetSendAmount, remark, fee) {
-                onUiThread {
-                    if (it.second != null) {
-                        loadingConstraintView.visibility = View.GONE
-                        mainConstraintView.visibility = View.VISIBLE
-                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
-                    } else if (it.first == null) {
-                        loadingConstraintView.visibility = View.GONE
-                        mainConstraintView.visibility = View.VISIBLE
-                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
-                    } else {
-                       moveToReceipt(it.first!!)
-                    }
-                }
-            }
+            performMintingViaSmartContract()
         } else {
-            var asset = NeoNodeRPC.Asset.NEO
-            if (assetSendSymbol.toUpperCase() == "GAS") {
-                asset = NeoNodeRPC.Asset.GAS
-            }
-            val attributes = arrayOf(TransactionAttribute().remarkAttribute(remark))
-            NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(
-                    Account.getWallet()!!, asset, BigDecimal(assetSendAmount), tokenSaleAddress, null) {
-                onUiThread {
-                    if (it.second != null) {
-                        loadingConstraintView.visibility = View.GONE
-                        mainConstraintView.visibility = View.VISIBLE
-                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
-                    } else if (it.first == null) {
-                        loadingConstraintView.visibility = View.GONE
-                        mainConstraintView.visibility = View.VISIBLE
-                        alert(resources.getString(R.string.ALERT_Something_Went_Wrong)) { yesButton { resources.getString(R.string.ALERT_OK_Confirm_Button) } }.show()
-                    } else {
-                        moveToReceipt(it.first!!)
-                    }
-                }
-            }
+            performMintingViaAddress()
         }
     }
 
