@@ -86,8 +86,8 @@ class TokenSaleInfoFragment : Fragment() {
 
         val gasCardDescriptionTextView = footerView.findViewById<TextView>(R.id.gasCardDecriptionTextView)
         val neoCardDescriptionTextView = footerView.findViewById<TextView>(R.id.neoCardDescriptionTextView)
-        gasCardDescriptionTextView.text = "1 GAS = " + gasInfo?.basicRate + " " + tokenSale.symbol
-        neoCardDescriptionTextView.text = "1 NEO = " + neoInfo?.basicRate + " " + tokenSale.symbol
+        gasCardDescriptionTextView.text = "1 GAS = " + gasInfo?.basicRate?.toInt() + " " + tokenSale.symbol
+        neoCardDescriptionTextView.text = "1 NEO = " + neoInfo?.basicRate?.toInt() + " " + tokenSale.symbol
 
         neoCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
         neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
@@ -137,7 +137,6 @@ class TokenSaleInfoFragment : Fragment() {
         val recieveAmountTextView = footerView.findViewById<TextView>(R.id.tokenSaleRecieveAmountTextView)
         if (doubleValue != null) {
             participateButton.isEnabled = true
-            participateButton.backgroundColor = resources.getColor(R.color.colorPrimary)
             val recieveAmount = doubleValue * selectedAsset.basicRate
             val df = DecimalFormat()
             if (recieveAmount - recieveAmount.toLong() == 0.0) {
@@ -152,7 +151,6 @@ class TokenSaleInfoFragment : Fragment() {
         } else if (amountEditText.text.toString() == "") {
             recieveAmountTextView.text = "0" + " " + tokenSale.symbol
             participateButton.isEnabled = false
-            participateButton.backgroundColor = resources.getColor(R.color.colorDisabledButton)
         }
     }
 
@@ -186,7 +184,6 @@ class TokenSaleInfoFragment : Fragment() {
     fun initiateParticipateButton() {
         participateButton = footerView.findViewById(R.id.tokenSaleInfoParticipateButton)
         participateButton.isEnabled = false
-        participateButton.backgroundColor = resources.getColor(R.color.colorDisabledButton)
         participateButton.setOnClickListener {
 
             if (!validateEditText()) {
@@ -195,7 +192,7 @@ class TokenSaleInfoFragment : Fragment() {
             val action = TokenSaleReviewFragment()
             val bundle = Bundle()
             val sendAssetAmount = amountEditText.text.toString().toDouble()
-            bundle.putString("bannerURL", tokenSale.imageURL)
+            bundle.putString("bannerURL", tokenSale.squareLogoURL)
             bundle.putString("tokenSaleCompanyID", tokenSale.companyID)
             bundle.putString("tokenSaleAddress", tokenSale.address)
             bundle.putDouble("assetSendAmount", sendAssetAmount)
@@ -209,6 +206,7 @@ class TokenSaleInfoFragment : Fragment() {
             bundle.putString("assetSendId", assetID)
             bundle.putString("assetReceiveSymbol", tokenSale.symbol.toUpperCase())
             bundle.putDouble("assetReceiveAmount", sendAssetAmount * selectedAsset.basicRate)
+            bundle.putDouble("basicRate", selectedAsset.basicRate)
             bundle.putString("assetReceiveContractHash", tokenSale.scriptHash)
             bundle.putBoolean("withPriority", priorityEnabled)
             bundle.putBoolean("verified", tokenSale.kycStatus.verified)
@@ -276,15 +274,6 @@ class TokenSaleInfoFragment : Fragment() {
         return false
     }
 
-    fun initiateActionButton() {
-        val fab = headerView.findViewById<FloatingActionButton>(R.id.websiteActionButton)
-        val browserIntent = Intent(context, DAppBrowserActivity::class.java)
-        browserIntent.putExtra("url", tokenSale.webURL)
-        fab.setOnClickListener {
-            startActivity(browserIntent)
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.tokensale_info_fragment, container, false)
@@ -301,7 +290,7 @@ class TokenSaleInfoFragment : Fragment() {
 
         headerView = inflater.inflate(R.layout.tokensale_info_header, null)
         val bannerImageView = headerView.findViewById<ImageView>(R.id.tokensaleBannerView)
-        Glide.with(this).load(tokenSale.imageURL).into(bannerImageView)
+        Glide.with(this).load(tokenSale.squareLogoURL).into(bannerImageView)
         footerView = inflater.inflate(R.layout.tokensale_info_footer, null)
 
         amountEditText = footerView.findViewById<EditText>(R.id.tokenSaleParticipationAmountEditText)
@@ -310,7 +299,6 @@ class TokenSaleInfoFragment : Fragment() {
         initiateAssetSelectorCards()
         initiateParticipateButton()
         initiatePartcipationEditText()
-        initiateActionButton()
         initiatePriority()
         loadBalance()
         listView.addHeaderView(headerView)

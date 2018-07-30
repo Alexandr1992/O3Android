@@ -38,7 +38,7 @@ class AccountViewModel: ViewModel() {
     private var claimError: Error? = null
     private var claimingInProgress: Boolean = false
     private var claimsDataRefreshing: Boolean = false
-    private var needsSync = true
+    var needsSync = true
     private var neoBalance: Int? = null
     private var storedClaims: ClaimData? = null
 

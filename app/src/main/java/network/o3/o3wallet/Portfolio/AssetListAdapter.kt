@@ -44,7 +44,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         assetData.assetSymbol = assets.get(position).symbol
         //TODO: HARDCODED FOR ONTOLOGY, FIND IMPROVED WAY TO DO THIS SOON
         if (assets.get(position).id.contains("000000000000000")) {
-            assetData.assetName = assets.get(position).symbol + " (MainNet)"
+            assetData.assetName = assets.get(position).symbol + " (M)"
         }
 
         if (portfolio != null) {
@@ -79,12 +79,14 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         val view = layoutInflater.inflate(R.layout.portfolio_asset_card, viewGroup, false)
         val asset = getItem(position)
         val assetNameView = view.findViewById<TextView>(R.id.assetNameTextView)
+        val assetPriceView = view.findViewById<TextView>(R.id.assetPriceTextView)
         val assetAmountView = view.findViewById<TextView>(R.id.assetAmountTextView)
         val assetTotalValueView = view.findViewById<TextView>(R.id.totalValueTextView)
         val assetPercentChangeView = view.findViewById<TextView>(R.id.percentChangeTextView)
         val logoView = view.find<ImageView>(R.id.portfolioAssetLogoView)
 
         assetNameView.text = asset.assetName
+        assetPriceView.text = asset.assetPrice.formattedCurrencyString(referenceCurrency)
         assetTotalValueView.text = asset.totalValue.formattedCurrencyString(referenceCurrency)
         assetPercentChangeView.text = asset.percentChange.formattedPercentString()
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.assetSymbol)
@@ -92,6 +94,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
 
         if (asset.assetPrice == 0.0 && portfolio?.price?.get(assets.get(position).symbol)?.averageUSD != null) {
             assetPercentChangeView.visibility = View.GONE
+            assetPriceView.visibility = View.GONE
+            assetTotalValueView.visibility = View.GONE
             view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.VISIBLE
             view.setOnClickListener {
                 mfragment.activity?.alert (
@@ -101,6 +105,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
             }
         } else {
             assetPercentChangeView.visibility = View.VISIBLE
+            assetPriceView.visibility = View.VISIBLE
+            assetTotalValueView.visibility = View.VISIBLE
             view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.GONE
             view.setOnClickListener {
                 val intent = Intent(mfragment.activity, AssetGraph::class.java)

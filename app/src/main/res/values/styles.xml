@@ -108,7 +108,7 @@
     </style>
 
     <style name="AccentButton.Rounded" parent="AccentButton">
-        <item name="android:background">@drawable/rounded_button_accent</item>
+        <item name="android:background">@drawable/accent_button_background</item>
     </style>
 
     <style name="PrimaryButton" parent="Base.Widget.AppCompat.Button">

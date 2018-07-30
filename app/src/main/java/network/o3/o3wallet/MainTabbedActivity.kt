@@ -40,6 +40,7 @@ class MainTabbedActivity : AppCompatActivity() {
     var fragments: Array<Fragment>? = arrayOf(HomeFragment.newInstance(),
             TabbedAccount.newInstance(), MarketplaceTabbedFragment.newInstance(), NewsFeedFragment.newInstance(),
             SettingsFragment.newInstance())
+    var deepLink: String? = null
 
     override fun onBackPressed() {
         alert(resources.getString(R.string.TABBAR_logout_warning)) {
@@ -113,7 +114,11 @@ class MainTabbedActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, selectedFragment, 0.toString())
         transaction.commit()
-
+        if (intent != null) {
+            if (intent.getStringExtra("deepLink") != null) {
+                deepLink = intent.getStringExtra("deepLink")
+            }
+        }
         setupKeyboardDetector()
         setupChannel()
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)

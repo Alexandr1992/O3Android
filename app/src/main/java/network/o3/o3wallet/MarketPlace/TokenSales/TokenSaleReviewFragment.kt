@@ -48,11 +48,13 @@ class TokenSaleReviewFragment : Fragment() {
     private lateinit var tokenSaleWebURL: String
     private lateinit var tokenSaleAddress: String
     private lateinit var tokenSaleCompanyID: String
+    private var basicRate: Double = 0.0
     private var isVerified: Boolean = false
 
     private var assetSendAmount: Double = 0.0
     private var assetReceiveAmount: Double = 0.0
     private var priorityEnabled: Boolean = false
+
 
     private lateinit var participateButton: Button
     private lateinit var loadingConstraintView: ConstraintLayout
@@ -63,7 +65,6 @@ class TokenSaleReviewFragment : Fragment() {
         val sendAmountView = mView.findViewById<TextView>(R.id.tokenSaleReviewSendAmountTextView)
         val receiveAmountTextView = mView.findViewById<TextView>(R.id.tokenSaleReviewReceiveAmountTextView)
         val priorityTextView = mView.findViewById<TextView>(R.id.tokenSaleReviewPriorityTextView)
-        val whiteListFloatingActionButton = mView.findViewById<FloatingActionButton>(R.id.whiteListFloatingActionButton)
         val whiteListErrorTextView = mView.findViewById<TextView>(R.id.whiteListErrorTextView)
         val issuerAgreementCheckbox = mView.findViewById<CheckBox>(R.id.issuerDisclaimerCheckbox)
         val o3AgreementCheckbox = mView.findViewById<CheckBox>(R.id.o3DisclaimerCheckbox)
@@ -88,31 +89,21 @@ class TokenSaleReviewFragment : Fragment() {
         o3AgreementCheckbox.setOnClickListener {
             if (o3AgreementCheckbox.isChecked && issuerAgreementCheckbox.isChecked) {
                 participateButton.isEnabled = true
-                participateButton.backgroundColor = resources.getColor(R.color.colorPrimary)
             } else {
                 participateButton.isEnabled = false
-                participateButton.backgroundColor = resources.getColor(R.color.colorDisabledButton)
             }
         }
 
         issuerAgreementCheckbox.setOnClickListener {
             if (o3AgreementCheckbox.isChecked && issuerAgreementCheckbox.isChecked) {
                 participateButton.isEnabled = true
-                participateButton.backgroundColor = resources.getColor(R.color.colorPrimary)
             } else {
                 participateButton.isEnabled = false
-                participateButton.backgroundColor = resources.getColor(R.color.colorDisabledButton)
             }
         }
 
         //TODO: READD WHITELISTING WHEN SHIPPING
         if (!whitelisted) {
-            whiteListFloatingActionButton.visibility = View.VISIBLE
-            whiteListFloatingActionButton.setOnClickListener {
-                val browserIntent = Intent(context, DAppBrowserActivity::class.java)
-                browserIntent.putExtra("url", tokenSaleWebURL)
-                startActivity(browserIntent)
-            }
             whiteListErrorTextView.text = resources.getString(R.string.TOKENSALE_Not_Whitelisted)
         } else {
             issuerAgreementCheckbox.visibility = View.VISIBLE
@@ -173,14 +164,18 @@ class TokenSaleReviewFragment : Fragment() {
     }
 
     fun performMintingViaAddress() {
-        val remark = String.format("O3X%s", tokenSaleCompanyID)
+        val remark = TransactionAttribute().remarkAttribute(String.format("O3X%s", tokenSaleCompanyID))
+        var formatter = NumberFormat.getNumberInstance(Locale.US)
+        formatter.maximumFractionDigits = 8
+        formatter.isGroupingUsed = false
+        val description = TransactionAttribute().descriptionAttribute(formatter.format(basicRate))
         var asset = NeoNodeRPC.Asset.NEO
         if (assetSendSymbol.toUpperCase() == "GAS") {
             asset = NeoNodeRPC.Asset.GAS
         }
-        val attributes = arrayOf(TransactionAttribute().remarkAttribute(remark))
+        val attributes = arrayOf(remark, description)
         NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(
-                Account.getWallet()!!, asset, BigDecimal(assetSendAmount), tokenSaleAddress, null) {
+                Account.getWallet()!!, asset, BigDecimal(assetSendAmount), tokenSaleAddress, attributes) {
             onUiThread {
                 if (it.second != null) {
                     loadingConstraintView.visibility = View.GONE
@@ -210,7 +205,6 @@ class TokenSaleReviewFragment : Fragment() {
 
     fun initiateParticipateButton() {
         participateButton.isEnabled = false
-        participateButton.backgroundColor = resources.getColor(R.color.colorDisabledButton)
         participateButton.setOnClickListener {
             mainConstraintView.visibility = View.GONE
             loadingConstraintView.visibility = View.VISIBLE
@@ -227,6 +221,7 @@ class TokenSaleReviewFragment : Fragment() {
         bannerURL = bundle.getString("bannerURL")
         assetSendSymbol = bundle.getString("assetSendSymbol")
         assetSendAmount = bundle.getDouble("assetSendAmount", 0.0)
+        basicRate = bundle.getDouble("basicRate", 0.0)
         assetSendId = bundle.getString("assetSendId")
         assetReceiveSymbol = bundle.getString("assetReceiveSymbol")
         assetReceiveContractHash = bundle.getString("assetReceiveContractHash")
@@ -235,7 +230,7 @@ class TokenSaleReviewFragment : Fragment() {
         tokenSaleName = bundle.getString("tokenSaleName")
         tokenSaleWebURL = bundle.getString("tokenSaleWebURL")
         isVerified = bundle.getBoolean("verified")
-        tokenSaleAddress = bundle.getString("tokenSaleAddress")
+        tokenSaleAddress = bundle.getString("tokenSaleAddress", "")
         tokenSaleCompanyID = bundle.getString("tokenSaleCompanyID")
     }
 

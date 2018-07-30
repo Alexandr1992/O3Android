@@ -8,16 +8,53 @@
 
 
     <TextView
-        android:id="@+id/assetNameTextView"
-        style="@style/BoldText"
+        android:id="@+id/pricingNotAvailableTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="12dp"
         android:includeFontPadding="false"
-        android:text="NEO"
+        android:minWidth="120dp"
+        android:text="@string/PORTFOLIO_pricing_not_available"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/SubtitleText"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/assetAmountTextView"
+        app:layout_constraintTop_toBottomOf="@+id/assetAmountTextView"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/assetPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:includeFontPadding="false"
+        android:minWidth="120dp"
+        android:text="TextView76USD"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/SubtitleText"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/percentChangeTextView"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/assetNameTextView"
+        style="@style/BoldText"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:includeFontPadding="false"
+        android:text="WWWW"
         android:textAlignment="textStart"
         android:textAppearance="@style/BoldText"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/portfolioAssetLogoView"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
@@ -26,17 +63,13 @@
         android:id="@+id/assetAmountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="12dp"
         android:includeFontPadding="false"
         android:text="235"
-        android:textAppearance="@style/SubtitleText"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/portfolioAssetLogoView"
-        app:layout_constraintTop_toBottomOf="@+id/assetNameTextView"
-        app:layout_constraintVertical_bias="0.0"
+        android:textAppearance="@style/RegularText"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/assetNameTextView"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -44,16 +77,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="16dp"
         android:includeFontPadding="false"
         android:minWidth="120dp"
         android:text="11,183.76USD"
-        android:textAlignment="textEnd"
+        android:textAlignment="textStart"
         android:textAppearance="@style/SubtitleText"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/assetAmountTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/percentChangeTextView"
+        app:layout_constraintStart_toStartOf="@+id/assetAmountTextView"
+        app:layout_constraintTop_toBottomOf="@+id/assetAmountTextView"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -68,20 +99,9 @@
         android:textAlignment="textEnd"
         android:textAppearance="@style/RegularSubtitleText.Gain"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/pricingNotAvailableTextView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/pricingNotAvailableTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="@string/PORTFOLIO_pricing_not_available"
-        android:textAppearance="@style/SubtitleText"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/totalValueTextView" />
 
     <ImageView
         android:id="@+id/portfolioAssetLogoView"
@@ -92,4 +112,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/md_transparent" />
+
 </android.support.constraint.ConstraintLayout>

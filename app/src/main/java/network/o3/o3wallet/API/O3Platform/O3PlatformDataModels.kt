@@ -105,11 +105,11 @@ class TransferableAssets(private val balances: TransferableBalances) {
         for (asset in balances.assets) {
             assets.add(TransferableAsset(asset))
         }
+        for (ontAsset in balances.ontology) {
+            assets.add(TransferableAsset(ontAsset))
+        }
         for (token in balances.nep5Tokens) {
             assets.add(TransferableAsset(token))
-        }
-       for (ontAsset in balances.ontology) {
-            assets.add(TransferableAsset(ontAsset))
         }
     }
 }

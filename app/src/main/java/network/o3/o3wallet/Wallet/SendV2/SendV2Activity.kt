@@ -14,6 +14,8 @@ import androidx.navigation.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
 import neoutils.Neoutils.parseNEP9URI
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.toastUntilCancel
 import org.jetbrains.anko.find
@@ -22,9 +24,22 @@ import java.math.BigDecimal
 class SendV2Activity : AppCompatActivity() {
     var sendViewModel: SendViewModel = SendViewModel()
     var sendingToast: Toast? = null
+
+    fun resetBestNode() {
+        O3PlatformClient().getChainNetworks {
+            if (it.first == null) {
+                return@getChainNetworks
+            } else {
+                PersistentStore.setOntologyNodeURL(it.first!!.ontology.best)
+                PersistentStore.setNodeURL(it.first!!.neo.best)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.send_v2_activity)
+        resetBestNode()
         if (intent.extras != null) {
             val uri = intent.getStringExtra("uri")
             if (uri != "") {

@@ -179,11 +179,11 @@
                     android:layout_width="0dp"
                     android:layout_height="35dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     android:gravity="right"
                     android:includeFontPadding="false"
                     android:textColor="@color/colorBlack"
-                    android:textSize="24sp"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toEndOf="@+id/claimableGasImageViewOntology"
                     app:layout_constraintTop_toBottomOf="@+id/gasStateTitle" />
 
@@ -213,11 +213,11 @@
                     android:layout_width="0dp"
                     android:layout_height="35dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     android:gravity="right"
                     android:includeFontPadding="false"
                     android:textColor="@color/colorBlack"
-                    android:textSize="24sp"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toEndOf="@+id/claimableGasImageView"
                     app:layout_constraintTop_toBottomOf="@+id/gasClaimDivider" />
 
