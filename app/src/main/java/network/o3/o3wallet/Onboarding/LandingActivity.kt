@@ -17,6 +17,7 @@ import io.fabric.sdk.android.Fabric
 import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
+import network.o3.o3wallet.PersistentStore.clearPersistentStore
 import org.jetbrains.anko.*
 
 class LandingActivity : AppCompatActivity() {
@@ -171,6 +172,7 @@ class LandingActivity : AppCompatActivity() {
             return
         } else {
             val generatedWIF = Neoutils.newWallet().wif
+            clearPersistentStore()
             val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
             intent.putExtra("wif", generatedWIF)
             startActivity(intent)

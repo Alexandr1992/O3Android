@@ -43,6 +43,7 @@ import network.o3.o3wallet.R.id.view
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.support.v4.content.ContextCompat.getSystemService
 import android.view.inputmethod.InputMethodManager
+import kotlin.math.floor
 
 
 class SendWhatFragment : Fragment() {
@@ -81,7 +82,11 @@ class SendWhatFragment : Fragment() {
             override fun onProgressChanged(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float, fromUser: Boolean) {
                 (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(activity!!, Observer { selectedAsset ->
                     var ratio = progressFloat / 100
-                    val cryptoAmount = ratio * selectedAsset!!.value.toDouble()
+                    var cryptoAmount = ratio * selectedAsset!!.value.toDouble()
+                    if (selectedAsset.decimals == 0) {
+                        cryptoAmount = floor(cryptoAmount)
+                    }
+
                     amountEditText.text = SpannableStringBuilder((cryptoAmount).toString())
                 })
             }
