@@ -17,7 +17,7 @@ import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 
 class PasscodeRequestActivity : AppCompatActivity() {
-
+    var deepLink: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.onboarding_passcode_request_activity)
@@ -29,6 +29,12 @@ class PasscodeRequestActivity : AppCompatActivity() {
 
         find<Button>(R.id.signInButton).setOnClickListener {
             signinTapped()
+        }
+
+        if (intent != null) {
+            if (intent.getStringExtra("deepLink") != null) {
+                deepLink = intent.getStringExtra("deepLink")
+            }
         }
 
         signinTapped()
@@ -71,6 +77,9 @@ class PasscodeRequestActivity : AppCompatActivity() {
             if (resultCode == -1) {
                 Account.restoreWalletFromDevice()
                 val intent = Intent(this, SelectingBestNode::class.java)
+                if (deepLink != null) {
+                    intent.putExtra("deepLink", deepLink!!)
+                }
                 startActivity(intent)
             }
         }

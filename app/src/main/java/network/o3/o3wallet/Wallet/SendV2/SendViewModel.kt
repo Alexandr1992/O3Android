@@ -27,6 +27,7 @@ class SendViewModel: ViewModel() {
 
     //var sendInProgress: MutableLiveData<Boolean>? = null
     var sendResult: MutableLiveData<String?>? = MutableLiveData()
+    var ontologyNetworkFee: MutableLiveData<Double>? = null
 
     var toSendAmount: BigDecimal = BigDecimal.ZERO
     var txID = ""
@@ -40,7 +41,12 @@ class SendViewModel: ViewModel() {
     }
 
     fun loadOwnedAssets() {
+        val cachedAssets = PersistentStore.getLatestBalances()
+        if (cachedAssets != null) {
+            ownedAssets!!.postValue(cachedAssets.assets)
+        }
         O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
+            PersistentStore.setLatestBalances(it.first)
             ownedAssets?.postValue(it.first?.assets ?: arrayListOf())
         }
     }
@@ -142,12 +148,14 @@ class SendViewModel: ViewModel() {
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount().toDouble()
         val wallet = Account.getWallet()
-        val error = OntologyClient().sendOntologyAsset(toSendAsset.symbol.toUpperCase(), recipientAddress, amount)
-        if (error == null) {
-            sendResult?.postValue("")
-        } else {
-            sendResult?.postValue(null)
+        OntologyClient().transferOntologyAsset(toSendAsset.symbol.toUpperCase(), recipientAddress, amount) {
+            if (it.first == true) {
+                sendResult?.postValue("")
+            } else {
+                sendResult?.postValue(null)
+            }
         }
+
     }
 
     fun sendNativeNeoAsset() {
@@ -198,9 +206,39 @@ class SendViewModel: ViewModel() {
         return sendResult!!
     }
 
+    fun getOntologyNetworkFee(): LiveData<Double> {
+        if (ontologyNetworkFee == null) {
+            ontologyNetworkFee = MutableLiveData()
+            loadOntologyNetworkFee()
+        }
+        return ontologyNetworkFee!!
+    }
+
+    fun loadOntologyNetworkFee() {
+        if (!isOntAsset()) {
+            ontologyNetworkFee?.postValue(-1.0)
+            return
+        } else {
+            ontologyNetworkFee?.postValue(500 * 20000.0)
+        }
+
+        OntologyClient().getGasPrice {
+            if (it.first != null) {
+                return@getGasPrice
+            } else {
+                ontologyNetworkFee?.postValue(it.first!! * 20000.0)
+            }
+        }
+    }
+
+    fun isOntAsset(): Boolean {
+        val toSendAsset = selectedAsset!!.value!!
+        return toSendAsset.id.contains("00000000")
+    }
+
     fun send() {
         val toSendAsset = selectedAsset!!.value!!
-        if (toSendAsset.id.contains("00000000")) {
+        if (isOntAsset()) {
             sendOntAsset()
         } else if (toSendAsset.symbol.toUpperCase() == "GAS"
                 || toSendAsset.symbol.toUpperCase() == "NEO") {

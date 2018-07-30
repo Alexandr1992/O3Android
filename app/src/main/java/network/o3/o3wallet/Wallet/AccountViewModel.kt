@@ -32,11 +32,13 @@ class AccountViewModel: ViewModel() {
     private var currentBlock: MutableLiveData<Int?>? = null
     private var swapInfo: MutableLiveData<O3InboxItem?>? = null
 
+    private var ontologyClaims: MutableLiveData<OntologyClaimableGas>? = null
+
     private var lastDataLoadError: Error? = null
     private var claimError: Error? = null
     private var claimingInProgress: Boolean = false
     private var claimsDataRefreshing: Boolean = false
-    private var needsSync = true
+    var needsSync = true
     private var neoBalance: Int? = null
     private var storedClaims: ClaimData? = null
 
@@ -54,6 +56,11 @@ class AccountViewModel: ViewModel() {
     }
 
     private fun loadAssets() {
+        val cachedAssets = PersistentStore.getLatestBalances()
+        if (cachedAssets != null) {
+            assets!!.postValue(cachedAssets)
+        }
+
         O3PlatformClient().getTransferableAssets(Account.getWallet()!!.address) {
             lastDataLoadError = it.second
             it.first?.assets?.let {
@@ -63,6 +70,7 @@ class AccountViewModel: ViewModel() {
                     }
                 }
             }
+            PersistentStore.setLatestBalances(it.first)
             assets!!.postValue(it.first)
         }
     }
@@ -182,6 +190,24 @@ class AccountViewModel: ViewModel() {
                     }
                     completion(it)
                 }
+            }
+        }
+    }
+
+    fun getOntologyClaims(): LiveData<OntologyClaimableGas> {
+        if (ontologyClaims == null) {
+            ontologyClaims = MutableLiveData()
+            loadOntologyClaims()
+        }
+        return ontologyClaims!!
+    }
+
+    fun loadOntologyClaims() {
+        O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
+            if(it.first == null) {
+                ontologyClaims?.postValue(OntologyClaimableGas("0", false))
+            } else {
+                ontologyClaims?.postValue(it.first)
             }
         }
     }

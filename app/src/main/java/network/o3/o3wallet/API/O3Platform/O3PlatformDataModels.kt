@@ -77,6 +77,9 @@ data class ChainNetworkData(val data: ChainNetwork)
 data class ChainNetwork(val neo: NetworkStatus, val ontology: NetworkStatus)
 data class NetworkStatus(val blockcount: Int, val best: String, val nodes: List<String>)
 
+data class OntologyClaimableGasData(val data: OntologyClaimableGas)
+data class OntologyClaimableGas(val ong: String, val calculated: Boolean)
+
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
     var address: String
@@ -85,6 +88,16 @@ class TransferableAssets(private val balances: TransferableBalances) {
     var tokens: ArrayList<TransferableAsset> = arrayListOf()
     var ontology: ArrayList<TransferableAsset> = arrayListOf()
 
+    override fun equals(other: Any?): Boolean {
+        other as TransferableAssets
+        for (asset in assets) {
+            if(other.assets.contains(asset) == false) {
+                return false
+            }
+        }
+        return true
+    }
+
     init {
         version = balances.version
         address = balances.address
@@ -92,11 +105,11 @@ class TransferableAssets(private val balances: TransferableBalances) {
         for (asset in balances.assets) {
             assets.add(TransferableAsset(asset))
         }
+        for (ontAsset in balances.ontology) {
+            assets.add(TransferableAsset(ontAsset))
+        }
         for (token in balances.nep5Tokens) {
             assets.add(TransferableAsset(token))
-        }
-       for (ontAsset in balances.ontology) {
-            assets.add(TransferableAsset(ontAsset))
         }
     }
 }
@@ -107,6 +120,18 @@ class TransferableAsset(val asset: TransferableBalance) {
     var value: BigDecimal
     var symbol: String
     var decimals: Int
+
+    override fun equals(other: Any?): Boolean {
+        other as TransferableAsset
+        if (other.id == this.id && other.value == this.value) {
+            return true
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 
     init {
         id = asset.id

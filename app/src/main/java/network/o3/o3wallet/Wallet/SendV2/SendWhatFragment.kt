@@ -2,6 +2,7 @@ package network.o3.o3wallet.Wallet.SendV2
 
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.renderscript.ScriptGroup
@@ -38,6 +39,11 @@ import org.jetbrains.anko.textColor
 import org.w3c.dom.Text
 import java.math.BigDecimal
 import java.text.NumberFormat
+import network.o3.o3wallet.R.id.view
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.support.v4.content.ContextCompat.getSystemService
+import android.view.inputmethod.InputMethodManager
+import kotlin.math.floor
 
 
 class SendWhatFragment : Fragment() {
@@ -76,7 +82,11 @@ class SendWhatFragment : Fragment() {
             override fun onProgressChanged(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float, fromUser: Boolean) {
                 (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(activity!!, Observer { selectedAsset ->
                     var ratio = progressFloat / 100
-                    val cryptoAmount = ratio * selectedAsset!!.value.toDouble()
+                    var cryptoAmount = ratio * selectedAsset!!.value.toDouble()
+                    if (selectedAsset.decimals == 0) {
+                        cryptoAmount = floor(cryptoAmount)
+                    }
+
                     amountEditText.text = SpannableStringBuilder((cryptoAmount).toString())
                 })
             }
@@ -88,11 +98,6 @@ class SendWhatFragment : Fragment() {
             }
         }
     }
-
-    fun changedAsset() {
-
-    }
-
 
     fun initiateAssetSelector() {
         val assetContainer = mView.find<ConstraintLayout>(R.id.assetSelectorContainer)
@@ -109,14 +114,13 @@ class SendWhatFragment : Fragment() {
                 }
             }
         })
-
-        assetContainer.setOnClickListener {
+        assetContainer.setNoDoubleClickListener(View.OnClickListener { v ->
             val assetSelectorSheet = AssetSelectionBottomSheet()
             (activity as SendV2Activity).sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
                 assetSelectorSheet.assets = ownedAssets!!
                 assetSelectorSheet.show(activity!!.supportFragmentManager, assetSelectorSheet.tag)
             })
-        }
+        })
 
         (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             formatter.maximumFractionDigits = selectedAsset!!.decimals
@@ -220,6 +224,9 @@ class SendWhatFragment : Fragment() {
         reviewButton = mView.find(R.id.sendWhereButton)
         reviewButton.isEnabled = false
         reviewButton.setOnClickListener {
+            //some devices you ahve to force keyboard down
+            val imm = (activity as SendV2Activity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm!!.hideSoftInputFromWindow(view?.getWindowToken(), 0)
             mView.findNavController().navigate(R.id.action_sendWhatFragment_to_sendReviewFragment)
         }
         listenForNewPricingData()

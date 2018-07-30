@@ -11,6 +11,7 @@ import network.o3.o3wallet.Portfolio.HomeFragment
 import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.Intent
+import android.support.design.bottomnavigation.LabelVisibilityMode
 import android.support.v7.app.ActionBar
 import android.text.Layout
 import android.view.Gravity
@@ -39,6 +40,7 @@ class MainTabbedActivity : AppCompatActivity() {
     var fragments: Array<Fragment>? = arrayOf(HomeFragment.newInstance(),
             TabbedAccount.newInstance(), MarketplaceTabbedFragment.newInstance(), NewsFeedFragment.newInstance(),
             SettingsFragment.newInstance())
+    var deepLink: String? = null
 
     override fun onBackPressed() {
         alert(resources.getString(R.string.TABBAR_logout_warning)) {
@@ -112,7 +114,11 @@ class MainTabbedActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, selectedFragment, 0.toString())
         transaction.commit()
-
+        if (intent != null) {
+            if (intent.getStringExtra("deepLink") != null) {
+                deepLink = intent.getStringExtra("deepLink")
+            }
+        }
         setupKeyboardDetector()
         setupChannel()
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
@@ -121,6 +127,7 @@ class MainTabbedActivity : AppCompatActivity() {
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED)
         bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var selectedFragment: Fragment? = null
@@ -188,9 +195,7 @@ class MainTabbedActivity : AppCompatActivity() {
         transaction.show(fragments!!.get(index))
         transaction.commit()
         if (index == 0) {
-            (fragments!!.get(index) as HomeFragment).homeModel.loadAssetsFromModel(false)
+           (fragments!!.get(index) as HomeFragment).homeModel.getDisplayedAssets(false)
         }
     }
-
-
 }

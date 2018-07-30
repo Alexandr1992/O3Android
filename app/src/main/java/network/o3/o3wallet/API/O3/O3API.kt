@@ -78,7 +78,7 @@ class O3API {
     }
 
     fun getNewsFeed(completion: (Pair<FeedData?, Error?>) -> Unit) {
-        val url = "https://staging-api.o3.network/v1/feed/"/*baseURL + Route.FEED.routeName()*/
+        val url = "https://api.o3.network/v1/feed/"/*baseURL + Route.FEED.routeName()*/
         url.httpGet().responseString { request, response, result ->
             val (data, error) = result
             if (error == null) {
@@ -112,12 +112,12 @@ class O3API {
         }
     }
 
-    fun getTokenSales(completion: (Pair<TokenSales?, Error?>) -> Unit) {
-        var url = "https://platform.o3.network/api/v1/neo/tokensales"
+    fun getTokenSales(address: String, completion: (Pair<TokenSales?, Error?>) -> Unit) {
+        var url = "https://platform.o3.network/api/v1/neo/" + address + "/tokensales"
         if (PersistentStore.getNetworkType() == "Test") {
-            url = "https://platform.o3.network/api/v1/neo/tokensales?network=test"
+            url = "https://platform.o3.network/api/v1/neo/" + address + "/tokensales?network=test"
         } else if (PersistentStore.getNetworkType() == "Private") {
-            url = "https://platform.o3.network/api/v1/neo/tokensales?network=private"
+            url = "https://platform.o3.network/api/v1/neo/" + address + "tokensales?network=private"
         }
 
         var request = url.httpGet()
