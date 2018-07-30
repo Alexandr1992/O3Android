@@ -14,6 +14,10 @@ import network.o3.o3wallet.API.O3.TokenSale
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
+import android.graphics.Paint.UNDERLINE_TEXT_FLAG
+import android.R.attr.button
+import android.graphics.Paint
+import android.support.v4.content.ContextCompat.startActivity
 
 
 /**
@@ -87,7 +91,14 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
             val coinNameTextView = view.find<TextView>(R.id.tokenSaleCoinNameTextView)
             val coinDescriptionTextView = view.find<TextView>(R.id.tokenSaleDescriptionTextView)
             val logoImageView = view.find<ImageView>(R.id.tokenSaleSquareImageView)
+            val weblinkButton = view.find<Button>(R.id.visitWebsiteButton)
 
+            weblinkButton.paintFlags = (weblinkButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG)
+            weblinkButton.setOnClickListener {
+                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                browserIntent.putExtra("url", tokenSale.webURL!!)
+                view.context.startActivity(browserIntent)
+            }
             daysLeftTextView.text = String.format(view.context.resources.getString(R.string.TOKENSALE_Days_Remaining), ((tokenSale.endTime - (System.currentTimeMillis()/1000)) / 3600 / 24).toString())
             coinNameTextView.text = tokenSale.name
             coinDescriptionTextView.text = tokenSale.shortDescription

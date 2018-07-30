@@ -178,6 +178,7 @@
                     android:id="@+id/portfolioSwipeRefresh"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <ListView
                         android:id="@+id/assetListView"
                         android:layout_width="match_parent"
@@ -186,8 +187,8 @@
                         android:layout_marginTop="8dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
-                        android:divider="@null"
-                        android:dividerHeight="0dp" />
+                        android:divider="@color/colorSubtitleGrey"
+                        android:dividerHeight="0.25dp" />
                 </android.support.v4.widget.SwipeRefreshLayout>
 
             </ScrollView>

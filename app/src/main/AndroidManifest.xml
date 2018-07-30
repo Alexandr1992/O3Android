@@ -30,7 +30,6 @@
                 android:resource="@xml/file_paths"
                 tools:replace="android:resource" />
         </provider>
-
         <activity
             android:name=".Onboarding.LandingActivity"
             android:screenOrientation="portrait">
@@ -91,9 +90,9 @@
         <activity android:name=".Onboarding.SelectingBestNode"
             android:theme="@style/AppTheme.White"
             />
-        <activity android:name=".MarketPlace.TokenSales.TokenSaleReviewFragment" />
-        <activity android:name=".MarketPlace.TokenSales.TokenSaleReceiptFragment" />
-        <activity android:name=".MarketPlace.TokenSales.TokenSaleRootActivity" />
+        <activity android:name=".MarketPlace.TokenSales.TokenSaleRootActivity"
+            android:theme="@style/AppTheme.White"
+            />
         <activity android:name=".Settings.AdvancedSettingsActivity" />
         <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
         <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />

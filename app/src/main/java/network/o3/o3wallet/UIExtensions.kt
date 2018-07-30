@@ -2,6 +2,7 @@ package network.o3.o3wallet
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.EditText
 
 /**
@@ -19,4 +20,14 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
             afterTextChanged.invoke(editable.toString())
         }
     })
+}
+
+fun View.setNoDoubleClickListener(listener: View.OnClickListener, waitMillis : Long = 1000) {
+    var lastClickTime = 0L
+    setOnClickListener { view ->
+        if (System.currentTimeMillis() > lastClickTime + waitMillis) {
+            listener.onClick(view)
+            lastClickTime = System.currentTimeMillis()
+        }
+    }
 }

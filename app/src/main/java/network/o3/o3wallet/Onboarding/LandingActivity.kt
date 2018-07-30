@@ -17,12 +17,16 @@ import io.fabric.sdk.android.Fabric
 import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
+import network.o3.o3wallet.PersistentStore.clearPersistentStore
 import org.jetbrains.anko.*
 
 class LandingActivity : AppCompatActivity() {
     private lateinit var pager: ViewPager
     private lateinit var nextButton: Button
     private lateinit var animationView: LottieAnimationView
+    private var deepLink: String? = null
+
+
     val maxPages = 5
     val minPages = 0
     var currentPage = 0
@@ -154,6 +158,9 @@ class LandingActivity : AppCompatActivity() {
             return
         } else {
             val intent = Intent(this, PasscodeRequestActivity::class.java)
+            if (deepLink != null) {
+                intent.putExtra("deepLink", deepLink!!)
+            }
             startActivity(intent)
         }
     }
@@ -165,6 +172,7 @@ class LandingActivity : AppCompatActivity() {
             return
         } else {
             val generatedWIF = Neoutils.newWallet().wif
+            clearPersistentStore()
             val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
             intent.putExtra("wif", generatedWIF)
             startActivity(intent)

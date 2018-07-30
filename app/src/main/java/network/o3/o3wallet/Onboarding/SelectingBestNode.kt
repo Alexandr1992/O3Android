@@ -20,6 +20,7 @@ import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.find
 
 class SelectingBestNode : AppCompatActivity() {
+    var deepLink: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +33,11 @@ class SelectingBestNode : AppCompatActivity() {
             putBoolean("USING_PRIVATE_NET", false)
             commit()
         }
+        if (intent != null) {
+            if (intent.getStringExtra("deepLink") != null) {
+                deepLink = intent.getStringExtra("deepLink")
+            }
+        }
         getBestNode()
     }
 
@@ -39,6 +45,9 @@ class SelectingBestNode : AppCompatActivity() {
         PersistentStore.setNodeURL(node)
         //close activity and start the main tabbed one fresh
         val intent = Intent(this, MainTabbedActivity::class.java)
+        if (deepLink != null) {
+            intent.putExtra("deepLink", deepLink!!)
+        }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }

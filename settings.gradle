@@ -1,1 +1,1 @@
-include ':app', ':neoutils', ':channel'
+include ':app', ':channel', ':neoutils'

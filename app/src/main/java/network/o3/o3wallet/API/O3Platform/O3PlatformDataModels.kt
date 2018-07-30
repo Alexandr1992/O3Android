@@ -77,6 +77,9 @@ data class ChainNetworkData(val data: ChainNetwork)
 data class ChainNetwork(val neo: NetworkStatus, val ontology: NetworkStatus)
 data class NetworkStatus(val blockcount: Int, val best: String, val nodes: List<String>)
 
+data class OntologyClaimableGasData(val data: OntologyClaimableGas)
+data class OntologyClaimableGas(val ong: String, val calculated: Boolean)
+
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String
     var address: String
@@ -102,11 +105,11 @@ class TransferableAssets(private val balances: TransferableBalances) {
         for (asset in balances.assets) {
             assets.add(TransferableAsset(asset))
         }
+        for (ontAsset in balances.ontology) {
+            assets.add(TransferableAsset(ontAsset))
+        }
         for (token in balances.nep5Tokens) {
             assets.add(TransferableAsset(token))
-        }
-       for (ontAsset in balances.ontology) {
-            assets.add(TransferableAsset(ontAsset))
         }
     }
 }

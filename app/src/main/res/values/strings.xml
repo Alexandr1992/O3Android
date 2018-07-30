@@ -208,7 +208,7 @@
     <string name="WALLET_my_o3_wallet" comment="A title for the wallet page where all utxos are listed">My O3 Wallet</string>
     <string name="WALLET_assets" comment="A title for the utxos tab on the wallet page">Assets</string>
     <string name="WALLET_transactions" comment="A title for the transactions tab in the wallet page">Transactions</string>
-    <string name="WALLET_claim" comment="A title for a claim in the transaction history">CLAIM</string>
+    <string name="WALLET_claim" comment="A title for a claim in the transaction history">Claim</string>
     <string name="WALLET_my_address" comment="Header for my address page">My Address</string>
     <string name="WALLET_copy_address_my_address" comment="Copy Address action when looking at my address qr">COPY ADDRESS</string>
 
@@ -368,9 +368,10 @@
 
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="WALLET_sync">sync now</string>
+    <string name="WALLET_sync">Sync Now</string>
     <string name="WALLET_estimated_gas">Estimated</string>
-    <string name="WALLET_confirmed_gas">Confirmed</string>
+    <string name="WALLET_confirmed_gas">Claim successful. It will appear in your account soon</string>
+    <string name="WALLET_ready_to_claim_gas">Your gas is ready to claim!</string>
     <string name="WALLET_Claimable_GAS">Claimable GAS</string>
     <string name="WALLET_learn_more_claim">Learn More</string>
     <string name="WALLET_syncing_title">Fetching transaction records...</string>
@@ -378,6 +379,7 @@
     <string name="WALLET_successful_claim_subtitle">It will be in your account soon</string>
     <string name="WALLET_successful_claim_title">GAS claimed successfully</string>
     <string name="WALLET_sync_failed">Oh no! Something went wrong with the syncing process. Check back later and try again</string>
+    <string name="WALLET_sync_needs_more_time">It\'s taking a bit longer than expected to sync. Pull down to refresh</string>
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
@@ -386,7 +388,7 @@
     <string name="DIALOG_can_lose_confirm">I understand that if I lose this key I will lose access to my wallet</string>
     <string name="DIALOG_show_my_key">Show my key</string>
     <string name="DIALOG_performed_backup">All Done!</string>
-    <string name="PORTFOLIO_pricing_not_available">No Pricing Data Available Yet</string>
+    <string name="PORTFOLIO_pricing_not_available">Pricing Unavailable</string>
     <string name="PORTFOLIO_pricing_not_available_description">Our source for pricing data (CoinCap) has not yet registered this token, check back soon!</string>
     <string name="PORTFOLIO_no_watch_addresses" comment="No watch addresses added in portfolio">No watch addresses added</string>
     <string name="PORTFOLIO_add_watch_address" comment="Add a watch address in portfolio screen">Add watch address</string>
@@ -413,4 +415,7 @@
     <string name="DAPP_connection_request">%s want\'s to coonect to your O3 app. Allow?</string>
     <string name="DAPP_transaction_signing_request">The app is requesting that you accept the transaction. Allow?</string>
     <string name="DAPP_allow">Allow</string>
+    <string name="Send_Network_Fee_Label">Network Fee: %s</string>
+    <string name="TOKENSALE_Visit_website">Visit Website</string>
+    <string name="TOKENSALE_Buy_Tokens">Buy Tokens</string>
 </resources>

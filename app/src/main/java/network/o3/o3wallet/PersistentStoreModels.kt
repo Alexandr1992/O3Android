@@ -18,6 +18,10 @@ data class Contact(val address: String, val nickname: String)
 
 object PersistentStore {
 
+    fun clearPersistentStore() {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().clear().apply()
+    }
+
     fun addWatchAddress(address: String, nickname: String): ArrayList<WatchAddress> {
         val currentAddresses = getWatchAddresses().toCollection(ArrayList<WatchAddress>())
         val toInsert = WatchAddress(address, nickname)

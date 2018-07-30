@@ -78,7 +78,7 @@ class O3API {
     }
 
     fun getNewsFeed(completion: (Pair<FeedData?, Error?>) -> Unit) {
-        val url = "https://staging-api.o3.network/v1/feed/"/*baseURL + Route.FEED.routeName()*/
+        val url = "https://api.o3.network/v1/feed/"/*baseURL + Route.FEED.routeName()*/
         url.httpGet().responseString { request, response, result ->
             val (data, error) = result
             if (error == null) {

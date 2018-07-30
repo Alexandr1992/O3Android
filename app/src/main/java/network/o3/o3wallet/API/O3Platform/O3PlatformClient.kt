@@ -1,8 +1,12 @@
 package network.o3.o3wallet.API.O3Platform
 
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPatch
+import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import network.o3.o3wallet.API.O3.TokenSaleLog
+import network.o3.o3wallet.API.O3.TokenSaleLogSigned
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import java.util.*
@@ -21,6 +25,7 @@ class O3PlatformClient {
         VERIFICATION,
         PRICING,
         NODES,
+        UNBOUNDONG,
         UTXO;
 
 
@@ -197,6 +202,46 @@ class O3PlatformClient {
                 completion(Pair<ChainNetwork?, Error?>(chainNetwork, null))
             } else {
                 completion(Pair<ChainNetwork?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getOntologyCalculatedGas(address: String, completion: (Pair<OntologyClaimableGas?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/ont/" + address + "/" + Route.UNBOUNDONG.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.timeout(600000).responseString { _, _, result ->
+            val(data, error) = result
+            if (error == null) {
+                val (data, error) = result
+                if (error == null) {
+                    val platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                    val calculatedGasData = Gson().fromJson<OntologyClaimableGasData>(platformResponse.result)
+                    val calculatedGas = calculatedGasData.data
+                    completion(Pair<OntologyClaimableGas?, Error?>(calculatedGas, null))
+                } else {
+                    completion(Pair<OntologyClaimableGas?, Error>(null, Error(error.localizedMessage)))
+                }
+            }
+        }
+    }
+
+    fun postTokenSaleLog(address: String, companyID: String, tokenSaleLog: TokenSaleLogSigned, completion: (Pair<Boolean, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/neo/" + address + "/tokensales/" + companyID
+        var request = url.httpPost()
+        request.headers["User-Agent"] = "O3Android"
+        request.body(Gson().toJson(tokenSaleLog)).timeout(600000).responseString {request, response, result ->
+            val(data, error) = result
+            if (error == null) {
+                val (data, error) =result
+                if (error == null) {
+                    val platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                    if (platformResponse.code == 200) {
+                        completion(Pair<Boolean, Error?>(true, null))
+                    } else {
+                        completion(Pair<Boolean, Error?>(false, Error("Something went wrong when posting transaction log")))
+                    }
+                }
             }
         }
     }

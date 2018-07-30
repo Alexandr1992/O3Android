@@ -6,10 +6,10 @@
         <shape>
             <solid android:color="@color/colorDisabledButton" />
             <corners
-                android:bottomRightRadius="2dp"
-                android:topRightRadius="2dp"
-                android:bottomLeftRadius="2dp"
-                android:topLeftRadius="2dp"/>
+                android:bottomRightRadius="8dp"
+                android:topRightRadius="8dp"
+                android:bottomLeftRadius="8dp"
+                android:topLeftRadius="8dp"/>
         </shape>
 
     </item>
@@ -18,10 +18,10 @@
         <shape>
             <solid android:color="@color/colorAccent" />
             <corners
-                android:bottomRightRadius="2dp"
-                android:topRightRadius="2dp"
-                android:bottomLeftRadius="2dp"
-                android:topLeftRadius="2dp"/>
+                android:bottomRightRadius="8dp"
+                android:topRightRadius="8dp"
+                android:bottomLeftRadius="8dp"
+                android:topLeftRadius="8dp"/>
         </shape>
 
     </item>
