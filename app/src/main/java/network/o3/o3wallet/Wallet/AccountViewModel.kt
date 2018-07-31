@@ -7,11 +7,14 @@ import android.arch.lifecycle.ViewModel
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.Block
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.*
+import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
+import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
@@ -25,18 +28,13 @@ class AccountViewModel: ViewModel() {
 
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
-    private var utxosFetched: MutableLiveData<Boolean>? = null
-    private var neoSent: MutableLiveData<Boolean>? = null
-    private var claimInfoUpdated: MutableLiveData<Boolean>? = null
     private var claims: MutableLiveData<ClaimData>? = null
-    private var currentBlock: MutableLiveData<Int?>? = null
     private var swapInfo: MutableLiveData<O3InboxItem?>? = null
 
     private var ontologyClaims: MutableLiveData<OntologyClaimableGas>? = null
 
     private var lastDataLoadError: Error? = null
     private var claimError: Error? = null
-    private var claimingInProgress: Boolean = false
     private var claimsDataRefreshing: Boolean = false
     var needsSync = true
     private var neoBalance: Int? = null
@@ -44,18 +42,18 @@ class AccountViewModel: ViewModel() {
 
 
     init {
-        getUTXOs(true)
+        getUTXOs()
     }
 
-    fun getAssets(refresh: Boolean): LiveData<TransferableAssets> {
-        if (assets == null || refresh) {
+    fun getAssets(): LiveData<TransferableAssets> {
+        if (assets == null) {
             assets = MutableLiveData()
             loadAssets()
         }
         return assets!!
     }
 
-    private fun loadAssets() {
+    fun loadAssets() {
         val cachedAssets = PersistentStore.getLatestBalances()
         if (cachedAssets != null) {
             assets!!.postValue(cachedAssets)
@@ -75,7 +73,7 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-    private fun loadInboxItem() {
+    fun loadInboxItem() {
         O3PlatformClient().getInbox(Account.getWallet()!!.address) {
             if (it.second != null) {
                 swapInfo!!.postValue(null)
@@ -87,34 +85,20 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-    fun getInboxItem(refresh: Boolean): LiveData<O3InboxItem?> {
-        if (swapInfo == null || refresh) {
+    fun getInboxItem(): LiveData<O3InboxItem?> {
+        if (swapInfo == null) {
             swapInfo = MutableLiveData()
             loadInboxItem()
         }
         return swapInfo!!
     }
 
-    fun getClaims(refresh: Boolean): LiveData<ClaimData> {
-        if (claims == null || refresh) {
+    fun getClaims(): LiveData<ClaimData> {
+        if (claims == null) {
             claims = MutableLiveData()
             loadClaims()
         }
         return claims!!
-    }
-
-    fun getBlock(refresh: Boolean): LiveData<Int?> {
-        if (currentBlock == null || refresh) {
-            currentBlock = MutableLiveData()
-            loadBlock()
-        }
-        return currentBlock!!
-    }
-
-    fun loadBlock() {
-        NeoNodeRPC(PersistentStore.getNodeURL()).getBlockCount {
-            currentBlock?.postValue(it.first)
-        }
     }
 
     fun getNeoBalance(): Int {
@@ -128,26 +112,15 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-    fun getUTXOs(refresh: Boolean): LiveData<UTXOS> {
-        if(utxos == null || refresh) {
+    fun getUTXOs(): LiveData<UTXOS> {
+        if(utxos == null) {
             utxos = MutableLiveData()
             loadUTXOs()
         }
         return utxos!!
     }
 
-    fun getEstimatedGas(claimData: ClaimData): Double {
-        if (claimData.data.claims.isEmpty()) {
-            return claimData.data.gas.toDouble()
-        } else if (currentBlock == null) {
-            return claimData.data.gas.toDouble()
-        } else {
-            val sortedClaims = claimData.data.claims.sortedBy { it.createdAtBlock }
-            return (currentBlock?.value!! - sortedClaims[0].createdAtBlock) / 100000000.0 * 7 * neoBalance!!
-        }
-    }
-
-    private fun loadClaims() {
+    fun loadClaims() {
         O3PlatformClient().getClaimableGAS(Account.getWallet()!!.address) {
             claimsDataRefreshing = false
             lastDataLoadError = it.second
@@ -155,8 +128,6 @@ class AccountViewModel: ViewModel() {
             storedClaims = it.first
         }
     }
-
-
 
     fun checkSyncComplete(completion: (Boolean) -> Unit ) {
         Looper.prepare()
@@ -169,7 +140,7 @@ class AccountViewModel: ViewModel() {
                 completion(false)
             }
         }
-        Handler().postDelayed(checker, 45000)
+        Handler().postDelayed(checker, 60000)
         Looper.loop()
     }
 
@@ -218,13 +189,43 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-
-    fun getClaimingStatus(): Boolean {
-        return claimingInProgress
+    fun resyncOntologyClaims(completion: (Double?, Error?) -> Unit) {
+        O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
+            if (it.first != null && it.first!!.calculated == false) {
+                val doubleValue = it.first!!.ong.toLong() / OntologyClient().DecimalDivisor
+                completion(doubleValue, null)
+            } else {
+                Handler().postDelayed(
+                        {
+                            O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
+                                if (it.first != null && it.first!!.calculated == false) {
+                                    val doubleValue = it.first!!.ong.toLong() / OntologyClient().DecimalDivisor
+                                    completion(doubleValue, null)
+                                } else {
+                                    completion(null, Error("Syncing Failed"))
+                                }
+                            }
+                        }, 15000)
+            }
+        }
     }
 
-    fun setClaimiable(isClaiming: Boolean) {
-        this.claimingInProgress = isClaiming
+    fun syncOntologyChain(completion: (Double?, Error?) -> Unit) {
+        OntologyClient().transferOntologyAsset(OntologyClient.Asset.ONT.assetID(), Account.getWallet()!!.address, 1.0) {
+            if(it.first) {
+                Looper.prepare()
+                Handler().postDelayed (
+                    {
+
+                        resyncOntologyClaims { amount, error ->
+                            completion(amount, error)
+                        }
+                    }, 15000)
+                Looper.loop()
+            } else {
+                completion(null, Error(it.second))
+            }
+        }
     }
 
     fun getLastError(): Error {

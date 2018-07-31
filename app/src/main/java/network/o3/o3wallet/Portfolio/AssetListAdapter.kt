@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
@@ -109,8 +110,9 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
             assetTotalValueView.visibility = View.VISIBLE
             view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.GONE
             view.setOnClickListener {
-                val intent = Intent(mfragment.activity, AssetGraph::class.java)
-                intent.putExtra("SYMBOL", asset.assetName.capitalize())
+                val detailURL = "https://public.o3.network/neo/assets/" + asset.assetSymbol + "?address=" + Account.getWallet()!!.address
+                val intent = Intent(mfragment.activity, DAppBrowserActivity::class.java)
+                intent.putExtra("url", detailURL)
                 mfragment.activity?.startActivity(intent)
             }
         }

@@ -370,6 +370,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="WALLET_sync">Sync Now</string>
     <string name="WALLET_estimated_gas">Estimated</string>
+    <string name="WALLET_unbound_ong">Unbound ONG</string>
     <string name="WALLET_confirmed_gas">Claim successful. It will appear in your account soon</string>
     <string name="WALLET_ready_to_claim_gas">Your gas is ready to claim!</string>
     <string name="WALLET_Claimable_GAS">Claimable GAS</string>
@@ -381,6 +382,8 @@
     <string name="WALLET_sync_failed">Oh no! Something went wrong with the syncing process. Check back later and try again</string>
     <string name="WALLET_sync_needs_more_time">It\'s taking a bit longer than expected to sync. Pull down to refresh</string>
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
+    <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It may incur a fee of 0.01 ONG</string>
+    <string name="WALLET_sync_ontology_gas">Are you sure you want to sync your ONG? It will cost (0.01) ONG to do so</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
     <string name="DIALOG_confirm_backup">My Private Key is backed up in a safe place</string>

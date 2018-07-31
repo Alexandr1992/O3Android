@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.TokenListing
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Portfolio.AssetGraph
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -49,9 +51,10 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
         }
 
         override fun onClick(v: View) {
-            val intent = Intent(v.context, AssetGraph::class.java)
-            intent.putExtra("SYMBOL", token!!.symbol.capitalize())
-            startActivity(v.context, intent, null)
+            val detailURL = "https://public.o3.network/neo/assets/" + token!!.symbol + "?address=" + Account.getWallet()!!.address
+            val intent = Intent(v.context, DAppBrowserActivity::class.java)
+            intent.putExtra("url", detailURL)
+            v.context.startActivity(intent)
         }
 
         companion object {

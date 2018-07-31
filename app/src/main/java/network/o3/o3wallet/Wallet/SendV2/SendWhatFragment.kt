@@ -117,8 +117,13 @@ class SendWhatFragment : Fragment() {
         assetContainer.setNoDoubleClickListener(View.OnClickListener { v ->
             val assetSelectorSheet = AssetSelectionBottomSheet()
             (activity as SendV2Activity).sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
-                assetSelectorSheet.assets = ownedAssets!!
-                assetSelectorSheet.show(activity!!.supportFragmentManager, assetSelectorSheet.tag)
+                //weird bug where this can be added twice potentially dont add until it is fully dismissed and destoryed
+                if (assetSelectorSheet.isAdded) {
+                    return@Observer
+                } else {
+                    assetSelectorSheet.assets = ownedAssets!!
+                    assetSelectorSheet.show(activity!!.supportFragmentManager, assetSelectorSheet.tag)
+                }
             })
         })
 

@@ -66,6 +66,23 @@ class OntologyClient {
         }
     }
 
+    fun claimOntologyGas(completion: (Pair<Boolean, Error?>) -> Unit) {
+        getGasPrice {
+            if (it.second != null) {
+                completion(Pair<Boolean, Error?>(false, Error(it.second!!.localizedMessage)))
+            } else {
+                try {
+                    Neoutils.claimONG(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
+                            Account.getWallet()?.wif!!)
+                    completion(Pair<Boolean, Error?>(true, null))
+                }
+                catch (e: Exception) {
+                    completion(Pair<Boolean, Error?>(false, Error(e.localizedMessage)))
+                }
+            }
+        }
+    }
+
     fun getGasPrice(completion: (Pair<Long?, Error?>) -> Unit) {
         val url = PersistentStore.getOntologyNodeURL()
         val dataJson = jsonObject(
