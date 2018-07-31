@@ -12,6 +12,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.SearchView
+import com.airbnb.lottie.LottieAnimationView
 import com.github.salomonbrys.kotson.obj
 import com.github.salomonbrys.kotson.toJson
 import com.google.gson.JsonObject
@@ -36,7 +37,7 @@ class DAppBrowserActivity : AppCompatActivity() {
         webView = view.findViewById(R.id.dapp_browser_webview)
         val searchBar = view.find<SearchView>(R.id.dappSearch)
 
-        val webLoader = find<ProgressBar>(R.id.webLoader)
+        val webLoader = find<LottieAnimationView>(R.id.webLoader)
         val url = intent.getStringExtra("url")
         val showSearchBar = intent.getBooleanExtra("allowSearch", false)
         if (showSearchBar) {
