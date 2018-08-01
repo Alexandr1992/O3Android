@@ -182,7 +182,7 @@ class AccountFragment : Fragment() {
                 this.neoSyncButton.isEnabled = false
                 context?.toast(accountViewModel.getLastError().localizedMessage)
             } else {
-                val format = NumberFormat.getInstance()
+                val format = NumberFormat.getInstance(Locale.US)
                 val number = format.parse(it.data.gas)
                 val current = number.toDouble()
                 unclaimedGASTicker.text =  "%.8f".format(current)
