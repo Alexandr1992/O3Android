@@ -49,12 +49,7 @@ class DAppBrowserActivity : AppCompatActivity() {
 
                 override fun onQueryTextSubmit(query: String): Boolean {
                     webLoader.visibility = View.VISIBLE
-                    if (query.startsWith("https://www.")) {
-                        webView.loadUrl(query)
-                    } else {
-                        webView.loadUrl("https://www." + query)
-                    }
-
+                    webView.loadUrl(query)
                     return true
                 }
             })
