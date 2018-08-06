@@ -46,7 +46,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     }
 
     fun handleRequestToConnect(message: O3Message) {
-        val appName = message.data.toString()
+        val appName = message.data.asString
         val authenticateMessage = webView.context.resources.getString(R.string.DAPP_connection_request, appName)
         context.alert(authenticateMessage) {
             yesButton {
@@ -61,7 +61,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     }
 
     fun handleVerifySession(message: O3Message) {
-        val session = message.data.toString()
+        val session = message.data.asString
         if (session != sessionId) {
             callback(message.command, JsonObject(), "Invalid Session", false)
         } else {
@@ -140,7 +140,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     }
 
     fun handleRequestToSign(message: O3Message) {
-        val unsignedTx = message.data.toString()
+        val unsignedTx = message.data.asString
         if (unsignedTx.length < 2) {
             callback(message.command, JsonObject(), "invalid unsigned raw transaction", true)
         }
