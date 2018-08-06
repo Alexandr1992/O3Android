@@ -5,13 +5,11 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.renderscript.ScriptGroup
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.text.InputFilter
 import android.text.InputType
 import android.text.SpannableStringBuilder
-import android.text.method.DigitsKeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,20 +18,10 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import org.jetbrains.anko.find
 import com.xw.repo.BubbleSeekBar
-import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import kotlinx.android.synthetic.main.send_what_fragment.*
-import kotlinx.android.synthetic.main.tabbar_activity_main_tabbed.*
-import kotlinx.coroutines.experimental.channels.Send
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.API.O3Platform.TransferableBalance
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.backgroundColorResource
-import org.jetbrains.anko.sdk15.coroutines.textChangedListener
-import org.jetbrains.anko.support.v4.act
-import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
 import org.w3c.dom.Text
@@ -42,7 +30,10 @@ import java.text.NumberFormat
 import network.o3.o3wallet.R.id.view
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.support.v4.content.ContextCompat.getSystemService
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import org.jetbrains.anko.image
+import java.text.DecimalFormatSymbols
 import kotlin.math.floor
 
 
@@ -52,6 +43,7 @@ class SendWhatFragment : Fragment() {
     private lateinit var amountCurrencyEditText: EditText
     private lateinit var otherAmountTextView: TextView
     private lateinit var reviewButton: Button
+    private lateinit var decimalButton: ImageButton
     private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
     var currentAssetFilters: Array<InputFilter>? = null
     var currentAssetInputType =  (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
@@ -65,31 +57,46 @@ class SendWhatFragment : Fragment() {
         otherAmountTextView.text = 0.0.formattedFiatString()
     }
 
+    fun digitTapped(digit: String) {
+        resetPercentButtonSelections()
+        amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + digit)
+    }
+
     fun initiatePinPadButtons() {
         mView.find<Button>(R.id.button0).setOnClickListener {
             val curVal = amountEditText.text.toString()
             if (curVal.isNotBlank()) {
                 amountEditText.text = SpannableStringBuilder(curVal + "0")
             }
+            resetPercentButtonSelections()
         }
-        mView.find<Button>(R.id.button1).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "1") }
-        mView.find<Button>(R.id.button2).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "2") }
-        mView.find<Button>(R.id.button3).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "3") }
-        mView.find<Button>(R.id.button4).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "4") }
-        mView.find<Button>(R.id.button5).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "5") }
-        mView.find<Button>(R.id.button6).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "6") }
-        mView.find<Button>(R.id.button7).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "7") }
-        mView.find<Button>(R.id.button8).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "8") }
-        mView.find<Button>(R.id.button9).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "9") }
+
+        mView.find<Button>(R.id.button1).setOnClickListener { digitTapped("1") }
+        mView.find<Button>(R.id.button2).setOnClickListener { digitTapped("2") }
+        mView.find<Button>(R.id.button3).setOnClickListener { digitTapped("3") }
+        mView.find<Button>(R.id.button4).setOnClickListener { digitTapped("4") }
+        mView.find<Button>(R.id.button5).setOnClickListener { digitTapped("5") }
+        mView.find<Button>(R.id.button6).setOnClickListener { digitTapped("6") }
+        mView.find<Button>(R.id.button7).setOnClickListener { digitTapped("7") }
+        mView.find<Button>(R.id.button8).setOnClickListener { digitTapped("8") }
+        mView.find<Button>(R.id.button9).setOnClickListener { digitTapped("9") }
 
         mView.find<ImageButton>(R.id.buttonBackSpace).setOnClickListener {
             val curVal = amountEditText.text.toString()
             if (curVal.isNotBlank()) {
                 amountEditText.text = SpannableStringBuilder(curVal.substring(0, curVal.length - 1))
             }
+            resetPercentButtonSelections()
         }
 
-        mView.find<ImageButton>(R.id.buttonDecimal).setOnClickListener {
+        decimalButton = mView.find<ImageButton>(R.id.buttonDecimal)
+        if (DecimalFormatSymbols().decimalSeparator == ',') {
+            decimalButton.image = resources.getDrawable(R.drawable.ic_comma)
+        } else {
+            decimalButton.image = resources.getDrawable(R.drawable.ic_decimal)
+        }
+
+        decimalButton.setOnClickListener {
             if ((activity as SendV2Activity).sendViewModel.selectedAssetDecimals == 0) {
                 return@setOnClickListener
             }
@@ -102,36 +109,58 @@ class SendWhatFragment : Fragment() {
         }
     }
 
-    fun setUpSeekBar() {
-        val mBubbleSeekBar = mView.find<BubbleSeekBar>(R.id.bubbleSeekBar)
-        mBubbleSeekBar.setCustomSectionTextArray(BubbleSeekBar.CustomSectionTextArray { sectionCount, array ->
-            array.clear()
-            array.put(0, "0%")
-            array.put(1, "25%")
-            array.put(2, "50%")
-            array.put(3, "75%")
-            array.put(4, "MAX")
-            array
-        })
+    fun resetPercentButtonSelections() {
+        mView.find<Button>(R.id.twentyFivePercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.fiftyPercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.seventyFivePercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.oneHundredPercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
+    }
 
-        mBubbleSeekBar.onProgressChangedListener = object : BubbleSeekBar.OnProgressChangedListenerAdapter() {
-            override fun onProgressChanged(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float, fromUser: Boolean) {
-                (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(activity!!, Observer { selectedAsset ->
-                    var ratio = progressFloat / 100
-                    var cryptoAmount = ratio * selectedAsset!!.value.toDouble()
-                    if (selectedAsset.decimals == 0) {
-                        cryptoAmount = floor(cryptoAmount)
-                    }
+    fun updateAmountPercentButton(ratio: Double, selectedButton: Button) {
+        val selectedAsset = (activity as SendV2Activity).sendViewModel.getSelectedAsset().value
+        if (selectedAsset == null) {
+            return
+        }
 
-                    amountEditText.text = SpannableStringBuilder((cryptoAmount).toString())
-                })
-            }
+        var cryptoAmount = ratio * selectedAsset.value.toDouble()
+        if (cryptoAmount == 0.0) {
+            return
+        }
 
-            override fun getProgressOnActionUp(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float) {
-            }
+        selectedButton.textColor = resources.getColor(R.color.colorAccent)
 
-            override fun getProgressOnFinally(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float, fromUser: Boolean) {
-            }
+        if (selectedAsset.decimals == 0) {
+            cryptoAmount = floor(cryptoAmount)
+        }
+        var formatter = NumberFormat.getNumberInstance()
+        formatter.maximumFractionDigits = selectedAsset.decimals
+        amountEditText.text = SpannableStringBuilder(formatter.format(cryptoAmount))
+    }
+
+    fun setupPercentageButtons() {
+        val percent25Button = mView.find<Button>(R.id.twentyFivePercentButton)
+        val percent50Button = mView.find<Button>(R.id.fiftyPercentButton)
+        val percent75Button = mView.find<Button>(R.id.seventyFivePercentButton)
+        val percent100Button = mView.find<Button>(R.id.oneHundredPercentButton)
+
+        percent25Button.setOnClickListener {
+            resetPercentButtonSelections()
+            updateAmountPercentButton(0.25, percent25Button)
+        }
+
+        percent50Button.setOnClickListener {
+            resetPercentButtonSelections()
+            updateAmountPercentButton(0.50, percent50Button)
+        }
+
+        percent75Button.setOnClickListener {
+            resetPercentButtonSelections()
+            updateAmountPercentButton(0.75, percent75Button)
+        }
+
+        percent100Button.setOnClickListener {
+            resetPercentButtonSelections()
+            updateAmountPercentButton(1.00, percent100Button)
         }
     }
 
@@ -165,29 +194,26 @@ class SendWhatFragment : Fragment() {
 
         (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             formatter.maximumFractionDigits = selectedAsset!!.decimals
+            if (selectedAsset.decimals > 0) {
+                decimalButton.visibility = View.VISIBLE
+            } else {
+                decimalButton.visibility = View.INVISIBLE
+            }
+
             find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset.value)
             find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
-            var displayedDecimals = selectedAsset.decimals
-            if (selectedAsset.decimals == 0) {
-                currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
-                currentAssetFilters = arrayOf<InputFilter>()
-            } else {
-                currentAssetInputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
-                currentAssetFilters = arrayOf<InputFilter>(DecimalDigitsInputFilter(8, displayedDecimals))
-            }
-            amountEditText.inputType = currentAssetInputType
-            amountEditText.filters = currentAssetFilters
+
             if (firstLoad) {
-                if((activity as SendV2Activity).sendViewModel.selectedAsset?.value != null) {
+                if ((activity as SendV2Activity).sendViewModel.selectedAsset?.value != null) {
                     (activity as SendV2Activity).sendViewModel.setSelectedAsset((activity as SendV2Activity).sendViewModel.selectedAsset?.value!!)
                 }
                 val toSendAmount = (activity as SendV2Activity).sendViewModel.toSendAmount
                 if (toSendAmount != BigDecimal.ZERO) {
-                    mView.find<EditText>(R.id.amountEditText).text = SpannableStringBuilder(toSendAmount.toDouble().toString())
+                    var formatter = NumberFormat.getNumberInstance()
+                    formatter.maximumFractionDigits = selectedAsset.decimals
+                    amountEditText.text = SpannableStringBuilder(formatter.format(toSendAmount))
                 }
                 firstLoad = false
-            } else {
-                amountEditText.text.clear()
             }
 
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol)
@@ -239,7 +265,7 @@ class SendWhatFragment : Fragment() {
         amountEditText.isCursorVisible = true
         val amount = pricingData.price *  displayedString.toDouble()
         enteredCurrencyDouble = amount
-        var assetBalance = find<TextView>(R.id.assetBalanceTextView).text.toString()
+        var assetBalance = mView.find<TextView>(R.id.assetBalanceTextView).text.toString()
         if (assetBalance.isNotEmpty()) {
             val balance = NumberFormat.getInstance().parse(assetBalance).toDouble()
             val underlineVuew = mView.find<View>(R.id.underlineView)
@@ -254,9 +280,11 @@ class SendWhatFragment : Fragment() {
             }
             mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
         }
-        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(displayedString))
-    }
 
+
+        val usFormattedString = displayedString.replace(',', '.')
+        (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(usFormattedString))
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -272,7 +300,7 @@ class SendWhatFragment : Fragment() {
         mView.find<EditText>(R.id.amountEditText).afterTextChanged { calculateAndDisplaySendAmount() }
         setupFiatEntrySwap()
         initiateAssetSelector()
-        setUpSeekBar()
+        setupPercentageButtons()
         initiatePinPadButtons()
         amountEditText.isCursorVisible = false
 

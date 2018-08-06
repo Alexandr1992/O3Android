@@ -60,6 +60,7 @@
             android:name=".Wallet.SendV2.SendV2Activity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
+
             android:theme="@style/AppTheme.White">
             <nav-graph android:value="@navigation/send_nav_graph" />
             <intent-filter>

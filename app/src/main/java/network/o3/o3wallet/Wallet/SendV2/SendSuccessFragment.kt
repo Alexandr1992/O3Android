@@ -14,6 +14,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.AddContact
 import network.o3.o3wallet.formattedFiatString
@@ -43,6 +44,7 @@ class SendSuccessFragment : Fragment() {
         if (contact != null) {
             mView.find<TextView>(R.id.receiptSelectedAddressTextView).text = contact.address
             mView.find<TextView>(R.id.receiptNicknameTextView).text = contact.nickname
+            addToContactCheckbox.visibility = View.INVISIBLE
         } else {
             val address = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
             mView.find<TextView>(R.id.receiptNicknameTextView).visibility = View.INVISIBLE
@@ -85,11 +87,11 @@ class SendSuccessFragment : Fragment() {
 
         mView = inflater.inflate(R.layout.send_success_fragment, container, false)
         mView.find<TextView>(R.id.transactionIdSubtitleLabel).text = (activity as SendV2Activity).sendViewModel.txID.toLowerCase()
+        addToContactCheckbox = mView.find(R.id.addToContactCheckbox)
         initateSelectedBalanceDetails()
         initiateSelectedRecipientDetails()
         initiateSelectedAssetDetails()
         initiateActionButtons()
-        addToContactCheckbox = mView.find(R.id.addToContactCheckbox)
         return mView
     }
 }

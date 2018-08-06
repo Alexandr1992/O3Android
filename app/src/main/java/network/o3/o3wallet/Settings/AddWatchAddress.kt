@@ -11,12 +11,15 @@ import android.widget.Toast
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
+import neoutils.Neoutils
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.API.NEO.*
 import network.o3.o3wallet.afterTextChanged
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
+import java.lang.Exception
+import java.math.BigDecimal
 
 class AddWatchAddress : AppCompatActivity() {
 
@@ -72,13 +75,29 @@ class AddWatchAddress : AppCompatActivity() {
         }
     }
 
+    fun parseQRPayload(payload: String) {
+        if (Neoutils.validateNEOAddress(payload)) {
+            findViewById<EditText>(R.id.AddressField).setText(payload)
+        } else {
+            try {
+                val uri = Neoutils.parseNEP9URI(payload)
+                val toAddress = uri.to
+                if (toAddress != "") {
+                    findViewById<EditText>(R.id.AddressField).setText(toAddress)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, e.localizedMessage, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null ) {
             if (result.contents == null) {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             } else {
-                findViewById<EditText>(R.id.AddressField).setText(result.contents)
+                parseQRPayload(result.contents)
             }
         }
     }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.findNavController

@@ -436,4 +436,8 @@
     <string name="Send_Network_Fee_Label">Network Fee: %s</string>
     <string name="TOKENSALE_Visit_website">Visit Website</string>
     <string name="TOKENSALE_Buy_Tokens">Buy Tokens</string>
+    <string name="twenty_five_oercent">25%</string>
+    <string name="fifty_percent">50%</string>
+    <string name="seventy_five_percent">75%</string>
+    <string name="one_hundred_percent">100%</string>
 </resources>
