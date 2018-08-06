@@ -10,6 +10,18 @@
         <item>Are you ready to get started?</item>
     </string-array>
 
+    <string name="PINPAD_1">1</string>
+    <string name="PINPAD_2">2</string>
+    <string name="PINPAD_3">3</string>
+    <string name="PINPAD_4">4</string>
+    <string name="PINPAD_5">5</string>
+    <string name="PINPAD_6">6</string>
+    <string name="PINPAD_7">7</string>
+    <string name="PINPAD_8">8</string>
+    <string name="PINPAD_9">9</string>
+    <string name="PINPAD_0">0</string>
+
+
     <string name="ONBOARDING_wallet_generated_title" comment="Initial title when wallet is generate">Wallet generated!</string>
     <string name="ONBOARDING_wallet_generated_subtitle" comment="Info to display after wallet is generated initially">Please take a moment to backup a copy of your Private Key.</string>
 
@@ -263,6 +275,9 @@
     <string name="SEND_success" comment="title when successfully sent tranasction">Success!</string>
     <string name="SEND_transaction_id" comment="label for transaction id after successfully complete transaction">Transaction ID:</string>
     <string name="SEND_save_to_contacts" comment="check whether or not to save the recipient address to your contacts">Save this address to contacts</string>
+
+    <string name="SEND_mempool_height">%d transactions are ahead of you</string>
+    <string name="SEND_mempool_height_unknown">Transaction Queue Unknown</string>
 
 
     <!-- TokenSale -->

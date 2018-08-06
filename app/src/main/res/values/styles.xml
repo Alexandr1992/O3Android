@@ -153,6 +153,14 @@
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
+    <style name="PinPadButton" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">30dp</item>
+        <item name="android:fontFamily">@font/muli</item>
+    </style>
+
+
+
     <style name="BorderLessButton.Accent" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textSize">12dp</item>

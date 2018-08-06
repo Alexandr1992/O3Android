@@ -29,6 +29,12 @@ class SendViewModel: ViewModel() {
     var sendResult: MutableLiveData<String?>? = MutableLiveData()
     var ontologyNetworkFee: MutableLiveData<Double>? = null
 
+    var neoNetworkFee: MutableLiveData<Double>? = null
+
+    var mempoolHeight: MutableLiveData<Int?>? = null
+
+    var selectedAssetDecimals: Int = 0
+
     var toSendAmount: BigDecimal = BigDecimal.ZERO
     var txID = ""
 
@@ -57,6 +63,7 @@ class SendViewModel: ViewModel() {
         }
         selectedAsset?.value = transferableAsset
         selectedAsset?.postValue(transferableAsset)
+        selectedAssetDecimals = transferableAsset.decimals
         O3PlatformClient().getRealTimePrice(transferableAsset.symbol, PersistentStore.getCurrency()) {
             if (it.first != null) {
                 realTimePrice?.postValue(it.first)
@@ -135,6 +142,20 @@ class SendViewModel: ViewModel() {
         }
     }
 
+    fun getMemPoolHeight(): LiveData<Int?> {
+        if (mempoolHeight == null) {
+            mempoolHeight = MutableLiveData()
+            loadMemPoolHeight()
+        }
+        return mempoolHeight!!
+    }
+
+    fun loadMemPoolHeight() {
+        NeoNodeRPC(PersistentStore.getNodeURL()).getMemPoolHeight {
+            mempoolHeight?.postValue(it.first)
+        }
+    }
+
     fun getSelectedSendAmount(): BigDecimal {
         return toSendAmount
     }
@@ -170,7 +191,7 @@ class SendViewModel: ViewModel() {
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount()
         NeoNodeRPC(PersistentStore.getNodeURL()).
-                sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null) {
+                sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
             val error = it.second
             val txid = it.first
             if (txid != null) {
@@ -189,13 +210,34 @@ class SendViewModel: ViewModel() {
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount()
 
-        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, toSendAsset.id, wallet.address, recipientAddress, amount, toSendAsset.decimals) {
-            val error = it.second
-            val txid = it.first
-            if (txid != null) {
-                sendResult?.postValue(txid)
-            } else {
-                sendResult?.postValue(null)
+        if (neoNetworkFee?.value ?: 0.0 == 0.0) {
+            NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, null, toSendAsset.id, wallet.address, recipientAddress, amount, toSendAsset.decimals, BigDecimal.ZERO) {
+                val error = it.second
+                val txid = it.first
+                if (txid != null) {
+                    sendResult?.postValue(txid)
+                } else {
+                    sendResult?.postValue(null)
+                }
+            }
+        } else {
+            O3PlatformClient().getUTXOS(wallet!!.address) {
+                var assets = it.first
+                var error = it.second
+                if (error != null) {
+                    sendResult?.postValue(null)
+                } else {
+                    NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, assets, toSendAsset.id, wallet.address,
+                            recipientAddress, amount, toSendAsset.decimals, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
+                        val error = it.second
+                        val txid = it.first
+                        if (txid != null) {
+                            sendResult?.postValue(txid)
+                        } else {
+                            sendResult?.postValue(null)
+                        }
+                    }
+                }
             }
         }
     }
@@ -212,6 +254,18 @@ class SendViewModel: ViewModel() {
             loadOntologyNetworkFee()
         }
         return ontologyNetworkFee!!
+    }
+
+    fun getNeoNetworkFee(): LiveData<Double> {
+        if (neoNetworkFee == null) {
+            neoNetworkFee = MutableLiveData()
+        }
+        return neoNetworkFee!!
+    }
+
+    fun setNeoNetworkFee(fee: Double) {
+        neoNetworkFee?.value = fee
+        neoNetworkFee?.postValue(fee)
     }
 
     fun loadOntologyNetworkFee() {
@@ -234,6 +288,10 @@ class SendViewModel: ViewModel() {
     fun isOntAsset(): Boolean {
         val toSendAsset = selectedAsset!!.value!!
         return toSendAsset.id.contains("00000000")
+    }
+
+    fun isNeoAsset(): Boolean {
+        return !isOntAsset()
     }
 
     fun send() {

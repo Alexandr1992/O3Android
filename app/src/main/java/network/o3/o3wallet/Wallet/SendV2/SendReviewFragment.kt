@@ -9,10 +9,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.R
@@ -105,19 +102,43 @@ class SendReviewFragment : Fragment() {
     }
 
     fun initiateFeeCalculator() {
-        val networkLabel = mView.find<TextView>(R.id.networkFeeLabel)
+        val networkLabel = mView.find<TextView>(R.id.totalFeeTextView)
         val sendActivity = activity as SendV2Activity
-        if (!sendActivity.sendViewModel.isOntAsset()) {
-            networkLabel.visibility = View.VISIBLE
-            networkLabel.text =
-                    resources.getString(R.string.Send_Network_Fee_Label,  "0")
+        val checkBox = mView.find<CheckBox>(R.id.sendPriorityCheckbox)
+
+        checkBox.setOnClickListener {
+            if (!checkBox.isChecked) {
+                sendActivity.sendViewModel.setNeoNetworkFee(0.0)
+            } else {
+                sendActivity.sendViewModel.setNeoNetworkFee(0.0011)
+            }
+        }
+
+        if (sendActivity.sendViewModel.isNeoAsset()) {
+            sendActivity.sendViewModel.getNeoNetworkFee().observe(this, Observer { result ->
+                networkLabel.text = result.toString() + " GAS"
+            })
+            sendActivity.sendViewModel.setNeoNetworkFee(0.0)
         } else {
+            checkBox.visibility = View.GONE
+            mView.find<TextView>(R.id.mempoolStatusTextView).visibility = View.GONE
             sendActivity.sendViewModel.getOntologyNetworkFee().observe(this, Observer { result ->
-                networkLabel.visibility = View.VISIBLE
-                networkLabel.text = resources.getString(R.string.Send_Network_Fee_Label,
-                                (result!! / OntologyClient().DecimalDivisor).toString() ) + " ONG"
+                networkLabel.text = (result!! / OntologyClient().DecimalDivisor).toString() + " ONG"
             })
         }
+    }
+
+    fun inititiateMemPoolChecker() {
+        val sendActivity = activity as SendV2Activity
+        sendActivity.sendViewModel.getMemPoolHeight().observe(this, Observer { result ->
+            val mempoolStatusLabel = mView.find<TextView>(R.id.mempoolStatusTextView)
+            if (result == null) {
+                mempoolStatusLabel.text = resources.getString(R.string.SEND_mempool_height_unknown)
+            } else {
+                mempoolStatusLabel.text = String.format(resources.getString(R.string.SEND_mempool_height), result)
+            }
+
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -130,6 +151,7 @@ class SendReviewFragment : Fragment() {
         initiateSendButton()
         initiateSendResultListener()
         initiateFeeCalculator()
+        inititiateMemPoolChecker()
         return mView
     }
 }

@@ -60,10 +60,46 @@ class SendWhatFragment : Fragment() {
     var ownedAssets: ArrayList<TransferableAsset> = arrayListOf()
     var enteredCurrencyDouble = 0.0
 
-
     fun setupFiatEntrySwap() {
         otherAmountTextView = mView.find<TextView>(R.id.otherAmountTextView)
         otherAmountTextView.text = 0.0.formattedFiatString()
+    }
+
+    fun initiatePinPadButtons() {
+        mView.find<Button>(R.id.button0).setOnClickListener {
+            val curVal = amountEditText.text.toString()
+            if (curVal.isNotBlank()) {
+                amountEditText.text = SpannableStringBuilder(curVal + "0")
+            }
+        }
+        mView.find<Button>(R.id.button1).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "1") }
+        mView.find<Button>(R.id.button2).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "2") }
+        mView.find<Button>(R.id.button3).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "3") }
+        mView.find<Button>(R.id.button4).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "4") }
+        mView.find<Button>(R.id.button5).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "5") }
+        mView.find<Button>(R.id.button6).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "6") }
+        mView.find<Button>(R.id.button7).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "7") }
+        mView.find<Button>(R.id.button8).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "8") }
+        mView.find<Button>(R.id.button9).setOnClickListener { amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + "9") }
+
+        mView.find<ImageButton>(R.id.buttonBackSpace).setOnClickListener {
+            val curVal = amountEditText.text.toString()
+            if (curVal.isNotBlank()) {
+                amountEditText.text = SpannableStringBuilder(curVal.substring(0, curVal.length - 1))
+            }
+        }
+
+        mView.find<ImageButton>(R.id.buttonDecimal).setOnClickListener {
+            if ((activity as SendV2Activity).sendViewModel.selectedAssetDecimals == 0) {
+                return@setOnClickListener
+            }
+
+            var currString = amountEditText.text.toString()
+            if (currString.isBlank() || currString.contains(".")) {
+                return@setOnClickListener
+            }
+            amountEditText.text = SpannableStringBuilder(SpannableStringBuilder(amountEditText.text.toString() + "."))
+        }
     }
 
     fun setUpSeekBar() {
@@ -229,16 +265,15 @@ class SendWhatFragment : Fragment() {
         reviewButton = mView.find(R.id.sendWhereButton)
         reviewButton.isEnabled = false
         reviewButton.setOnClickListener {
-            //some devices you ahve to force keyboard down
-            val imm = (activity as SendV2Activity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-            imm!!.hideSoftInputFromWindow(view?.getWindowToken(), 0)
             mView.findNavController().navigate(R.id.action_sendWhatFragment_to_sendReviewFragment)
         }
+
         listenForNewPricingData()
         mView.find<EditText>(R.id.amountEditText).afterTextChanged { calculateAndDisplaySendAmount() }
         setupFiatEntrySwap()
         initiateAssetSelector()
         setUpSeekBar()
+        initiatePinPadButtons()
         amountEditText.isCursorVisible = false
 
         return mView

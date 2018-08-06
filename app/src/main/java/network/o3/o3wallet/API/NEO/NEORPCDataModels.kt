@@ -1,5 +1,6 @@
 package network.o3.o3wallet.API.NEO
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.annotations.SerializedName
@@ -8,7 +9,7 @@ import java.io.Serializable
 
 data class SendRawTransactionResponse(var jsonrpc: String, var id: Int, var result: Boolean)
 
-data class NodeResponse(var jsonrpc: String, var id: Int, var result: JsonObject)
+data class NodeResponse(var jsonrpc: String, var id: Int, var result: JsonElement)
 data class NodeResponsePrimitive(var jsonrpc: String, var id: Int, var result: JsonPrimitive)
 
 data class ValidatedAddress(val address: String, val isvalid: Boolean)
