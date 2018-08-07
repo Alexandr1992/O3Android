@@ -65,7 +65,9 @@ class AssetSelectorAdapter(context: Context, fragment: AssetSelectionBottomSheet
                 val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", item!!.symbol)
                 Glide.with(mContext).load(imageURL).into(view.findViewById(R.id.logoImageView))
                 view.findViewById<TextView>(R.id.nativeAssetName).text = item!!.name
-                view.findViewById<TextView>(R.id.assetAmountTextView).text = item.value.toString()
+                var formatter = NumberFormat.getNumberInstance()
+                formatter.maximumFractionDigits = item.decimals
+                view.findViewById<TextView>(R.id.assetAmountTextView).text = formatter.format(item.value)
                 setListenerForRow(view, item)
                 return view
             } else -> {

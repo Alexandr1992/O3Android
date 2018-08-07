@@ -96,6 +96,7 @@
     <TextView
         android:id="@+id/otherAmountTextView"
         android:layout_width="wrap_content"
+        android:visibility="invisible"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:textAppearance="@style/SubtitleText"
@@ -380,12 +381,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/colorSubtitleGrey"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sendWhereButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.33"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/gridLayout"
-        app:layout_constraintTop_toBottomOf="@id/gridLayout"/>
+        app:layout_constraintTop_toTopOf="@id/gridLayout"/>
 
     <View
         android:id="@+id/view15"
@@ -394,7 +394,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/colorSubtitleGrey"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sendWhereButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.66"
         app:layout_constraintStart_toStartOf="parent"

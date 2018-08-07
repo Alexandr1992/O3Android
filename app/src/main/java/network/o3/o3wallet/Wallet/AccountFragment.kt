@@ -329,6 +329,9 @@ class AccountFragment : Fragment() {
             neoGasSuccess.visibility = View.VISIBLE
             neoGasSuccess.playAnimation()
             Handler().postDelayed(Runnable{
+                //if (activity == null) {
+                  //  return@Runnable
+                //}
                 neoGasClaimingStateTitle.text = getString(R.string.WALLET_estimated_gas)
                 neoGasClaimingStateTitle.textColor = resources.getColor(R.color.colorSubtitleGrey)
                 unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
@@ -419,6 +422,9 @@ class AccountFragment : Fragment() {
             ontologyGasSuccess.visibility = View.VISIBLE
             ontologyGasSuccess.playAnimation()
             Handler().postDelayed(Runnable{
+                if (activity == null) {
+                    return@Runnable
+                }
                 showOntologyGasReadyToSync()
                 accountViewModel.loadOntologyClaims()
             }, 30000)

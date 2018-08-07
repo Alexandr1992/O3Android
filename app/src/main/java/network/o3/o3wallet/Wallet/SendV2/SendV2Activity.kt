@@ -56,7 +56,7 @@ class SendV2Activity : AppCompatActivity() {
     fun parseQRPayload(payload: String) {
         if (Neoutils.validateNEOAddress(payload)) {
             sendViewModel.setSelectedAddress(payload)
-        } else {
+        } else try {
             val uri = parseNEP9URI(payload)
             val toAddress = uri.to
             val amount = uri.amount
@@ -84,6 +84,8 @@ class SendV2Activity : AppCompatActivity() {
                     })
                 }
             }
+        } catch (e: Exception) {
+            Toast.makeText(this, e.localizedMessage, Toast.LENGTH_LONG).show()
         }
     }
 

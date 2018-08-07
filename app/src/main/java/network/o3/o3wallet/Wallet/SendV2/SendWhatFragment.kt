@@ -33,6 +33,7 @@ import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import org.jetbrains.anko.image
+import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import java.text.DecimalFormatSymbols
 import kotlin.math.floor
 
@@ -67,6 +68,8 @@ class SendWhatFragment : Fragment() {
             val curVal = amountEditText.text.toString()
             if (curVal.isNotBlank()) {
                 amountEditText.text = SpannableStringBuilder(curVal + "0")
+            } else if ((activity as SendV2Activity).sendViewModel.selectedAssetDecimals > 0) {
+                amountEditText.text = SpannableStringBuilder(curVal + "0" + DecimalFormatSymbols().decimalSeparator)
             }
             resetPercentButtonSelections()
         }
@@ -89,6 +92,10 @@ class SendWhatFragment : Fragment() {
             resetPercentButtonSelections()
         }
 
+        mView.find<ImageButton>(R.id.buttonBackSpace).onLongClick {
+            amountEditText.text = SpannableStringBuilder("")
+        }
+
         decimalButton = mView.find<ImageButton>(R.id.buttonDecimal)
         if (DecimalFormatSymbols().decimalSeparator == ',') {
             decimalButton.image = resources.getDrawable(R.drawable.ic_comma)
@@ -102,10 +109,10 @@ class SendWhatFragment : Fragment() {
             }
 
             var currString = amountEditText.text.toString()
-            if (currString.isBlank() || currString.contains(".")) {
+            if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
                 return@setOnClickListener
             }
-            amountEditText.text = SpannableStringBuilder(SpannableStringBuilder(amountEditText.text.toString() + "."))
+            amountEditText.text = SpannableStringBuilder(SpannableStringBuilder(amountEditText.text.toString() + DecimalFormatSymbols().decimalSeparator))
         }
     }
 
@@ -134,6 +141,7 @@ class SendWhatFragment : Fragment() {
         }
         var formatter = NumberFormat.getNumberInstance()
         formatter.maximumFractionDigits = selectedAsset.decimals
+        formatter.isGroupingUsed = false
         amountEditText.text = SpannableStringBuilder(formatter.format(cryptoAmount))
     }
 
@@ -215,7 +223,7 @@ class SendWhatFragment : Fragment() {
                 }
                 firstLoad = false
             }
-
+            calculateAndDisplaySendAmount()
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.assetLogoImageView))
         })
@@ -238,7 +246,15 @@ class SendWhatFragment : Fragment() {
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
             assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
-            otherAmountTextView.text = 0.0.formattedFiatString()
+            val displayedString =  amountEditText.text.toString()
+            val usFormattedString = displayedString.replace(',', '.')
+            if (usFormattedString == "" || usFormattedString.isEmpty() || BigDecimal(usFormattedString) == BigDecimal.ZERO) {
+                otherAmountTextView.visibility = View.INVISIBLE
+            } else {
+                val amount = pricingData.price *  usFormattedString.toDouble()
+                otherAmountTextView.text = amount.formattedFiatString()
+                otherAmountTextView.visibility = View.VISIBLE
+            }
         })
     }
 
@@ -247,29 +263,25 @@ class SendWhatFragment : Fragment() {
             return
         }
         var displayedString = amountEditText.text.toString()
-        if (displayedString == ".") {
-            amountEditText.isCursorVisible = true
-            amountEditText.text = SpannableStringBuilder("0.")
-            amountEditText.setSelection(amountEditText.text.length)
-            return
-        }
+        val usFormattedString = displayedString.replace(',', '.')
 
-        if (displayedString == "" || displayedString.isEmpty() || BigDecimal(displayedString) == BigDecimal.ZERO) {
+        if (usFormattedString == "" || usFormattedString.isEmpty() || BigDecimal(usFormattedString) == BigDecimal.ZERO) {
             amountEditText.isCursorVisible = false
-            otherAmountTextView.text = 0.0.formattedFiatString()
+            assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            otherAmountTextView.visibility = View.INVISIBLE
             enteredCurrencyDouble = 0.0
             reviewButton.isEnabled = false
             return
         }
         reviewButton.isEnabled  = true
         amountEditText.isCursorVisible = true
-        val amount = pricingData.price *  displayedString.toDouble()
+        val amount = pricingData.price *  usFormattedString.toDouble()
         enteredCurrencyDouble = amount
         var assetBalance = mView.find<TextView>(R.id.assetBalanceTextView).text.toString()
         if (assetBalance.isNotEmpty()) {
             val balance = NumberFormat.getInstance().parse(assetBalance).toDouble()
             val underlineVuew = mView.find<View>(R.id.underlineView)
-            if (displayedString.toDouble() > balance) {
+            if (usFormattedString.toDouble() > balance) {
                 assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
                 amountEditText.textColor = resources.getColor(R.color.colorLoss)
                 reviewButton.isEnabled = false
@@ -279,10 +291,10 @@ class SendWhatFragment : Fragment() {
                 reviewButton.isEnabled = true
             }
             mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()
+            otherAmountTextView.visibility = View.VISIBLE
         }
 
 
-        val usFormattedString = displayedString.replace(',', '.')
         (activity as SendV2Activity).sendViewModel.setSelectedSendAmount(BigDecimal(usFormattedString))
     }
 
