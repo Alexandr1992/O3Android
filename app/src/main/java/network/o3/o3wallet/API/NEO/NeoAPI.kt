@@ -285,7 +285,7 @@ class NeoNodeRPC {
         for (utxo in sortedUnspents) {
             decimalSum += (utxo.value.toSafeDecimal())
         }
-        if (decimalSum < amount + fee) {
+        if (decimalSum.toSafeMemory(8) < (amount + fee).toSafeMemory(8)) {
             return SendAssetReturn(null, 0, null, fee, Error("insufficient balance"))
         }
 
@@ -293,7 +293,7 @@ class NeoNodeRPC {
         var index = 0
         var count: Int = 0
         //Assume we always have enough balance to do this, prevent the check for bal
-        while (runningAmount < amount + fee) {
+        while (runningAmount.toSafeMemory(8) < (amount + fee).toSafeMemory(8)) {
             neededForTransaction.add(sortedUnspents[index])
             runningAmount += (sortedUnspents[index].value.toSafeDecimal())
             index += 1
@@ -363,7 +363,7 @@ class NeoNodeRPC {
     private fun getOutputDataPayload(wallet: Wallet, asset: Asset,
                                         runningAmount: BigDecimal, toSendAmount: BigDecimal, toAddressHash: String,
                                         fee: BigDecimal): Pair<ByteArray, Int> {
-        val needsTwoOutputTransactions = runningAmount != (toSendAmount + fee) || fee > BigDecimal.ZERO
+        val needsTwoOutputTransactions = runningAmount.toSafeMemory(8) != (toSendAmount + fee).toSafeMemory(8)
 
         var outputCount: Int = 0
         var payload = byteArrayOf()
@@ -410,7 +410,7 @@ class NeoNodeRPC {
         } else {
             mainInput = getInputsNecessaryToSendNEO(amount, utxos)
                 if (fee > BigDecimal.ZERO) {
-                    optionalFeeInput = getInputsNecessaryToSendGAS(amount, utxos, fee)
+                    optionalFeeInput = getInputsNecessaryToSendGAS(BigDecimal(0.00000001), utxos, fee)
             }
         }
 
@@ -423,7 +423,7 @@ class NeoNodeRPC {
         if (optionalFeeInput != null) {
             optionalFeeOutputData = getOutputDataPayload(wallet,
                     Asset.GAS, optionalFeeInput.totalAmount!!,
-                    amount, toAddress.hashFromAddress(), fee)
+                    BigDecimal(0.00000001), wallet.address.hashFromAddress(), fee)
        }
 
         val totalInputCount = mainInput.inputCount + (optionalFeeInput?.inputCount ?: 0)
