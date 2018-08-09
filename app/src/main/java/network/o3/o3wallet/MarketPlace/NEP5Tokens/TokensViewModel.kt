@@ -20,9 +20,9 @@ class TokensViewModel: ViewModel() {
     }
 
     fun loadListingData() {
-        O3PlatformClient().getTokenListings {
-            if (it.second != null) return@getTokenListings
-            listingData?.postValue(it.first?.nep5tokens)
+        O3PlatformClient().getMarketPlace {
+            if (it.second != null) return@getMarketPlace
+            listingData?.postValue(it.first?.assets!! + it.first?.nep5!!)
         }
     }
 

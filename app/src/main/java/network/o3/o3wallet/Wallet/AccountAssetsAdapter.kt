@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Wallet
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,8 @@ import network.o3.o3wallet.API.NEO.AccountAsset
 import network.o3.o3wallet.API.NEO.AssetType
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -88,6 +91,14 @@ class AccountAssetsAdapter(fragment: AccountFragment, context: Context, address:
         configureRow(position,vh)
 
         val asset = arrayOfAccountAssets[position]
+
+        view?.setOnClickListener {
+            val detailURL = "https://public.o3.network/neo/assets/" + asset.symbol + "?address=" + Account.getWallet()!!.address
+            val intent = Intent(view.context, DAppBrowserActivity::class.java)
+            intent.putExtra("url", detailURL)
+            view.context.startActivity(intent)
+        }
+
         return view!!
 
     }

@@ -21,7 +21,7 @@
             <FrameLayout
                 android:id="@+id/graphLayout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="160dp"
                 android:layout_marginTop="4dp"
                 app:layout_constraintBottom_toTopOf="@+id/intervalButtonLayout"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -37,13 +37,13 @@
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/progressBar"
-                    app:lottie_rawRes="@raw/loader_portfolio"
-                    app:lottie_loop="true"
-                    app:lottie_autoPlay="true"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/loader_portfolio" />
 
             </FrameLayout>
 
@@ -167,31 +167,28 @@
                     android:text="@string/PORTFOLIO_all"
                     android:textAppearance="@style/IntervalButtonText.NotSelected" />
             </LinearLayout>
-            <ScrollView
+
+
+
+            <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/portfolioSwipeRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:fillViewport="true"
-                app:layout_constraintTop_toBottomOf="@+id/intervalButtonLayout">
-                <android.support.v4.widget.SwipeRefreshLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/portfolioSwipeRefresh"
+                app:layout_constraintTop_toBottomOf="@id/intervalButtonLayout">
+
+
+                <ListView
+                    android:id="@+id/assetListView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:divider="@color/colorSubtitleGrey"
+                    android:dividerHeight="0.25dp" />
+            </android.support.v4.widget.SwipeRefreshLayout>
 
-                    <ListView
-                        android:id="@+id/assetListView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginTop="8dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:divider="@color/colorSubtitleGrey"
-                        android:dividerHeight="0.25dp" />
-                </android.support.v4.widget.SwipeRefreshLayout>
-
-            </ScrollView>
         </android.support.constraint.ConstraintLayout>
 
 

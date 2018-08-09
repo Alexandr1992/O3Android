@@ -45,14 +45,18 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         callback(message.command, JsonObject(), null, false)
     }
 
+    fun finishConnectionToO3() {
+        sessionId = UUID.randomUUID().toString()
+        userAuthenticatedApp = true
+        callback("requestToConnect", currentAccount(), null, true)
+    }
+
     fun handleRequestToConnect(message: O3Message) {
         val appName = message.data.asString
         val authenticateMessage = webView.context.resources.getString(R.string.DAPP_connection_request, appName)
         context.alert(authenticateMessage) {
             yesButton {
-                sessionId = UUID.randomUUID().toString()
-                userAuthenticatedApp = true
-                callback(message.command, currentAccount(), null, true)
+                verifyPassCodeAndSign()
             }
             noButton {
                 callback(message.command, JsonObject(), "User rejected connection request", false)
@@ -130,15 +134,6 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         callback(message.command, json, null, true)
     }
 
-    fun executePendingTransaction() {
-        callback("requestToSign", pendingTransaction!!, null, true)
-        pendingTransaction = null
-    }
-
-    fun clearPendingTransaction() {
-        pendingTransaction = null
-    }
-
     fun handleRequestToSign(message: O3Message) {
         val unsignedTx = message.data.asString
         if (unsignedTx.length < 2) {
@@ -155,9 +150,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
                             "signatureData" to signed.toHex(),
                             "account" to currentAccount()
                     )
-                    pendingTransaction = signedTxJson
-                    verifyPassCodeAndSign()
-
+                    callback("requestToSign", signedTxJson, null, true)
                 } catch (e: Exception) {
                     callback("requestToSign", JsonObject(), e.localizedMessage, true)
                 }

@@ -37,7 +37,12 @@ data class Claim(val claim: Int,
 
 data class TokenListingsData(val data: TokenListings)
 
-data class TokenListings(val nep5tokens: Array<TokenListing>)
+data class TokenListings(val assets: Array<TokenListing>,
+                         val nep5: Array<TokenListing>)
+
+data class NEP5TokensData(val data: NEP5Tokens)
+
+data class NEP5Tokens(val nep5tokens: Array<TokenListing>)
 
 data class TokenListing(val logoURL: String,
                         val logoSVG: String,

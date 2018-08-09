@@ -4,6 +4,7 @@ package network.o3.o3wallet.MarketPlace.NEP5Tokens
 import android.app.ActionBar
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -21,6 +22,8 @@ import android.graphics.Color.parseColor
 import android.support.design.internal.BottomNavigationMenu
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.CardView
+import android.widget.Button
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.R.id.searchView
 import org.jetbrains.anko.sdk25.coroutines.onFocusChange
@@ -63,6 +66,13 @@ class TokensFragment : Fragment() {
 
         }
 
+        view.find<Button>(R.id.tradeNowButton).setOnClickListener {
+            val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
+            val intent = Intent(this.activity, DAppBrowserActivity::class.java)
+            intent.putExtra("url", url)
+            intent.putExtra("allowSearch", false)
+            startActivity(intent)
+        }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {

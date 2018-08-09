@@ -1,44 +1,61 @@
 package network.o3.o3wallet.Dapp
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebResourceRequest
 import network.o3.o3wallet.R
 import android.webkit.WebView
-import android.webkit.JsResult
-import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
-import android.widget.ProgressBar
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.SearchView
+import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
-import com.github.salomonbrys.kotson.obj
-import com.github.salomonbrys.kotson.toJson
-import com.google.gson.JsonObject
 import com.google.zxing.integration.android.IntentIntegrator
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.Onboarding.SelectingBestNode
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.yesButton
+import java.net.URL
 
 
 class DAppBrowserActivity : AppCompatActivity() {
 
-    lateinit var view: View
+    lateinit var dappBrowserView: View
     lateinit var webView: WebView
     lateinit var jsInterface: DappBrowserJSInterface
 
+    val whitelistedAuthorities = arrayOf("neoscan.io", "beta.switcheo.exchange", "switcheo.exchange", "neonewstoday.com", "public.o3.network")
+    val doNotShowAuthorities = arrayOf("analytics.o3.network")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dapp_browser_activity)
 
-        view = findViewById<View>(R.id.dapp_browser_root_layout)
-        webView = view.findViewById(R.id.dapp_browser_webview)
-        val searchBar = view.find<SearchView>(R.id.dappSearch)
+        dappBrowserView = findViewById<View>(R.id.dapp_browser_root_layout)
+        webView = dappBrowserView.findViewById(R.id.dapp_browser_webview)
+        val searchBar = dappBrowserView.find<SearchView>(R.id.dappSearch)
 
         val webLoader = find<LottieAnimationView>(R.id.webLoader)
         val url = intent.getStringExtra("url")
+        val currentUrlRoute = URL(url)
+        setVerifiedHeaderUrl(url)
+
+
+
+
+        dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
+            if (webView.canGoBack()) {
+                val currIndex = webView.copyBackForwardList().currentIndex
+                setVerifiedHeaderUrl(webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url)
+                webView.goBack()
+            } else {
+                onBackPressed()
+            }
+        }
+
         val showSearchBar = intent.getBooleanExtra("allowSearch", false)
         if (showSearchBar) {
             searchBar.visibility = View.VISIBLE
@@ -56,10 +73,20 @@ class DAppBrowserActivity : AppCompatActivity() {
         }
 
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                // dmayo your handling codes here, which url is the requested url
-                // probably you need to open that url rather than redirect:
-                view.loadUrl(url)
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                webLoader.visibility = View.VISIBLE
+
+                val currentAuthority = currentUrlRoute.authority
+                //we are in our own app, open a new browser
+                if (currentAuthority == "public.o3.network") {
+                    val i = Intent(view.context, DAppBrowserActivity::class.java)
+                    i.putExtra("url", request.url.toString())
+                    view.context.startActivity(i)
+                    return false
+                }
+
+                setVerifiedHeaderUrl(request.url.toString())
+                view.loadUrl(request.url.toString())
                 return false // then it is not handled by default action
             }
 
@@ -77,15 +104,51 @@ class DAppBrowserActivity : AppCompatActivity() {
         WebView.setWebContentsDebuggingEnabled(true)
     }
 
+    fun setVerifiedHeaderUrl(url: String) {
+        val toLoadUrl = URL(url)
+        val browserTitleTextView = dappBrowserView.find<TextView>(R.id.browserTitleTextView)
+        val verifiedImageView = dappBrowserView.find<ImageView>(R.id.verifiedURLImageView)
+        if (doNotShowAuthorities.contains(toLoadUrl.authority)) {
+            verifiedImageView.visibility = View.INVISIBLE
+            browserTitleTextView.visibility = View.INVISIBLE
+            return
+        }
+
+        if (whitelistedAuthorities.contains(toLoadUrl.authority)) {
+            verifiedImageView.visibility = View.VISIBLE
+        } else {
+            verifiedImageView.visibility = View.INVISIBLE
+        }
+        browserTitleTextView.visibility = View.VISIBLE
+        browserTitleTextView.text = toLoadUrl.authority.toString()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents == null) {
-            jsInterface.clearPendingTransaction()
+            return
         } else {
             if (resultCode == -1) {
-                jsInterface.executePendingTransaction()
+                jsInterface.finishConnectionToO3()
             } else {
-                jsInterface.clearPendingTransaction()
+                return
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        if (jsInterface.userAuthenticatedApp) {
+            alert(resources.getString(R.string.DAPP_logout_warning)) {
+                yesButton { super.onBackPressed() }
+                noButton { }
+            }.show()
+        } else {
+            if (webView.canGoBack()) {
+                val currIndex = webView.copyBackForwardList().currentIndex
+                setVerifiedHeaderUrl(webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url)
+                webView.goBack()
+            } else {
+                super.onBackPressed()
             }
         }
     }
