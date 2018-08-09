@@ -1,13 +1,13 @@
 package network.o3.o3wallet.Dapp
 
 import android.content.Intent
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.view.View
-import android.webkit.WebResourceRequest
+import android.webkit.*
 import network.o3.o3wallet.R
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SearchView
@@ -26,6 +26,8 @@ class DAppBrowserActivity : AppCompatActivity() {
     lateinit var dappBrowserView: View
     lateinit var webView: WebView
     lateinit var jsInterface: DappBrowserJSInterface
+
+    var previousWasRedirect = false
 
     val whitelistedAuthorities = arrayOf("neoscan.io", "beta.switcheo.exchange", "switcheo.exchange", "neonewstoday.com", "public.o3.network")
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
@@ -72,6 +74,7 @@ class DAppBrowserActivity : AppCompatActivity() {
             })
         }
 
+
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 webLoader.visibility = View.VISIBLE
@@ -86,6 +89,11 @@ class DAppBrowserActivity : AppCompatActivity() {
                 }
 
                 setVerifiedHeaderUrl(request.url.toString())
+                if (previousWasRedirect) {
+                    return false
+                }
+                previousWasRedirect = (doNotShowAuthorities.contains(request.url.authority))
+
                 view.loadUrl(request.url.toString())
                 return false // then it is not handled by default action
             }
