@@ -117,8 +117,8 @@ class O3PlatformClient {
         }
     }
 
-    fun getTokenListings(completion: (Pair<TokenListings?, Error?>) -> Unit) {
-        val url = baseAPIURL + "/" + Route.NEP5.routeName() + networkQueryString()
+    fun getMarketPlace(completion: (Pair<TokenListings?, Error?>) -> Unit) {
+        val url = "https://api.o3.network/v1/marketplace" + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.headers["Version"] = O3Wallet.version ?: ""
@@ -131,6 +131,24 @@ class O3PlatformClient {
                 completion(Pair<TokenListings?, Error?>(nep5Data.data, null))
             } else {
                 completion(Pair<TokenListings?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getNep5(completion: (Pair<NEP5Tokens?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/neo/" + Route.NEP5.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.headers["Version"] = O3Wallet.version ?: ""
+        request.timeout(600000).responseString { _, _, result ->
+            val(data, error)  = result
+            if (error == null) {
+                val gson = Gson()
+                val platformResponse = gson.fromJson<PlatformResponse>(data!!)
+                val nep5Data = Gson().fromJson<NEP5TokensData>(platformResponse.result)
+                completion(Pair<NEP5Tokens?, Error?>(nep5Data.data, null))
+            } else {
+                completion(Pair<NEP5Tokens?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

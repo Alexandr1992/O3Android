@@ -36,6 +36,11 @@
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="AppTheme.NoTopBar.White" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimaryDark">@color/colorGhostWhite</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
     <style name="WhiteActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:fontFamily">@font/muli_bold</item>
         <item name="elevation">0dp</item>
@@ -83,7 +88,7 @@
     </style>
 
     <style name="CardViewStyle" parent="CardView">
-        <item name="cardCornerRadius">4dp</item>
+        <item name="cardCornerRadius">8dp</item>
         <item name="cardElevation">4dp</item>
     </style>
 
@@ -109,6 +114,10 @@
 
     <style name="AccentButton.Rounded" parent="AccentButton">
         <item name="android:background">@drawable/accent_button_background</item>
+    </style>
+
+    <style name="AccentButton.Rounded.Trade" parent="AccentButton">
+        <item name="android:background">@drawable/trade_button_background</item>
     </style>
 
     <style name="PrimaryButton" parent="Base.Widget.AppCompat.Button">

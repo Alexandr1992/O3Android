@@ -35,9 +35,9 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
     private var availableTokens:Array<TokenListing> = arrayOf()
 
     init {
-        O3PlatformClient().getTokenListings {
+        O3PlatformClient().getNep5 {
             if (it.second != null) {
-                return@getTokenListings
+                return@getNep5
             } else {
                 availableTokens = it.first!!.nep5tokens
             }

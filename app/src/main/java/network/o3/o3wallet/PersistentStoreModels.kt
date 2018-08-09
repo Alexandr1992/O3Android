@@ -220,4 +220,14 @@ object PersistentStore {
             return Gson().fromJson(assetsJson)
         }
     }
+
+    fun shouldShowSwitcheoOnPortfolio(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getBoolean("SHOW_SWITCHEO", true)
+    }
+
+    fun setShouldShowSwitcheoOnPortfolio(shouldShow: Boolean) {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .edit().putBoolean("SHOW_SWITCHEO", shouldShow).apply()
+    }
 }

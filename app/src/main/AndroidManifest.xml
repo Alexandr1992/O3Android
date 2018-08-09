@@ -103,7 +103,7 @@
             android:name=".Dapp.DAppBrowserActivity"
             android:label="@string/title_activity_dapp_browser"
             android:hardwareAccelerated="true"
-            android:theme="@style/AppTheme.White" />
+            android:theme="@style/AppTheme.NoTopBar.White" />
     </application>
 
 </manifest>

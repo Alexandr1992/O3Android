@@ -3,21 +3,19 @@ package network.o3.o3wallet.Portfolio
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.startActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.find
-import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.yesButton
+import network.o3.o3wallet.R.*
+import org.jetbrains.anko.*
+import org.jetbrains.anko.support.v4.alert
 import java.text.NumberFormat
 
 /**
@@ -72,19 +70,58 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
     }
 
     override fun getCount(): Int {
+        if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
+            return assets.count() + 1
+        }
         return assets.count()
     }
 
-    override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
+    fun getNotificationView(viewGroup: ViewGroup?): View {
         val layoutInflater = LayoutInflater.from(mContext)
-        val view = layoutInflater.inflate(R.layout.portfolio_asset_card, viewGroup, false)
-        val asset = getItem(position)
-        val assetNameView = view.findViewById<TextView>(R.id.assetNameTextView)
-        val assetPriceView = view.findViewById<TextView>(R.id.assetPriceTextView)
-        val assetAmountView = view.findViewById<TextView>(R.id.assetAmountTextView)
-        val assetTotalValueView = view.findViewById<TextView>(R.id.totalValueTextView)
-        val assetPercentChangeView = view.findViewById<TextView>(R.id.percentChangeTextView)
-        val logoView = view.find<ImageView>(R.id.portfolioAssetLogoView)
+        val view = layoutInflater.inflate(layout.portfolio_notification_row, viewGroup, false)
+        view.find<ImageButton>(id.dismissNotificationButton).setOnClickListener {
+            mfragment.alert(mfragment.resources.getString(string.PORTFOLIO_are_you_sure_switcheo)) {
+                yesButton {
+                    PersistentStore.setShouldShowSwitcheoOnPortfolio(false)
+                    notifyDataSetChanged()
+                }
+                noButton {
+
+                }
+            }.show()
+
+        }
+
+        view.find<Button>(id.tradeNowPortfolioButton).setOnClickListener {
+            val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
+            val intent = Intent(mContext, DAppBrowserActivity::class.java)
+            intent.putExtra("url", url)
+            intent.putExtra("allowSearch", false)
+            mContext.startActivity(intent)
+        }
+        return view
+    }
+
+    override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
+        var assetPosition = position
+        if (position == 0 && PersistentStore.shouldShowSwitcheoOnPortfolio()) {
+            return getNotificationView(viewGroup)
+        }
+
+        if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
+            assetPosition = position - 1
+        }
+
+
+        val layoutInflater = LayoutInflater.from(mContext)
+        val view = layoutInflater.inflate(layout.portfolio_asset_card, viewGroup, false)
+        val asset = getItem(assetPosition)
+        val assetNameView = view.findViewById<TextView>(id.assetNameTextView)
+        val assetPriceView = view.findViewById<TextView>(id.assetPriceTextView)
+        val assetAmountView = view.findViewById<TextView>(id.assetAmountTextView)
+        val assetTotalValueView = view.findViewById<TextView>(id.totalValueTextView)
+        val assetPercentChangeView = view.findViewById<TextView>(id.percentChangeTextView)
+        val logoView = view.find<ImageView>(id.portfolioAssetLogoView)
 
         assetNameView.text = asset.assetName
         assetPriceView.text = asset.assetPrice.formattedCurrencyString(referenceCurrency)
@@ -93,22 +130,22 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.assetSymbol)
         Glide.with(mContext).load(imageURL).into(logoView)
 
-        if (asset.assetPrice == 0.0 && portfolio?.price?.get(assets.get(position).symbol)?.averageUSD != null) {
+        if (asset.assetPrice == 0.0 && portfolio?.price?.get(assets.get(assetPosition).symbol)?.averageUSD != null) {
             assetPercentChangeView.visibility = View.GONE
             assetPriceView.visibility = View.GONE
             assetTotalValueView.visibility = View.GONE
-            view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.VISIBLE
+            view.find<TextView>(id.pricingNotAvailableTextView).visibility = View.VISIBLE
             view.setOnClickListener {
                 mfragment.activity?.alert (
-                    mContext.getString(R.string.PORTFOLIO_pricing_not_available_description)) {
-                    yesButton { mContext.getString(R.string.ALERT_OK_Confirm_Button) }
+                    mContext.getString(string.PORTFOLIO_pricing_not_available_description)) {
+                    yesButton { mContext.getString(string.ALERT_OK_Confirm_Button) }
                 }?.show()
             }
         } else {
             assetPercentChangeView.visibility = View.VISIBLE
             assetPriceView.visibility = View.VISIBLE
             assetTotalValueView.visibility = View.VISIBLE
-            view.find<TextView>(R.id.pricingNotAvailableTextView).visibility = View.GONE
+            view.find<TextView>(id.pricingNotAvailableTextView).visibility = View.GONE
             view.setOnClickListener {
                 val detailURL = "https://public.o3.network/neo/assets/" + asset.assetSymbol + "?address=" + Account.getWallet()!!.address
                 val intent = Intent(mfragment.activity, DAppBrowserActivity::class.java)
@@ -118,13 +155,13 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         }
 
         if (asset.percentChange < 0) {
-            assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, R.color.colorLoss))
+            assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, color.colorLoss))
         } else {
-            assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, R.color.colorGain))
+            assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, color.colorGain))
         }
 
         var formatter = NumberFormat.getNumberInstance()
-        formatter.maximumFractionDigits = assets[position].decimals
+        formatter.maximumFractionDigits = assets[assetPosition].decimals
         assetAmountView.text = formatter.format(asset.assetAmount)
 
         return view
