@@ -235,7 +235,7 @@ class MainTabbedActivity : AppCompatActivity() {
                     .setTitleAppearance(R.style.NotificationTitle)
                     .setIconColorFilter(0)
                     .enableSwipeToDismiss()
-                    .setDuration(2500)
+                    .setDuration(3000)
                     .show()
         }
     }
