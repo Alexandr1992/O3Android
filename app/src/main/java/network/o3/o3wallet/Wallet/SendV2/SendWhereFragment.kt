@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.InputFilter
 import android.text.InputType
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -63,6 +64,9 @@ class SendWhereFragment : Fragment() {
 
     fun setupAddressEditText() {
         addressEditText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        addressEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+            source.toString().filterNot { it.isWhitespace() }
+        })
         addressEditText.afterTextChanged { checkEnableSendButton() }
         if ((activity as SendV2Activity).sendViewModel.selectedAddress?.value != null) {
             addressEditText.text = SpannableStringBuilder((activity as SendV2Activity).sendViewModel.selectedAddress?.value!!)

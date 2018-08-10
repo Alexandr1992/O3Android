@@ -252,6 +252,18 @@
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
+    <style name="NotificationText">
+        <item name="android:fontFamily">@font/muli</item>
+        <item name="android:color">@color/colorWhite</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="NotificationTitle">
+        <item name="android:fontFamily">@font/muli_bold</item>
+        <item name="android:color">@color/colorWhite</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="RegularText.Small.Primary">
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:fontFamily">@font/muli_bold</item>

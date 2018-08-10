@@ -91,7 +91,6 @@ class HomeViewModelV2: ViewModel() {
     }
 
     fun addReadOnlyBalances(assets: TransferableAssets) {
-        assetsReadOnlyIntermediate.clear()
         for (asset in assets.assets) {
             addReadOnlyAsset(asset)
         }
@@ -140,11 +139,16 @@ class HomeViewModelV2: ViewModel() {
             }
             latch.await()
             PersistentStore.setLatestWatchAddressBalances(assetsReadOnlyIntermediate)
-            assetsReadOnly = assetsReadOnlyIntermediate
+            assetsReadOnly?.clear()
+            for (asset in assetsReadOnlyIntermediate) {
+                assetsReadOnly?.add(asset.deepCopy())
+            }
+            assetsReadOnlyIntermediate?.clear()
+
             if (displayType == DisplayType.COMBINED) {
                 combineReadOnlyAndWritable()
             } else if (displayType == DisplayType.COLD) {
-                displayedAssets?.postValue(assetsReadOnlyIntermediate)
+                displayedAssets?.postValue(assetsReadOnly)
             }
             delegate.hideAssetLoadingIndicator()
         }

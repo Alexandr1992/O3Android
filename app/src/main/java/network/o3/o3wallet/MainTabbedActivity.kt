@@ -1,5 +1,6 @@
 package network.o3.o3wallet
 
+import android.app.Activity
 import android.app.Dialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,7 @@ import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.TabbedAccount
 import android.content.Intent
 import android.support.design.bottomnavigation.LabelVisibilityMode
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.ActionBar
 import android.text.Layout
 import android.view.Gravity
@@ -32,6 +34,11 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
+import com.tapadoo.alerter.Alerter
+
 
 class MainTabbedActivity : AppCompatActivity() {
 
@@ -196,6 +203,40 @@ class MainTabbedActivity : AppCompatActivity() {
         transaction.commit()
         if (index == 0) {
            (fragments!!.get(index) as HomeFragment).homeModel.getDisplayedAssets(false)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), IntentFilter("Alert"))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
+
+    }
+
+    fun getActivity(): Activity {
+        return this
+    }
+
+    private val mMessageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (Alerter.isShowing) {
+                return
+            }
+            Alerter.create(getActivity())
+                    .setTitle(intent.extras!!.getString("alert_title"))
+                    .setText(intent.extras!!.getString("alert_message"))
+                    .setBackgroundColorRes(R.color.colorPrimaryTranslucent)
+                    .setIcon(R.drawable.ic_notifciation_luna)
+                    .setTextAppearance(R.style.NotificationText)
+                    .setTitleAppearance(R.style.NotificationTitle)
+                    .setIconColorFilter(0)
+                    .enableSwipeToDismiss()
+                    .setDuration(2500)
+                    .show()
         }
     }
 }

@@ -1,10 +1,16 @@
 package network.o3.o3wallet.Dapp
 
+import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Typeface
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.annotation.RequiresApi
+import android.support.v4.content.LocalBroadcastManager
 import android.view.View
 import android.webkit.*
 import network.o3.o3wallet.R
@@ -14,6 +20,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
+import com.tapadoo.alerter.Alerter
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
@@ -158,6 +165,41 @@ class DAppBrowserActivity : AppCompatActivity() {
             } else {
                 super.onBackPressed()
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), IntentFilter("Alert"))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
+
+    }
+
+    fun getActivity(): Activity {
+        return this
+    }
+
+    private val mMessageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (Alerter.isShowing) {
+                return
+            }
+
+            Alerter.create(getActivity())
+                    .setTitle(intent.extras!!.getString("alert_title"))
+                    .setText(intent.extras!!.getString("alert_message"))
+                    .setBackgroundColorRes(R.color.colorPrimaryTranslucent)
+                    .setIcon(R.drawable.ic_notifciation_luna)
+                    .setTextAppearance(R.style.NotificationText)
+                    .setTitleAppearance(R.style.NotificationTitle)
+                    .setIconColorFilter(0)
+                    .enableSwipeToDismiss()
+                    .setDuration(2500)
+                    .show()
         }
     }
 }

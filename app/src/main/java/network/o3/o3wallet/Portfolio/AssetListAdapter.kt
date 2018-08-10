@@ -130,29 +130,17 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.assetSymbol)
         Glide.with(mContext).load(imageURL).into(logoView)
 
-        if (asset.assetPrice == 0.0 && portfolio?.price?.get(assets.get(assetPosition).symbol)?.averageUSD != null) {
-            assetPercentChangeView.visibility = View.GONE
-            assetPriceView.visibility = View.GONE
-            assetTotalValueView.visibility = View.GONE
-            view.find<TextView>(id.pricingNotAvailableTextView).visibility = View.VISIBLE
-            view.setOnClickListener {
-                mfragment.activity?.alert (
-                    mContext.getString(string.PORTFOLIO_pricing_not_available_description)) {
-                    yesButton { mContext.getString(string.ALERT_OK_Confirm_Button) }
-                }?.show()
-            }
-        } else {
-            assetPercentChangeView.visibility = View.VISIBLE
-            assetPriceView.visibility = View.VISIBLE
-            assetTotalValueView.visibility = View.VISIBLE
-            view.find<TextView>(id.pricingNotAvailableTextView).visibility = View.GONE
-            view.setOnClickListener {
-                val detailURL = "https://public.o3.network/neo/assets/" + asset.assetSymbol + "?address=" + Account.getWallet()!!.address
-                val intent = Intent(mfragment.activity, DAppBrowserActivity::class.java)
-                intent.putExtra("url", detailURL)
-                mfragment.activity?.startActivity(intent)
-            }
+        assetPercentChangeView.visibility = View.VISIBLE
+        assetPriceView.visibility = View.VISIBLE
+        assetTotalValueView.visibility = View.VISIBLE
+        view.find<TextView>(id.pricingNotAvailableTextView).visibility = View.GONE
+        view.setOnClickListener {
+            val detailURL = "https://public.o3.network/neo/assets/" + asset.assetSymbol + "?address=" + Account.getWallet()!!.address
+            val intent = Intent(mfragment.activity, DAppBrowserActivity::class.java)
+            intent.putExtra("url", detailURL)
+            mfragment.activity?.startActivity(intent)
         }
+
 
         if (asset.percentChange < 0) {
             assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, color.colorLoss))
