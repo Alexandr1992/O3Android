@@ -1,12 +1,11 @@
 package network.o3.o3wallet.API.O3Platform
 
 import com.github.kittinunf.fuel.httpGet
-import com.github.kittinunf.fuel.httpPatch
 import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import network.o3.o3wallet.API.O3.TokenSaleLog
 import network.o3.o3wallet.API.O3.TokenSaleLogSigned
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import java.util.*
@@ -26,6 +25,7 @@ class O3PlatformClient {
         PRICING,
         NODES,
         UNBOUNDONG,
+        HISTORY,
         UTXO;
 
 
@@ -260,6 +260,22 @@ class O3PlatformClient {
                         completion(Pair<Boolean, Error?>(false, Error("Something went wrong when posting transaction log")))
                     }
                 }
+            }
+        }
+    }
+
+    fun getTransactionHistory(page: Int, completion: (Pair<TransactionHistory?, Error?>) -> (Unit)) {
+        val url = "https://platform.o3.network/api/v1/"  + Route.HISTORY.routeName() + "/" + Account.getWallet()!!.address + "?p=" + page.toString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                val platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val history = Gson().fromJson<TransactionHistory>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<TransactionHistory?, Error?>(history, null))
+            } else {
+                completion(Pair<TransactionHistory?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

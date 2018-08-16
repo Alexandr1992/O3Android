@@ -148,6 +148,16 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): BaseAdapter() 
             assetPercentChangeView.setTextColor(ContextCompat.getColor(mContext, color.colorGain))
         }
 
+        if (portfolio ==  null) {
+            assetPriceView.visibility = View.INVISIBLE
+            assetPercentChangeView.visibility = View.INVISIBLE
+            assetTotalValueView.visibility = View.INVISIBLE
+        } else {
+            assetPriceView.visibility = View.VISIBLE
+            assetPercentChangeView.visibility = View.VISIBLE
+            assetTotalValueView.visibility = View.VISIBLE
+        }
+
         var formatter = NumberFormat.getNumberInstance()
         formatter.maximumFractionDigits = assets[assetPosition].decimals
         assetAmountView.text = formatter.format(asset.assetAmount)

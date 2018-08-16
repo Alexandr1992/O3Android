@@ -6,19 +6,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import network.o3.o3wallet.API.NeoScan.NeoScanTransactionEntry
 import android.widget.TextView
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.NEO.NEP5Token
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
-import network.o3.o3wallet.API.O3.O3API
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor
-import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
-import android.net.Uri
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TokenListing
+import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 
 
@@ -26,7 +21,7 @@ import network.o3.o3wallet.Dapp.DAppBrowserActivity
  * Created by drei on 4/24/18.
  */
 
-class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableList<NeoScanTransactionEntry>,
+class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableList<TransactionHistoryEntry>,
                                 context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TRANSACTION_ENTRY_VIEW = 0
     val LOADING_FOOTER_VIEW = 1
@@ -90,7 +85,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
         notifyDataSetChanged()
     }
 
-    fun addAllTransactions(txList: List<NeoScanTransactionEntry>) {
+    fun addAllTransactions(txList: List<TransactionHistoryEntry>) {
         for (tx in txList) {
             transactionHistoryEntries.add(tx)
 
@@ -111,69 +106,52 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             private val TRANSACTION_KEY = "TRANSACTION_KEY"
         }
 
-        fun setTokenName(tx: NeoScanTransactionEntry): Boolean {
-            val assetTextView = view.find<TextView>(R.id.assetTextView)
-            val token = supportedTokens.find { it.tokenHash.contains(tx.asset) }
-            if (tx.asset.contains(NeoNodeRPC.Asset.NEO.assetID())) {
-                assetTextView.text = "NEO"
-                return false
-            } else if (tx.asset.contains(NeoNodeRPC.Asset.GAS.assetID())) {
-                assetTextView.text = "GAS"
-                return false
-            } else if (token != null) {
-                assetTextView.text = token.symbol.toUpperCase()
-                return true
-            } else {
-                assetTextView.text = view.context.resources.getString(R.string.WALLET_unknown_asset)
-                return true
-            }
-        }
-
-        fun bindTransaction(tx: NeoScanTransactionEntry, tokens: Array<TokenListing>) {
+        fun bindTransaction(tx: TransactionHistoryEntry, tokens: Array<TokenListing>) {
             supportedTokens = tokens
 
+            val assetTextView = view.find<TextView>(R.id.assetTextView)
             val toTextView = view.find<TextView>(R.id.toTextView)
             val fromTextView = view.find<TextView>(R.id.fromTextView)
             val amountTextView = view.find<TextView>(R.id.amountTextView)
             val blockTextView = view.find<TextView>(R.id.blockNumberTextView)
 
-            val isTokenAsset = setTokenName(tx)
+            assetTextView.text = tx.asset.symbol.toUpperCase()
             val amountToDisplay = tx.amount
 
-            var toNickname = PersistentStore.getContacts().find { it.address == tx.address_to }?.nickname
+            var toNickname = PersistentStore.getContacts().find { it.address == tx.to }?.nickname
             if (toNickname == null) {
-                toNickname = PersistentStore.getWatchAddresses().find {it.address == tx.address_to}?.nickname
+                toNickname = PersistentStore.getWatchAddresses().find {it.address == tx.to}?.nickname
             }
 
-            if (tx.address_to == Account.getWallet()?.address!!) {
+            if (tx.to == Account.getWallet()?.address!!) {
                 toTextView.text = view.context.resources.getString(R.string.WALLET_to_O3_wallet) //"To: O3 Wallet"
-                amountTextView.text =  "+" + amountToDisplay.removeTrailingZeros()
+                amountTextView.text =  "+" + tx.amount
                 amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorGain)
             } else if (toNickname != null) {
                 toTextView.text =   String.format(view.context.resources.getString(R.string.WALLET_to_formatted), toNickname)
-                amountTextView.text =  "-" + amountToDisplay.removeTrailingZeros()
+                amountTextView.text =  "-" + tx.amount
                 amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorLoss)
             }else {
-                toTextView.text = String.format(view.context.resources.getString(R.string.WALLET_to_formatted), tx.address_to)
-                amountTextView.text =  "-" + amountToDisplay.removeTrailingZeros()
+                toTextView.text = String.format(view.context.resources.getString(R.string.WALLET_to_formatted), tx.to)
+                amountTextView.text =  "-" + tx.amount
                 amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorLoss)
             }
 
 
-            var fromNickname = PersistentStore.getContacts().find { it.address == tx.address_from }?.nickname
+            var fromNickname = PersistentStore.getContacts().find { it.address == tx.from }?.nickname
             if (fromNickname == null) {
-                fromNickname = PersistentStore.getWatchAddresses().find {it.address == tx.address_from }?.nickname
+                fromNickname = PersistentStore.getWatchAddresses().find {it.address == tx.from }?.nickname
             }
 
-            if (tx.address_from == Account.getWallet()?.address!!) {
+            if (tx.from == Account.getWallet()?.address!!) {
                 fromTextView.text = view.context.resources.getString(R.string.WALLET_from_O3_wallet)
             } else if (fromNickname != null) {
                 fromTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), toNickname)
             } else {
-                fromTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), tx.address_from)
+                fromTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), tx.from)
             }
 
-            blockTextView.text = String.format(view.context.resources.getString(R.string.WALLET_block_number), tx.block_height.toString())
+            blockTextView.text = String.format(view.context.resources.getString(R.string.WALLET_block_number), tx.blockHeight.toString())
 
             view.setOnClickListener {
                 val url = "https://neoscan.io/transaction/" + tx.txid
