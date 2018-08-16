@@ -51,7 +51,7 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
         }
 
         override fun onClick(v: View) {
-            val detailURL = "https://public.o3.network/neo/assets/" + token!!.symbol + "?address=" + Account.getWallet()!!.address
+            val detailURL = token?.url!! + "?address=" + Account.getWallet()!!.address
             val intent = Intent(v.context, DAppBrowserActivity::class.java)
             intent.putExtra("url", detailURL)
             v.context.startActivity(intent)

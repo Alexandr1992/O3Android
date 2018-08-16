@@ -329,9 +329,9 @@ class AccountFragment : Fragment() {
             neoGasSuccess.visibility = View.VISIBLE
             neoGasSuccess.playAnimation()
             Handler().postDelayed(Runnable{
-                //if (activity == null) {
-                  //  return@Runnable
-                //}
+                if (activity == null) {
+                    return@Runnable
+                }
                 neoGasClaimingStateTitle.text = getString(R.string.WALLET_estimated_gas)
                 neoGasClaimingStateTitle.textColor = resources.getColor(R.color.colorSubtitleGrey)
                 unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)

@@ -46,7 +46,7 @@ data class NEP5Tokens(val nep5tokens: Array<TokenListing>)
 
 data class TokenListing(val logoURL: String,
                         val logoSVG: String,
-                        val webURL: String,
+                        val url: String,
                         val tokenHash: String,
                         val name: String,
                         val symbol: String,

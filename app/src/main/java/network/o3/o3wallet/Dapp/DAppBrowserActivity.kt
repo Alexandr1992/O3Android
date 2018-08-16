@@ -5,7 +5,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -86,22 +88,28 @@ class DAppBrowserActivity : AppCompatActivity() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 webLoader.visibility = View.VISIBLE
 
-                val currentAuthority = currentUrlRoute.authority
+                val urlToLoad = request.url.toString()
                 //we are in our own app, open a new browser
-                if (currentAuthority == "public.o3.network") {
-                    val i = Intent(view.context, DAppBrowserActivity::class.java)
-                    i.putExtra("url", request.url.toString())
-                    view.context.startActivity(i)
-                    return false
+
+                if (!urlToLoad.startsWith("http") && !urlToLoad.startsWith("https")) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToLoad))
+                    val activityToUse = intent.resolveActivity(packageManager)
+                    if (activityToUse == null) {
+                        webLoader.visibility = View.INVISIBLE
+                        return false
+                    } else {
+                        startActivity(intent)
+                        return true
+                    }
                 }
 
-                setVerifiedHeaderUrl(request.url.toString())
+                setVerifiedHeaderUrl(urlToLoad)
                 if (previousWasRedirect) {
                     return false
                 }
                 previousWasRedirect = (doNotShowAuthorities.contains(request.url.authority))
 
-                view.loadUrl(request.url.toString())
+                view.loadUrl(urlToLoad)
                 return false // then it is not handled by default action
             }
 
@@ -119,7 +127,12 @@ class DAppBrowserActivity : AppCompatActivity() {
         WebView.setWebContentsDebuggingEnabled(true)
     }
 
+
     fun setVerifiedHeaderUrl(url: String) {
+        if (!url.startsWith("http") && !url.startsWith("https")) {
+            return
+        }
+
         val toLoadUrl = URL(url)
         val browserTitleTextView = dappBrowserView.find<TextView>(R.id.browserTitleTextView)
         val verifiedImageView = dappBrowserView.find<ImageView>(R.id.verifiedURLImageView)
@@ -159,7 +172,11 @@ class DAppBrowserActivity : AppCompatActivity() {
             }.show()
         } else {
             if (webView.canGoBack()) {
-                val currIndex = webView.copyBackForwardList().currentIndex
+                var currIndex = webView.copyBackForwardList().currentIndex
+                if (webView.copyBackForwardList().getItemAtIndex(currIndex).url ==  webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url) {
+                    currIndex -= 1
+                    webView.goBack()
+                }
                 setVerifiedHeaderUrl(webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url)
                 webView.goBack()
             } else {

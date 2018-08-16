@@ -15,10 +15,6 @@ import android.text.style.UnderlineSpan
 import android.text.SpannableString
 import android.graphics.Paint.UNDERLINE_TEXT_FLAG
 
-
-
-
-
 class CreateNewWalletActivity : AppCompatActivity() {
     lateinit var animationView: LottieAnimationView
     lateinit var tutorialPager: ViewPager

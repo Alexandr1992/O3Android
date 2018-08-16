@@ -89,9 +89,9 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
             //
 
             if (displayedAssets?.equals(assetListAdapter?.assets) == false || amountView?.text == "") {
-                assetListAdapter?.assets = displayedAssets!!
+                assetListAdapter?.assets = displayedAssets ?: arrayListOf()
                 assetListAdapter?.notifyDataSetChanged()
-                homeModel.loadPortfolioValue(displayedAssets)
+                homeModel.loadPortfolioValue(displayedAssets ?: arrayListOf())
             }
         })
     }
