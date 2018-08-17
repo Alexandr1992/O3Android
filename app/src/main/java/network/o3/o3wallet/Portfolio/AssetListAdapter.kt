@@ -2,6 +2,7 @@ package network.o3.o3wallet.Portfolio
 
 import android.content.Context
 import android.content.Intent
+import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
@@ -10,12 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.robinhood.spark.SparkView
+import com.robinhood.spark.animation.MorphSparkAnimator
 import kotlinx.android.synthetic.main.settings_activity_add_contact.view.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.R.*
+import network.o3.o3wallet.Settings.WatchAddressFragment
+import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
 import java.text.NumberFormat
@@ -40,12 +45,23 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
     private val ASSETROW = 0
     private val NOTIFICATIONROW = 1
+    private val GRAPHHEADER = 2
+
+    override fun getItemViewType(position: Int): Int {
+        if (position == 0) {
+            return GRAPHHEADER
+        } else if (true/*PersistentStore.shouldShowSwitcheoOnPortfolio()*/ && position == 1) {
+            return NOTIFICATIONROW
+        } else {
+            return ASSETROW
+        }
+    }
 
     override fun getItemCount(): Int {
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
-            return assets.count() + 1
+        if (true/*PersistentStore.shouldShowSwitcheoOnPortfolio()*/) {
+            return assets.count() + 2
         }
-        return assets.count()
+        return assets.count() + 1
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -53,17 +69,28 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
         if (viewType == NOTIFICATIONROW) {
             val view = layoutInflater.inflate(layout.portfolio_notification_row, viewGroup, false)
             return NotificationViewHolder(view)
-        } else {
+        } else if (viewType == ASSETROW) {
             val view = layoutInflater.inflate(layout.portfolio_asset_card, viewGroup, false)
             return PortfolioAssetViewHolder(view)
+        } else  {
+            val view = layoutInflater.inflate(layout.portfolio_graph_layout, viewGroup, false)
+            return GraphViewHolder(view)
         }
     }
 
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
         var assetPosition = position
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
+        if (position == 0 ){
+            (vh as GraphViewHolder).bindGraph(this, mfragment)
+            return
+        } else if (true/*PersistentStore.shouldShowSwitcheoOnPortfolio()*/ && position == 1) {
             (vh as NotificationViewHolder).bindNotification(this)
-        } else if (PersistentStore.shouldShowSwitcheoOnPortfolio()){
+            return
+        }
+
+        if (true/*PersistentStore.shouldShowSwitcheoOnPortfolio()*/){
+            assetPosition = position - 2
+        } else {
             assetPosition = position - 1
         }
         (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[assetPosition], portfolio, referenceCurrency)
@@ -181,6 +208,90 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                 intent.putExtra("allowSearch", false)
                 view.context.startActivity(intent)
             }
+        }
+    }
+
+    class GraphViewHolder(v: View): RecyclerView.ViewHolder(v) {
+        val view = v
+        lateinit var adapter: AssetListAdapter
+        lateinit var mFragment: HomeFragment
+        lateinit var sparkView: SparkView
+
+        fun clearButtonStyling() {
+            val sixHourButton = view.findViewById<Button>(R.id.sixHourInterval)
+            val oneDayButton = view.findViewById<Button>(R.id.oneDayInterval)
+            val oneWeekButton = view.findViewById<Button>(R.id.oneWeekInterval)
+            val oneMonthButton = view.findViewById<Button>(R.id.oneMonthInterval)
+            val threeMonthButton = view.findViewById<Button>(R.id.threeMonthInterval)
+            val allButton = view.findViewById<Button>(R.id.allInterval)
+
+            sixHourButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
+            oneDayButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
+            oneWeekButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
+            oneMonthButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
+            threeMonthButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
+            allButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
+
+        }
+
+        fun initiateIntervalButtons(mFragment: HomeFragment) {
+            val sixHourButton = view.findViewById<Button>(R.id.sixHourInterval)
+            val oneDayButton = view.findViewById<Button>(R.id.oneDayInterval)
+            val oneWeekButton = view.findViewById<Button>(R.id.oneWeekInterval)
+            val oneMonthButton = view.findViewById<Button>(R.id.oneMonthInterval)
+            val threeMonthButton = view.findViewById<Button>(R.id.threeMonthInterval)
+            val allButton = view.findViewById<Button>(R.id.allInterval)
+
+            sixHourButton.setOnClickListener { tappedIntervalButton(sixHourButton, mFragment) }
+            oneDayButton.setOnClickListener { tappedIntervalButton(oneDayButton, mFragment) }
+            oneWeekButton.setOnClickListener { tappedIntervalButton(oneWeekButton, mFragment) }
+            oneMonthButton.setOnClickListener { tappedIntervalButton(oneMonthButton, mFragment) }
+            threeMonthButton.setOnClickListener { tappedIntervalButton(threeMonthButton, mFragment) }
+            allButton.setOnClickListener { tappedIntervalButton(allButton, mFragment) }
+        }
+
+        fun tappedIntervalButton(button: Button, mFragment: HomeFragment) {
+            clearButtonStyling()
+            button.setTextAppearance(R.style.IntervalButtonText_Selected)
+            mFragment.homeModel.setInterval(button.tag.toString())
+            mFragment.homeModel.loadPortfolioValue(adapter.assets)
+        }
+
+        fun initiateGraph() {
+            sparkView = view.findViewById(R.id.sparkview)
+            sparkView.sparkAnimator = MorphSparkAnimator()
+            sparkView.adapter = mFragment.chartDataAdapter
+            sparkView.scrubListener = SparkView.OnScrubListener { value ->
+                val name = "android:switcher:" + mFragment.viewPager?.id + ":" + mFragment.viewPager?.currentItem
+                val header = mFragment.childFragmentManager.findFragmentByTag(name) as PortfolioHeader
+
+                val amountView = header.view?.findViewById<TextView>(R.id.fundAmountTextView)
+                val percentView = header.view?.findViewById<TextView>(R.id.fundChangeTextView)
+                if (value == null) { //return to original state
+                    mFragment.updateHeader(mFragment.homeModel.getCurrentPortfolioValue().formattedCurrencyString(mFragment.homeModel.getCurrency()),
+                            mFragment.homeModel.getPercentChange())
+                    return@OnScrubListener
+                } else {
+                    val scrubbedAmount = (value as Float).toDouble()
+                    val percentChange = (scrubbedAmount - mFragment.homeModel.getInitialPortfolioValue()) /
+                            mFragment.homeModel.getInitialPortfolioValue() * 100
+                    if (percentChange < 0) {
+                        percentView?.setTextColor(view.context.resources.getColor(R.color.colorLoss))
+                    } else {
+                        percentView?.setTextColor(view.context.resources.getColor(R.color.colorGain))
+                    }
+                    percentView?.text = percentChange.formattedPercentString() +
+                            " " +  mFragment.homeModel.getInitialDate().intervaledString(mFragment.homeModel.getInterval())
+                    amountView?.text = scrubbedAmount.formattedCurrencyString(mFragment.homeModel.getCurrency())
+                }
+            }
+        }
+
+        fun bindGraph(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>, fragment: HomeFragment) {
+            this.adapter = adapter as AssetListAdapter
+            mFragment = fragment
+            initiateIntervalButtons(mFragment)
+            initiateGraph()
         }
     }
 }

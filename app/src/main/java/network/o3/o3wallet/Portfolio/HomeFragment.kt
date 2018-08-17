@@ -44,7 +44,8 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     var viewPager: ViewPager? = null
     var chartDataAdapter = PortfolioDataAdapter(FloatArray(0))
     var assetListAdapter: AssetListAdapter? = null
-    var sparkView: SparkView? = null
+            //  var sparkView: SparkView? = null
+    lateinit var recyclerView: RecyclerView
 
     lateinit var mView: View
 
@@ -103,15 +104,12 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
 
         assetListAdapter = AssetListAdapter(this.context!!, this)
         initiateBalanceListeners()
-        val assetsList = view.findViewById<RecyclerView>(R.id.assetListView)
+        recyclerView = view.findViewById<RecyclerView>(R.id.assetListView)
         val layoutManager = LinearLayoutManager(this.activity)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        assetsList.layoutManager = layoutManager
-        assetsList.adapter = assetListAdapter
-
-        initiateGraph()
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = assetListAdapter
         initiateViewPager(view)
-        initiateIntervalButtons(view)
         view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setColorSchemeResources(R.color.colorPrimary)
         view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).onRefresh {
             view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).isRefreshing = true
@@ -125,37 +123,6 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         LocalBroadcastManager.getInstance(this.context!!)
                 .unregisterReceiver(needReloadPortfolioReciever)
         super.onDestroy()
-    }
-
-    fun initiateGraph() {
-
-        sparkView = mView.findViewById(R.id.sparkview)
-        sparkView?.sparkAnimator = MorphSparkAnimator()
-        sparkView?.adapter = chartDataAdapter
-        sparkView?.scrubListener = SparkView.OnScrubListener { value ->
-            val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
-            val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
-
-            val amountView = header.view?.findViewById<TextView>(R.id.fundAmountTextView)
-            val percentView = header.view?.findViewById<TextView>(R.id.fundChangeTextView)
-            if (value == null) { //return to original state
-                updateHeader(homeModel.getCurrentPortfolioValue().formattedCurrencyString(homeModel.getCurrency()),
-                        homeModel.getPercentChange())
-                return@OnScrubListener
-            } else {
-                val scrubbedAmount = (value as Float).toDouble()
-                val percentChange = (scrubbedAmount - homeModel.getInitialPortfolioValue()) /
-                        homeModel.getInitialPortfolioValue() * 100
-                if (percentChange < 0) {
-                    percentView?.setTextColor(resources.getColor(R.color.colorLoss))
-                } else {
-                    percentView?.setTextColor(resources.getColor(R.color.colorGain))
-                }
-                percentView?.text = percentChange.formattedPercentString() +
-                      " " +  homeModel.getInitialDate().intervaledString(homeModel.getInterval())
-                amountView?.text = scrubbedAmount.formattedCurrencyString(homeModel.getCurrency())
-            }
-        }
     }
 
     fun initiateViewPager(view: View) {
@@ -184,13 +151,13 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         val emptyPortfolioActionButton = view?.find<Button>(R.id.emptyPortfolioActionButton)
         val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
         if (portfolio.data.first().averageBTC == 0.0) {
-            sparkView?.visibility = View.INVISIBLE
-            view?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.INVISIBLE
+            recyclerView.find<SparkView>(R.id.sparkview)?.visibility = View.INVISIBLE
+            recyclerView?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
             emptyPortfolioActionButton?.visibility = View.VISIBLE
         } else {
-            sparkView?.visibility = View.VISIBLE
-            view?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.VISIBLE
+            recyclerView.find<SparkView>(R.id.sparkview)?.visibility = View.VISIBLE
+            recyclerView?.find<LinearLayout>(R.id.intervalButtonLayout)?.visibility = View.VISIBLE
             emptyWalletView?.visibility = View.INVISIBLE
             emptyPortfolioActionButton?.visibility = View.INVISIBLE
         }
@@ -230,31 +197,6 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         }
     }
 
-    fun initiateIntervalButtons(view: View) {
-        val sixHourButton = view.findViewById<Button>(R.id.sixHourInterval)
-        val oneDayButton = view.findViewById<Button>(R.id.oneDayInterval)
-        val oneWeekButton = view.findViewById<Button>(R.id.oneWeekInterval)
-        val oneMonthButton = view.findViewById<Button>(R.id.oneMonthInterval)
-        val threeMonthButton = view.findViewById<Button>(R.id.threeMonthInterval)
-        val allButton = view.findViewById<Button>(R.id.allInterval)
-
-        selectedButton = oneDayButton
-
-        sixHourButton.setOnClickListener { tappedIntervalButton(sixHourButton) }
-        oneDayButton.setOnClickListener { tappedIntervalButton(oneDayButton) }
-        oneWeekButton.setOnClickListener { tappedIntervalButton(oneWeekButton) }
-        oneMonthButton.setOnClickListener { tappedIntervalButton(oneMonthButton) }
-        threeMonthButton.setOnClickListener { tappedIntervalButton(threeMonthButton) }
-        allButton.setOnClickListener { tappedIntervalButton(allButton) }
-    }
-
-    fun tappedIntervalButton(button: Button) {
-        selectedButton?.setTextAppearance(R.style.IntervalButtonText_NotSelected)
-        button.setTextAppearance(R.style.IntervalButtonText_Selected)
-        selectedButton = button
-        homeModel.setInterval(button.tag.toString())
-        homeModel.loadPortfolioValue(assetListAdapter?.assets ?: arrayListOf())
-    }
 
     fun updateHeader(amount: String, percentChange: Double) {
         viewPager?.currentItem = viewPager?.currentItem!!
@@ -265,15 +207,15 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
 
     override fun showPortfolioLoadingIndicator() {
         onUiThread {
-            sparkView?.visibility = View.INVISIBLE
-            view?.findViewById<LottieAnimationView>(R.id.progressBar)?.visibility = View.VISIBLE
+            recyclerView.find<SparkView>(R.id.sparkview)?.visibility = View.INVISIBLE
+            recyclerView?.findViewById<LottieAnimationView>(R.id.progressBar)?.visibility = View.VISIBLE
         }
     }
 
     override fun hidePortfolioLoadingIndicator() {
         onUiThread {
-            sparkView?.visibility = View.VISIBLE
-            view?.findViewById<LottieAnimationView>(R.id.progressBar)?.visibility = View.GONE
+            recyclerView.find<SparkView>(R.id.sparkview)?.visibility = View.VISIBLE
+            recyclerView?.findViewById<LottieAnimationView>(R.id.progressBar)?.visibility = View.GONE
         }
     }
 
