@@ -17,6 +17,8 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager.*
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.widget.*
 import com.airbnb.lottie.LottieAnimationView
 import com.robinhood.spark.animation.MorphSparkAnimator
@@ -101,7 +103,12 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
 
         assetListAdapter = AssetListAdapter(this.context!!, this)
         initiateBalanceListeners()
-        view.findViewById<ListView>(R.id.assetListView).adapter = assetListAdapter
+        val assetsList = view.findViewById<RecyclerView>(R.id.assetListView)
+        val layoutManager = LinearLayoutManager(this.activity)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        assetsList.layoutManager = layoutManager
+        assetsList.adapter = assetListAdapter
+
         initiateGraph()
         initiateViewPager(view)
         initiateIntervalButtons(view)

@@ -178,7 +178,7 @@
                 app:layout_constraintTop_toBottomOf="@id/intervalButtonLayout">
 
 
-                <ListView
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/assetListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
