@@ -29,7 +29,7 @@ class AccountViewModel: ViewModel() {
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
     private var claims: MutableLiveData<ClaimData>? = null
-    private var swapInfo: MutableLiveData<O3InboxItem?>? = null
+    private var swapInfo: MutableLiveData<List<O3InboxItem>>? = null
 
     private var ontologyClaims: MutableLiveData<OntologyClaimableGas>? = null
 
@@ -77,15 +77,13 @@ class AccountViewModel: ViewModel() {
         O3PlatformClient().getInbox(Account.getWallet()!!.address) {
             if (it.second != null) {
                 swapInfo!!.postValue(null)
-            } else if (it.first != null && it.first!!.isNotEmpty()){
-                swapInfo!!.postValue(it.first!![0])
             } else {
-                swapInfo!!.postValue(null)
+                swapInfo!!.postValue(it.first!!)
             }
         }
     }
 
-    fun getInboxItem(): LiveData<O3InboxItem?> {
+    fun getInboxItem(): LiveData<List<O3InboxItem>?> {
         if (swapInfo == null) {
             swapInfo = MutableLiveData()
             loadInboxItem()

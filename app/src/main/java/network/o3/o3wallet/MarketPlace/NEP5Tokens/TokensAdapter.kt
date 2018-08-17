@@ -24,9 +24,6 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
     private val HEADER = 0
     private val ITEM = 1
 
-    init {
-        var tokens = tokens
-    }
 
     fun setData(tokens: ArrayList<TokenListing>) {
         this.tokens = tokens
@@ -60,8 +57,6 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
             val view = layoutInflater.inflate(R.layout.martketplace_token_grid_cell, parent, false)
             return FeatureHolder(view)
         }
-
-
     }
 
     class HeaderHolder(v: View): RecyclerView.ViewHolder(v) {

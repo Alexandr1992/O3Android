@@ -11,6 +11,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.support.v7.widget.CardView
+import android.support.v7.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
@@ -31,6 +32,9 @@ import org.jetbrains.anko.textColor
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
+import android.support.v7.widget.LinearLayoutManager
+
+
 
 
 class AccountFragment : Fragment() {
@@ -42,7 +46,7 @@ class AccountFragment : Fragment() {
 
     //assets list
     private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var assetListView: ListView
+    private lateinit var assetListView: RecyclerView
 
     //Gas Claim Card NEO
     private lateinit var neoSyncButton: Button
@@ -65,9 +69,12 @@ class AccountFragment : Fragment() {
     private var tickupHandler = Handler()
     private lateinit var tickupRunnable: Runnable
 
+    private lateinit var mView: View
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.wallet_fragment_account, container, false)
+        mView = inflater.inflate(R.layout.wallet_fragment_account, container, false)
+        return mView
     }
 
 
@@ -75,24 +82,22 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         accountViewModel = AccountViewModel()
 
-        setupNeoGasClaimViews(view)
-        setupOntologyGasClaimViews(view)
-        setupAssetList(view)
-        setupActionButtons(view)
-        setUpInboxData()
+        setupNeoGasClaimViews()
+        setupOntologyGasClaimViews()
+        setupAssetList()
+        setupActionButtons()
         setupAssetListener()
         setupNeoClaimsListener()
 
         activity?.title = "Account"
-
     }
 
 
     //region UI Binding
-    fun setupActionButtons(view: View) {
-        myQrButton = view.findViewById(R.id.requestButton)
-        sendButton = view.findViewById(R.id.sendButton)
-        scanButton = view.findViewById(R.id.scanButton)
+    fun setupActionButtons() {
+        myQrButton = mView.findViewById(R.id.requestButton)
+        sendButton = mView.findViewById(R.id.sendButton)
+        scanButton = mView.findViewById(R.id.scanButton)
 
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
@@ -100,15 +105,15 @@ class AccountFragment : Fragment() {
 
     }
 
-    fun setupNeoGasClaimViews(view: View) {
-        neoGasProgress = view.find(R.id.neoGasProgress)
-        neoGasSuccess = view.find(R.id.neoGasSuccess)
-        neoGasClaimingStateTitle = view.find(R.id.neoGasStateTitle)
-        unclaimedGASTicker = view.findViewById(R.id.neoUnclaimedGasTicker)
+    fun setupNeoGasClaimViews() {
+        neoGasProgress = mView.find(R.id.neoGasProgress)
+        neoGasSuccess = mView.find(R.id.neoGasSuccess)
+        neoGasClaimingStateTitle = mView.find(R.id.neoGasStateTitle)
+        unclaimedGASTicker = mView.findViewById(R.id.neoUnclaimedGasTicker)
         unclaimedGASTicker.setCharacterList(TickerUtils.getDefaultNumberList())
 
-        neoSyncButton = view.find(R.id.neoSyncButton)
-        neoClaimButton = view.find(R.id.neoClaimButton)
+        neoSyncButton = mView.find(R.id.neoSyncButton)
+        neoClaimButton = mView.find(R.id.neoClaimButton)
         unclaimedGASTicker.text = "0.00000000"
         unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
         neoSyncButton.setOnClickListener { neoSyncTapped() }
@@ -121,16 +126,16 @@ class AccountFragment : Fragment() {
         }
     }
 
-    fun setupOntologyGasClaimViews(view: View) {
-        ontologyTicker = view.find(R.id.ontologyUnclaimedGasTicker)
+    fun setupOntologyGasClaimViews() {
+        ontologyTicker = mView.find(R.id.ontologyUnclaimedGasTicker)
         ontologyTicker.setCharacterList(TickerUtils.getDefaultNumberList())
         ontologyTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
 
-        ontologySyncButton = view.find(R.id.ontologySyncButton)
-        ontologyClaimButton = view.find(R.id.ontologyClaimButton)
-        ontologyGasProgress = view.find(R.id.ontologyGasProgress)
-        ontologyGasSuccess = view.find(R.id.ontologyGasSuccess)
-        ontologyClaimingStateTitle = view.find(R.id.ontologyGasStateTitle)
+        ontologySyncButton = mView.find(R.id.ontologySyncButton)
+        ontologyClaimButton = mView.find(R.id.ontologyClaimButton)
+        ontologyGasProgress = mView.find(R.id.ontologyGasProgress)
+        ontologyGasSuccess = mView.find(R.id.ontologyGasSuccess)
+        ontologyClaimingStateTitle = mView.find(R.id.ontologyGasStateTitle)
 
         ontologyClaimButton.setOnClickListener { ontologyClaimTapped() }
         ontologySyncButton.setOnClickListener {ontologySyncTapped() }
@@ -138,9 +143,12 @@ class AccountFragment : Fragment() {
         setupOntologyClaimListener()
     }
 
-    fun setupAssetList(view: View) {
-        assetListView = view.findViewById(R.id.assetListView)
-        swipeContainer = view.findViewById(R.id.swipeContainer)
+    fun setupAssetList() {
+        assetListView = mView.findViewById(R.id.assetListView)
+        val layoutManager = LinearLayoutManager(this.activity)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        assetListView .setLayoutManager(layoutManager)
+        swipeContainer = mView.findViewById(R.id.swipeContainer)
         swipeContainer.setColorSchemeResources(R.color.colorPrimary,
                 R.color.colorPrimary,
                 R.color.colorPrimary,
@@ -168,11 +176,15 @@ class AccountFragment : Fragment() {
 
     fun setupAssetListener() {
         accountViewModel.getAssets().observe(this, Observer<TransferableAssets?> {
+            swipeContainer.isRefreshing = false
             if (it == null) {
                 context?.toast(accountViewModel.getLastError().localizedMessage)
             } else {
-                showAssets(it)
+                assetListView.adapter = AccountAssetsAdapter(it.assets)
             }
+            accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
+                (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
+            })
         })
     }
 
@@ -197,57 +209,6 @@ class AccountFragment : Fragment() {
                 }
             }
         })
-    }
-    //endregion
-
-    //region Inbox
-    fun setUpInboxData() {
-        accountViewModel.getInboxItem().observe(this, Observer<O3InboxItem?>{
-            if (it == null){
-                find<CardView>(R.id.tokenSwapCard).visibility = View.GONE
-            } else {
-                find<CardView>(R.id.tokenSwapCard).visibility = View.VISIBLE
-                find<TextView>(R.id.tokenSwapTitleView).text = it.title
-                find<TextView>(R.id.tokenSwapDescriptionView).text = it.description
-                find<TextView>(R.id.tokenSwapSubtitleLabel).text = it.subtitle
-                find<Button>(R.id.tokenSwapLearnmoreButton).text = it.readmoreTitle
-                find<Button>(R.id.tokenSwapActionButton).text = it.actionTitle
-
-                if (find<TextView>(R.id.tokenSwapSubtitleLabel).text.isBlank()) {
-                    find<TextView>(R.id.tokenSwapSubtitleLabel).visibility = View.GONE
-                } else {
-                    find<TextView>(R.id.tokenSwapSubtitleLabel).visibility = View.VISIBLE
-                }
-
-                if (find<TextView>(R.id.tokenSwapDescriptionView).text.isBlank()) {
-                    find<TextView>(R.id.tokenSwapDescriptionView).visibility = View.GONE
-                } else {
-                    find<TextView>(R.id.tokenSwapDescriptionView).visibility = View.VISIBLE
-                }
-                Glide.with(context).load(it.iconURL).into(find(R.id.tokenSwapLogoImageView))
-
-                val nep9 = it.actionURL
-                find<Button>(R.id.tokenSwapActionButton).setOnClickListener {
-                    sendButtonTapped(nep9)
-                }
-
-                val learnURL = it.readmoreURL
-                find<Button>(R.id.tokenSwapLearnmoreButton).setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.setData(Uri.parse(learnURL))
-                    startActivity(intent)
-                }
-            }
-        })
-    }
-    // endregion
-
-    //region Assets
-    private fun showAssets(data: TransferableAssets) {
-        swipeContainer.isRefreshing = false
-        val adapter = AccountAssetsAdapter(this,context!!, Account.getWallet()!!.address,
-                data.assets)
-        assetListView.adapter = adapter
     }
     //endregion
 
