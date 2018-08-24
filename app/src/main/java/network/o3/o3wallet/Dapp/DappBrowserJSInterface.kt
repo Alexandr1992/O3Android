@@ -14,6 +14,7 @@ import com.google.gson.JsonObject
 import com.github.salomonbrys.kotson.*
 import android.os.Handler
 import android.support.v4.content.ContextCompat.getSystemService
+import com.amplitude.api.Amplitude
 import com.google.gson.JsonElement
 import neoutils.Neoutils
 import network.o3.o3wallet.*
@@ -24,6 +25,7 @@ import network.o3.o3wallet.Onboarding.PasscodeRequestActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
 
@@ -48,6 +50,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     fun finishConnectionToO3() {
         sessionId = UUID.randomUUID().toString()
         userAuthenticatedApp = true
+        //Amplitude.getInstance().logEvent("Connected_To_Switcheo")
         callback("requestToConnect", currentAccount(), null, true)
     }
 
@@ -134,11 +137,26 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         callback(message.command, json, null, true)
     }
 
+    fun parseAndAnalyze(unsignedJson: String) {
+        unsignedJson.removeSuffix("0000")
+        val index = unsignedJson.indexOf("7b")
+        val unsignedJsonSubstring = unsignedJson.substring(index)
+
+        Amplitude.getInstance().logEvent("Switcheo_Signed_JSON", JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
+    }
+
     fun handleRequestToSign(message: O3Message) {
         val unsignedTx = message.data.asString
+        // a raw json request coming from Switcheo
+        if (unsignedTx.endsWith("0000")) {
+            parseAndAnalyze(unsignedTx)
+        } else {
+            Amplitude.getInstance().logEvent("Switcheo_Signed_Raw_TX")
+        }
         if (unsignedTx.length < 2) {
             callback(message.command, JsonObject(), "invalid unsigned raw transaction", true)
         }
+
 
         val unsignedHex = unsignedTx.hexStringToByteArray()
         val authenticateMessage = webView.context.resources.getString(R.string.DAPP_transaction_signing_request)

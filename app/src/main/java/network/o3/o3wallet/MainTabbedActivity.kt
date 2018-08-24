@@ -37,7 +37,10 @@ import org.jetbrains.anko.yesButton
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
+import android.util.Log
+import com.amplitude.api.Amplitude
 import com.tapadoo.alerter.Alerter
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 
 
 class MainTabbedActivity : AppCompatActivity() {
@@ -115,7 +118,9 @@ class MainTabbedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tabbar_activity_main_tabbed)
-
+        if (!BuildConfig.DEBUG) {
+            Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
+        }
 
         val selectedFragment = fragments!!.get(0)
         val transaction = supportFragmentManager.beginTransaction()

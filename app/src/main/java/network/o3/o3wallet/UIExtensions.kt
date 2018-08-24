@@ -1,7 +1,12 @@
 package network.o3.o3wallet
 
+import android.graphics.Canvas
+import android.graphics.Rect
+import android.support.annotation.LayoutRes
+import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 
@@ -31,3 +36,4 @@ fun View.setNoDoubleClickListener(listener: View.OnClickListener, waitMillis : L
         }
     }
 }
+

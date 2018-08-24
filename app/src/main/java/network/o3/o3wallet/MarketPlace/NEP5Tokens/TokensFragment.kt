@@ -66,14 +66,6 @@ class TokensFragment : Fragment() {
 
         }
 
-        view.find<Button>(R.id.tradeNowButton).setOnClickListener {
-            val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-            val intent = Intent(this.activity, DAppBrowserActivity::class.java)
-            intent.putExtra("url", url)
-            intent.putExtra("allowSearch", false)
-            startActivity(intent)
-        }
-
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 tokensGridRecycler.adapter = TokensAdapter(model!!.filteredTokens(newText).toCollection(ArrayList()))
@@ -93,6 +85,11 @@ class TokensFragment : Fragment() {
         }
 
         val layoutManager = GridLayoutManager(this.context, spanCount)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (position == 0 ) 3 else 1
+            }
+        }
         tokensGridRecycler.setLayoutManager(layoutManager)
 
         model?.getListingData(true)?.observe(this, Observer { tokens ->

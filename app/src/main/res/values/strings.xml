@@ -231,6 +231,8 @@
     <!-- Wallet History -->
     <string name="WALLET_to" comment="to label in transaction history screen">To</string>>
     <string name="WALLET_to_formatted" comment="to label in transaction history screen and send screen">To: %1$s</string>
+    <string name="WALLET_Received" comment="receive type transaction in history">Received</string>
+    <string name="WALLET_Sent" comment="send type transaction in history">Sent</string>
     >
     <string name="WALLET_from" comment="from label in transaction history screen">From</string>>
     <string name="WALLET_from_formatted" comment="to label in transaction history screen">From: %1$s</string>

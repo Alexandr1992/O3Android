@@ -4,35 +4,24 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import network.o3.o3wallet.API.NEO.Transaction
 import org.json.JSONObject
 import java.math.BigDecimal
 
 /**
  * Created by drei on 11/24/17.
  */
-data class TransactionHistoryEntry(val GAS: Double,
-                                   val NEO: Double,
-                                   val block_index: Int,
-                                   val gas_sent: Boolean,
-                                   val neo_sent: Boolean,
-                                   val txid: String
-                                   )
-
-data class TransactionHistory(val address: String,
-                              val history: Array<TransactionHistoryEntry>,
-                              val name: String,
-                              val net: String)
 
 
 data class PlatformResponse(val code: Int, val result: JsonElement)
 
-data class Claim(val claim: Int,
-                 val end: Int,
-                 val index: Int,
-                 val start: Int,
-                 val sysfee: Int,
-                 val txid: String,
-                 val value: Int)
+
+data class TransactionHistory(val totalPage: Int, val pageIndex: Int, val history: Array<TransactionHistoryEntry>)
+
+data class TransactionHistoryEntry(val blockchain: String, val txid: String, val time: Long,
+                                   val blockHeight: Long, val asset: TokenListing,
+                                   val amount: String, val to: String,
+                                   val from: String)
 
 
 data class TokenListingsData(val data: TokenListings)
@@ -46,7 +35,7 @@ data class NEP5Tokens(val nep5tokens: Array<TokenListing>)
 
 data class TokenListing(val logoURL: String,
                         val logoSVG: String,
-                        val webURL: String,
+                        val url: String,
                         val tokenHash: String,
                         val name: String,
                         val symbol: String,
