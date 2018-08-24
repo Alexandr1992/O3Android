@@ -16,6 +16,12 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.onUiThread
 import java.util.concurrent.CountDownLatch
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v4.content.ContextCompat
+
+
+
+
 
 /**
  * A simple [Fragment] subclass.
@@ -40,7 +46,9 @@ class TransactionHistoryFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = TransactionHistoryAdapter(entries, context!!)
-
+        val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
+        itemDecorator.setDrawable(ContextCompat.getDrawable(context!!, R.drawable.vertical_divider)!!)
+        recyclerView.addItemDecoration(itemDecorator)
 
         swipeContainer = view.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
         swipeContainer.setColorSchemeResources(R.color.colorPrimary,

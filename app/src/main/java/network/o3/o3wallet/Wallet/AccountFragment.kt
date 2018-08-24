@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import android.support.annotation.LayoutRes
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
@@ -33,12 +34,9 @@ import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
-
-
-
+import kotlinx.android.synthetic.main.wallet_account_header_layout.*
 
 class AccountFragment : Fragment() {
-
     // toolbar items
     private lateinit var myQrButton: Button
     private lateinit var sendButton: Button
@@ -74,21 +72,19 @@ class AccountFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         mView = inflater.inflate(R.layout.wallet_fragment_account, container, false)
+        accountViewModel = AccountViewModel()
+        setupAssetList()
         return mView
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        accountViewModel = AccountViewModel()
-
-        setupNeoGasClaimViews()
-        setupOntologyGasClaimViews()
-        setupAssetList()
-        setupActionButtons()
         setupAssetListener()
         setupNeoClaimsListener()
-
+        setupNeoGasClaimViews()
+        setupOntologyGasClaimViews()
+        setupActionButtons()
+        setupOntologyClaimListener()
         activity?.title = "Account"
     }
 
@@ -145,9 +141,9 @@ class AccountFragment : Fragment() {
 
     fun setupAssetList() {
         assetListView = mView.findViewById(R.id.assetListView)
-        val layoutManager = LinearLayoutManager(this.activity)
+        val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        assetListView .setLayoutManager(layoutManager)
+        assetListView.setLayoutManager(layoutManager)
         swipeContainer = mView.findViewById(R.id.swipeContainer)
         swipeContainer.setColorSchemeResources(R.color.colorPrimary,
                 R.color.colorPrimary,
@@ -157,6 +153,7 @@ class AccountFragment : Fragment() {
         swipeContainer.setOnRefreshListener {
             accountViewModel.loadAssets()
         }
+        assetListView.adapter = AccountAssetsAdapter(this)
     }
     //endregion
 
@@ -180,7 +177,7 @@ class AccountFragment : Fragment() {
             if (it == null) {
                 context?.toast(accountViewModel.getLastError().localizedMessage)
             } else {
-                assetListView.adapter = AccountAssetsAdapter(it.assets)
+                 (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
             }
             accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
                 (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
@@ -285,7 +282,7 @@ class AccountFragment : Fragment() {
 
     fun showNeoClaimSucceeded() {
         onUiThread {
-            neoGasStateTitle.textColor = resources.getColor(R.color.colorGain)
+            neoGasClaimingStateTitle.textColor = resources.getColor(R.color.colorGain)
             neoGasClaimingStateTitle.text = getString(R.string.WALLET_confirmed_gas)
             neoGasSuccess.visibility = View.VISIBLE
             neoGasSuccess.playAnimation()
@@ -378,8 +375,8 @@ class AccountFragment : Fragment() {
 
     fun showOntologyClaimSucceeded() {
         onUiThread {
-            ontologyGasStateTitle.textColor = resources.getColor(R.color.colorGain)
-            ontologyGasStateTitle.text = getString(R.string.WALLET_confirmed_gas)
+            ontologyClaimingStateTitle.textColor = resources.getColor(R.color.colorGain)
+            ontologyClaimingStateTitle.text = getString(R.string.WALLET_confirmed_gas)
             ontologyGasSuccess.visibility = View.VISIBLE
             ontologyGasSuccess.playAnimation()
             Handler().postDelayed(Runnable{
@@ -394,7 +391,7 @@ class AccountFragment : Fragment() {
 
     fun showOntologyLoadingInProgress() {
         onUiThread {
-            ontologyGasStateTitle.text = resources.getString(R.string.WALLET_syncing_title)
+            ontologyClaimingStateTitle.text = resources.getString(R.string.WALLET_syncing_title)
             ontologyGasProgress.visibility = View.VISIBLE
             ontologySyncButton.visibility = View.GONE
             ontologyClaimButton.visibility = View.GONE
@@ -471,3 +468,4 @@ class AccountFragment : Fragment() {
     }
     //endregion
 }
+

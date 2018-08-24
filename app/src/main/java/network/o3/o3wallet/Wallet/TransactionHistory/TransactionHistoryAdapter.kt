@@ -11,10 +11,16 @@ import network.o3.o3wallet.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor
 import android.content.Intent
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import java.sql.Date
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -110,51 +116,58 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             supportedTokens = tokens
 
             val assetTextView = view.find<TextView>(R.id.assetTextView)
-            val toTextView = view.find<TextView>(R.id.toTextView)
-            val fromTextView = view.find<TextView>(R.id.fromTextView)
+            val otherPartyTextView = view.find<TextView>(R.id.otherPartyTextView)
+
             val amountTextView = view.find<TextView>(R.id.amountTextView)
-            val blockTextView = view.find<TextView>(R.id.blockNumberTextView)
+            val txDateTextView = view.find<TextView>(R.id.transactionDateTextView)
+            val sdf =   SimpleDateFormat("MMM dd yyyy @ HH:mm", Locale.getDefault())
+            val date = java.util.Date(tx.time * 1000)
+            txDateTextView.text = sdf.format(date)
+
+
+            val logoImageView = view.find<ImageView>(R.id.txHistoryLogo)
+            Glide.with(view.context).load(tx.asset.logoURL).into(logoImageView)
+
+            val txTypeTextView = view.find<TextView>(R.id.transactionTypeTextView)
 
             assetTextView.text = tx.asset.symbol.toUpperCase()
-            val amountToDisplay = tx.amount
 
             var toNickname = PersistentStore.getContacts().find { it.address == tx.to }?.nickname
             if (toNickname == null) {
                 toNickname = PersistentStore.getWatchAddresses().find {it.address == tx.to}?.nickname
             }
 
-            if (tx.to == Account.getWallet()?.address!!) {
-                toTextView.text = view.context.resources.getString(R.string.WALLET_to_O3_wallet) //"To: O3 Wallet"
-                amountTextView.text =  "+" + tx.amount
-                amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorGain)
-            } else if (toNickname != null) {
-                toTextView.text =   String.format(view.context.resources.getString(R.string.WALLET_to_formatted), toNickname)
-                amountTextView.text =  "-" + tx.amount
-                amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorLoss)
-            }else {
-                toTextView.text = String.format(view.context.resources.getString(R.string.WALLET_to_formatted), tx.to)
-                amountTextView.text =  "-" + tx.amount
-                amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorLoss)
-            }
-
-
             var fromNickname = PersistentStore.getContacts().find { it.address == tx.from }?.nickname
             if (fromNickname == null) {
                 fromNickname = PersistentStore.getWatchAddresses().find {it.address == tx.from }?.nickname
             }
 
-            if (tx.from == Account.getWallet()?.address!!) {
-                fromTextView.text = view.context.resources.getString(R.string.WALLET_from_O3_wallet)
-            } else if (fromNickname != null) {
-                fromTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), toNickname)
+            if (tx.to == Account.getWallet()?.address!!) {
+                txTypeTextView.text = view.context.resources.getString(R.string.WALLET_Received)
+                if (fromNickname  != null) {
+                    otherPartyTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), fromNickname)
+                } else {
+                    otherPartyTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), tx.from)
+                }
+                amountTextView.text =  "+" + tx.amount
+                amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorGain)
             } else {
-                fromTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), tx.from)
+                txTypeTextView.text = view.context.resources.getString(R.string.WALLET_Sent)
+                if (toNickname  != null) {
+                    otherPartyTextView.text = String.format(view.context.resources.getString(R.string.WALLET_to_formatted), toNickname)
+                } else {
+                    otherPartyTextView.text = String.format(view.context.resources.getString(R.string.WALLET_to_formatted), tx.to)
+                }
+                amountTextView.text =  "-" + tx.amount
+                amountTextView.textColor = O3Wallet.appContext!!.resources!!.getColor(R.color.colorLoss)
             }
 
-            blockTextView.text = String.format(view.context.resources.getString(R.string.WALLET_block_number), tx.blockHeight.toString())
 
             view.setOnClickListener {
-                val url = "https://neoscan.io/transaction/" + tx.txid
+                var url = "https://neoscan.io/transaction/" + tx.txid
+                if (tx.asset.tokenHash.contains("000000000")) {
+                    url = "https://explorer.ont.io/transaction/" + tx.txid
+                }
                 val i = Intent(view.context, DAppBrowserActivity::class.java)
                 i.putExtra("url", url)
                 view.context.startActivity(i)

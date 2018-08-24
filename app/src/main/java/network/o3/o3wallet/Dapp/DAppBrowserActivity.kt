@@ -38,7 +38,8 @@ class DAppBrowserActivity : AppCompatActivity() {
 
     var previousWasRedirect = false
 
-    val whitelistedAuthorities = arrayOf("neoscan.io", "beta.switcheo.exchange", "switcheo.exchange", "neonewstoday.com", "public.o3.network")
+    val whitelistedAuthorities = arrayOf("neoscan.io", "beta.switcheo.exchange", "switcheo.exchange",
+            "neonewstoday.com", "public.o3.network", "explorer.ont.io")
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +54,6 @@ class DAppBrowserActivity : AppCompatActivity() {
         val url = intent.getStringExtra("url")
         val currentUrlRoute = URL(url)
         setVerifiedHeaderUrl(url)
-
-
 
 
         dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
@@ -122,6 +121,7 @@ class DAppBrowserActivity : AppCompatActivity() {
         webView.loadUrl(url)
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
+        webSettings.setDomStorageEnabled(true)
         jsInterface = DappBrowserJSInterface(this, webView)
         webView!!.addJavascriptInterface(jsInterface, "O3AndroidInterface")
         WebView.setWebContentsDebuggingEnabled(true)

@@ -16,25 +16,49 @@
                 app:layout_constraintBottom_toTopOf="@+id/portfolioSwipeRefresh"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="spread_inside" />
 
             <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/portfolioSwipeRefresh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/portfolioHeaderFragment">
+                android:layout_height="0dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layout_constraintTop_toBottomOf="@+id/portfolioHeaderFragment"
+                app:layout_constraintBottom_toBottomOf="parent">
 
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/portfolioScrollView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:descendantFocusability="blocksDescendants"
+                        android:orientation="vertical">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/assetListView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:divider="@color/colorSubtitleGrey"
-                    android:dividerHeight="0.25dp" />
+                    <include
+                        android:id="@+id/portfolioGraph"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/portfolioHeaderFragment"
+                        app:layout_constraintBottom_toTopOf="@id/portfolioSwipeRefresh"
+                        layout="@layout/portfolio_graph_layout">
+                    </include>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/assetListView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:nestedScrollingEnabled="false"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:divider="@color/colorSubtitleGrey"
+                        android:dividerHeight="0.25dp" />
+                    </LinearLayout>
+                    </android.support.v4.widget.NestedScrollView>
             </android.support.v4.widget.SwipeRefreshLayout>
         </android.support.constraint.ConstraintLayout>
 </FrameLayout>

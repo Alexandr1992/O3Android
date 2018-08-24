@@ -37,6 +37,7 @@ import org.jetbrains.anko.yesButton
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
+import android.util.Log
 import com.amplitude.api.Amplitude
 import com.tapadoo.alerter.Alerter
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI

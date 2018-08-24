@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Wallet
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Telephony
@@ -21,23 +22,33 @@ import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
+import java.security.AccessControlContext
 import java.text.NumberFormat
 
 /**
  * Created by apisit on 12/20/17.
  */
-class AccountAssetsAdapter(assets: ArrayList<TransferableAsset>)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var arrayOfAccountAssets = assets
+    private var arrayOfAccountAssets = arrayListOf<TransferableAsset>()
     private var inboxList = listOf<O3InboxItem>()
+    private val mFragment = mFragment
+    private var isInitialLoad = true
 
-    private val ASSETROW = 0
-    private val INBOXROW = 1
+    companion object {
+        val ASSETROW = 0
+        val INBOXROW = 1
+    }
+
 
     fun setInboxList(list: List<O3InboxItem>) {
         inboxList = list
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, inboxList.count() + arrayOfAccountAssets.count())
+    }
+
+    fun setAssetsArray(assets: ArrayList<TransferableAsset>) {
+        arrayOfAccountAssets = assets
+        notifyItemRangeChanged(inboxList.count(), arrayOfAccountAssets.count())
     }
 
     override fun getItemCount(): Int {
@@ -53,6 +64,7 @@ class AccountAssetsAdapter(assets: ArrayList<TransferableAsset>)
             return ASSETROW
         }
     }
+
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (inboxList.isEmpty()) {
@@ -130,7 +142,10 @@ class AccountAssetsAdapter(assets: ArrayList<TransferableAsset>)
         val logoImageView = view.find<ImageView>(R.id.coinLogoImageView)
 
         override fun onClick(p0: View?) {
-            val detailURL = "https://public.o3.network/neo/assets/" + asset!!.symbol + "?address=" + Account.getWallet()!!.address
+            var detailURL = "https://public.o3.network/neo/assets/" + asset!!.symbol + "?address=" + Account.getWallet()!!.address
+            if (asset!!.id.contains("00000000000")) {
+                detailURL = "https://public.o3.network/ont/assets/" + asset!!.symbol + "?address=" + Account.getWallet()!!.address
+            }
             val intent = Intent(view.context, DAppBrowserActivity::class.java)
             intent.putExtra("url", detailURL)
             view.context.startActivity(intent)
