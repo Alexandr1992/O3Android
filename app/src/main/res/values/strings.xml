@@ -243,6 +243,9 @@
     <string name="WALLET_block_number" comment="label for block number in transaction histoty">Block Number: %1$s</string>
     <string name="WALLET_Request" comment="lavel for the request button">Request</string>
 
+    <string name="WALLET_Confirmed" comment="In Transaction History for confirmed transactions">Confirmed</string>
+    <string name="WALLET_Pending" comment="In Transaction History for pending transactions">Pending</string>
+
     <!-- Wallet Send -->
     <string name="SEND_send" comment="Send label in send screen">Send</string>
     <string name="SEND_to" comment="Send To address in send screen">To</string>
@@ -401,6 +404,7 @@
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
     <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It may incur a fee of 0.01 ONG</string>
     <string name="WALLET_sync_ontology_gas">Are you sure you want to sync your ONG? It will cost (0.01) ONG to do so</string>
+    <string name="WALLET_sync_ontology_error">You must have generated at least 0.01 ONG in order to sync. Check back soon!</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
     <string name="DIALOG_confirm_backup">My Private Key is backed up in a safe place</string>

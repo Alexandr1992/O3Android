@@ -31,6 +31,8 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
                                 context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TRANSACTION_ENTRY_VIEW = 0
     val LOADING_FOOTER_VIEW = 1
+    val SECTION_HEADER = 2
+
     private var mContext = context
     private var isLoadingAdded = false
     private var availableTokens:Array<TokenListing> = arrayOf()
@@ -45,14 +47,39 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
         }
     }
 
+    fun pendingHeaderPosition(): Int? {
+        if (PersistentStore.getPendingTransactions().count() > 0 ) {
+            return 0
+        }
+        return null
+    }
+
+    fun txHeaderPostion(): Int? {
+        if (PersistentStore.getPendingTransactions().count() == 0 ) {
+            return null
+        } else {
+            return 1 + PersistentStore.getPendingTransactions().count()
+        }
+    }
+
+    fun headerCount(): Int {
+        if (PersistentStore.getPendingTransactions().count() > 0) {
+            return 2
+        }
+        return 0
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent?.context)
         if (viewType == TRANSACTION_ENTRY_VIEW) {
             val view = layoutInflater.inflate(R.layout.wallet_transaction_history_row_layout, parent, false)
             return TransactionHistoryAdapter.TransactionViewHolder(view)
-        } else {
+        } else  if (viewType == LOADING_FOOTER_VIEW){
             val view = layoutInflater.inflate(R.layout.wallet_transaction_history_footer, parent, false)
             return TransactionHistoryAdapter.LoadingViewHolder(view)
+        } else {
+            val view = layoutInflater.inflate(R.layout.wallet_transaction_history_header, parent, false)
+            return TransactionHistoryAdapter.SectionHeaderViewHolder(view)
         }
     }
 
@@ -60,8 +87,31 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
         val type = getItemViewType(position)
         if (type == LOADING_FOOTER_VIEW) {
             return
+        }
+
+        if (txHeaderPostion() != null && position == pendingHeaderPosition()) {
+            (holder as SectionHeaderViewHolder).bindHeader(0)
+            return
+        }
+
+        if (txHeaderPostion() != null && position == txHeaderPostion()) {
+            (holder as SectionHeaderViewHolder).bindHeader(1)
+            return
+        }
+
+        if(PersistentStore.getPendingTransactions().count() > 0) {
+            if (position < PersistentStore.getPendingTransactions().count() + 1) {
+                (holder as TransactionViewHolder).bindTransaction(
+                        PersistentStore.getPendingTransactions()[position - 1], availableTokens)
+                return
+            } else {
+                (holder as TransactionViewHolder).bindTransaction(
+                        transactionHistoryEntries[position - PersistentStore.getPendingTransactions()!!.count() - 2], availableTokens)
+                return
+            }
         } else {
-            (holder as TransactionViewHolder).bindTransaction(transactionHistoryEntries[position], availableTokens)
+            (holder as TransactionViewHolder).bindTransaction(
+                    transactionHistoryEntries[position], availableTokens)
         }
     }
 
@@ -70,11 +120,20 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
         if (isLoadingAdded) {
             footerInserted = 1
         }
-        return transactionHistoryEntries.count() + footerInserted
+        return transactionHistoryEntries.count() + PersistentStore.getPendingTransactions()!!.count() + footerInserted + headerCount()
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == transactionHistoryEntries.count() && isLoadingAdded) {
+        if (txHeaderPostion() != null && position == txHeaderPostion()) {
+            return SECTION_HEADER
+        }
+
+        if (pendingHeaderPosition() != null && position == pendingHeaderPosition()) {
+            return SECTION_HEADER
+        }
+
+        return if (position == transactionHistoryEntries.count() + PersistentStore.getPendingTransactions()!!.count() + headerCount()
+                && isLoadingAdded) {
             LOADING_FOOTER_VIEW
         } else {
             TRANSACTION_ENTRY_VIEW
@@ -180,6 +239,18 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
 
         companion object {
             private val LOADING_KEY = "LOADING_KEY"
+        }
+    }
+
+    class SectionHeaderViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        private var view = v
+
+        fun bindHeader(type: Int) {
+            if (type == 0) {
+                view.find<TextView>(R.id.headerTextView).text = view.context.resources.getString(R.string.WALLET_Pending)
+            } else {
+                view.find<TextView>(R.id.headerTextView).text = view.context.resources.getString(R.string.WALLET_Confirmed)
+            }
         }
     }
 }

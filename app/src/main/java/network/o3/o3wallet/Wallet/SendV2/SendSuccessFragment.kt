@@ -14,11 +14,11 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
+import network.o3.o3wallet.*
+import network.o3.o3wallet.API.O3Platform.TokenListing
+import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
+import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Settings.AddContact
-import network.o3.o3wallet.formattedFiatString
-import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
 
@@ -58,12 +58,42 @@ class SendSuccessFragment : Fragment() {
         }
     }
 
+    fun setPendingEntry(selectedAsset: TransferableAsset) {
+        var amount = (activity as SendV2Activity).sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros()
+        if ((activity as SendV2Activity).sendViewModel.getSelectedAddress().value!! == Account.getWallet()!!.address) {
+            amount = "0"
+        }
+        val pendingTxEntry = TransactionHistoryEntry(blockchain = "", txid = (activity as SendV2Activity).sendViewModel.txID.toLowerCase(),
+                time = System.currentTimeMillis() / 1000, blockHeight = 0,
+                asset = TokenListing(logoURL =  String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset!!.symbol),
+                        symbol = selectedAsset.symbol, decimal = selectedAsset.decimals, name = selectedAsset.name,
+                        logoSVG = "", url = "", tokenHash = selectedAsset.id, totalSupply = 0),
+                amount = amount,
+                to = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!,
+                from = Account.getWallet()!!.address)
+
+        // sending tokens to yourself wont be picked up by the notification server
+        // so dont add them to the pending transaction list
+        if ((activity as SendV2Activity).sendViewModel.isNEOTokenAsset()) {
+            if ((activity as SendV2Activity).sendViewModel.getSelectedAddress().value!! == Account.getWallet()!!.address) {
+                return
+            }
+        }
+
+
+        var currentPending = PersistentStore.getPendingTransactions()
+        currentPending.add(pendingTxEntry)
+        PersistentStore.setPendingTransactions(currentPending)
+    }
+
     fun initiateSelectedAssetDetails() {
         (activity as SendV2Activity).sendViewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset!!.symbol)
             Glide.with(this).load(imageURL).into(find(R.id.receiptAssetLogoImageView))
             mView.find<TextView>(R.id.receiptAmountTextView).text = (activity as SendV2Activity)
                     .sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros() + " " + selectedAsset.symbol
+            setPendingEntry(selectedAsset)
+
         })
     }
 
@@ -92,6 +122,12 @@ class SendSuccessFragment : Fragment() {
         initiateSelectedRecipientDetails()
         initiateSelectedAssetDetails()
         initiateActionButtons()
+        /*(val blockchain: String, val txid: String, val time: Long,
+        val blockHeight: Long, val asset: TokenListing,
+        val amount: String, val to: String,
+        val from: String*/
+
+
         return mView
     }
 }

@@ -161,6 +161,7 @@ class AccountFragment : Fragment() {
     fun setupOntologyClaimListener() {
         accountViewModel.getOntologyClaims().observe(this, Observer<OntologyClaimableGas?> {
             val doubleValue = it!!.ong.toLong() / OntologyClient().DecimalDivisor
+            accountViewModel.ontologyCanNotSync = doubleValue <= 0.02
             ontologyTicker.textColor = resources.getColor(R.color.colorBlack)
             // ready to claim
             if (it.calculated == false) {
@@ -399,6 +400,13 @@ class AccountFragment : Fragment() {
     }
 
     fun ontologySyncTapped() {
+        if (accountViewModel.ontologyCanNotSync) {
+            alert (resources.getString(R.string.WALLET_sync_ontology_error)) {
+                yesButton {  }
+            }.show()
+            return
+        }
+
         alert (resources.getString(R.string.WALLET_sync_ontology_gas)) {
             noButton {}
             yesButton {

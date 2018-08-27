@@ -294,6 +294,15 @@ class SendViewModel: ViewModel() {
         return !isOntAsset()
     }
 
+    fun isNEOTokenAsset(): Boolean {
+        val toSendAsset = selectedAsset!!.value!!
+        if (isNeoAsset() && toSendAsset.symbol.toUpperCase() != "GAS"
+                && toSendAsset.symbol.toUpperCase() != "NEO") {
+            return true
+        }
+        return false
+    }
+
     fun send() {
         val toSendAsset = selectedAsset!!.value!!
         if (isOntAsset()) {

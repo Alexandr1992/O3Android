@@ -18,9 +18,9 @@ import org.jetbrains.anko.support.v4.onUiThread
 import java.util.concurrent.CountDownLatch
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v4.content.ContextCompat
-
-
-
+import network.o3.o3wallet.API.O3Platform.TransactionHistory
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.PersistentStore.getPendingTransactions
 
 
 /**
@@ -68,15 +68,17 @@ class TransactionHistoryFragment : Fragment() {
                 onUiThread { (recyclerView.adapter as TransactionHistoryAdapter).addLoadingFooter() }
                 currentPage = currentPage + 1
                 O3PlatformClient().getTransactionHistory(currentPage) {
-                    isLoading = false
                     onUiThread {
+
+                    isLoading = false
                         (recyclerView.adapter as TransactionHistoryAdapter).removeLoadingFooter()
-                        if (it.second != null) {
+                        if (it.second != null || it.first == null || (it.first?.history ?: arrayOf()).isEmpty()) {
                             currentPage = currentPage - 1
                         } else {
+                            val history = it.first!!
                             totalPageCount = it.first!!.totalPage
                             isLastPage = currentPage == totalPageCount
-                            (recyclerView.adapter as TransactionHistoryAdapter).addAllTransactions(it.first!!.history.toList())
+                            (recyclerView.adapter as TransactionHistoryAdapter).addAllTransactions(history.history.toList())
                         }
                     }
                 }
@@ -96,11 +98,24 @@ class TransactionHistoryFragment : Fragment() {
         onUiThread { (recyclerView.adapter as TransactionHistoryAdapter).removeAllTransactions() }
         O3PlatformClient().getTransactionHistory(currentPage) {
             onUiThread {  swipeContainer.isRefreshing = false }
-            if (it.second != null) {
-                return@getTransactionHistory
-            }
             onUiThread {
-                (recyclerView.adapter as TransactionHistoryAdapter).addAllTransactions(it.first!!.history.toList())
+
+                if (it.second != null || it.first == null || (it.first?.history ?: arrayOf()).isEmpty()) {
+                    //do nothing
+                } else {
+                    val history = it.first!!
+                    val pendingTransactions = PersistentStore.getPendingTransactions()
+                    if (pendingTransactions.size > 0) {
+                        for (i in pendingTransactions.size - 1 downTo 0) {
+                            if(history.history.toList().find { pendingTransactions[i].txid == it.txid} != null) {
+                                pendingTransactions.remove(pendingTransactions[i])
+                            }
+                        }
+                    }
+                    (recyclerView.adapter as TransactionHistoryAdapter).removeLoadingFooter()
+                    PersistentStore.setPendingTransactions(pendingTransactions)
+                    (recyclerView.adapter as TransactionHistoryAdapter).addAllTransactions(history.history.toList())
+                }
             }
         }
     }

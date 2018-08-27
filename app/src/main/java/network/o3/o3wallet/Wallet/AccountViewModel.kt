@@ -39,6 +39,7 @@ class AccountViewModel: ViewModel() {
     var needsSync = true
     private var neoBalance: Int? = null
     private var storedClaims: ClaimData? = null
+    var ontologyCanNotSync = false
 
 
     init {
@@ -191,6 +192,7 @@ class AccountViewModel: ViewModel() {
         O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
             if (it.first != null && it.first!!.calculated == false) {
                 val doubleValue = it.first!!.ong.toLong() / OntologyClient().DecimalDivisor
+                ontologyCanNotSync = doubleValue <= 0.02
                 completion(doubleValue, null)
             } else {
                 Handler().postDelayed(
@@ -198,6 +200,7 @@ class AccountViewModel: ViewModel() {
                             O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
                                 if (it.first != null && it.first!!.calculated == false) {
                                     val doubleValue = it.first!!.ong.toLong() / OntologyClient().DecimalDivisor
+                                    ontologyCanNotSync = doubleValue <= 0.02
                                     completion(doubleValue, null)
                                 } else {
                                     completion(null, Error("Syncing Failed"))

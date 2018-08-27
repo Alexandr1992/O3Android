@@ -6,6 +6,7 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import network.o3.o3wallet.API.NEO.NEP5Token
 import network.o3.o3wallet.API.O3.O3Response
+import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
 
@@ -229,5 +230,26 @@ object PersistentStore {
     fun setShouldShowSwitcheoOnPortfolio(shouldShow: Boolean) {
         return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
                 .edit().putBoolean("SHOW_SWITCHEO", shouldShow).apply()
+    }
+
+    fun getPendingTransactions(): ArrayList<TransactionHistoryEntry> {
+        val json = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("PENDING_TRANSACTIONS", "")
+        if (json == "") {
+            return arrayListOf()
+        }
+        return Gson().fromJson(json)
+    }
+
+    fun setPendingTransactions(transactions: ArrayList<TransactionHistoryEntry>) {
+        val pendingTx = Gson().toJson(transactions)
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putString("PENDING_TRANSACTIONS", pendingTx).apply()
+
+    }
+
+    fun clearPendingTransactions() {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putString("PENDING_TRANSACTIONS", "").apply()
     }
 }

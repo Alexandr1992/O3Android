@@ -441,7 +441,7 @@ class NeoNodeRPC {
         val signatureData = sign(rawTransaction, privateKeyHex)
         val finalPayload = concatenatePayloadData(wallet, rawTransaction, signatureData)
         return Pair(finalPayload, rawTransaction)
-    }
+        }
 
     private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String,
                                                  contractHash: String,
