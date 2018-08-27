@@ -80,6 +80,12 @@ class SendSuccessFragment : Fragment() {
             }
         }
 
+        if ((activity as SendV2Activity).sendViewModel.isOntAsset()) {
+            return
+        }
+
+
+
 
         var currentPending = PersistentStore.getPendingTransactions()
         currentPending.add(pendingTxEntry)
@@ -122,11 +128,6 @@ class SendSuccessFragment : Fragment() {
         initiateSelectedRecipientDetails()
         initiateSelectedAssetDetails()
         initiateActionButtons()
-        /*(val blockchain: String, val txid: String, val time: Long,
-        val blockHeight: Long, val asset: TokenListing,
-        val amount: String, val to: String,
-        val from: String*/
-
 
         return mView
     }

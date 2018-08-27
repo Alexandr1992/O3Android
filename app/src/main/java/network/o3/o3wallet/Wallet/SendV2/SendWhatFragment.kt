@@ -134,6 +134,10 @@ class SendWhatFragment : Fragment() {
             return
         }
 
+        if (selectedAsset?.symbol == "ONG") {
+            cryptoAmount = cryptoAmount - 0.01
+        }
+
         selectedButton.textColor = resources.getColor(R.color.colorAccent)
 
         if (selectedAsset.decimals == 0) {

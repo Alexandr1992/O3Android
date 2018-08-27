@@ -49,18 +49,18 @@ class OntologyClient {
         }
     }
 
-    fun transferOntologyAsset(assetID: String, toAddress: String, amount: Double, completion: (Pair<Boolean, Error?>) -> Unit) {
+    fun transferOntologyAsset(assetID: String, toAddress: String, amount: Double, completion: (Pair<String?, Error?>) -> Unit) {
         getGasPrice {
             if (it.second != null) {
-                completion(Pair<Boolean, Error?>(false, Error(it.second!!.localizedMessage)))
+                completion(Pair<String?, Error?>(null, Error(it.second!!.localizedMessage)))
             } else {
                 try {
-                    Neoutils.ontologyTransfer(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
+                    val txid = Neoutils.ontologyTransfer(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
                             Account.getWallet()?.wif!!, assetID, toAddress, amount)
-                    completion(Pair<Boolean, Error?>(true, null))
+                    completion(Pair<String?, Error?>(txid, null))
                 }
                 catch (e: Exception) {
-                     completion(Pair<Boolean, Error?>(false, Error("Transfer Failed")))
+                     completion(Pair<String?, Error?>(null, Error("Transfer Failed")))
                 }
             }
         }

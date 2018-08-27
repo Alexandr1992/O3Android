@@ -159,20 +159,12 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
             }
 
 
-            if (tableCellData.percentChange < 0) {
+            if (tableCellData.percentChange == 0.0) {
+                assetPercentChangeView.setTextColor(ContextCompat.getColor(view.context, color.colorSubtitleGrey))
+            } else if (tableCellData.percentChange < 0) {
                 assetPercentChangeView.setTextColor(ContextCompat.getColor(view.context, color.colorLoss))
             } else {
                 assetPercentChangeView.setTextColor(ContextCompat.getColor(view.context, color.colorGain))
-            }
-
-            if (portfolio ==  null) {
-                assetPriceView.visibility = View.INVISIBLE
-                assetPercentChangeView.visibility = View.INVISIBLE
-                assetTotalValueView.visibility = View.INVISIBLE
-            } else {
-                assetPriceView.visibility = View.VISIBLE
-                assetPercentChangeView.visibility = View.VISIBLE
-                assetTotalValueView.visibility = View.VISIBLE
             }
 
             var formatter = NumberFormat.getNumberInstance()

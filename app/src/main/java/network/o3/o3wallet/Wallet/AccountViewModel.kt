@@ -213,7 +213,7 @@ class AccountViewModel: ViewModel() {
 
     fun syncOntologyChain(completion: (Double?, Error?) -> Unit) {
         OntologyClient().transferOntologyAsset(OntologyClient.Asset.ONT.assetID(), Account.getWallet()!!.address, 1.0) {
-            if(it.first) {
+            if(it.first != null) {
                 Looper.prepare()
                 Handler().postDelayed (
                     {

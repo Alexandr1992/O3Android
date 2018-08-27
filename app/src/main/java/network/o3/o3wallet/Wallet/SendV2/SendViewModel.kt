@@ -170,8 +170,8 @@ class SendViewModel: ViewModel() {
         val amount = getSelectedSendAmount().toDouble()
         val wallet = Account.getWallet()
         OntologyClient().transferOntologyAsset(toSendAsset.symbol.toUpperCase(), recipientAddress, amount) {
-            if (it.first == true) {
-                sendResult?.postValue("")
+            if (it.first != null ) {
+                sendResult?.postValue(it.first!!)
             } else {
                 sendResult?.postValue(null)
             }

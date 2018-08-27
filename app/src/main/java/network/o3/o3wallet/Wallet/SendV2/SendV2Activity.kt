@@ -11,7 +11,9 @@ import android.text.SpannableStringBuilder
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.navigation.NavHost
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
 import neoutils.Neoutils.parseNEP9URI
@@ -52,6 +54,7 @@ class SendV2Activity : AppCompatActivity() {
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
     }
+
 
     fun parseQRPayload(payload: String) {
         if (Neoutils.validateNEOAddress(payload)) {
@@ -111,6 +114,14 @@ class SendV2Activity : AppCompatActivity() {
             //give sometime to load eveything up
             Thread.sleep(2000)
             return
+        }
+    }
+
+    override fun onBackPressed() {
+        if (sendViewModel.txID != "") {
+            finish()
+        } else {
+            super.onBackPressed()
         }
     }
 }
