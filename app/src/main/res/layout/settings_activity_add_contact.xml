@@ -100,14 +100,14 @@
 
             <Button
                 android:id="@+id/AddButton"
-                style="@style/PrimaryButton"
+                style="@style/AccentButton.Rounded"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/accent_button_background"
+                android:background="@drawable/disable_accent_button"
                 android:text="@string/WALLET_add_contact"
                 android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"

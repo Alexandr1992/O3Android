@@ -4,18 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
+<android.support.v7.widget.CardView
+    style="@style/CardViewStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="3dp">
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
+        android:background="?attr/secondaryBackgroundColor"
         app:tabIndicatorColor="@color/colorPrimary"
         app:tabSelectedTextColor="@color/colorPrimary"
         app:tabTextAppearance="@style/TabLayoutAppearance"
-        app:tabTextColor="@color/colorBlack">
+        app:tabTextColor="?attr/defaultTextColor">
 
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
@@ -29,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </android.support.design.widget.TabLayout>
-
+</android.support.v7.widget.CardView>
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"

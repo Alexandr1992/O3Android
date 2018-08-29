@@ -291,7 +291,7 @@ class SendWhatFragment : Fragment() {
                 reviewButton.isEnabled = false
             } else {
                 assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
-                amountEditText.textColor = resources.getColor(R.color.colorBlack)
+                amountEditText.textColor = context!!.getColorFromAttr(R.attr.defaultTextColor)
                 reviewButton.isEnabled = true
             }
             mView.find<TextView>(R.id.otherAmountTextView).text = amount.formattedFiatString()

@@ -30,6 +30,9 @@ import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.onUiThread
+import android.support.v7.widget.DividerItemDecoration
+
+
 
 interface HomeViewModelProtocol {
     fun showPortfolioLoadingIndicator()
@@ -140,6 +143,8 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = assetListAdapter
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+
 
         initiateGraph()
         initiateViewPager(view)

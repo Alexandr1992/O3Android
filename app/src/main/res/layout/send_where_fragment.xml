@@ -196,8 +196,8 @@
             <View
                 android:id="@+id/view7"
                 android:layout_width="39dp"
-                android:layout_height="4dp"
-                android:background="@color/colorSubtitleGrey"
+                android:layout_height="2dp"
+                android:background="?attr/primaryBackgroundColor"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView9"
                 app:layout_constraintEnd_toStartOf="@+id/imageView9"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -207,8 +207,8 @@
             <View
                 android:id="@+id/view6"
                 android:layout_width="39dp"
-                android:layout_height="4dp"
-                android:background="@color/colorSubtitleGrey"
+                android:layout_height="2dp"
+                android:background="?attr/primaryBackgroundColor"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView7"
                 app:layout_constraintEnd_toStartOf="@+id/imageView8"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -216,15 +216,5 @@
                 app:layout_constraintTop_toTopOf="@+id/imageView7" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-
-    <View
-        android:id="@+id/view8"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/colorWhite"
-        app:layout_constraintBottom_toTopOf="@+id/pasteButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

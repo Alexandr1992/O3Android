@@ -10,6 +10,6 @@
         android:id="@+id/watchAddressListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/colorSubtleGrey"
+        android:divider="?attr/primaryBackgroundColor"
         android:dividerHeight="1dp" />
 </FrameLayout>

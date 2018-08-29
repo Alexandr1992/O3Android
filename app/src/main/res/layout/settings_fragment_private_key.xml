@@ -55,6 +55,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
+        style="@style/CardViewStyle"
         android:layout_height="400dp"
         android:layout_marginTop="32dp"
         app:cardCornerRadius="8dp"
@@ -86,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.25dp"
                 android:layout_marginTop="32dp"
-                android:background="@color/colorSubtitleGrey"
+                android:background="?attr/primaryBackgroundColor"
                 app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
             <TextView

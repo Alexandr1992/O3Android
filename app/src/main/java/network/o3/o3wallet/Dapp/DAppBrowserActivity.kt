@@ -177,7 +177,7 @@ class DAppBrowserActivity : AppCompatActivity() {
                     currIndex -= 1
                     webView.goBack()
                 }
-                val url = webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url
+                val url = webView.copyBackForwardList().getItemAtIndex(currIndex).url
                 if (url != null) {
                     setVerifiedHeaderUrl(url)
                 }

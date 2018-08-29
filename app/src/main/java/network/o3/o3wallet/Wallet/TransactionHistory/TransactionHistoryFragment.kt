@@ -47,7 +47,6 @@ class TransactionHistoryFragment : Fragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = TransactionHistoryAdapter(entries, context!!)
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(context!!, R.drawable.vertical_divider)!!)
         recyclerView.addItemDecoration(itemDecorator)
 
         swipeContainer = view.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)

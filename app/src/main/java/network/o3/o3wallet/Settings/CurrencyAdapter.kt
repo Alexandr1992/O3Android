@@ -13,6 +13,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.wallet_account_asset_row.view.*
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
@@ -70,8 +71,8 @@ class CurrencyAdapter(context: Context, fragment: CurrencyFragment): BaseAdapter
             checkbox.visibility = View.VISIBLE
             checkbox.isChecked = true
         } else {
-            textViewCurrency.textColor = mContext.getColor(R.color.colorBlack)
-            textViewSymbol.textColor = mContext.getColor(R.color.colorBlack)
+            textViewCurrency.textColor = mContext.getColorFromAttr(R.attr.defaultTextColor)
+            textViewSymbol.textColor = mContext.getColorFromAttr(R.attr.defaultTextColor)
             checkbox.visibility = View.INVISIBLE
             checkbox.isChecked = false
         }

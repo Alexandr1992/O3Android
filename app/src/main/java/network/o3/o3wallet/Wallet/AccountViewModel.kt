@@ -42,10 +42,6 @@ class AccountViewModel: ViewModel() {
     var ontologyCanNotSync = false
 
 
-    init {
-        getUTXOs()
-    }
-
     fun getAssets(): LiveData<TransferableAssets> {
         if (assets == null) {
             assets = MutableLiveData()
@@ -101,7 +97,7 @@ class AccountViewModel: ViewModel() {
     }
 
     fun getNeoBalance(): Int {
-        return neoBalance!!
+        return neoBalance ?: 0
     }
 
     private fun loadUTXOs() {

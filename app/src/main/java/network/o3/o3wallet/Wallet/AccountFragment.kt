@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Handler
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.CardView
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
@@ -34,6 +35,7 @@ import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
+import android.util.TypedValue
 import kotlinx.android.synthetic.main.wallet_account_header_layout.*
 
 class AccountFragment : Fragment() {
@@ -141,6 +143,8 @@ class AccountFragment : Fragment() {
 
     fun setupAssetList() {
         assetListView = mView.findViewById(R.id.assetListView)
+        assetListView.addItemDecoration(DividerItemDecoration(assetListView.context, DividerItemDecoration.VERTICAL))
+
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         assetListView.setLayoutManager(layoutManager)
@@ -162,7 +166,9 @@ class AccountFragment : Fragment() {
         accountViewModel.getOntologyClaims().observe(this, Observer<OntologyClaimableGas?> {
             val doubleValue = it!!.ong.toLong() / OntologyClient().DecimalDivisor
             accountViewModel.ontologyCanNotSync = doubleValue <= 0.02
-            ontologyTicker.textColor = resources.getColor(R.color.colorBlack)
+            val typedValue = TypedValue()
+            activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
+            ontologyTicker.textColor = resources.getColor(typedValue.resourceId)
             // ready to claim
             if (it.calculated == false) {
                 showOntologyGasReadyToClaim(doubleValue)
@@ -272,8 +278,10 @@ class AccountFragment : Fragment() {
             } else {
                 neoClaimButton.visibility = View.INVISIBLE
             }
+            val typedValue = TypedValue()
+            activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
 
-            unclaimedGASTicker.textColor = resources.getColor(R.color.colorBlack)
+            unclaimedGASTicker.textColor = resources.getColor(typedValue.resourceId)
             neoSyncButton.visibility = View.GONE
             neoGasProgress.visibility = View.GONE
             neoGasClaimingStateTitle.text = getString(R.string.WALLET_ready_to_claim_gas)
@@ -349,7 +357,9 @@ class AccountFragment : Fragment() {
             if (amount != null) {
                 ontologyTicker.text = "%.8f".format(amount)
             }
-            ontologyTicker.textColor = resources.getColor(R.color.colorBlack)
+            val typedValue = TypedValue()
+            activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
+            ontologyTicker.textColor = resources.getColor(typedValue.resourceId)
             ontologySyncButton.visibility = View.GONE
             ontologyClaimButton.visibility = View.VISIBLE
             ontologyGasProgress.visibility = View.GONE

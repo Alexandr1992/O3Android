@@ -43,6 +43,9 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
     fun setInboxList(list: List<O3InboxItem>) {
         inboxList = list
+        if (inboxList.count() == list.count()) {
+            return
+        }
         notifyItemRangeChanged(0, inboxList.count() + arrayOfAccountAssets.count())
     }
 

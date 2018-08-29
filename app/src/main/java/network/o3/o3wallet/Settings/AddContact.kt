@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.ActionBar
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
@@ -19,6 +21,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
 import network.o3.o3wallet.afterTextChanged
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.find
 import org.jetbrains.anko.yesButton
 import java.lang.Exception
 
@@ -26,13 +29,16 @@ class AddContact : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity_add_contact)
-        this.title = resources.getString(R.string.WALLET_address_book)
         val nickNameField = findViewById<EditText>(R.id.NickNameField)
         val addressField = findViewById<EditText>(R.id.AddressField)
         val saveButton = findViewById<Button>(R.id.AddButton)
 
         val scanAddressButton = findViewById<Button>(R.id.scanAddressButton)
         val pasteAddressButton = findViewById<Button>(R.id.pasteAddressButton)
+        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_address_book)
+
 
         if (intent.extras != null) {
             val address = intent.getStringExtra("address")

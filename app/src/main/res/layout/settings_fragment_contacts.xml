@@ -21,7 +21,7 @@
           android:id="@+id/contactsListView"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:divider="@color/colorSubtleGrey"
+          android:divider="?attr/primaryBackgroundColor"
           android:dividerHeight="1dp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
