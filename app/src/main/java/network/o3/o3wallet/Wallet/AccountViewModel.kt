@@ -41,6 +41,8 @@ class AccountViewModel: ViewModel() {
     private var storedClaims: ClaimData? = null
     var ontologyCanNotSync = false
 
+    var wallet = Account.getWallet()!!
+
 
     fun getAssets(): LiveData<TransferableAssets> {
         if (assets == null) {
@@ -56,7 +58,7 @@ class AccountViewModel: ViewModel() {
             assets!!.postValue(cachedAssets)
         }
 
-        O3PlatformClient().getTransferableAssets(Account.getWallet()!!.address) {
+        O3PlatformClient().getTransferableAssets(wallet.address) {
             lastDataLoadError = it.second
             it.first?.assets?.let {
                 for (asset in it) {
@@ -71,7 +73,7 @@ class AccountViewModel: ViewModel() {
     }
 
     fun loadInboxItem() {
-        O3PlatformClient().getInbox(Account.getWallet()!!.address) {
+        O3PlatformClient().getInbox(wallet.address) {
             if (it.second != null) {
                 swapInfo!!.postValue(null)
             } else {
@@ -101,7 +103,7 @@ class AccountViewModel: ViewModel() {
     }
 
     private fun loadUTXOs() {
-        O3PlatformClient().getUTXOS(Account.getWallet()!!.address) {
+        O3PlatformClient().getUTXOS(wallet.address) {
             claimError = it.second
             utxos!!.postValue(it.first)
         }
@@ -116,7 +118,7 @@ class AccountViewModel: ViewModel() {
     }
 
     fun loadClaims() {
-        O3PlatformClient().getClaimableGAS(Account.getWallet()!!.address) {
+        O3PlatformClient().getClaimableGAS(wallet.address) {
             claimsDataRefreshing = false
             lastDataLoadError = it.second
             claims!!.postValue(it.first)
@@ -127,7 +129,7 @@ class AccountViewModel: ViewModel() {
     fun checkSyncComplete(completion: (Boolean) -> Unit ) {
         Looper.prepare()
         val checker = Runnable {
-            var claimData = O3PlatformClient().getClaimableGasBlocking(Account.getWallet()!!.address)
+            var claimData = O3PlatformClient().getClaimableGasBlocking(wallet.address)
             if (claimData != null && storedClaims != null && claimData.data.claims.size != storedClaims!!.data.claims.size) {
                 storedClaims = claimData
                 completion(true)
@@ -145,7 +147,7 @@ class AccountViewModel: ViewModel() {
             return
         }
 
-        NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(Account.getWallet()!!,
+        NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(wallet,
                 NeoNodeRPC.Asset.NEO, neoBalance!!.toBigDecimal(), Account.getWallet()!!.address, null) {
             if (it.second != null || it.first == null) {
                 completion(false)
@@ -169,7 +171,7 @@ class AccountViewModel: ViewModel() {
     }
 
     fun loadOntologyClaims() {
-        O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
+        O3PlatformClient().getOntologyCalculatedGas(wallet.address) {
             if(it.first == null) {
                 ontologyClaims?.postValue(OntologyClaimableGas("0", false))
             } else {
@@ -179,13 +181,13 @@ class AccountViewModel: ViewModel() {
     }
 
     fun performClaim(completion: (Boolean?, Error?) -> Unit) {
-        NeoNodeRPC(PersistentStore.getNodeURL()).claimGAS(Account.getWallet()!!, storedClaims) {
+        NeoNodeRPC(PersistentStore.getNodeURL()).claimGAS(wallet, storedClaims) {
             completion(it.first, it.second)
         }
     }
 
     fun resyncOntologyClaims(completion: (Double?, Error?) -> Unit) {
-        O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
+        O3PlatformClient().getOntologyCalculatedGas(wallet.address) {
             if (it.first != null && it.first!!.calculated == false) {
                 val doubleValue = it.first!!.ong.toLong() / OntologyClient().DecimalDivisor
                 ontologyCanNotSync = doubleValue <= 0.02
@@ -193,7 +195,7 @@ class AccountViewModel: ViewModel() {
             } else {
                 Handler().postDelayed(
                         {
-                            O3PlatformClient().getOntologyCalculatedGas(Account.getWallet()!!.address) {
+                            O3PlatformClient().getOntologyCalculatedGas(wallet.address) {
                                 if (it.first != null && it.first!!.calculated == false) {
                                     val doubleValue = it.first!!.ong.toLong() / OntologyClient().DecimalDivisor
                                     ontologyCanNotSync = doubleValue <= 0.02
@@ -208,7 +210,7 @@ class AccountViewModel: ViewModel() {
     }
 
     fun syncOntologyChain(completion: (Double?, Error?) -> Unit) {
-        OntologyClient().transferOntologyAsset(OntologyClient.Asset.ONT.assetID(), Account.getWallet()!!.address, 1.0) {
+        OntologyClient().transferOntologyAsset(OntologyClient.Asset.ONT.assetID(), wallet.address, 1.0) {
             if(it.first != null) {
                 Looper.prepare()
                 Handler().postDelayed (

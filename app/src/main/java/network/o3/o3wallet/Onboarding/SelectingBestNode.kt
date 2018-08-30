@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Onboarding
 
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
@@ -61,5 +62,15 @@ class SelectingBestNode : AppCompatActivity() {
                 gotBestNode(it.first!!.neo.best)
             }
         }
+    }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_White, true)
+        }
+        return theme
     }
 }

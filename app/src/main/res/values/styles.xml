@@ -31,6 +31,29 @@
         <item name="android:textColorHint">@color/colorSubtitleGrey</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+    </style>
+
     <style name="AppTheme.Dark" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorGhostBlack</item>
@@ -50,17 +73,19 @@
         <item name="android:textColorSecondary">@color/colorWhite</item>
     </style>
 
-    <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light">
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
-        <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowIsTranslucent">true</item>
+    <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light.Dialog">
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
     <style name="AppTheme.NoTopBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
     <style name="AppTheme.NoTopBar.White" parent="Theme.AppCompat.Light.NoActionBar">
@@ -70,7 +95,6 @@
         <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
         <item name="primaryBackgroundColor">@color/colorWhite</item>
         <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
-
     </style>
 
     <style name="WhiteActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
@@ -78,6 +102,9 @@
         <item name="elevation">0dp</item>
         <item name="titleTextStyle">@style/WhiteActionBarTitleTextStyle</item>
         <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
 
@@ -408,14 +435,5 @@
     </style>
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
