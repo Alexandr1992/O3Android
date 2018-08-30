@@ -160,7 +160,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
 
             if (tableCellData.percentChange == 0.0) {
-                assetPercentChangeView.setTextColor(ContextCompat.getColor(view.context, color.colorSubtitleGrey))
+                assetPercentChangeView.setTextColor(view.context.getColorFromAttr(R.attr.defaultSubtitleTextColor))
             } else if (tableCellData.percentChange < 0) {
                 assetPercentChangeView.setTextColor(ContextCompat.getColor(view.context, color.colorLoss))
             } else {

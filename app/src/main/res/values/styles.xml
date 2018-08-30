@@ -9,6 +9,8 @@
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="actionBarStyle">@style/NoShadowActionBar</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
     </style>
 
     <style name="AppTheme.White" parent="Theme.AppCompat.Light">
@@ -16,35 +18,93 @@
         <item name="colorPrimary">@color/colorWhite</item>
         <item name="android:colorPrimaryDark">@color/colorGhostWhite</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowBackground">@color/colorWhite</item>
+        <item name="android:windowBackground">@color/colorGhostWhite</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="actionBarStyle">@style/NoShadowActionBar</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+        <item name="android:editTextColor">?attr/defaultTextColor</item>
+        <item name="android:textColorHint">@color/colorSubtitleGrey</item>
     </style>
 
-    <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light">
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:windowIsFloating">false</item>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorGhostBlack</item>
+        <item name="android:colorPrimaryDark">@color/colorBlack</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/colorBlack</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
-        <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="actionBarStyle">@style/NoShadowActionBar</item>
+        <item name="defaultTextColor">@color/colorGhostWhite</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGreyDark</item>
+        <item name="primaryBackgroundColor">@color/colorBlack</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostBlack</item>
+        <item name="android:editTextColor">?attr/defaultTextColor</item>
+        <item name="android:textColorHint">@color/colorSubtitleGrey</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+    </style>
+
+    <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light.Dialog">
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
     <style name="AppTheme.NoTopBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
     <style name="AppTheme.NoTopBar.White" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimaryDark">@color/colorGhostWhite</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
     <style name="WhiteActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:fontFamily">@font/muli_bold</item>
         <item name="elevation">0dp</item>
         <item name="titleTextStyle">@style/WhiteActionBarTitleTextStyle</item>
+        <item name="defaultTextColor">@color/colorBlack</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
     </style>
 
 
@@ -90,16 +150,17 @@
     <style name="CardViewStyle" parent="CardView">
         <item name="cardCornerRadius">8dp</item>
         <item name="cardElevation">4dp</item>
+        <item name="cardBackgroundColor">?attr/secondaryBackgroundColor</item>
     </style>
 
     <style name="HeaderText">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">20dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
     <style name="SubtitleText">
-        <item name="android:textColor">@color/colorSubtitleGrey</item>
+        <item name="android:textColor">?attr/defaultSubtitleTextColor</item>
         <item name="android:textSize">12dp</item>
         <item name="android:fontFamily">@font/muli</item>
     </style>
@@ -163,7 +224,7 @@
     </style>
 
     <style name="PinPadButton" parent="Base.Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">20dp</item>
         <item name="android:fontFamily">@font/muli</item>
     </style>
@@ -178,14 +239,14 @@
 
     <style name="BorderLessButton.Ghost" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:background">@color/colorGhostWhite</item>>
+        <item name="android:background">?attr/secondaryBackgroundColor</item>>
         <item name="android:textSize">12dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
 
     <style name="BoldText">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">16dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
@@ -204,24 +265,24 @@
     </style>
 
     <style name="RegularText">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">16dp</item>
         <item name="android:fontFamily">@font/muli</item>
     </style>
 
     <style name="RegularText.Small">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">14dp</item>
     </style>
 
     <style name="RegularText.Bold">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">14dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
 
     <style name="RegularText.Small.Gray">
-        <item name="android:textColor">@color/colorSubtitleGrey</item>
+        <item name="android:textColor">?attr/defaultSubtitleTextColor</item>
     </style>
 
     <style name="RegularText.Small.Accent">
@@ -270,7 +331,7 @@
     </style>
 
     <style name="RegularSubtitleText">
-        <item name="android:textColor">@color/colorSubtitleGrey</item>
+        <item name="android:textColor">?attr/defaultSubtitleTextColor</item>
         <item name="android:textSize">12dp</item>
         <item name="android:fontFamily">@font/muli</item>
     </style>
@@ -295,7 +356,7 @@
     </style>
 
     <style name="IntervalButtonText.NotSelected">
-        <item name="android:textColor">@color/colorSubtitleGrey</item>
+        <item name="android:textColor">?attr/defaultSubtitleTextColor</item>
     </style>
 
     <style name="PortfolioHeader">
@@ -339,7 +400,7 @@
 
 
     <style name="TableRowTitleText">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
         <item name="android:textSize">16dp</item>
         <item name="android:fontFamily">@font/muli_bold</item>
     </style>
@@ -374,14 +435,5 @@
     </style>
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

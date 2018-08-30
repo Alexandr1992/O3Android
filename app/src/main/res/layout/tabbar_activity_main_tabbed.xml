@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorWhite"
+        android:background="?attr/primaryBackgroundColor"
         app:itemIconTint="@color/menu_item"
         app:itemTextColor="@color/menu_item"
         android:isScrollContainer="false"

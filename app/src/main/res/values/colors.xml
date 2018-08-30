@@ -8,14 +8,18 @@
     <color name="colorLoss">#d0011b</color>
     <color name="colorGain">#7ED321</color>
     <color name="colorSubtitleGrey">#cecece</color>
+    <color name="colorDisabled">#55cecece</color>
     <color name="colorWeakGrayBackground">#f6f6f6</color>
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#303030</color>
+
+
     <color name="colorSubtleGrey">#FAFAFA</color>
+    <color name="colorSubtitleGreyDark">#909090</color>
     <color name="colorDisabledButton">#1a4f4f4f</color>
 
+    <color name="colorWhite">#ffffff</color>
     <color name="colorGhostWhite">#f8f9fa</color>
-
+    <color name="colorGhostBlack">#2C2E34</color>
+    <color name="colorBlack">#242424</color>
 </resources>
 
 

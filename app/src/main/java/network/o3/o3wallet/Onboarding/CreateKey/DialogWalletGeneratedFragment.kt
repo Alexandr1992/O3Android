@@ -29,6 +29,11 @@ class DialogWalletGeneratedFragment() : DialogFragment() {
         return view
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog)
+    }
+
     companion object {
         fun newInstance(): DialogWalletGeneratedFragment {
             return DialogWalletGeneratedFragment()

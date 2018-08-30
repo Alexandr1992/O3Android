@@ -3,10 +3,13 @@ package network.o3.o3wallet.Settings
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.ActionBar
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
@@ -17,6 +20,7 @@ import network.o3.o3wallet.R
 import network.o3.o3wallet.API.NEO.*
 import network.o3.o3wallet.afterTextChanged
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.find
 import org.jetbrains.anko.yesButton
 import java.lang.Exception
 import java.math.BigDecimal
@@ -27,11 +31,14 @@ class AddWatchAddress : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity_add_watch_address)
 
-        this.title = resources.getString(R.string.SETTINGS_watch_address)
         val nickNameField = findViewById<EditText>(R.id.NickNameField)
         val addressField = findViewById<EditText>(R.id.AddressField)
         val saveButton = findViewById<Button>(R.id.AddButton)
         val scanAddressButton = findViewById<Button>(R.id.scanAddressButton)
+
+        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.SETTINGS_watch_address)
         scanAddressButton.setOnClickListener {
             val integrator = IntentIntegrator(this)
             integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
@@ -100,5 +107,15 @@ class AddWatchAddress : AppCompatActivity() {
                 parseQRPayload(result.contents)
             }
         }
+    }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_White, true)
+        }
+        return theme
     }
 }

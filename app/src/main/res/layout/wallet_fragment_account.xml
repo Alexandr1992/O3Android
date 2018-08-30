@@ -42,9 +42,7 @@
                             android:layout_height="wrap_content"
                             android:clipChildren="false"
                             android:clipToPadding="false"
-                            android:divider="@color/colorSubtitleGrey"
                             android:nestedScrollingEnabled="false"
-                            android:dividerHeight="0.25dp"
                             android:footerDividersEnabled="false"
                             android:headerDividersEnabled="false" />
                     </LinearLayout>

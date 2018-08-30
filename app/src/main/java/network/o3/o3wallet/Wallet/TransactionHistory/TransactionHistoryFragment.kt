@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat
 import network.o3.o3wallet.API.O3Platform.TransactionHistory
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.PersistentStore.getPendingTransactions
+import network.o3.o3wallet.getColorFromAttr
 
 
 /**
@@ -47,7 +48,7 @@ class TransactionHistoryFragment : Fragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = TransactionHistoryAdapter(entries, context!!)
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(context!!, R.drawable.vertical_divider)!!)
+        itemDecorator.setDrawable(resources.getDrawable(R.drawable.vertical_divider))
         recyclerView.addItemDecoration(itemDecorator)
 
         swipeContainer = view.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)

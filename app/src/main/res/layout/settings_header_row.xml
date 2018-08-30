@@ -17,7 +17,7 @@
         android:layout_marginStart="16dp"
         android:includeFontPadding="false"
         android:text="@string/SETTINGS_available_nodes"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

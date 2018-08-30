@@ -18,6 +18,7 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import android.os.Build
+import kotlinx.android.synthetic.main.settings_activity_add_contact.view.*
 import network.o3.o3wallet.Onboarding.LandingActivity
 import java.util.*
 import org.jetbrains.anko.image
@@ -31,7 +32,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_currency,
+    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_currency, R.drawable.ic_currency,
             R.drawable.ic_settingswatchonlyaddressicon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
             R.drawable.ic_settings_logout, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
@@ -41,7 +42,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     enum class CellType {
-        PRIVATEKEY, CURRENCY,
+        PRIVATEKEY, CURRENCY, THEME,
         WATCHADRESS, SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
 
@@ -84,6 +85,10 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
         if (position == CellType.CURRENCY.ordinal  ) {
             val currencyModal = CurrencyFragment.newInstance()
             currencyModal.show((mContext as AppCompatActivity).supportFragmentManager, currencyModal.tag)
+            return
+        } else if(position == CellType.THEME.ordinal) {
+            val themeModal = ThemeModalFragment.newInstance()
+            themeModal.show((mContext as AppCompatActivity).supportFragmentManager, themeModal.tag)
             return
         } else if (position == CellType.WATCHADRESS.ordinal) {
             val watchAddressModal = WatchAddressFragment.newInstance()

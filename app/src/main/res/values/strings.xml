@@ -161,6 +161,7 @@
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
         <item>My Private Key</item>
         <item>Currency</item>
+        <item>Theme</item>
         <item>Watch Only Address</item>
         <item>Support</item>
         <item>Contact</item>
@@ -171,6 +172,10 @@
     <!-- This string exists in order to allow for proper formatting-->
     <string name="SETTINGS_version" comment="A title for the version label in the settings menu">Version: %1$s</string>
     <string name="SETTINGS_more" comment="Title for more stuff tab">More...</string>
+
+    <string name="SETTINGS_Theme">Theme</string>
+    <string name="SETTINGS_Dark">Dark</string>
+    <string name="SETTINGS_Light">Light</string>
 
 
     <!-- Settings: Private Key -->

@@ -19,7 +19,7 @@ import java.util.*
  */
 
 class O3API {
-    val baseURL = "http://api.o3.network/v1/"
+    val baseURL = "https://api.o3.network/v1/"
     enum class Route {
         PRICE,
         HISTORICAL,

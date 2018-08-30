@@ -110,8 +110,8 @@
             <View
                 android:id="@+id/view7"
                 android:layout_width="39dp"
-                android:layout_height="4dp"
-                android:background="@color/colorSubtitleGrey"
+                android:layout_height="2dp"
+                android:background="?attr/primaryBackgroundColor"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView9"
                 app:layout_constraintEnd_toStartOf="@+id/imageView9"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -121,8 +121,8 @@
             <View
                 android:id="@+id/view6"
                 android:layout_width="39dp"
-                android:layout_height="4dp"
-                android:background="@color/colorSubtitleGrey"
+                android:layout_height="2dp"
+                android:background="?attr/primaryBackgroundColor"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView7"
                 app:layout_constraintEnd_toStartOf="@+id/imageView8"
                 app:layout_constraintHorizontal_bias="0.5"

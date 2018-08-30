@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/secondaryBackgroundColor"
     android:maxHeight="140dp"
     android:minHeight="130dp"
     android:padding="16dp">

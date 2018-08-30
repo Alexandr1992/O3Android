@@ -16,10 +16,11 @@ android {
     defaultConfig {
         applicationId "network.o3.o3wallet"
         minSdkVersion 23
-        targetSdkVersion 27
-        versionCode 55
-        versionName "2.0.2"
+        targetSdkVersion 28
+        versionCode 57
+        versionName "2.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
         multiDexEnabled true
     }
 
@@ -99,12 +100,11 @@ dependencies {
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version" // use -ktx for Kotlin
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.Kyash:rx-keyboard-detector:0.1.2'
-    implementation('com.airbnb.android:lottie:2.5.5') { exclude group: 'com.android.support' }
+    implementation('com.airbnb.android:lottie:2.6.0-beta19') { exclude group: 'com.android.support' }
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true
     }
     implementation 'com.amplitude:android-sdk:2.16.0'
-
 
     implementation 'com.xw.repo:bubbleseekbar:3.17-lite'
     implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha02"
