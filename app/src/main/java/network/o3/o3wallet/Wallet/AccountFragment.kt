@@ -143,7 +143,9 @@ class AccountFragment : Fragment() {
 
     fun setupAssetList() {
         assetListView = mView.findViewById(R.id.assetListView)
-        assetListView.addItemDecoration(DividerItemDecoration(assetListView.context, DividerItemDecoration.VERTICAL))
+        val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
+        itemDecorator.setDrawable(resources.getDrawable(R.drawable.vertical_divider))
+        assetListView.addItemDecoration(itemDecorator)
 
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL

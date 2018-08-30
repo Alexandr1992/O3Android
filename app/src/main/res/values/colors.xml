@@ -10,15 +10,16 @@
     <color name="colorSubtitleGrey">#cecece</color>
     <color name="colorDisabled">#55cecece</color>
     <color name="colorWeakGrayBackground">#f6f6f6</color>
-    <color name="colorWhite">#ffffff</color>
-    <color name="colorBlack">#242424</color>
+
+
     <color name="colorSubtleGrey">#FAFAFA</color>
     <color name="colorSubtitleGreyDark">#909090</color>
     <color name="colorDisabledButton">#1a4f4f4f</color>
 
+    <color name="colorWhite">#ffffff</color>
     <color name="colorGhostWhite">#f8f9fa</color>
     <color name="colorGhostBlack">#2C2E34</color>
-
+    <color name="colorBlack">#242424</color>
 </resources>
 
 

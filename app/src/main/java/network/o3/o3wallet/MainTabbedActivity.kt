@@ -37,6 +37,7 @@ import org.jetbrains.anko.yesButton
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
+import android.content.res.Resources
 import android.util.Log
 import com.amplitude.api.Amplitude
 import com.tapadoo.alerter.Alerter
@@ -214,17 +215,36 @@ class MainTabbedActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), IntentFilter("Alert"))
+        LocalBroadcastManager.getInstance(this).registerReceiver(needReloadThemeReciever, IntentFilter("need-reload-theme"))
     }
 
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
-
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(needReloadThemeReciever)
     }
 
     fun getActivity(): Activity {
         return this
     }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_White, true)
+        }
+        return theme
+    }
+
+    private val needReloadThemeReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            getActivity().finish()
+            getActivity().startActivity(getActivity().intent)
+        }
+    }
+
 
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

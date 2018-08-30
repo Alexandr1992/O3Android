@@ -77,6 +77,14 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadPortfolioReciever,
                 IntentFilter("need-update-currency-event"))
         mView =  inflater.inflate(R.layout.portfolio_fragment_home, container, false)
+
+        recyclerView = mView.findViewById<RecyclerView>(R.id.assetListView)
+        val layoutManager = LinearLayoutManager(this.activity)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerView.layoutManager = layoutManager
+        val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
+        itemDecorator.setDrawable(resources.getDrawable(R.drawable.vertical_divider))
+        recyclerView.addItemDecoration(itemDecorator)
         return mView
     }
 
@@ -137,14 +145,9 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         super.onViewCreated(view, savedInstanceState)
 
         assetListAdapter = AssetListAdapter(this.context!!, this)
-        initiateBalanceListeners()
-        recyclerView = view.findViewById<RecyclerView>(R.id.assetListView)
-        val layoutManager = LinearLayoutManager(this.activity)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = assetListAdapter
-        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
 
+        initiateBalanceListeners()
 
         initiateGraph()
         initiateViewPager(view)

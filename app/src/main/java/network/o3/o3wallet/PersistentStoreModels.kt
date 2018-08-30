@@ -252,4 +252,14 @@ object PersistentStore {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
                 .putString("PENDING_TRANSACTIONS", "").apply()
     }
+
+    fun setTheme(theme: String) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putString("THEME", theme).apply()
+    }
+
+    fun getTheme(): String {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("THEME", "Light")
+    }
 }

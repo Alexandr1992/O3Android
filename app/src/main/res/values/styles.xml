@@ -18,15 +18,15 @@
         <item name="colorPrimary">@color/colorWhite</item>
         <item name="android:colorPrimaryDark">@color/colorGhostWhite</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowBackground">@color/colorWhite</item>
+        <item name="android:windowBackground">@color/colorGhostWhite</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="actionBarStyle">@style/NoShadowActionBar</item>
         <item name="defaultTextColor">@color/colorBlack</item>
         <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
-        <item name="primaryBackgroundColor">@color/colorWhite</item>
-        <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="primaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="secondaryBackgroundColor">@color/colorWhite</item>
         <item name="android:editTextColor">?attr/defaultTextColor</item>
         <item name="android:textColorHint">@color/colorSubtitleGrey</item>
     </style>
