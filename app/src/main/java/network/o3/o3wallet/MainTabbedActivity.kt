@@ -241,15 +241,9 @@ class MainTabbedActivity : AppCompatActivity() {
 
     override fun onResume() {
         if (Account.getWallet() == null) {
-            val i = baseContext.packageManager
-                    .getLaunchIntentForPackage(baseContext.packageName)
-            i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            finish()
-            startActivity(i)
-            Runtime.getRuntime().exit(0)
-        } else {
-            super.onResume()
+            Account.restoreWalletFromDevice()
         }
+        super.onResume()
     }
 
     private val needReloadThemeReciever = object : BroadcastReceiver() {

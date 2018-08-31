@@ -24,6 +24,7 @@ import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
@@ -233,5 +234,12 @@ class DAppBrowserActivity : AppCompatActivity() {
             theme.applyStyle(R.style.AppTheme_NoTopBar_White, true)
         }
         return theme
+    }
+
+    override fun onResume() {
+        if (Account.getWallet() == null) {
+            Account.restoreWalletFromDevice()
+        }
+        super.onResume()
     }
 }
