@@ -52,7 +52,7 @@ class TutorialCard : Fragment() {
 
         if (position == MAX_POSITION - 1) {
             view.findViewById<Button>(R.id.tutorialForwardButton).text = activity?.getString(R.string.ONBOARDING_done_action)
-            view.find<TextView>(R.id.emphasisTextView).textColor = resources.getColor(R.color.colorGain)
+            view.find<TextView>(R.id.emphasisTextView).textColor = context!!.getColor(R.color.colorGain)
         }
 
         view.find<Button>(R.id.tutorialForwardButton).setOnClickListener {

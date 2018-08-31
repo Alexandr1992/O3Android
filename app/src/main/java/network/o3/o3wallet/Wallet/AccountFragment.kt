@@ -113,7 +113,7 @@ class AccountFragment : Fragment() {
         neoSyncButton = mView.find(R.id.neoSyncButton)
         neoClaimButton = mView.find(R.id.neoClaimButton)
         unclaimedGASTicker.text = "0.00000000"
-        unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
+        unclaimedGASTicker.textColor = context!!.getColor(R.color.colorSubtitleGrey)
         neoSyncButton.setOnClickListener { neoSyncTapped() }
         neoClaimButton.setOnClickListener { neoClaimTapped() }
         tickupRunnable = object : Runnable {
@@ -127,7 +127,7 @@ class AccountFragment : Fragment() {
     fun setupOntologyGasClaimViews() {
         ontologyTicker = mView.find(R.id.ontologyUnclaimedGasTicker)
         ontologyTicker.setCharacterList(TickerUtils.getDefaultNumberList())
-        ontologyTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
+        ontologyTicker.textColor = context!!.getColor(R.color.colorSubtitleGrey)
 
         ontologySyncButton = mView.find(R.id.ontologySyncButton)
         ontologyClaimButton = mView.find(R.id.ontologyClaimButton)
@@ -144,7 +144,7 @@ class AccountFragment : Fragment() {
     fun setupAssetList() {
         assetListView = mView.findViewById(R.id.assetListView)
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(resources.getDrawable(R.drawable.vertical_divider))
+        itemDecorator.setDrawable(context!!.getDrawable(R.drawable.vertical_divider))
         assetListView.addItemDecoration(itemDecorator)
 
         val layoutManager = LinearLayoutManager(context)
@@ -156,6 +156,7 @@ class AccountFragment : Fragment() {
                 R.color.colorPrimary,
                 R.color.colorPrimary)
 
+        swipeContainer.setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
         swipeContainer.setOnRefreshListener {
             accountViewModel.loadAssets()
         }
@@ -170,7 +171,7 @@ class AccountFragment : Fragment() {
             accountViewModel.ontologyCanNotSync = doubleValue <= 0.02
             val typedValue = TypedValue()
             activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
-            ontologyTicker.textColor = resources.getColor(typedValue.resourceId)
+            ontologyTicker.textColor = context!!.getColor(typedValue.resourceId)
             // ready to claim
             if (it.calculated == false) {
                 showOntologyGasReadyToClaim(doubleValue)
@@ -254,7 +255,7 @@ class AccountFragment : Fragment() {
             neoGasProgress.visibility = View.GONE
             neoGasClaimingStateTitle.text = getString(R.string.WALLET_estimated_gas)
             unclaimedGASTicker.visibility = View.VISIBLE
-            unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            unclaimedGASTicker.textColor = context!!.getColor(R.color.colorSubtitleGrey)
             neoSyncButton.visibility = View.VISIBLE
 
             if (reload) {
@@ -283,7 +284,7 @@ class AccountFragment : Fragment() {
             val typedValue = TypedValue()
             activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
 
-            unclaimedGASTicker.textColor = resources.getColor(typedValue.resourceId)
+            unclaimedGASTicker.textColor = context!!.getColor(typedValue.resourceId)
             neoSyncButton.visibility = View.GONE
             neoGasProgress.visibility = View.GONE
             neoGasClaimingStateTitle.text = getString(R.string.WALLET_ready_to_claim_gas)
@@ -293,7 +294,7 @@ class AccountFragment : Fragment() {
 
     fun showNeoClaimSucceeded() {
         onUiThread {
-            neoGasClaimingStateTitle.textColor = resources.getColor(R.color.colorGain)
+            neoGasClaimingStateTitle.textColor = context!!.getColor(R.color.colorGain)
             neoGasClaimingStateTitle.text = getString(R.string.WALLET_confirmed_gas)
             neoGasSuccess.visibility = View.VISIBLE
             neoGasSuccess.playAnimation()
@@ -302,8 +303,8 @@ class AccountFragment : Fragment() {
                     return@Runnable
                 }
                 neoGasClaimingStateTitle.text = getString(R.string.WALLET_estimated_gas)
-                neoGasClaimingStateTitle.textColor = resources.getColor(R.color.colorSubtitleGrey)
-                unclaimedGASTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
+                neoGasClaimingStateTitle.textColor = context!!.getColor(R.color.colorSubtitleGrey)
+                unclaimedGASTicker.textColor = context!!.getColor(R.color.colorSubtitleGrey)
                 neoGasSuccess.visibility = View.GONE
                 accountViewModel.loadClaims()
             }, 60000)
@@ -361,7 +362,7 @@ class AccountFragment : Fragment() {
             }
             val typedValue = TypedValue()
             activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
-            ontologyTicker.textColor = resources.getColor(typedValue.resourceId)
+            ontologyTicker.textColor = context!!.getColor(typedValue.resourceId)
             ontologySyncButton.visibility = View.GONE
             ontologyClaimButton.visibility = View.VISIBLE
             ontologyGasProgress.visibility = View.GONE
@@ -378,9 +379,9 @@ class AccountFragment : Fragment() {
                 ontologyTicker.text = "%.8f".format(0.0)
             }
             ontologyClaimingStateTitle.text = getString(R.string.WALLET_unbound_ong)
-            ontologyClaimingStateTitle.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            ontologyClaimingStateTitle.textColor = context!!.getColor(R.color.colorSubtitleGrey)
             ontologyGasSuccess.visibility = View.GONE
-            ontologyTicker.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            ontologyTicker.textColor = context!!.getColor(R.color.colorSubtitleGrey)
             ontologySyncButton.visibility = View.VISIBLE
             ontologyGasProgress.visibility = View.GONE
         }
@@ -388,7 +389,7 @@ class AccountFragment : Fragment() {
 
     fun showOntologyClaimSucceeded() {
         onUiThread {
-            ontologyClaimingStateTitle.textColor = resources.getColor(R.color.colorGain)
+            ontologyClaimingStateTitle.textColor = context!!.getColor(R.color.colorGain)
             ontologyClaimingStateTitle.text = getString(R.string.WALLET_confirmed_gas)
             ontologyGasSuccess.visibility = View.VISIBLE
             ontologyGasSuccess.playAnimation()

@@ -38,6 +38,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.content.res.Resources
+import android.os.Handler
 import android.util.Log
 import com.amplitude.api.Amplitude
 import com.tapadoo.alerter.Alerter
@@ -236,6 +237,19 @@ class MainTabbedActivity : AppCompatActivity() {
             theme.applyStyle(R.style.AppTheme_White, true)
         }
         return theme
+    }
+
+    override fun onResume() {
+        if (Account.getWallet() == null) {
+            val i = baseContext.packageManager
+                    .getLaunchIntentForPackage(baseContext.packageName)
+            i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            finish()
+            startActivity(i)
+            Runtime.getRuntime().exit(0)
+        } else {
+            super.onResume()
+        }
     }
 
     private val needReloadThemeReciever = object : BroadcastReceiver() {

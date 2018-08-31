@@ -45,9 +45,9 @@ class PortfolioHeader:Fragment() {
         fundAmountTextView.text = amount
 
         if (percentChange < 0) {
-            fundChangeTextView?.setTextColor(resources.getColor(R.color.colorLoss))
+            fundChangeTextView?.setTextColor(context!!.getColor(R.color.colorLoss))
         } else {
-            fundChangeTextView?.setTextColor(resources.getColor(R.color.colorGain))
+            fundChangeTextView?.setTextColor(context!!.getColor(R.color.colorGain))
         }
     }
 

@@ -36,6 +36,10 @@ import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import java.text.DecimalFormatSymbols
 import kotlin.math.floor
+import android.app.Activity
+import android.support.v4.content.ContextCompat.getSystemService
+
+
 
 
 class SendWhatFragment : Fragment() {
@@ -98,9 +102,9 @@ class SendWhatFragment : Fragment() {
 
         decimalButton = mView.find<ImageButton>(R.id.buttonDecimal)
         if (DecimalFormatSymbols().decimalSeparator == ',') {
-            decimalButton.image = resources.getDrawable(R.drawable.ic_comma)
+            decimalButton.image = context!!.getDrawable(R.drawable.ic_comma)
         } else {
-            decimalButton.image = resources.getDrawable(R.drawable.ic_decimal)
+            decimalButton.image = context!!.getDrawable(R.drawable.ic_decimal)
         }
 
         decimalButton.setOnClickListener {
@@ -117,10 +121,10 @@ class SendWhatFragment : Fragment() {
     }
 
     fun resetPercentButtonSelections() {
-        mView.find<Button>(R.id.twentyFivePercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
-        mView.find<Button>(R.id.fiftyPercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
-        mView.find<Button>(R.id.seventyFivePercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
-        mView.find<Button>(R.id.oneHundredPercentButton).textColor = resources.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.twentyFivePercentButton).textColor = context!!.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.fiftyPercentButton).textColor = context!!.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.seventyFivePercentButton).textColor = context!!.getColor(R.color.colorSubtitleGrey)
+        mView.find<Button>(R.id.oneHundredPercentButton).textColor = context!!.getColor(R.color.colorSubtitleGrey)
     }
 
     fun updateAmountPercentButton(ratio: Double, selectedButton: Button) {
@@ -138,7 +142,7 @@ class SendWhatFragment : Fragment() {
             cryptoAmount = cryptoAmount - 0.01
         }
 
-        selectedButton.textColor = resources.getColor(R.color.colorAccent)
+        selectedButton.textColor = context!!.getColor(R.color.colorAccent)
 
         if (selectedAsset.decimals == 0) {
             cryptoAmount = floor(cryptoAmount)
@@ -249,7 +253,7 @@ class SendWhatFragment : Fragment() {
                 otherAmountTextView.visibility = View.VISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
-            assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            assetBalanceTextView.textColor = context!!.getColor(R.color.colorSubtitleGrey)
             val displayedString =  amountEditText.text.toString()
             val usFormattedString = displayedString.replace(',', '.')
             if (usFormattedString == "" || usFormattedString.isEmpty() || BigDecimal(usFormattedString) == BigDecimal.ZERO) {
@@ -271,7 +275,7 @@ class SendWhatFragment : Fragment() {
 
         if (usFormattedString == "" || usFormattedString.isEmpty() || BigDecimal(usFormattedString) == BigDecimal.ZERO) {
             amountEditText.isCursorVisible = false
-            assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+            assetBalanceTextView.textColor = context!!.getColor(R.color.colorSubtitleGrey)
             otherAmountTextView.visibility = View.INVISIBLE
             enteredCurrencyDouble = 0.0
             reviewButton.isEnabled = false
@@ -286,11 +290,11 @@ class SendWhatFragment : Fragment() {
             val balance = NumberFormat.getInstance().parse(assetBalance).toDouble()
             val underlineVuew = mView.find<View>(R.id.underlineView)
             if (usFormattedString.toDouble() > balance) {
-                assetBalanceTextView.textColor = resources.getColor(R.color.colorLoss)
-                amountEditText.textColor = resources.getColor(R.color.colorLoss)
+                assetBalanceTextView.textColor = context!!.getColor(R.color.colorLoss)
+                amountEditText.textColor = context!!.getColor(R.color.colorLoss)
                 reviewButton.isEnabled = false
             } else {
-                assetBalanceTextView.textColor = resources.getColor(R.color.colorSubtitleGrey)
+                assetBalanceTextView.textColor = context!!.getColor(R.color.colorSubtitleGrey)
                 amountEditText.textColor = context!!.getColorFromAttr(R.attr.defaultTextColor)
                 reviewButton.isEnabled = true
             }

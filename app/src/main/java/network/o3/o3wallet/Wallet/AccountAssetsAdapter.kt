@@ -18,6 +18,7 @@ import network.o3.o3wallet.API.O3Platform.O3InboxItem
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
@@ -145,9 +146,11 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         val logoImageView = view.find<ImageView>(R.id.coinLogoImageView)
 
         override fun onClick(p0: View?) {
-            var detailURL = "https://public.o3.network/neo/assets/" + asset!!.symbol + "?address=" + Account.getWallet()!!.address
+            var detailURL = "https://public.o3.network/neo/assets/" + asset!!.symbol + "?address=" +
+                    Account.getWallet()!!.address + "&theme=" + PersistentStore.getTheme()
             if (asset!!.id.contains("00000000000")) {
-                detailURL = "https://public.o3.network/ont/assets/" + asset!!.symbol + "?address=" + Account.getWallet()!!.address
+                detailURL = "https://public.o3.network/ont/assets/" + asset!!.symbol + "?address=" +
+                        Account.getWallet()!!.address + "&theme=" + PersistentStore.getTheme()
             }
             val intent = Intent(view.context, DAppBrowserActivity::class.java)
             intent.putExtra("url", detailURL)

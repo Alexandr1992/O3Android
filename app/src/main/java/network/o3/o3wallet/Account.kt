@@ -108,4 +108,8 @@ object Account {
     fun getWallet(): Wallet? {
         return wallet
     }
+
+    fun clearWallet() {
+        wallet = null
+    }
 }

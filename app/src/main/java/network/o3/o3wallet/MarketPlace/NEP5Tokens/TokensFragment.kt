@@ -58,7 +58,7 @@ class TokensFragment : Fragment() {
         searchView = view.find(R.id.searchView)
 
         val v = searchView.find<View>(android.support.v7.appcompat.R.id.search_plate)
-        v.setBackgroundColor(resources.getColor(R.color.zxing_transparent))
+        v.setBackgroundColor(context!!.getColor(R.color.zxing_transparent))
 
         view.find<CardView>(R.id.searchContainerCardView).setOnClickListener {
             searchView.isIconified = false

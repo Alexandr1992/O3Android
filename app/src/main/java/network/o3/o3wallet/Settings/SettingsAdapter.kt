@@ -32,7 +32,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_currency, R.drawable.ic_currency,
+    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_currency, R.drawable.ic_moon,
             R.drawable.ic_settingswatchonlyaddressicon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
             R.drawable.ic_settings_logout, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)

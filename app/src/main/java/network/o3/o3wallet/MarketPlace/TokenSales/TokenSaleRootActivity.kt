@@ -4,6 +4,8 @@ import android.content.res.Resources
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.ActionBar
+import android.widget.TextView
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.token_sale_root_activity.*
@@ -11,6 +13,7 @@ import network.o3.o3wallet.API.O3.TokenSale
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import org.jetbrains.anko.find
 
 class TokenSaleRootActivity : AppCompatActivity() {
     lateinit var tokenSale: TokenSale
@@ -34,6 +37,9 @@ class TokenSaleRootActivity : AppCompatActivity() {
         resetBestNode()
         tokenSale = Gson().fromJson(intent.getStringExtra("TOKENSALE_JSON"))
         setContentView(R.layout.token_sale_root_activity)
+        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.TOKENSALE_Token_Sale)
     }
 
     override fun onBackPressed() {

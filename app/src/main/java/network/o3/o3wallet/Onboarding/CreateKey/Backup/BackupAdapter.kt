@@ -122,7 +122,7 @@ class BackupAdapter(context: Context, fragment: Fragment): BaseAdapter() {
 
         if (position == CLOSE) {
             view.find<ImageView>(R.id.backupOptionIcon).visibility = View.INVISIBLE
-            view.find<TextView>(R.id.backupOptionTextView).textColor = mContext.resources.getColor(R.color.colorSubtitleGrey)
+            view.find<TextView>(R.id.backupOptionTextView).textColor = mContext.getColor(R.color.colorSubtitleGrey)
             view.setOnClickListener { (mFragment as BottomSheetDialogFragment).dismiss() }
         }
 

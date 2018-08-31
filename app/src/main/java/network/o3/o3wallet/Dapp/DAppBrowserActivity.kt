@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -23,6 +24,7 @@ import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
+import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
@@ -221,5 +223,15 @@ class DAppBrowserActivity : AppCompatActivity() {
                     .setDuration(3000)
                     .show()
         }
+    }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_NoTopBar_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_NoTopBar_White, true)
+        }
+        return theme
     }
 }

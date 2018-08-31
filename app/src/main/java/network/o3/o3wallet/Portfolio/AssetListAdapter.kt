@@ -117,14 +117,23 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                     val latestPrice = portfolio!!.price[asset.symbol]?.averageUSD ?: 0.0
                     val firstPrice = portfolio!!.firstPrice[asset.symbol]?.averageUSD ?: 0.0
                     assetData.assetPrice = latestPrice
-                    assetData.percentChange = (latestPrice - firstPrice) / firstPrice * 100
                     assetData.totalValue = latestPrice * assetData.assetAmount
+                    if (firstPrice == 0.0 ) {
+                        assetData.percentChange = 0.0
+                    } else {
+                        assetData.percentChange = (latestPrice - firstPrice) / firstPrice * 100
+                    }
+
                 } else {
                     val latestPrice = portfolio!!.price[asset.symbol]?.averageBTC ?: 0.0
                     val firstPrice = portfolio!!.firstPrice[asset.symbol]?.averageBTC ?: 0.0
                     assetData.assetPrice = latestPrice
-                    assetData.percentChange = (latestPrice - firstPrice) / firstPrice * 100
                     assetData.totalValue = latestPrice * assetData.assetAmount
+                    if (firstPrice == 0.0 ) {
+                        assetData.percentChange = 0.0
+                    } else {
+                        assetData.percentChange = (latestPrice - firstPrice) / firstPrice * 100
+                    }
                 }
             }
 
@@ -148,9 +157,9 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
             view.find<TextView>(id.pricingNotAvailableTextView).visibility = View.GONE
 
             view.setOnClickListener {
-                var detailURL = "https://public.o3.network/neo/assets/" + tableCellData.assetSymbol + "?address=" + Account.getWallet()!!.address
+                var detailURL = "https://public.o3.network/neo/assets/" + tableCellData.assetSymbol + "?address=" + Account.getWallet()!!.address + "&theme=" + PersistentStore.getTheme().toLowerCase()
                 if (asset.id.contains("00000000000")) {
-                    detailURL = "https://public.o3.network/ont/assets/" + tableCellData.assetSymbol + "?address=" + Account.getWallet()!!.address
+                    detailURL = "https://public.o3.network/ont/assets/" + tableCellData.assetSymbol + "?address=" + Account.getWallet()!!.address + "&theme=" + PersistentStore.getTheme().toLowerCase()
                 }
 
                 val intent = Intent(view.context, DAppBrowserActivity::class.java)

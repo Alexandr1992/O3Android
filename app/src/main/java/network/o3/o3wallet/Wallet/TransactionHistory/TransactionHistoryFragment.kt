@@ -48,7 +48,7 @@ class TransactionHistoryFragment : Fragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = TransactionHistoryAdapter(entries, context!!)
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(resources.getDrawable(R.drawable.vertical_divider))
+        itemDecorator.setDrawable(context!!.getDrawable(R.drawable.vertical_divider))
         recyclerView.addItemDecoration(itemDecorator)
 
         swipeContainer = view.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
@@ -56,6 +56,7 @@ class TransactionHistoryFragment : Fragment() {
                 R.color.colorPrimary,
                 R.color.colorPrimary,
                 R.color.colorPrimary)
+        swipeContainer.setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
 
         swipeContainer.setOnRefreshListener {
             swipeContainer.isRefreshing = true

@@ -52,12 +52,9 @@
                         android:background="?attr/secondaryBackgroundColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
                         android:nestedScrollingEnabled="false"
                         android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:divider="@color/colorSubtitleGrey"
-                        android:dividerHeight="0.25dp" />
+                        android:clipToPadding="false"/>
                     </LinearLayout>
                     </android.support.v4.widget.NestedScrollView>
             </android.support.v4.widget.SwipeRefreshLayout>

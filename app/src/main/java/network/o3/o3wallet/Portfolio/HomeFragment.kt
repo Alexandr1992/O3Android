@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager
 import com.robinhood.spark.SparkView
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager.*
 import android.support.v4.widget.SwipeRefreshLayout
@@ -78,13 +79,14 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
                 IntentFilter("need-update-currency-event"))
         mView =  inflater.inflate(R.layout.portfolio_fragment_home, container, false)
 
-        recyclerView = mView.findViewById<RecyclerView>(R.id.assetListView)
+        recyclerView = mView.findViewById(R.id.assetListView)
+        val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
+        itemDecorator.setDrawable(ContextCompat.getDrawable(context!!, R.drawable.vertical_divider)!!)
+        recyclerView.addItemDecoration(itemDecorator)
+
         val layoutManager = LinearLayoutManager(this.activity)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.layoutManager = layoutManager
-        val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(resources.getDrawable(R.drawable.vertical_divider))
-        recyclerView.addItemDecoration(itemDecorator)
         return mView
     }
 
@@ -130,9 +132,9 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
                 val percentChange = (scrubbedAmount - homeModel.getInitialPortfolioValue()) /
                         homeModel.getInitialPortfolioValue() * 100
                 if (percentChange < 0) {
-                    percentView?.setTextColor(resources.getColor(R.color.colorLoss))
+                    percentView?.setTextColor(context!!.getColor(R.color.colorLoss))
                 } else {
-                    percentView?.setTextColor(resources.getColor(R.color.colorGain))
+                    percentView?.setTextColor(context!!.getColor(R.color.colorGain))
                 }
                 percentView?.text = percentChange.formattedPercentString() +
                         " " +  homeModel.getInitialDate().intervaledString(homeModel.getInterval())
@@ -153,6 +155,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         initiateViewPager(view)
         initiateIntervalButtons()
         view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setColorSchemeResources(R.color.colorPrimary)
+        view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
         view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).onRefresh {
             view.find<SwipeRefreshLayout>(R.id.portfolioSwipeRefresh).isRefreshing = true
             homeModel.getDisplayedAssets(true)
@@ -202,6 +205,8 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         oneMonthButton.setOnClickListener { tappedIntervalButton(oneMonthButton) }
         threeMonthButton.setOnClickListener { tappedIntervalButton(threeMonthButton) }
         allButton.setOnClickListener { tappedIntervalButton(allButton) }
+
+        selectedButton = oneDayButton
     }
 
     fun tappedIntervalButton(button: Button) {

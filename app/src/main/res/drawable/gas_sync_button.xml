@@ -3,12 +3,12 @@
     android:shape="rectangle"   >
 
     <solid
-        android:color="@color/colorWhite" >
+        android:color="?attr/secondaryBackgroundColor" >
     </solid>
 
     <corners
         android:radius="18dp">
     </corners>
 
-    <stroke android:width="2px" android:color="@color/colorSubtitleGrey"/>
+    <stroke android:width="2px" android:color="?attr/defaultSubtitleTextColor"/>
 </shape>

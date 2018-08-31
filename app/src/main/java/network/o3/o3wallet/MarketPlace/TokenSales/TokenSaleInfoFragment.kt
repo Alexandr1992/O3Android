@@ -89,25 +89,25 @@ class TokenSaleInfoFragment : Fragment() {
         gasCardDescriptionTextView.text = "1 GAS = " + gasInfo?.basicRate?.toInt() + " " + tokenSale.symbol
         neoCardDescriptionTextView.text = "1 NEO = " + neoInfo?.basicRate?.toInt() + " " + tokenSale.symbol
 
-        neoCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
-        neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
-        neoCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
+        neoCardTitleTextView.textColor = context!!.getColor(R.color.colorPrimary)
+        neoCardDescriptionTextView.textColor = context!!.getColor(R.color.colorAccent)
+        neoCardBalanceTextView.textColor = context!!.getColor(R.color.colorPrimary)
 
-        gasCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-        gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-        gasCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+        gasCardTitleTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
+        gasCardDescriptionTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
+        gasCardBalanceTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
 
         selectedAsset = neoInfo!!
 
         if (gasInfo != null) {
             gasCard.setOnClickListener {
-                gasCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
-                gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
-                gasCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
+                gasCardTitleTextView.textColor = context!!.getColor(R.color.colorPrimary)
+                gasCardDescriptionTextView.textColor = context!!.getColor(R.color.colorAccent)
+                gasCardBalanceTextView.textColor = context!!.getColor(R.color.colorPrimary)
 
-                neoCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-                neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-                neoCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                neoCardTitleTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
+                neoCardDescriptionTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
+                neoCardBalanceTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
 
                 selectedAsset = gasInfo!!
                 amountEditText.text = SpannableStringBuilder("")
@@ -117,13 +117,13 @@ class TokenSaleInfoFragment : Fragment() {
 
         if (neoInfo != null) {
             neoCard.setOnClickListener {
-                neoCardTitleTextView.textColor = resources.getColor(R.color.colorPrimary)
-                neoCardDescriptionTextView.textColor = resources.getColor(R.color.colorAccent)
-                neoCardBalanceTextView.textColor = resources.getColor(R.color.colorPrimary)
+                neoCardTitleTextView.textColor = context!!.getColor(R.color.colorPrimary)
+                neoCardDescriptionTextView.textColor = context!!.getColor(R.color.colorAccent)
+                neoCardBalanceTextView.textColor = context!!.getColor(R.color.colorPrimary)
 
-                gasCardTitleTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-                gasCardDescriptionTextView.textColor = resources.getColor(R.color.colorDisabledButton)
-                gasCardBalanceTextView.textColor = resources.getColor(R.color.colorDisabledButton)
+                gasCardTitleTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
+                gasCardDescriptionTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
+                gasCardBalanceTextView.textColor = context!!.getColor(R.color.colorDisabledButton)
 
                 selectedAsset = neoInfo!!
                 amountEditText.text = SpannableStringBuilder("")

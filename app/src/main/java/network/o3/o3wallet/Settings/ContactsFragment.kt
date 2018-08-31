@@ -11,10 +11,7 @@ import android.view.*
 import android.widget.ListView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.settings_fragment_contacts.*
-import network.o3.o3wallet.Contact
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
+import network.o3.o3wallet.*
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
@@ -48,6 +45,7 @@ class ContactsFragment : RoundedBottomSheetDialogFragment() {
         listView?.adapter = adapter
 
         view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).setColorSchemeResources(R.color.colorPrimary)
+        view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
         view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).onRefresh {
             adapter?.updateData()
             view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).isRefreshing = false
