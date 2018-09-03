@@ -37,8 +37,7 @@ class SettingsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.settings_fragment_menu, container, false)
-        val headerView = layoutInflater.inflate(R.layout.settings_header_row, null)
-        headerView.findViewById<TextView>(R.id.headerTextView).text = resources.getString(R.string.SETTINGS_settings_title)
+        val headerView = layoutInflater.inflate(R.layout.settings_header, null)
 
         val listView = view.findViewById<ListView>(R.id.settingsListView)
         listView.addHeaderView(headerView)
@@ -46,8 +45,8 @@ class SettingsFragment : Fragment() {
         val basicAdapter = SettingsAdapter(this.context!!, this)
         listView.adapter = basicAdapter
 
-        val addressLabel = view.findViewById<TextView>(R.id.addressLabel)
-        val qrImageView = view.findViewById<ImageView>(R.id.addressQRCodeImageView)
+        val addressLabel = headerView.findViewById<TextView>(R.id.addressLabel)
+        val qrImageView = headerView.findViewById<ImageView>(R.id.addressQRCodeImageView)
 
         val wallet = Account.getWallet()
         addressLabel.text = wallet.address
@@ -55,17 +54,17 @@ class SettingsFragment : Fragment() {
         val bitmap = QRCode.from(wallet.address).withSize(1000, 1000).bitmap()
         qrImageView.setImageBitmap(bitmap)
 
-        view.find<ImageButton>(R.id.shareButton).setOnClickListener{
-            val shareIntent = Intent()
-            shareIntent.action = Intent.ACTION_SEND
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Account.getWallet().address)
-            shareIntent.type = "text/plain"
-            startActivity(shareIntent)
+        headerView.find<ImageButton>(R.id.shareButton).setOnClickListener{
+           val shareIntent = Intent()
+           shareIntent.action = Intent.ACTION_SEND
+           shareIntent.putExtra(Intent.EXTRA_STREAM, Account.getWallet().address)
+           shareIntent.type = "text/plain"
+           startActivity(shareIntent)
         }
 
         qrImageView.setOnClickListener{
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet().address)
+            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet()!!.address)
             clipboard.primaryClip = clip
             context?.toast(resources.getString(R.string.WALLET_copied_address))
         }

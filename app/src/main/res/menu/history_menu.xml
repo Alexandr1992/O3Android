@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/view_in_explorer_menu"
+        android:contentDescription="@string/SETTINGS_View_In_Explorer"
+        android:title="@string/SETTINGS_View_In_Explorer" />
+    <item
+        android:id="@+id/add_to_contact_menu"
+        android:contentDescription="@string/SETTINGS_Save_To_Contacts"
+        android:title="@string/SETTINGS_Save_To_Contacts" />
+</menu>

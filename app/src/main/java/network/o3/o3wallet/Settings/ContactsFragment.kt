@@ -44,12 +44,6 @@ class ContactsFragment : RoundedBottomSheetDialogFragment() {
         adapter = ContactsAdapter(this.context!!, this, arguments!!["canAddAddress"] as Boolean)
         listView?.adapter = adapter
 
-        view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).setColorSchemeResources(R.color.colorPrimary)
-        view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
-        view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).onRefresh {
-            adapter?.updateData()
-            view.find<SwipeRefreshLayout>(R.id.contactsSwipeContainer).isRefreshing = false
-        }
         return view
     }
 

@@ -18,10 +18,13 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import android.os.Build
+import android.os.Bundle
 import kotlinx.android.synthetic.main.settings_activity_add_contact.view.*
 import network.o3.o3wallet.Onboarding.LandingActivity
 import java.util.*
 import org.jetbrains.anko.image
+import org.w3c.dom.Text
+import zendesk.support.request.RequestActivity
 
 
 /**
@@ -32,8 +35,8 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_currency, R.drawable.ic_moon,
-            R.drawable.ic_settingswatchonlyaddressicon,
+    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_address_book, R.drawable.ic_settingswatchonlyaddressicon,
+            R.drawable.ic_currency, R.drawable.ic_moon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
             R.drawable.ic_settings_logout, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
     init {
@@ -42,14 +45,15 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     enum class CellType {
-        PRIVATEKEY, CURRENCY, THEME,
-        WATCHADRESS, SUPPORT, CONTACT, LOGOUT,
+        HEADER, PRIVATEKEY, CONTACTS, WATCHADRESS,
+        CURRENCY, THEME,
+        SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
 
     }
 
     override fun getItem(position: Int): Pair<String, Int> {
-        return Pair(settingsTitles[position], images[position])
+        return Pair(settingsTitles[position - 1], images[position - 1])
     }
 
     override fun getItemId(position: Int): Long {
@@ -58,13 +62,19 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
 
     override fun getCount(): Int {
         if (BuildConfig.DEBUG) {
-            return settingsTitles.count()
+            return settingsTitles.count() + 1
         }
-        return settingsTitles.count() - 1
+        return settingsTitles.count()
     }
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
         val layoutInflater = LayoutInflater.from(mContext)
+        if (position == 0) {
+            val view = layoutInflater.inflate(R.layout.settings_header_row, viewGroup, false)
+            view.findViewById<TextView>(R.id.headerTextView).text = mContext.resources.getString(R.string.SETTINGS_settings_title)
+            return view
+        }
+
         val view = layoutInflater.inflate(R.layout.settings_row_layout, viewGroup, false)
         val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
         titleTextView.text = getItem(position).first
@@ -73,7 +83,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             titleTextView.text = mContext.resources.getString(R.string.SETTINGS_version, version)
         }
 
-        view.findViewById<ImageView>(R.id.settingsIcon).image = mContext.getDrawable(images[position])
+        view.findViewById<ImageView>(R.id.settingsIcon).image = mContext.getDrawable(images[position - 1])
 
         view.setOnClickListener {
             getClickListenerForPosition(position)
@@ -82,9 +92,16 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     fun getClickListenerForPosition(position: Int) {
-        if (position == CellType.CURRENCY.ordinal  ) {
+        if (position == CellType.CURRENCY.ordinal) {
             val currencyModal = CurrencyFragment.newInstance()
             currencyModal.show((mContext as AppCompatActivity).supportFragmentManager, currencyModal.tag)
+            return
+        } else if (position == CellType.CONTACTS.ordinal) {
+            val contactsModal = ContactsFragment.newInstance()
+            val args = Bundle()
+            args.putBoolean("canAddAddress", true)
+            contactsModal.arguments = args
+            contactsModal.show((mContext as AppCompatActivity).supportFragmentManager, contactsModal.tag)
             return
         } else if(position == CellType.THEME.ordinal) {
             val themeModal = ThemeModalFragment.newInstance()
@@ -98,10 +115,10 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))
             startActivity(mContext, browserIntent, null)
         } else if (position == CellType.CONTACT.ordinal) {
-            val intent = Intent(Intent.ACTION_VIEW)
-            val data = Uri.parse("mailto:support@o3.network")
-            intent.data = data
-            startActivity(mContext, intent, null)
+            RequestActivity.builder()
+                    .withTags("Android", mContext.packageManager.getPackageInfo(mContext.packageName, 0).versionName)
+                    .withRequestSubject("Android Support Ticket")
+                    .show(mContext)
             return
         } else if (position == CellType.LOGOUT.ordinal) {
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {

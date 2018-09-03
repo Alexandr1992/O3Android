@@ -160,9 +160,10 @@
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
         <item>My Private Key</item>
+        <item>Manage Contacts</item>
+        <item>Watch Only Address</item>
         <item>Currency</item>
         <item>Theme</item>
-        <item>Watch Only Address</item>
         <item>Support</item>
         <item>Contact</item>
         <item>Logout</item>
@@ -176,6 +177,8 @@
     <string name="SETTINGS_Theme">Theme</string>
     <string name="SETTINGS_Dark">Dark</string>
     <string name="SETTINGS_Light">Light</string>
+    <string name="SETTINGS_View_In_Explorer">View In Explorer</string>
+    <string name="SETTINGS_Save_To_Contacts">Save To Contacts</string>
 
 
     <!-- Settings: Private Key -->

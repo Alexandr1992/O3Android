@@ -22,7 +22,7 @@ import network.o3.o3wallet.Wallet.toast
  * Created by drei on 12/8/17.
  */
 
-class ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddress: Boolean): BaseAdapter() {
+class  ContactsAdapter(context: Context, fragment: ContactsFragment, canAddAddress: Boolean): BaseAdapter() {
 
     private val mContext: Context
     private val mFragment: ContactsFragment

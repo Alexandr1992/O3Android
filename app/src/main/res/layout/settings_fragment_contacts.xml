@@ -6,24 +6,12 @@
     android:layout_height="match_parent"
     tools:context="network.o3.o3wallet.Settings.ContactsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/contactsSwipeContainer"
+    <ListView
+        android:id="@+id/contactsListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
-      <ListView
-          android:id="@+id/contactsListView"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:divider="?attr/primaryBackgroundColor"
-          android:dividerHeight="1dp"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:divider="?attr/primaryBackgroundColor"
+        android:dividerHeight="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

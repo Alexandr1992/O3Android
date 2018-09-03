@@ -43,6 +43,9 @@ import android.util.Log
 import com.amplitude.api.Amplitude
 import com.tapadoo.alerter.Alerter
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import zendesk.core.AnonymousIdentity
+import zendesk.core.Zendesk
+import zendesk.support.Support
 
 
 class MainTabbedActivity : AppCompatActivity() {
@@ -117,6 +120,15 @@ class MainTabbedActivity : AppCompatActivity() {
         })
     }
 
+    fun setupZendesk() {
+        Zendesk.INSTANCE.init(this, resources.getString(R.string.Zendesk_url),
+                resources.getString(R.string.Zendesk_API_key),
+                resources.getString(R.string.Zendesk_client_key))
+        val identity = AnonymousIdentity()
+        Zendesk.INSTANCE.setIdentity(identity)
+        Support.INSTANCE.init(Zendesk.INSTANCE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tabbar_activity_main_tabbed)
@@ -135,6 +147,7 @@ class MainTabbedActivity : AppCompatActivity() {
         }
         setupKeyboardDetector()
         setupChannel()
+        setupZendesk()
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
