@@ -201,7 +201,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
                 fromNickname = PersistentStore.getWatchAddresses().find {it.address == tx.from }?.nickname
             }
 
-            if (tx.to == Account.getWallet()?.address!!) {
+            if (tx.to == Account.getWallet().address) {
                 txTypeTextView.text = view.context.resources.getString(R.string.WALLET_Received)
                 if (fromNickname  != null) {
                     otherPartyTextView.text = String.format(view.context.resources.getString(R.string.WALLET_from_formatted), fromNickname)

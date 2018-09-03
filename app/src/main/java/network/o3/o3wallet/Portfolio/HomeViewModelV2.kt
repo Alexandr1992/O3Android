@@ -161,7 +161,7 @@ class HomeViewModelV2: ViewModel() {
             displayedAssets!!.postValue((cachedAssets.assets + cachedAssets.tokens).toCollection(ArrayList()))
         }
         bg {
-            O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
+            O3PlatformClient().getTransferableAssets(Account.getWallet().address) {
                 PersistentStore.setLatestBalances(it.first)
                 val tokens = it.first?.tokens ?: arrayListOf()
                 val assets = it.first?.assets ?: arrayListOf()

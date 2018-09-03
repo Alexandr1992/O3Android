@@ -51,7 +51,7 @@ class SendViewModel: ViewModel() {
         if (cachedAssets != null) {
             ownedAssets!!.postValue(cachedAssets.assets)
         }
-        O3PlatformClient().getTransferableAssets(Account.getWallet()?.address!!) {
+        O3PlatformClient().getTransferableAssets(Account.getWallet().address) {
             PersistentStore.setLatestBalances(it.first)
             ownedAssets?.postValue(it.first?.assets ?: arrayListOf())
         }
@@ -168,7 +168,6 @@ class SendViewModel: ViewModel() {
         val toSendAsset = selectedAsset!!.value!!
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount().toDouble()
-        val wallet = Account.getWallet()
         OntologyClient().transferOntologyAsset(toSendAsset.symbol.toUpperCase(), recipientAddress, amount) {
             if (it.first != null ) {
                 sendResult?.postValue(it.first!!)
@@ -221,7 +220,7 @@ class SendViewModel: ViewModel() {
                 }
             }
         } else {
-            O3PlatformClient().getUTXOS(wallet!!.address) {
+            O3PlatformClient().getUTXOS(wallet.address) {
                 var assets = it.first
                 var error = it.second
                 if (error != null) {

@@ -39,13 +39,13 @@ class PrivateKeyFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.settings_fragment_private_key, container, false)
-        view.findViewById<TextView>(R.id.privateKeyTextView).text = Account.getWallet()?.wif
-        val bitmap = QRCode.from(Account.getWallet()!!.wif).withSize(2000, 2000).bitmap()
+        view.findViewById<TextView>(R.id.privateKeyTextView).text = Account.getWallet().wif
+        val bitmap = QRCode.from(Account.getWallet().wif).withSize(2000, 2000).bitmap()
         view.findViewById<ImageView>(R.id.qrView).setImageBitmap(bitmap)
 
         view.findViewById<TextView>(R.id.copyKeyToClipboardTextView).setOnClickListener {
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.SETTINGS_copied_key),Account.getWallet()!!.wif)
+            val clip = ClipData.newPlainText(resources.getString(R.string.SETTINGS_copied_key),Account.getWallet().wif)
             clipboard.primaryClip = clip
             onUiThread {
                 O3Wallet.appContext?.toast(resources.getString(R.string.SETTINGS_copied_key))

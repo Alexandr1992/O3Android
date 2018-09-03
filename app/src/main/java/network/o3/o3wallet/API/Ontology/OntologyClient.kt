@@ -56,7 +56,7 @@ class OntologyClient {
             } else {
                 try {
                     val txid = Neoutils.ontologyTransfer(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
-                            Account.getWallet()?.wif!!, assetID, toAddress, amount)
+                            Account.getWallet().wif, assetID, toAddress, amount)
                     completion(Pair<String?, Error?>(txid, null))
                 }
                 catch (e: Exception) {
@@ -73,7 +73,7 @@ class OntologyClient {
             } else {
                 try {
                     Neoutils.claimONG(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
-                            Account.getWallet()?.wif!!)
+                            Account.getWallet().wif)
                     completion(Pair<Boolean, Error?>(true, null))
                 }
                 catch (e: Exception) {

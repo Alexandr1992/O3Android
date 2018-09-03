@@ -41,7 +41,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         val INBOXROW = 1
     }
 
-
+    @Synchronized
     fun setInboxList(list: List<O3InboxItem>) {
         inboxList = list
         if (inboxList.count() == list.count()) {
@@ -50,6 +50,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         notifyItemRangeChanged(0, inboxList.count() + arrayOfAccountAssets.count())
     }
 
+    @Synchronized
     fun setAssetsArray(assets: ArrayList<TransferableAsset>) {
         arrayOfAccountAssets = assets
         notifyItemRangeChanged(inboxList.count(), arrayOfAccountAssets.count())
@@ -147,10 +148,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
         override fun onClick(p0: View?) {
             var detailURL = "https://public.o3.network/neo/assets/" + asset!!.symbol + "?address=" +
-                    Account.getWallet()!!.address + "&theme=" + PersistentStore.getTheme()
+                    Account.getWallet().address + "&theme=" + PersistentStore.getTheme()
             if (asset!!.id.contains("00000000000")) {
                 detailURL = "https://public.o3.network/ont/assets/" + asset!!.symbol + "?address=" +
-                        Account.getWallet()!!.address + "&theme=" + PersistentStore.getTheme()
+                        Account.getWallet().address + "&theme=" + PersistentStore.getTheme()
             }
             val intent = Intent(view.context, DAppBrowserActivity::class.java)
             intent.putExtra("url", detailURL)

@@ -50,7 +50,7 @@ class TokenSaleInfoFragment : Fragment() {
     private var neoBalance = 0
 
     fun loadBalance() {
-        NeoNodeRPC(PersistentStore.getNodeURL()).getAccountState(Account.getWallet()?.address!!) {
+        NeoNodeRPC(PersistentStore.getNodeURL()).getAccountState(Account.getWallet().address) {
             if (it.second != null) {
                 return@getAccountState
             }

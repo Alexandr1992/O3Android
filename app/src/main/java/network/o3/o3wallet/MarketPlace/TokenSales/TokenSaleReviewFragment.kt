@@ -156,9 +156,9 @@ class TokenSaleReviewFragment : Fragment() {
         formatter.maximumFractionDigits = 8
         formatter.isGroupingUsed = false
         val txLog = TokenSaleLog(formatter.format(assetSendAmount), asset, txid)
-        val signature = Neoutils.sign(Gson().toJson(txLog).toByteArray(), Account.getWallet()!!.privateKey.toHex())
-        val txLogSigned = TokenSaleLogSigned(txLog, signature.toHex(), Account.getWallet()!!.publicKey.toHex())
-        O3PlatformClient().postTokenSaleLog(Account.getWallet()?.address!!,saleInfo.companyID, txLogSigned) {
+        val signature = Neoutils.sign(Gson().toJson(txLog).toByteArray(), Account.getWallet().privateKey.toHex())
+        val txLogSigned = TokenSaleLogSigned(txLog, signature.toHex(), Account.getWallet().publicKey.toHex())
+        O3PlatformClient().postTokenSaleLog(Account.getWallet().address,saleInfo.companyID, txLogSigned) {
 
         }
     }
@@ -175,7 +175,7 @@ class TokenSaleReviewFragment : Fragment() {
         }
         val attributes = arrayOf(remark, description)
         NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(
-                Account.getWallet()!!, asset, BigDecimal(assetSendAmount), tokenSaleAddress, attributes) {
+                Account.getWallet(), asset, BigDecimal(assetSendAmount), tokenSaleAddress, attributes) {
             onUiThread {
                 if (it.second != null) {
                     loadingConstraintView.visibility = View.GONE

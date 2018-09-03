@@ -235,11 +235,4 @@ class DAppBrowserActivity : AppCompatActivity() {
         }
         return theme
     }
-
-    override fun onResume() {
-        if (Account.getWallet() == null) {
-            Account.restoreWalletFromDevice()
-        }
-        super.onResume()
-    }
 }

@@ -38,7 +38,7 @@ class MyAddressFragment : RoundedBottomSheetDialogFragment() {
         qrImageView = view.findViewById<ImageView>(R.id.addressQRCodeImageView)
         val copyButton = view.findViewById<Button>(R.id.copyMyAddressButton)
 
-        val wallet = Account.getWallet()!!
+        val wallet = Account.getWallet()
         addressLabel.text = wallet.address
 
         val bitmap = QRCode.from(wallet.address).withSize(1000, 1000).bitmap()
@@ -47,7 +47,7 @@ class MyAddressFragment : RoundedBottomSheetDialogFragment() {
 
         qrImageView.setOnClickListener {
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet()!!.address)
+            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet().address)
             clipboard.primaryClip = clip
             context?.toast(resources.getString(R.string.WALLET_copied_address))
         }
@@ -55,7 +55,7 @@ class MyAddressFragment : RoundedBottomSheetDialogFragment() {
         copyButton.setOnClickListener{
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Account.getWallet()!!.address)
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Account.getWallet().address)
             shareIntent.type = "text/plain"
             startActivity(shareIntent)
         }

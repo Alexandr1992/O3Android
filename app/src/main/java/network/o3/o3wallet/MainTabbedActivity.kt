@@ -100,7 +100,7 @@ class MainTabbedActivity : AppCompatActivity() {
             override fun onFail(message: String) {}
         })
 
-                Channel.subscribeToTopic(Account.getWallet()!!.address.toString(), object : ChannelCallback {
+                Channel.subscribeToTopic(Account.getWallet().address.toString(), object : ChannelCallback {
                     override fun onSuccess() {
 
                     }
@@ -237,13 +237,6 @@ class MainTabbedActivity : AppCompatActivity() {
             theme.applyStyle(R.style.AppTheme_White, true)
         }
         return theme
-    }
-
-    override fun onResume() {
-        if (Account.getWallet() == null) {
-            Account.restoreWalletFromDevice()
-        }
-        super.onResume()
     }
 
     private val needReloadThemeReciever = object : BroadcastReceiver() {

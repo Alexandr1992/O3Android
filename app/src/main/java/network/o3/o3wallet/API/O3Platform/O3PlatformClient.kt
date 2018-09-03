@@ -265,7 +265,7 @@ class O3PlatformClient {
     }
 
     fun getTransactionHistory(page: Int, completion: (Pair<TransactionHistory?, Error?>) -> (Unit)) {
-        val url = "https://platform.o3.network/api/v1/"  + Route.HISTORY.routeName() + "/" + Account.getWallet()!!.address + "?p=" + page.toString()
+        val url = "https://platform.o3.network/api/v1/"  + Route.HISTORY.routeName() + "/" + Account.getWallet().address + "?p=" + page.toString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.responseString { request, response, result ->

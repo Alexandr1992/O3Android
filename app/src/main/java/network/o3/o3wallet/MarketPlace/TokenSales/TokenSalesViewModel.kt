@@ -23,7 +23,7 @@ class TokenSalesViewModel: ViewModel() {
     }
 
     fun loadTokenSalesData() {
-        O3API().getTokenSales(Account.getWallet()!!.address) {
+        O3API().getTokenSales(Account.getWallet().address) {
             if (it.second != null) return@getTokenSales
             tokenSales?.postValue(it.first!!)
         }

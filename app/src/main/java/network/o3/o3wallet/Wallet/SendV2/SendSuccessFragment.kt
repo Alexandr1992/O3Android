@@ -60,7 +60,7 @@ class SendSuccessFragment : Fragment() {
 
     fun setPendingEntry(selectedAsset: TransferableAsset) {
         var amount = (activity as SendV2Activity).sendViewModel.getSelectedSendAmount().toDouble().removeTrailingZeros()
-        if ((activity as SendV2Activity).sendViewModel.getSelectedAddress().value!! == Account.getWallet()!!.address) {
+        if ((activity as SendV2Activity).sendViewModel.getSelectedAddress().value!! == Account.getWallet().address) {
             amount = "0"
         }
         val pendingTxEntry = TransactionHistoryEntry(blockchain = "", txid = (activity as SendV2Activity).sendViewModel.txID.toLowerCase(),
@@ -70,12 +70,12 @@ class SendSuccessFragment : Fragment() {
                         logoSVG = "", url = "", tokenHash = selectedAsset.id, totalSupply = 0),
                 amount = amount,
                 to = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!,
-                from = Account.getWallet()!!.address)
+                from = Account.getWallet().address)
 
         // sending tokens to yourself wont be picked up by the notification server
         // so dont add them to the pending transaction list
         if ((activity as SendV2Activity).sendViewModel.isNEOTokenAsset()) {
-            if ((activity as SendV2Activity).sendViewModel.getSelectedAddress().value!! == Account.getWallet()!!.address) {
+            if ((activity as SendV2Activity).sendViewModel.getSelectedAddress().value!! == Account.getWallet().address) {
                 return
             }
         }

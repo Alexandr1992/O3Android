@@ -458,7 +458,7 @@ class NeoNodeRPC {
         //since nep5 transfers are fee, the destination address is just sending to yourself
         var mainOutputData = getOutputDataPayload(wallet,
                         Asset.GAS, mainInput.totalAmount!!,
-                gasSendAmount, Account.getWallet()?.address!!.hashFromAddress(), mainInput.fee)
+                gasSendAmount, Account.getWallet().address.hashFromAddress(), mainInput.fee)
 
 
 
@@ -573,7 +573,7 @@ class NeoNodeRPC {
         }
         var finalPayload: RawTransaction? = null
         try {
-            finalPayload = Neoutils.mintTokensRawTransactionMobile(utxoEndpoint, scriptHash, Account.getWallet()?.wif, assetID, amount, remark, networkFee)
+            finalPayload = Neoutils.mintTokensRawTransactionMobile(utxoEndpoint, scriptHash, Account.getWallet().wif, assetID, amount, remark, networkFee)
         } catch (e: Exception) {
             completion(Pair(null, Error(e.localizedMessage)))
             return

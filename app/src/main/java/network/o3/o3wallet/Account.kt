@@ -105,8 +105,14 @@ object Account {
         return true
     }
 
-    fun getWallet(): Wallet? {
-        return wallet
+    fun getWallet(): Wallet {
+        if (wallet != null) {
+            return wallet!!
+        } else {
+            restoreWalletFromDevice()
+            return wallet!!
+        }
+
     }
 
     fun clearWallet() {

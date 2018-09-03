@@ -124,7 +124,7 @@ class SwitcheoAPI {
         var byteCountHex = toEvenHexString(jsonPayloadBytes.count())
         val finalHex = "010001f0" + byteCountHex + jsonPayloadBytes.toHex().toLowerCase() + "0000"
         Log.d("SWITCHEO FINAL HEX:", finalHex)
-        val signedHex = Neoutils.sign(finalHex.hexStringToByteArray(), Account.getWallet()!!.privateKey.toHex())
+        val signedHex = Neoutils.sign(finalHex.hexStringToByteArray(), Account.getWallet().privateKey.toHex())
         Log.d("SIGNATURE: ", signedHex.toHex().toLowerCase())
         return signedHex.toHex().toLowerCase()
     }
@@ -254,7 +254,7 @@ class SwitcheoAPI {
 
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
-            jsonPayload.addProperty("address", Account.getWallet()!!.hashedSignature.reversedArray().toHex().toLowerCase())
+            jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
 
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
@@ -275,7 +275,7 @@ class SwitcheoAPI {
         Log.d("Transaction:", transactionJson.toString())
         val jsonPayloadBytes = serializeTransactionFromJson(transactionJson)
         Log.d("EXECUTION BYTES:", jsonPayloadBytes.toHex())
-        val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet()!!.privateKey.toHex()).toHex().toLowerCase()
+        val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
         val url = baseURL + Route.DEPOSITS.routeName() + "/" + depositId + "/broadcast"
 
         val jsonPayload = jsonObject("signature" to signature)
@@ -326,7 +326,7 @@ class SwitcheoAPI {
 
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
-            jsonPayload.addProperty("address", Account.getWallet()!!.hashedSignature.reversedArray().toHex().toLowerCase())
+            jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
 
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
@@ -384,7 +384,7 @@ class SwitcheoAPI {
 
     //region Orders
     fun getOrders(contract_hash: String, completion: (Pair<List<SwitcheoOrderRequest>?, Error?>) -> (Unit)) {
-        val jsonPayload = jsonObject("address" to Account.getWallet()!!.hashedSignature.reversedArray().toHex().toLowerCase(),
+        val jsonPayload = jsonObject("address" to Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase(),
                 "contract_hash" to contract_hash)
         val url = baseURL + Route.ORDERS.routeName()
         val request = url.httpPost().body(jsonPayload.toString())
@@ -418,7 +418,7 @@ class SwitcheoAPI {
 
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
-            jsonPayload.addProperty("address", Account.getWallet()!!.hashedSignature.reversedArray().toHex().toLowerCase())
+            jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
 
             val url = baseURL + Route.ORDERS.routeName()
             val request = url.httpPost().body(jsonPayload.toString())
@@ -440,7 +440,7 @@ class SwitcheoAPI {
         for (makeTx in orderRequest.makes) {
             val makeId = makeTx.id
             val jsonPayloadBytes = serializeTransactionFromJson(makeTx.txn)
-            val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet()!!.privateKey.toHex()).toHex().toLowerCase()
+            val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             makesObject.addProperty(makeId, signature)
         }
 
@@ -448,7 +448,7 @@ class SwitcheoAPI {
         for (fillTx in orderRequest.fills) {
             val fillId = fillTx.id
             val jsonPayloadBytes = serializeTransactionFromJson(fillTx.txn)
-            val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet()!!.privateKey.toHex()).toHex().toLowerCase()
+            val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             fillsObject.addProperty(fillId, signature)
         }
 
@@ -492,7 +492,7 @@ class SwitcheoAPI {
 
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
-            jsonPayload.addProperty("address", Account.getWallet()!!.hashedSignature.reversedArray().toHex().toLowerCase())
+            jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
 
             val url = baseURL + Route.CANCELLATIONS.routeName() + "/" + orderId + "/broadcast"
             val request = url.httpPost().body(jsonPayload.toString())
@@ -511,7 +511,7 @@ class SwitcheoAPI {
 
     fun executeCancelOrder(orderId: String, transactionJson: JsonObject, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
         val jsonPayloadBytes = serializeTransactionFromJson(transactionJson)
-        val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet()!!.privateKey.toHex()).toHex().toLowerCase()
+        val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
         val url = baseURL + Route.CANCELLATIONS.routeName() + "/" + orderId + "/broadcast"
 
         val jsonPayload = jsonObject("signature" to signature)

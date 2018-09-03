@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat.getSystemService
 import com.amplitude.api.Amplitude
 import com.google.gson.JsonElement
 import neoutils.Neoutils
+import neoutils.Wallet
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.O3API
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
@@ -35,10 +36,12 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     var sessionId: String? = null
     var pendingTransaction: JsonObject? = null
 
+    var wallet: Wallet = Account.getWallet()
+
     fun currentAccount(): JsonObject {
         val json = JsonObject()
-        json.put("address" to Account.getWallet()!!.address)
-        json.put("publicKey" to Account.getWallet()!!.publicKey.toHex())
+        json.put("address" to wallet!!.address)
+        json.put("publicKey" to wallet!!.publicKey.toHex())
         return json
     }
 
@@ -91,7 +94,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     }
 
     fun handleBalancesRequest(message: O3Message) {
-        O3PlatformClient().getTransferableAssets(Account.getWallet()!!.address) {
+        O3PlatformClient().getTransferableAssets(wallet!!.address) {
             if(it.second != null) {
                 callback(message.command, JsonObject(), it.second!!.localizedMessage, true)
             } else {
@@ -163,7 +166,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         context.alert(authenticateMessage) {
             yesButton {
                 try {
-                    val signed = Neoutils.sign(unsignedHex, Account.getWallet()!!.privateKey.toHex())
+                    val signed = Neoutils.sign(unsignedHex, wallet!!.privateKey.toHex())
                     val signedTxJson = jsonObject (
                             "signatureData" to signed.toHex(),
                             "account" to currentAccount()
