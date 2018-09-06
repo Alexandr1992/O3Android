@@ -11,9 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.send_success_fragment.*
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 
 import network.o3.o3wallet.R
 import network.o3.o3wallet.afterTextChanged
@@ -239,6 +241,25 @@ class OrderSubmissionFragment : Fragment() {
         })
     }
 
+    fun initiateOrderButton() {
+        mView.find<TextView>(R.id.placeOrderButton).setOnClickListener {
+            val vm = (activity as NativeTradeRootActivity).viewModel
+            val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
+            val price = cryptoPriceTextView.text.toString()
+            val side = "buy"
+            val wantAmount = (orderAssetAmountEditText.text.toString().toDouble() * 100000000.0).toLong().toString()
+            val orderType = "limit"
+           /* SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
+                if(it.first != true) {
+                    //TODO: "Some serios error occured"
+                } else {
+                    mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_orderPlacedFragment)
+
+                }
+            }*/
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.native_trade_order_submission_fragment, container, false)
@@ -251,6 +272,7 @@ class OrderSubmissionFragment : Fragment() {
         initiateEditingFieldListener()
         initializeRealTimePriceListeners()
         initializeAssetBalanceListener()
+        initiateOrderButton()
 
         return mView
     }

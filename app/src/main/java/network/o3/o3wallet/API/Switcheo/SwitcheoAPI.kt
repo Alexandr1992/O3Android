@@ -412,8 +412,8 @@ class SwitcheoAPI {
         }
     }
 
-    fun submitOrder(pair: String, side: String, price: String, want_amount: String, use_native_tokens: Boolean = false,
-                    orderType: String, contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<SwitcheoOrders?, Error?>) -> (Unit)) {
+    fun submitOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
+                    contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<SwitcheoOrders?, Error?>) -> (Unit)) {
         bg {
             val (data, error) = (baseURL + "/" + Route.TIMESTAMP.routeName()).httpGet().responseString().third
             val timeStamp = Gson().fromJson<JsonObject>(data!!)["timestamp"].asLong
@@ -426,7 +426,7 @@ class SwitcheoAPI {
                     "timestamp" to timeStamp,
                     "use_native_tokens" to use_native_tokens,
                     "want_amount" to want_amount)
-
+            Log.d("JSON PAYLOD: ",jsonPayload.toString())
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
             jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
@@ -450,7 +450,7 @@ class SwitcheoAPI {
         val makesObject = jsonObject()
         for (makeTx in orderRequest.makes!!) {
             val makeId = makeTx!!.id
-            val jsonPayloadBytes = serializeTransactionFromJson(makeTx.txn as JsonObject)
+            val jsonPayloadBytes = serializeTransactionFromJson(Gson().toJsonTree(makeTx.txn!!).asJsonObject)
             val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             makesObject.addProperty(makeId, signature)
         }
@@ -458,7 +458,7 @@ class SwitcheoAPI {
         val fillsObject = jsonObject()
         for (fillTx in orderRequest.fills!!) {
             val fillId = fillTx!!.id
-            val jsonPayloadBytes = serializeTransactionFromJson(fillTx.txn as JsonObject)
+            val jsonPayloadBytes = serializeTransactionFromJson(Gson().toJsonTree(fillTx.txn!!).asJsonObject)
             val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             fillsObject.addProperty(fillId, signature)
         }
@@ -480,10 +480,10 @@ class SwitcheoAPI {
         }
     }
 
-    fun singleStepOrder(pair: String, side: String, price: String, want_amount: String, use_native_tokens: Boolean = false,
-                        orderType: String, contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+    fun singleStepOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
+                        contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
-        submitOrder(pair, side, price, want_amount, use_native_tokens, orderType, contract_hash, blockchain) {
+        submitOrder(pair, side, price, want_amount, orderType, use_native_tokens, contract_hash, blockchain) {
             if (it.second != null) {
                 completion(Pair<Boolean?, Error?>(false, it.second))
             } else {
