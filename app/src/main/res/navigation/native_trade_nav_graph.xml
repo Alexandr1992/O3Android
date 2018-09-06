@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/native_trade_nav_graph"
+    app:startDestination="@id/orderSubmissionFragment">
+
+    <fragment
+        android:id="@+id/orderSubmissionFragment"
+        android:name="network.o3.o3wallet.NativeTrade.OrderSubmissionFragment"
+        android:label="native_trade_order_submission_fragment"
+        tools:layout="@layout/native_trade_order_submission_fragment" >
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_priceSelectionFragment"
+            app:destination="@id/priceSelectionFragment" />
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_orderPlacedFragment"
+            app:destination="@id/orderPlacedFragment" />
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_ordersListFragment"
+            app:destination="@id/ordersListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/priceSelectionFragment"
+        android:name="network.o3.o3wallet.NativeTrade.PriceSelectionFragment"
+        android:label="native_trade_price_selection_fragment"
+        tools:layout="@layout/native_trade_price_selection_fragment" />
+
+    <fragment
+        android:id="@+id/orderPlacedFragment"
+        android:name="network.o3.o3wallet.NativeTrade.OrderPlacedFragment"
+        android:label="native_trade_price_selection_fragment"
+        tools:layout="@layout/native_trade_price_selection_fragment" />
+
+    <fragment
+        android:id="@+id/ordersListFragment"
+        android:name="network.o3.o3wallet.NativeTrade.OrdersListFragment"
+        android:label="native_trade_orders_list_fragment"
+        tools:layout="@layout/native_trade_orders_list_fragment" />
+</navigation>

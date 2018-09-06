@@ -12,25 +12,66 @@ data class Offer(val id: String, val offer_asset: String,
                  val want_asset: String, val available_amount: Long,
                  val offer_amount: Long, val want_amount: Long)
 
-data class SwitcheoDepositTransaction(val id: String, val transaction: JsonObject)
+data class SwitcheoDepositTransaction(val id: String, val transaction: JsonObject? = null)
 
-data class SwitcheoOrderRequest(val id: String, val blockchain: String, val contract_hash: String,
-                                val address: String, val side: String, val offer_asset_id: String,
-                                val want_asset_id: String, val offer_amount: String, val want_amount: String,
-                                val transfer_amount: String, val priority_gas_amount: String,
-                                val use_native_token: Boolean, val native_fee_transfer_amount: Long,
-                                val deposit_txn: JsonObject?, val created_at: String, val status: String,
-                                val fills: List<SwitcheoFill>, val makes: List<SwitcheoMake>)
+data class SwitcheoOrders(
+        val id: String,
+        val blockchain: String,
+        val contract_hash: String,
+        val address: String,
+        val side: String,
+        val offer_asset_id: String,
+        val want_asset_id: String,
+        val offer_amount: String,
+        val want_amount: String,
+        val transfer_amount: String,
+        val priority_gas_amount: String,
+        val use_native_token: Boolean,
+        val native_fee_transfer_amount: Int,
+        val deposit_txn: Any?,
+        val created_at: String,
+        val status: String,
+        val fills: List<Fill>,
+        val makes: List<Make>
+) {
 
-data class SwitcheoFill(val id: String, val offer_hash: String, val offer_asset_id: String, val fill_amount: String,
-                        val want_amount: String, val filled_amount: String, val fee_Asset_id: String, val fee_amount: String,
-                        val price: String, val txn: JsonObject, val status: String, val created_at: String, val transaction_hash: String)
+    data class Fill(
+            val id: String,
+            val offer_hash: String,
+            val offer_asset_id: String,
+            val want_asset_id: String,
+            val fill_amount: String,
+            val want_amount: String,
+            val filled_amount: String,
+            val fee_asset_id: String,
+            val fee_amount: String,
+            val price: String,
+            val txn: Any?,
+            val status: String,
+            val created_at: String,
+            val transaction_hash: String
+    )
 
-data class SwitcheoMake(val id: String, val offer_hash: String, val offer_asset_id: String, val fill_amount: String,
-                        val want_amount: String, val filled_amount: String, val txn: JsonObject, val cancel_txn: JsonObject,
-                        val price: String, val status: String, val created_at: String, val transaction_hash: String)
+    data class Make(
+            val id: String,
+            val offer_hash: String,
+            val available_amount: String,
+            val offer_asset_id: String,
+            val offer_amount: String,
+            val want_asset_id: String,
+            val want_amount: String,
+            val filled_amount: String,
+            val txn: Any?,
+            val cancel_txn: Any?,
+            val price: String,
+            val status: String,
+            val created_at: String,
+            val transaction_hash: String,
+            val trades: List<Any>
+    )
+}
 
-data class SwitcheoCancellationTransaction(val id: String, val transaction: JsonObject)
+data class SwitcheoCancellationTransaction(val id: String, val transaction: JsonObject? = null)
 
 data class ContractBalance(val confirmed: JsonObject, val confirming: JsonObject, val locked: JsonObject)
 

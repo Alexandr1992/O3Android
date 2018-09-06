@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -61,11 +62,12 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
 
         fun bindHeader() {
             view.find<Button>(R.id.tradeNowButton).setOnClickListener {
-                val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivity::class.java)
-                intent.putExtra("url", url)
-                intent.putExtra("allowSearch", false)
-                view.context.startActivity(intent)
+                //val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
+                //val intent = Intent(view.context, DAppBrowserActivity::class.java)
+                //intent.putExtra("url", url)
+                //intent.putExtra("allowSearch", false)
+                //view.context.startActivity(intent)
+                view.context.startActivity(Intent(view.context, NativeTradeRootActivity::class.java))
             }
         }
     }

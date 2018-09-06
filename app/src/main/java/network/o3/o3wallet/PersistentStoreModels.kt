@@ -245,7 +245,6 @@ object PersistentStore {
         val pendingTx = Gson().toJson(transactions)
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
                 .putString("PENDING_TRANSACTIONS", pendingTx).apply()
-
     }
 
     fun clearPendingTransactions() {

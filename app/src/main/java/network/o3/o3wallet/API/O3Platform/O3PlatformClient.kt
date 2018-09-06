@@ -26,6 +26,7 @@ class O3PlatformClient {
         NODES,
         UNBOUNDONG,
         HISTORY,
+        TRADING,
         UTXO;
 
 
@@ -190,7 +191,7 @@ class O3PlatformClient {
     }
 
     fun getRealTimePrice(token: String, currency: String, completion: (Pair<O3RealTimePrice?, Error?>) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token + "/" + currency + networkQueryString()
+        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token.toLowerCase() + "/" + currency.toLowerCase() + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.timeout(600000).responseString {_, _, result ->
@@ -277,6 +278,23 @@ class O3PlatformClient {
             } else {
                 completion(Pair<TransactionHistory?, Error?>(null, Error(error.localizedMessage)))
             }
+        }
+    }
+
+    fun getTradingAccounts(completion: (Pair<TradingAccount?, Error?>) -> (Unit)) {
+        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" + Account.getWallet().address
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val tradingAccount = Gson().fromJson<TradingAccount>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<TradingAccount?, Error?>(tradingAccount, null))
+            } else {
+                completion(Pair<TradingAccount?, Error?>(null, Error(error.localizedMessage)))
+            }
+
         }
     }
 }

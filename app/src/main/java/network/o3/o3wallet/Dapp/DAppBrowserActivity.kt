@@ -16,15 +16,13 @@ import android.support.annotation.RequiresApi
 import android.support.v4.content.LocalBroadcastManager
 import android.view.View
 import android.webkit.*
+import android.widget.*
 import network.o3.o3wallet.R
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.SearchView
-import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
@@ -45,6 +43,26 @@ class DAppBrowserActivity : AppCompatActivity() {
             "neonewstoday.com", "public.o3.network", "explorer.ont.io")
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
 
+    fun initiateTradeFooter(uri: Uri) {
+        if (uri.authority == "public.o3.network") {
+            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+            val asset = uri.lastPathSegment
+            dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
+                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                intent.putExtra("asset", asset)
+                startActivity(intent)
+            }
+
+            dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
+                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                intent.putExtra("asset", asset)
+                startActivity(intent)
+            }
+        } else {
+            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dapp_browser_activity)
@@ -57,6 +75,8 @@ class DAppBrowserActivity : AppCompatActivity() {
         val url = intent.getStringExtra("url")
         val currentUrlRoute = URL(url)
         setVerifiedHeaderUrl(url)
+        initiateTradeFooter(Uri.parse(url))
+
 
 
         dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
@@ -93,6 +113,7 @@ class DAppBrowserActivity : AppCompatActivity() {
                 val urlToLoad = request.url.toString()
                 //we are in our own app, open a new browser
 
+                initiateTradeFooter(Uri.parse(urlToLoad))
                 if (!urlToLoad.startsWith("http") && !urlToLoad.startsWith("https")) {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToLoad))
                     val activityToUse = intent.resolveActivity(packageManager)

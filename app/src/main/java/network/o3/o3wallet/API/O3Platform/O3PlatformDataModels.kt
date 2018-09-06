@@ -23,6 +23,18 @@ data class TransactionHistoryEntry(val blockchain: String, val txid: String, val
                                    val amount: String, val to: String,
                                    val from: String)
 
+data class TradingAccount(val switcheo: TradingAcountAssets)
+data class TradingAcountAssets(val confirming: List<ConfirmingAsset>,
+                               val confirmed: List<TransferableAsset>,
+                               val locked: List<TransferableAsset>)
+
+data class ConfirmingAsset(val symbol: ConfirmingAsset,
+                           val eventType: String,
+                           val hash: String,
+                           val amount: Long,
+                           val TXID: String,
+                           val createdAt: String)
+
 
 data class TokenListingsData(val data: TokenListings)
 
