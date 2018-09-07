@@ -10,12 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.send_success_fragment.*
-import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 
 import network.o3.o3wallet.R
 import network.o3.o3wallet.afterTextChanged
@@ -25,8 +24,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onFocusChange
 import org.jetbrains.anko.sdk15.coroutines.onLongClick
-import org.jetbrains.anko.support.v4.act
-import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import java.text.DecimalFormatSymbols
 
@@ -41,6 +39,8 @@ class OrderSubmissionFragment : Fragment() {
     lateinit var totalFiatAmountTextView: TextView
     lateinit var pendingOrdersContainer: ConstraintLayout
 
+    lateinit var baseAssetBalanceTextView: TextView
+
     lateinit var fiatPriceTextView: TextView
     lateinit var cryptoPriceTextView: TextView
 
@@ -54,11 +54,33 @@ class OrderSubmissionFragment : Fragment() {
         } else {
             (activity as NativeTradeRootActivity).viewModel.setOrderAssetAmount(double)
         }
+
+        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+            baseAssetAmountEditText.textColor = context!!.getColor(R.color.colorLoss)
+        } else {
+            baseAssetAmountEditText.textColor = context!!.getColor(R.color.colorPrimary)
+        }
     }
 
     fun digitTapped(digit: String) {
+        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+            baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
+            if (editingAmountView == baseAssetAmountEditText) {
+                return
+            }
+        }
+
+        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > 10000000) {
+            baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
+            return
+        }
+
         editingAmountView?.text = SpannableStringBuilder(editingAmountView?.text.toString() + digit)
         updateAmountsBasedOnInput(editingAmountView?.text.toString())
+
+        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+            baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
+        }
     }
 
     fun initiatePinPadButtons() {
@@ -143,6 +165,9 @@ class OrderSubmissionFragment : Fragment() {
 
     fun initializeOrdersView() {
         pendingOrdersContainer = mView.find(R.id.pendingOrdersContainer)
+        pendingOrdersContainer.setOnClickListener {
+            mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_ordersListFragment)
+        }
         val pendingsOrderLabel: TextView = mView.find(R.id.pendingOrdersLabel)
         (activity as NativeTradeRootActivity).viewModel.getOrders().observe ( this, Observer { orders ->
             if (orders == null) {
@@ -170,11 +195,11 @@ class OrderSubmissionFragment : Fragment() {
 
         // listen for the other text field and update as necessary
         (activity as NativeTradeRootActivity).viewModel.getSelectedBaseAssetAmount().observe(this, Observer { baseAssetAmount ->
-            val marketPriceCrypto = (activity as NativeTradeRootActivity).viewModel.marketPrice?.value?.second
-            val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.marketPrice?.value?.first
+            val marketPriceCrypto = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.second
+            val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.first
             if (marketPriceCrypto != null) {
                 val newValue = baseAssetAmount!! / (marketPriceCrypto)
-                orderAssetAmountEditText.text = SpannableStringBuilder(newValue.toString())
+                orderAssetAmountEditText.text = SpannableStringBuilder("%.8f".format(newValue))
             }
 
             if (marketPriceFiat != null) {
@@ -199,11 +224,11 @@ class OrderSubmissionFragment : Fragment() {
 
         // listen for the other text field and update as necessary
         (activity as NativeTradeRootActivity).viewModel.getOrderAssetAmount().observe(this, Observer { orderAssetAmount ->
-            val marketPriceCrypto = (activity as NativeTradeRootActivity).viewModel.marketPrice?.value?.second
-            val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.marketPrice?.value?.first
+            val marketPriceCrypto = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.second
+            val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.first
             if (marketPriceCrypto != null ) {
                 val newValue = orderAssetAmount!! * (marketPriceCrypto)
-                baseAssetAmountEditText.text = SpannableStringBuilder(newValue.toString())
+                baseAssetAmountEditText.text = SpannableStringBuilder("%.8f".format(newValue))
             }
 
             if (marketPriceFiat != null) {
@@ -226,18 +251,25 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun initializeRealTimePriceListeners() {
+        val priceRow = mView.find<ConstraintLayout>(R.id.priceConstraintLayout)
+        priceRow.setOnClickListener {
+            mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_priceSelectionFragment)
+        }
+
         fiatPriceTextView = mView.find(R.id.selectedFiatPriceTextView)
         cryptoPriceTextView = mView.find(R.id.selectedCryptoPriceTextView)
 
-        (activity as NativeTradeRootActivity).viewModel.getMarketPrice().observe( this, Observer { marketPrice ->
+
+        (activity as NativeTradeRootActivity).viewModel.getSelectedPrice().observe( this, Observer { marketPrice ->
             fiatPriceTextView.text = marketPrice!!.first.formattedFiatString()
             cryptoPriceTextView.text = marketPrice.second.toString()
         })
     }
 
     fun initializeAssetBalanceListener() {
+        baseAssetBalanceTextView = mView.find<TextView>(R.id.baseAssetBalanceTextView)
         (activity as NativeTradeRootActivity).viewModel.getSelectedBaseAssetBalance().observe(this, Observer { balance ->
-            mView.find<TextView>(R.id.baseAssetBalanceTextView).text = balance?.toString()
+            baseAssetBalanceTextView.text = balance?.toString()
         })
     }
 

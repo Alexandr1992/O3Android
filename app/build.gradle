@@ -37,7 +37,7 @@ android {
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
     configurations.all { resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9' }
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 }
 
 buildscript {
@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.android.support:gridlayout-v7:27.1.1'
+    implementation 'com.shawnlin:number-picker:2.4.6'
     implementation 'com.google.guava:guava:23.3-android'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.google.firebase:firebase-messaging:11.8.0'

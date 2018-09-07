@@ -43,13 +43,13 @@ class NativeTradeBaseAssetSelectionAdapter(context: Context,
         val view = inflator.inflate(R.layout.native_trade_base_asset_row, null)
         view.setOnClickListener {
             (mFragment.activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetValue(item.first)
-            (mFragment.activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetBalance(item.second)
+            (mFragment.activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetBalance(item.second!! / 100000000)
             (mFragment.activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetImageUrl(
                     String.format("https://cdn.o3.network/img/neo/%s.png", item.first))
             mFragment.dismiss()
         }
         view.find<TextView>(R.id.baseAssetName).text = item.first
-        view.find<TextView>(R.id.baseAssetBalance).text = item.second?.toString() ?: ""
+        view.find<TextView>(R.id.baseAssetBalance).text = (item.second!! / 100000000).toString()
         Glide.with(view.context).load(String.format("https://cdn.o3.network/img/neo/%s.png", item.first)).
                 into(view.find<ImageView>(R.id.baseAssetlogoImageView))
 

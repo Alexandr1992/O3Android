@@ -26,6 +26,12 @@ fun Double.formattedBTCString() : String {
 fun Double.formattedFiatString() : String {
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.currency = Currency.getInstance(PersistentStore.getCurrency().toUpperCase())
+    if (this < 0.0099999999999999) {
+        formatter.maximumFractionDigits = 4
+    } else {
+        formatter.maximumFractionDigits = 2
+    }
+
     return formatter.format(this)
 }
 

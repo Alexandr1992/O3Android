@@ -3,16 +3,10 @@ package network.o3.o3wallet.NativeTrade
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.widget.Switch
-import com.github.salomonbrys.kotson.jsonObject
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.API.O3Platform.TradingAccount
-import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.API.Switcheo.ContractBalance
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
-import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import java.util.concurrent.CountDownLatch
 
@@ -25,7 +19,7 @@ class NativeTradeViewModel: ViewModel() {
 
    // val selectedPriceCrypto: Long
    // val selectedPriceFiat: Long
-    //val marketPrice: Double = 0.1
+    //val selectedPrice: Double = 0.1
 
     var selectedBaseAsset: MutableLiveData<String>? = null
     var selectedBaseAssetAmount: MutableLiveData<Double> = MutableLiveData()
@@ -34,8 +28,8 @@ class NativeTradeViewModel: ViewModel() {
 
     var orders: MutableLiveData<List<SwitcheoOrders>>? = null
 
-    var marketPrice: MutableLiveData<Pair<Double, Double>>? = null
-
+    var selectedPrice: MutableLiveData<Pair<Double, Double>>? = null
+    var marketPrice: Pair<Double, Double>? = null
     var orderAsset = "QLC"
 
    // val baseAssetTradeBalance: Long
@@ -106,12 +100,22 @@ class NativeTradeViewModel: ViewModel() {
         orderAssetAmount.postValue(amount)
     }
 
-    fun getMarketPrice(): LiveData<Pair<Double, Double>> {
-        if (marketPrice == null) {
-            marketPrice = MutableLiveData()
+    fun getSelectedPrice(): LiveData<Pair<Double, Double>> {
+        if (selectedPrice == null) {
+            selectedPrice = MutableLiveData()
             loadMarketPrice()
         }
-        return marketPrice!!
+        return selectedPrice!!
+    }
+
+    fun setManualPrice(newPrice: Double) {
+        var previousCryptoPrice = selectedPrice?.value?.second!!
+
+        var percentMultiple = (newPrice / marketPrice!!.second)
+        var newFiatPrice = marketPrice!!.first * percentMultiple
+
+        selectedPrice?.postValue(Pair(newFiatPrice, newPrice))
+
     }
 
     fun loadMarketPrice() {
@@ -142,8 +146,9 @@ class NativeTradeViewModel: ViewModel() {
             latch.countDown()
         }
         latch.await()
-        marketPrice?.value = Pair(fiatPrice, cryptoPrice)
-        marketPrice?.postValue(Pair(fiatPrice, cryptoPrice))
+        marketPrice = Pair(fiatPrice, cryptoPrice)
+        selectedPrice?.value = Pair(fiatPrice, cryptoPrice)
+        selectedPrice?.postValue(Pair(fiatPrice, cryptoPrice))
     }
 
     fun getTradingAccountBalances(): LiveData<TradingAccount> {
@@ -163,10 +168,16 @@ class NativeTradeViewModel: ViewModel() {
             tradingAccount?.postValue(it.first!!)
             val neoAsset = it.first!!.switcheo.confirmed.find { it.symbol.toLowerCase() == "neo" }
             if(neoAsset != null) {
-                setSelectedBaseAssetBalance(neoAsset.value.toDouble())
+                setSelectedBaseAssetBalance(neoAsset.value.toDouble() / 100000000.0)
             } else {
                 setSelectedBaseAssetBalance(0.0)
             }
+        }
+    }
+
+    fun loadTopOrderBookPrice() {
+        SwitcheoAPI().getOffersForPair("") {
+
         }
     }
 

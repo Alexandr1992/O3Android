@@ -401,8 +401,11 @@ class SwitcheoAPI {
                 val orders = Gson().fromJson<List<SwitcheoOrders>>(data!!)
                 var pendingOrders: MutableList<SwitcheoOrders> = mutableListOf()
                 for (order in orders) {
-                   if (order.makes!!.count() > 0)
-                       pendingOrders.add(order)
+                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } == null) {
+                            pendingOrders.add(order)
+                        }
+                    }
                 }
 
                 completion(Pair<List<SwitcheoOrders>?, Error?>(pendingOrders, null))
@@ -498,14 +501,14 @@ class SwitcheoAPI {
         bg {
             val (data, error) = (baseURL + "/" + Route.TIMESTAMP.routeName()).httpGet().responseString().third
             val timeStamp = Gson().fromJson<JsonObject>(data!!)["timestamp"].asLong
-            val jsonPayload = jsonObject("id" to orderId,
+            val jsonPayload = jsonObject("order_id" to orderId,
                     "timestamp" to timeStamp)
 
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
             jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
 
-            val url = baseURL + Route.CANCELLATIONS.routeName() + "/" + orderId + "/broadcast"
+            val url = baseURL + Route.CANCELLATIONS.routeName()
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
             request.responseString { req, response, result ->
@@ -544,7 +547,7 @@ class SwitcheoAPI {
             if (it.second != null) {
                 completion(Pair<Boolean?, Error?>(false, it.second))
             } else {
-                executeCancelOrder(orderId, it.first!!.transaction!!) {
+                executeCancelOrder(it.first!!.id, it.first!!.transaction!!) {
                     completion(Pair<Boolean?, Error?>(it.first, it.second))
                 }
             }
