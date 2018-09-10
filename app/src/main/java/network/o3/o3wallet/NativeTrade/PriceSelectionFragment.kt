@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +13,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import network.o3.o3wallet.*
 
-import network.o3.o3wallet.R
-import network.o3.o3wallet.afterTextChanged
-import network.o3.o3wallet.formattedFiatString
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onLongClick
+import org.jetbrains.anko.textColor
 import java.text.DecimalFormatSymbols
+import kotlin.math.absoluteValue
 
 // TODO: Rename parameter arguments, choose names that match
 
@@ -113,14 +114,22 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiateIncrementButtons() {
         mView.find<Button>(R.id.plusButton).setOnClickListener {
-            (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble() * 1.1)
-            priceEditText.text = SpannableStringBuilder("%.8f".format(priceEditText.text.toString().toDouble() * 1.1))
+            val vm = (activity as NativeTradeRootActivity).viewModel
+            var currentDifference = vm.marketRateDifference.value!!
+            currentDifference += 0.01
+            val newPrice = vm.marketPrice!!.second * currentDifference
+            vm.setManualPrice(newPrice)
+            priceEditText.text = SpannableStringBuilder("%.8f".format(newPrice))
 
         }
 
         mView.find<Button>(R.id.minusButton).setOnClickListener {
-            (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble() * 0.9)
-            priceEditText.text = SpannableStringBuilder("%.8f".format(priceEditText.text.toString().toDouble() * 0.9))
+            val vm = (activity as NativeTradeRootActivity).viewModel
+            var currentDifference = vm.marketRateDifference.value!!
+            currentDifference -= 0.01
+            val newPrice = vm.marketPrice!!.second * currentDifference
+            vm.setManualPrice(newPrice)
+            priceEditText.text = SpannableStringBuilder("%.8f".format(newPrice))
         }
     }
 
@@ -130,14 +139,68 @@ class PriceSelectionFragment : Fragment() {
         }
     }
 
+    fun initiatePercentDifference() {
+        val percentDiffTextView = mView.find<TextView>(R.id.percentDifferenceTextView)
+        (activity as NativeTradeRootActivity).viewModel.getMarketRatePercentDifference().observe(this, Observer { rate ->
+            var percent = (rate!! - 1.0) * 100
+            if (percent == 0.0) {
+                percentDiffTextView.text =
+                        String.format(resources.getString(R.string.NATIVE_Trade_percent_below_market), percent.formattedPercentString())
+                percentDiffTextView.textColor = context!!.getColor(R.color.colorSubtitleGrey)
+            } else if (percent < 0.0) {
+                percentDiffTextView.text =
+                        String.format(resources.getString(R.string.NATIVE_Trade_percent_below_market), percent.absoluteValue.formattedPercentString())
+            } else {
+                percentDiffTextView.text =
+                        String.format(resources.getString(R.string.NATIVE_Trade_percent_above_market), percent.formattedPercentString())
+                percentDiffTextView.textColor = context!!.getColor(R.color.colorLoss)
+            }
+
+            if(percent.absoluteValue > 10.0) {
+                percentDiffTextView.textColor = context!!.getColor(R.color.colorLoss)
+            } else {
+                percentDiffTextView.textColor = context!!.getColorFromAttr(R.attr.defaultTextColor)
+
+            }
+        })
+    }
+
+    fun initiateTopOrderBookPrice() {
+        val topOrderLabel = mView.find<TextView>(R.id.topOrderBookPrice)
+        (activity as NativeTradeRootActivity).viewModel.getOrderBookTopPrice().observe(this, Observer { rate ->
+            topOrderLabel.text = "%.8f".format(rate!!)
+        })
+
+        topOrderLabel.setOnClickListener {
+            priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
+        }
+
+        val medianPriceLabel = mView.find<TextView>(R.id.currentMedianPriceTextView)
+        medianPriceLabel.text =
+                "%.8f".format((activity as NativeTradeRootActivity).viewModel.marketPrice!!.second)
+        medianPriceLabel.setOnClickListener {
+            priceEditText.text = SpannableStringBuilder(medianPriceLabel.text)
+        }
+    }
+
+    fun initiateEstimatedFill() {
+        (activity as NativeTradeRootActivity).viewModel.getFillAmount().observe(this, Observer { fillAmount ->
+            mView.find<TextView>(R.id.estimatedFillAmount).text = fillAmount!!.toString()
+        })
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.native_trade_price_selection_fragment, container, false)
+        initiateEstimatedFill()
         initiatePinPadButtons()
         initiatePriceEditText()
         initiatePriceListeners()
         initiateIncrementButtons()
         initiateAdvancedPriceSelection()
+        initiatePercentDifference()
+        initiateTopOrderBookPrice()
+        (activity as NativeTradeRootActivity).viewModel.loadTopOrderBookPrice()
         return mView
     }
 }

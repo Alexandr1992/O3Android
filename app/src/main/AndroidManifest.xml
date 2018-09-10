@@ -85,9 +85,6 @@ package="network.o3.o3wallet">
     </service>
 
     <meta-data
-        android:name="preloaded_fonts"
-        android:resource="@array/preloaded_fonts" />
-    <meta-data
         android:name="io.fabric.ApiKey"
         android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
     <meta-data

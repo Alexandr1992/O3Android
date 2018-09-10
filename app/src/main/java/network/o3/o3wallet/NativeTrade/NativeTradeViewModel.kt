@@ -3,8 +3,10 @@ package network.o3.o3wallet.NativeTrade
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.google.common.graph.MutableValueGraph
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TradingAccount
+import network.o3.o3wallet.API.Switcheo.Offer
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
 import network.o3.o3wallet.PersistentStore
@@ -32,6 +34,8 @@ class NativeTradeViewModel: ViewModel() {
     var marketPrice: Pair<Double, Double>? = null
     var orderAsset = "QLC"
 
+    var orderBookTopPrice: MutableLiveData<Double>? = null
+
    // val baseAssetTradeBalance: Long
    // val baseAssetAmount: Long
    // val baseAssetAmountFiat: Long
@@ -42,6 +46,12 @@ class NativeTradeViewModel: ViewModel() {
 
     var baseAssetBalance: MutableLiveData<Double?> = MutableLiveData()
     var baseAssetImageUrl: MutableLiveData<String> = MutableLiveData()
+
+    var marketRateDifference: MutableLiveData<Double> = MutableLiveData()
+
+    var estimatedFillAmount: MutableLiveData<Double>? = null
+
+    var orderBook = listOf<Offer>()
 
     fun getSelectedBaseAssetValue(): String? {
         return selectedBaseAsset!!.value
@@ -115,6 +125,9 @@ class NativeTradeViewModel: ViewModel() {
         var newFiatPrice = marketPrice!!.first * percentMultiple
 
         selectedPrice?.postValue(Pair(newFiatPrice, newPrice))
+        selectedPrice?.value = Pair(newFiatPrice, newPrice)
+        updateMarketRateDifference(newPrice)
+        calculateFillAmount()
 
     }
 
@@ -149,6 +162,7 @@ class NativeTradeViewModel: ViewModel() {
         marketPrice = Pair(fiatPrice, cryptoPrice)
         selectedPrice?.value = Pair(fiatPrice, cryptoPrice)
         selectedPrice?.postValue(Pair(fiatPrice, cryptoPrice))
+        updateMarketRateDifference(cryptoPrice)
     }
 
     fun getTradingAccountBalances(): LiveData<TradingAccount> {
@@ -175,9 +189,52 @@ class NativeTradeViewModel: ViewModel() {
         }
     }
 
-    fun loadTopOrderBookPrice() {
-        SwitcheoAPI().getOffersForPair("") {
+    fun getOrderBookTopPrice(): LiveData<Double> {
+        if (orderBookTopPrice == null) {
+            orderBookTopPrice = MutableLiveData()
+        }
+        return orderBookTopPrice!!
+    }
 
+    fun loadTopOrderBookPrice() {
+        val pair = orderAsset + "_" + selectedBaseAsset!!.value
+        SwitcheoAPI().getOffersForPair(pair) {
+            //buy side
+            if (it.first != null) {
+                val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == orderAsset.toLowerCase() }
+                if (filtered.isNotEmpty()) {
+                    val sorted = filtered.sortedBy { it.want_amount.toDouble() / it.offer_amount.toDouble() }
+                    orderBookTopPrice!!.postValue(sorted[0].want_amount.toDouble() / sorted[0].offer_amount.toDouble())
+                    orderBook = sorted
+                    calculateFillAmount()
+                }
+            }
+        }
+    }
+
+    fun getFillAmount(): LiveData<Double> {
+        if (estimatedFillAmount == null) {
+            estimatedFillAmount = MutableLiveData()
+        }
+        return estimatedFillAmount!!
+    }
+
+    fun calculateFillAmount() {
+        //Buy Side
+        var offersUnderPrice = mutableListOf<Offer>()
+        for(offer in orderBook) {
+            if (offer.want_amount.toDouble() / offer.offer_amount.toDouble() <= selectedPrice!!.value!!.second) {
+                offersUnderPrice.add(offer)
+            } else {
+                break
+            }
+        }
+        var fillSum = offersUnderPrice.sumByDouble { it.offer_amount.toDouble() } / 100000000
+
+        if (fillSum >= orderAssetAmount.value!!) {
+            estimatedFillAmount!!.postValue(1.0)
+        } else {
+            estimatedFillAmount!!.postValue(fillSum / orderAssetAmount.value!!)
         }
     }
 
@@ -195,5 +252,16 @@ class NativeTradeViewModel: ViewModel() {
 
     fun getSelectedBaseAssetImageUrl(): LiveData<String> {
         return baseAssetImageUrl
+    }
+
+    fun getMarketRatePercentDifference(): LiveData<Double> {
+        return marketRateDifference!!
+
+    }
+
+    fun updateMarketRateDifference(newPrice: Double) {
+        val newDifference = newPrice / marketPrice!!.second
+        marketRateDifference.value = newDifference
+        marketRateDifference.postValue(newDifference)
     }
 }

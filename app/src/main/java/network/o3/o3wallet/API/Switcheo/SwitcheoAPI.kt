@@ -206,10 +206,10 @@ class SwitcheoAPI {
     //endregion
 
     //region Offers
-    fun getOffersForPair(pair: String, blockchain: String = "neo", completion: (Pair<Array<Offer>?, Error?>) -> (Unit)) {
+    fun getOffersForPair(pair: String, blockchain: String = "neo", contract_hash: String = mainNetContract, completion: (Pair<Array<Offer>?, Error?>) -> (Unit)) {
         val url = baseURL + Route.OFFERS.routeName()
         var request = url.httpGet(
-                listOf("blockchain" to blockchain, "pair" to pair))
+                listOf("blockchain" to blockchain, "pair" to pair, "contract_hash" to contract_hash))
 
         request.responseString { req, response, result ->
             val (data, error) = result
