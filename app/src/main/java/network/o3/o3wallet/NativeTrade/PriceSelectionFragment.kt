@@ -21,6 +21,11 @@ import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import org.jetbrains.anko.textColor
 import java.text.DecimalFormatSymbols
 import kotlin.math.absoluteValue
+import network.o3.o3wallet.R.id.constraintLayout
+import android.support.constraint.ConstraintSet
+import network.o3.o3wallet.R.id.imageView
+
+
 
 // TODO: Rename parameter arguments, choose names that match
 
@@ -101,6 +106,7 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiatePriceEditText() {
         priceEditText = mView.find(R.id.priceEditText)
+        priceEditText.showSoftInputOnFocus = false
         fiatPriceTextView = mView.find(R.id.fiatPriceTextView)
         priceEditText.afterTextChanged {
             priceEditText.setSelection(priceEditText.text.length)
@@ -135,6 +141,13 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiateAdvancedPriceSelection() {
         mView.find<TextView>(R.id.manualEntryButton).setOnClickListener {
+            val constraintSet = ConstraintSet()
+            val constraintLayout = mView.find<ConstraintLayout>(R.id.pricingConstraints)
+            constraintSet.clone(constraintLayout)
+            constraintSet.clear(R.id.pricingCard, ConstraintSet.TOP)
+            constraintSet.clear(R.id.pricingCard, ConstraintSet.BOTTOM)
+            constraintSet.connect(R.id.pricingCard, ConstraintSet.TOP, R.id.pricingConstraints, ConstraintSet.TOP, 16)
+            constraintSet.applyTo(constraintLayout)
             mView.find<ConstraintLayout>(R.id.priceSelectionPinPad).visibility = View.VISIBLE
         }
     }

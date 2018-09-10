@@ -14,11 +14,11 @@
             android:id="@+id/action_orderSubmissionFragment_to_priceSelectionFragment"
             app:destination="@id/priceSelectionFragment" />
         <action
-            android:id="@+id/action_orderSubmissionFragment_to_orderPlacedFragment"
-            app:destination="@id/orderPlacedFragment" />
-        <action
             android:id="@+id/action_orderSubmissionFragment_to_ordersListFragment"
             app:destination="@id/ordersListFragment" />
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_reviewOrderFragment"
+            app:destination="@id/reviewOrderFragment" />
     </fragment>
 
     <fragment
@@ -38,4 +38,13 @@
         android:name="network.o3.o3wallet.NativeTrade.OrdersList.OrdersListFragment"
         android:label="native_trade_orders_list_fragment"
         tools:layout="@layout/native_trade_orders_list_fragment" />
+    <fragment
+        android:id="@+id/reviewOrderFragment"
+        android:name="network.o3.o3wallet.NativeTrade.ReviewOrderFragment"
+        android:label="native_trade_review_order_fragment"
+        tools:layout="@layout/native_trade_review_order_fragment" >
+        <action
+            android:id="@+id/action_reviewOrderFragment_to_orderPlacedFragment"
+            app:destination="@id/orderPlacedFragment" />
+    </fragment>
 </navigation>

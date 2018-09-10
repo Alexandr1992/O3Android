@@ -163,6 +163,7 @@ class OrderSubmissionFragment : Fragment() {
         (activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetImageUrl("https://cdn.o3.network/img/neo/NEO.png")
     }
 
+    /*
     fun initializeOrdersView() {
         pendingOrdersContainer = mView.find(R.id.pendingOrdersContainer)
         pendingOrdersContainer.setOnClickListener {
@@ -177,7 +178,7 @@ class OrderSubmissionFragment : Fragment() {
                 pendingOrdersContainer.visibility = View.VISIBLE
             }
         })
-    }
+    }*/
 
     fun initializeOrderAmountSelector() {
         orderAssetAmountEditText = mView.find(R.id.orderAssetAmountEditText)
@@ -281,6 +282,9 @@ class OrderSubmissionFragment : Fragment() {
             val side = "buy"
             val wantAmount = (orderAssetAmountEditText.text.toString().toDouble() * 100000000.0).toLong().toString()
             val orderType = "limit"
+            mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
+
+
            /* SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
                 if(it.first != true) {
                     //TODO: "Some serios error occured"
@@ -297,7 +301,7 @@ class OrderSubmissionFragment : Fragment() {
         mView = inflater.inflate(R.layout.native_trade_order_submission_fragment, container, false)
         totalFiatAmountTextView = mView.find(R.id.totalFiatAmountTextView)
         initializeBaseAssetContainer()
-        initializeOrdersView()
+        //initializeOrdersView()
         initializeOrderAmountSelector()
         initializeBaseAmountSelector()
         initiatePinPadButtons()
