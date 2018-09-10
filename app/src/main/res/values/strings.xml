@@ -461,7 +461,7 @@
     <string name="DAPP_logout_warning">Are you sure you want to logout of this dapp?</string>
     <string name="Portfolio_trading_title">TRADING IN O3 IS HERE!</string>
     <string name="PORTFOLIO_trading_subtitle">O3 has partnered with Switcheo to allow trading directly in O3 apps.</string>
-
+4
     <string name="PORTFOLIO_are_you_sure_switcheo">Are you sure you want to dismiss this notification? You can always access Switcheo trading in the O3 Marketplace.</string>
 
     <string name="NATIVE_TRADE_pendings_orders_count">Open Orders (%1$d)</string>
@@ -472,5 +472,6 @@
     <string name="NATIVE_TRADE_median_price">Median Price</string>
     <string name="Native_TRADE_Buy">Buy</string>
     <string name="Native_TRADE_Sell">Sell</string>
+    <string name="NATIVE_TRADE_orders">Orders</string>
 
 </resources>
