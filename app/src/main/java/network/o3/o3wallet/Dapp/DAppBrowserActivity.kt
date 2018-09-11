@@ -50,12 +50,14 @@ class DAppBrowserActivity : AppCompatActivity() {
             dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
                 val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
                 intent.putExtra("asset", asset)
+                intent.putExtra("is_buy", true)
                 startActivity(intent)
             }
 
             dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
                 val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
                 intent.putExtra("asset", asset)
+                intent.putExtra("is_buy", false)
                 startActivity(intent)
             }
         } else {

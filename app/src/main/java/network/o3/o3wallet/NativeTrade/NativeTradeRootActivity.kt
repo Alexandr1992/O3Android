@@ -19,10 +19,16 @@ class NativeTradeRootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.orderAsset = intent.getStringExtra("asset")
+        viewModel.isBuyOrder = intent.getBooleanExtra("is_buy", true)
 
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
         supportActionBar?.setCustomView(R.layout.actionbar_layout_trade)
-        find<TextView>(R.id.orderTypeTextView).text = resources.getString(R.string.Native_TRADE_Buy)
+        if (viewModel.isBuyOrder) {
+            find<TextView>(R.id.orderTypeTextView).text = resources.getString(R.string.Native_TRADE_Buy)
+        } else {
+            find<TextView>(R.id.orderTypeTextView).text = resources.getString(R.string.Native_TRADE_Sell)
+        }
+
         find<TextView>(R.id.orderAssetSymbolTextView).text = viewModel.orderAsset
 
         Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", viewModel.orderAsset))

@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch
 class NativeTradeViewModel: ViewModel() {
     val availableBaseAssets = arrayOf(Pair<String, Double?>("NEO", null), Pair<String, Double?>("GAS", null))
 
-   // val isBuyOrder: Boolean = true
+    var isBuyOrder: Boolean = true
    // val selectedTradeAsset: TransferableAsset
    // val selectedTradeAssetAmount: Long
 
@@ -49,7 +49,11 @@ class NativeTradeViewModel: ViewModel() {
 
     var marketRateDifference: MutableLiveData<Double> = MutableLiveData()
 
-    var estimatedFillAmount: MutableLiveData<Double>? = null
+    var estimatedFillAmount: MutableLiveData<Double> = MutableLiveData()
+
+    init {
+        estimatedFillAmount.value = 0.0
+    }
 
     var orderBook = listOf<Offer>()
 
@@ -99,6 +103,8 @@ class NativeTradeViewModel: ViewModel() {
     fun setSelectedBaseAssetAmount(amount: Double) {
         selectedBaseAssetAmount.value = amount
         selectedBaseAssetAmount.postValue(amount)
+
+        orderAssetAmount.value =  amount / selectedPrice?.value?.second!!
     }
 
     fun getOrderAssetAmount(): LiveData<Double> {
@@ -108,6 +114,9 @@ class NativeTradeViewModel: ViewModel() {
     fun setOrderAssetAmount(amount: Double) {
         orderAssetAmount.value = amount
         orderAssetAmount.postValue(amount)
+
+        selectedBaseAssetAmount.value =  selectedPrice?.value?.second!! * amount
+
     }
 
     fun getSelectedPrice(): LiveData<Pair<Double, Double>> {
@@ -199,42 +208,70 @@ class NativeTradeViewModel: ViewModel() {
     fun loadTopOrderBookPrice() {
         val pair = orderAsset + "_" + selectedBaseAsset!!.value
         SwitcheoAPI().getOffersForPair(pair) {
-            //buy side
             if (it.first != null) {
-                val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == orderAsset.toLowerCase() }
-                if (filtered.isNotEmpty()) {
-                    val sorted = filtered.sortedBy { it.want_amount.toDouble() / it.offer_amount.toDouble() }
-                    orderBookTopPrice!!.postValue(sorted[0].want_amount.toDouble() / sorted[0].offer_amount.toDouble())
-                    orderBook = sorted
-                    calculateFillAmount()
+                if (isBuyOrder) {
+                    val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == orderAsset.toLowerCase() }
+                    if (filtered.isNotEmpty()) {
+                        val sorted = filtered.sortedBy { it.want_amount.toDouble() / it.offer_amount.toDouble() }
+                        orderBookTopPrice!!.postValue(sorted[0].want_amount.toDouble() / sorted[0].offer_amount.toDouble())
+                        orderBook = sorted
+                        calculateFillAmount()
+                    }
+                } else {
+                    val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == selectedBaseAsset!!.value!!.toLowerCase() }
+                    if (filtered.isNotEmpty()) {
+                        val sorted = filtered.sortedBy { it.want_amount.toDouble() / it.offer_amount.toDouble() }
+                        orderBookTopPrice!!.postValue(sorted[0].offer_amount.toDouble() / sorted[0].want_amount.toDouble())
+                        orderBook = sorted
+                        calculateFillAmount()
+                    }
                 }
             }
         }
     }
 
     fun getFillAmount(): LiveData<Double> {
-        if (estimatedFillAmount == null) {
-            estimatedFillAmount = MutableLiveData()
-        }
-        return estimatedFillAmount!!
+        return estimatedFillAmount
     }
 
     fun calculateFillAmount() {
         //Buy Side
-        var offersUnderPrice = mutableListOf<Offer>()
-        for(offer in orderBook) {
-            if (offer.want_amount.toDouble() / offer.offer_amount.toDouble() <= selectedPrice!!.value!!.second) {
-                offersUnderPrice.add(offer)
-            } else {
-                break
+        if (isBuyOrder) {
+            var offersUnderPrice = mutableListOf<Offer>()
+            for (offer in orderBook) {
+                if (offer.want_amount.toDouble() / offer.offer_amount.toDouble() <= selectedPrice!!.value!!.second) {
+                    offersUnderPrice.add(offer)
+                } else {
+                    break
+                }
             }
-        }
-        var fillSum = offersUnderPrice.sumByDouble { it.offer_amount.toDouble() } / 100000000
+            var fillSum = offersUnderPrice.sumByDouble { it.offer_amount.toDouble() } / 100000000
 
-        if (fillSum >= orderAssetAmount.value!!) {
-            estimatedFillAmount!!.postValue(1.0)
+            if (fillSum >= orderAssetAmount.value!!) {
+                estimatedFillAmount!!.value = 1.0
+                estimatedFillAmount!!.postValue(1.0)
+            } else {
+                estimatedFillAmount!!.value = fillSum / orderAssetAmount.value!!
+                estimatedFillAmount!!.postValue(fillSum / orderAssetAmount.value!!)
+            }
         } else {
-            estimatedFillAmount!!.postValue(fillSum / orderAssetAmount.value!!)
+            var offersOverPrice = mutableListOf<Offer>()
+            for(offer in orderBook) {
+                if (offer.offer_amount.toDouble() / offer.want_amount.toDouble() >= selectedPrice!!.value!!.second) {
+                    offersOverPrice.add(offer)
+                } else {
+                    break
+                }
+            }
+            var fillSum = offersOverPrice.sumByDouble { it.want_amount.toDouble() } / 100000000
+
+            if (fillSum >= orderAssetAmount.value!!) {
+                estimatedFillAmount!!.value = 1.0
+                estimatedFillAmount!!.postValue(1.0)
+            } else {
+                estimatedFillAmount!!.value = fillSum / orderAssetAmount.value!!
+                estimatedFillAmount!!.postValue(fillSum / orderAssetAmount.value!!)
+            }
         }
     }
 
