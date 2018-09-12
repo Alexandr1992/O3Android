@@ -23,8 +23,9 @@ import java.text.DecimalFormatSymbols
 import kotlin.math.absoluteValue
 import network.o3.o3wallet.R.id.constraintLayout
 import android.support.constraint.ConstraintSet
+import kotlinx.android.synthetic.main.pinpad_layout.*
 import network.o3.o3wallet.R.id.imageView
-
+import org.jetbrains.anko.sdk15.coroutines.onClick
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,16 +38,21 @@ class PriceSelectionFragment : Fragment() {
     fun digitTapped(digit: String) {
         priceEditText.text = SpannableStringBuilder(priceEditText.text.toString() + digit)
         (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
+        if (priceEditText.text.toString().toDouble() > 0.0) {
+            placeOrderButton.isEnabled = true
+        } else {
+            placeOrderButton.isEnabled = false
+        }
     }
 
     fun initiatePinPadButtons() {
         mView.find<Button>(R.id.button0).setOnClickListener {
             val curVal = priceEditText.text.toString()
-            /*if (curVal.isNotBlank()) {
-                editingAmountView?.text = SpannableStringBuilder(curVal + "0")
-            } else if ((activity as NativeTradeRootActivity).viewModel.selectedAssetDecimals > 0) {
-                editingAmountView?.text = SpannableStringBuilder(curVal + "0" + DecimalFormatSymbols().decimalSeparator)
-            }*/
+            if (curVal.isNotBlank()) {
+                priceEditText.text = SpannableStringBuilder(curVal + "0")
+            } else {
+                priceEditText.text = SpannableStringBuilder(curVal + "0" + DecimalFormatSymbols().decimalSeparator)
+            }
         }
 
         mView.find<Button>(R.id.button1).setOnClickListener { digitTapped("1") }
@@ -70,15 +76,21 @@ class PriceSelectionFragment : Fragment() {
                 (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
             }
 
-
+            if (priceEditText.text.toString().toDoubleOrNull() ?: 0.0 == 0.0) {
+                placeOrderButton.isEnabled = false
+            } else {
+                placeOrderButton.isEnabled = true
+            }
         }
 
         mView.find<ImageButton>(R.id.buttonBackSpace).onLongClick {
             priceEditText.text = SpannableStringBuilder("")
+            placeOrderButton.isEnabled = false
             (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
         }
 
         val decimalButton = mView.find<ImageButton>(R.id.buttonDecimal)
+        decimalButton.visibility = View.VISIBLE
         if (DecimalFormatSymbols().decimalSeparator == ',') {
             decimalButton.image = context!!.getDrawable(R.drawable.ic_comma)
         } else {
@@ -86,10 +98,6 @@ class PriceSelectionFragment : Fragment() {
         }
 
         decimalButton.setOnClickListener {
-            /*if ((activity as NativeTradeRootActivity).viewModel.selectedAssetDecimals == 0) {
-                return@setOnClickListener
-            }*/
-
             var currString = priceEditText.text.toString()
             if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
                 return@setOnClickListener
@@ -113,7 +121,7 @@ class PriceSelectionFragment : Fragment() {
         }
 
         priceEditText.text = SpannableStringBuilder((activity as NativeTradeRootActivity).
-                viewModel.selectedPrice!!.value!!.second.toString())
+                viewModel.selectedPrice!!.value!!.second.removeTrailingZeros())
         fiatPriceTextView.text = (activity as NativeTradeRootActivity).
                 viewModel.selectedPrice!!.value!!.first.formattedFiatString()
     }
@@ -149,6 +157,11 @@ class PriceSelectionFragment : Fragment() {
             constraintSet.connect(R.id.pricingCard, ConstraintSet.TOP, R.id.pricingConstraints, ConstraintSet.TOP, 16)
             constraintSet.applyTo(constraintLayout)
             mView.find<ConstraintLayout>(R.id.priceSelectionPinPad).visibility = View.VISIBLE
+            mView.find<TextView>(R.id.manualEntryButton).visibility = View.GONE
+            mView.find<Button>(R.id.placeOrderButton).text = context!!.getString(R.string.ONBOARDING_done_action)
+            mView.find<Button>(R.id.placeOrderButton).onClick {
+                activity?.onBackPressed()
+            }
         }
     }
 
@@ -179,26 +192,31 @@ class PriceSelectionFragment : Fragment() {
     }
 
     fun initiateTopOrderBookPrice() {
+        val vm = (activity as NativeTradeRootActivity).viewModel
         val topOrderLabel = mView.find<TextView>(R.id.topOrderBookPrice)
-        (activity as NativeTradeRootActivity).viewModel.getOrderBookTopPrice().observe(this, Observer { rate ->
-            topOrderLabel.text = "%.8f".format(rate!!)
+        vm.getOrderBookTopPrice().observe(this, Observer { rate ->
+            topOrderLabel.text = rate!!.removeTrailingZeros()
         })
 
         topOrderLabel.setOnClickListener {
-            priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
+            if (topOrderLabel.text.toString().toDoubleOrNull() != null) {
+                priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
+                vm.setManualPrice(topOrderLabel.text.toString().toDoubleOrNull()!!)
+            }
         }
 
         val medianPriceLabel = mView.find<TextView>(R.id.currentMedianPriceTextView)
         medianPriceLabel.text =
-                "%.8f".format((activity as NativeTradeRootActivity).viewModel.marketPrice!!.second)
+                vm.marketPrice!!.second.removeTrailingZeros()
         medianPriceLabel.setOnClickListener {
             priceEditText.text = SpannableStringBuilder(medianPriceLabel.text)
+            vm.setManualPrice(vm.marketPrice!!.second)
         }
     }
 
     fun initiateEstimatedFill() {
         (activity as NativeTradeRootActivity).viewModel.getFillAmount().observe(this, Observer { fillAmount ->
-            mView.find<TextView>(R.id.estimatedFillAmount).text = fillAmount!!.toString()
+            mView.find<TextView>(R.id.estimatedFillAmount).text = (fillAmount!! * 100).formattedPercentString()
         })
     }
 

@@ -9,7 +9,9 @@
         style="@style/CardViewStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,20 +28,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="TextView"
                 android:textAppearance="@style/SubtitleText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/orderFiatRateTextView" />
-
-            <ImageView
-                android:id="@+id/orderRightArrowImageView"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/orderLeftArrowImageView"
-                app:layout_constraintStart_toStartOf="@+id/guideline5"
-                app:layout_constraintTop_toTopOf="@+id/orderLeftArrowImageView"
-                app:srcCompat="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/orderTypeTextView"
@@ -47,7 +38,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/muli_bold"
                 android:text="TextView"
+                android:textAppearance="@style/RegularText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -79,7 +72,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="TextView"
-                android:textAppearance="@style/SubtitleText"
+                android:textAppearance="@style/RegularText"
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/orderAssetLogoImageView" />
 
@@ -97,12 +91,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/orderCryptoRateTextView" />
 
             <ImageView
-                android:id="@+id/orderLeftArrowImageView"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="4dp"
+                android:id="@+id/orderArrowImage"
+                android:layout_width="40dp"
+                android:layout_height="21dp"
                 app:layout_constraintBottom_toBottomOf="@+id/orderAssetLogoImageView"
-                app:layout_constraintEnd_toStartOf="@+id/guideline5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/orderAssetLogoImageView"
                 app:srcCompat="@color/colorAccent" />
 
@@ -110,7 +105,7 @@
                 android:id="@+id/orderFillProgressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -142,9 +137,9 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/orderRightArrowImageView"
+                app:layout_constraintBottom_toBottomOf="@+id/orderArrowImage"
                 app:layout_constraintEnd_toStartOf="@+id/baseAssetAmountTextView"
-                app:layout_constraintTop_toTopOf="@+id/orderRightArrowImageView"
+                app:layout_constraintTop_toTopOf="@+id/orderArrowImage"
                 app:srcCompat="?attr/colorAccent" />
 
             <TextView
@@ -153,7 +148,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="TextView"
                 android:textAppearance="@style/SubtitleText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView18" />

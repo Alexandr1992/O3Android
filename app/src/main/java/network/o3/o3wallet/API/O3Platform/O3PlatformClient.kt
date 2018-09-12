@@ -282,7 +282,7 @@ class O3PlatformClient {
     }
 
     fun getTradingAccounts(completion: (Pair<TradingAccount?, Error?>) -> (Unit)) {
-        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" + Account.getWallet().address
+        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" + Account.getWallet().address + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.responseString { request, response, result ->

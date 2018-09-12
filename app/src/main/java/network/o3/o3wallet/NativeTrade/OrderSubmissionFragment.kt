@@ -15,17 +15,19 @@ import android.widget.*
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.native_trade_order_card.*
+import network.o3.o3wallet.*
 
-import network.o3.o3wallet.R
-import network.o3.o3wallet.afterTextChanged
-import network.o3.o3wallet.formattedFiatString
-import network.o3.o3wallet.setNoDoubleClickListener
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onFocusChange
 import org.jetbrains.anko.sdk15.coroutines.onLongClick
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
+import java.nio.file.Files.find
 import java.text.DecimalFormatSymbols
 
 class OrderSubmissionFragment : Fragment() {
@@ -44,6 +46,7 @@ class OrderSubmissionFragment : Fragment() {
     lateinit var fiatPriceTextView: TextView
     lateinit var cryptoPriceTextView: TextView
 
+    lateinit var placeOrderButton: Button
 
     var editingAmountView: EditText? = null
 
@@ -86,11 +89,11 @@ class OrderSubmissionFragment : Fragment() {
     fun initiatePinPadButtons() {
         mView.find<Button>(R.id.button0).setOnClickListener {
             val curVal = editingAmountView?.text.toString()
-            /*if (curVal.isNotBlank()) {
-                editingAmountView?.text = SpannableStringBuilder(curVal + "0")
-            } else if ((activity as NativeTradeRootActivity).viewModel.selectedAssetDecimals > 0) {
+            if (curVal.isNotBlank()) {
+                digitTapped("0")
+            } else  {
                 editingAmountView?.text = SpannableStringBuilder(curVal + "0" + DecimalFormatSymbols().decimalSeparator)
-            }*/
+            }
         }
 
         mView.find<Button>(R.id.button1).setOnClickListener { digitTapped("1") }
@@ -117,6 +120,7 @@ class OrderSubmissionFragment : Fragment() {
         }
 
         val decimalButton = mView.find<ImageButton>(R.id.buttonDecimal)
+        decimalButton.visibility = View.VISIBLE
         if (DecimalFormatSymbols().decimalSeparator == ',') {
             decimalButton.image = context!!.getDrawable(R.drawable.ic_comma)
         } else {
@@ -124,10 +128,6 @@ class OrderSubmissionFragment : Fragment() {
         }
 
         decimalButton.setOnClickListener {
-            /*if ((activity as NativeTradeRootActivity).viewModel.selectedAssetDecimals == 0) {
-                return@setOnClickListener
-            }*/
-
             var currString = editingAmountView?.text.toString()
             if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
                 return@setOnClickListener
@@ -158,27 +158,19 @@ class OrderSubmissionFragment : Fragment() {
         (activity as NativeTradeRootActivity).viewModel.getSelectedBaseAssetImageUrl().observe ( this, Observer { url ->
             Glide.with(activity).load(url).into(mView.find<ImageView>(R.id.baseAssetLogo))
         })
-
-        (activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetValue("NEO")
-        (activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetImageUrl("https://cdn.o3.network/img/neo/NEO.png")
     }
 
-    /*
+
     fun initializeOrdersView() {
-        pendingOrdersContainer = mView.find(R.id.pendingOrdersContainer)
-        pendingOrdersContainer.setOnClickListener {
-            mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_ordersListFragment)
-        }
-        val pendingsOrderLabel: TextView = mView.find(R.id.pendingOrdersLabel)
         (activity as NativeTradeRootActivity).viewModel.getOrders().observe ( this, Observer { orders ->
             if (orders == null) {
                 context?.toast("ERROR")
             } else {
-                pendingsOrderLabel.text = String.format(resources.getString(R.string.NATIVE_TRADE_pendings_orders_count), orders.count())
-                pendingOrdersContainer.visibility = View.VISIBLE
+                (activity as NativeTradeRootActivity).find<TextView>(R.id.pendingOrderCountBadge).text = orders.count().toString()
+                (activity as NativeTradeRootActivity).find<TextView>(R.id.pendingOrderCountBadge).visibility = View.VISIBLE
             }
         })
-    }*/
+    }
 
     fun initializeOrderAmountSelector() {
         orderAssetAmountEditText = mView.find(R.id.orderAssetAmountEditText)
@@ -196,11 +188,23 @@ class OrderSubmissionFragment : Fragment() {
 
         // listen for the other text field and update as necessary
         (activity as NativeTradeRootActivity).viewModel.getSelectedBaseAssetAmount().observe(this, Observer { baseAssetAmount ->
+            if (editingAmountView == orderAssetAmountEditText) {
+                return@Observer
+            }
             val marketPriceCrypto = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.second
             val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.first
             if (marketPriceCrypto != null) {
                 val newValue = baseAssetAmount!! / (marketPriceCrypto)
-                orderAssetAmountEditText.text = SpannableStringBuilder("%.8f".format(newValue))
+                if (newValue == orderAssetAmountEditText.text.toString().toDouble()) {
+                    return@Observer
+                }
+                if (newValue == 0.0) {
+                    orderAssetAmountEditText.text = SpannableStringBuilder("")
+                    placeOrderButton.isEnabled = false
+                } else {
+                    orderAssetAmountEditText.text = SpannableStringBuilder(newValue.removeTrailingZeros())
+                    placeOrderButton.isEnabled = true
+                }
             }
 
             if (marketPriceFiat != null) {
@@ -225,11 +229,21 @@ class OrderSubmissionFragment : Fragment() {
 
         // listen for the other text field and update as necessary
         (activity as NativeTradeRootActivity).viewModel.getOrderAssetAmount().observe(this, Observer { orderAssetAmount ->
+            if (editingAmountView == baseAssetAmountEditText) {
+                return@Observer
+            }
+
             val marketPriceCrypto = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.second
             val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.first
             if (marketPriceCrypto != null ) {
                 val newValue = orderAssetAmount!! * (marketPriceCrypto)
-                baseAssetAmountEditText.text = SpannableStringBuilder("%.8f".format(newValue))
+                if (newValue == 0.0) {
+                    baseAssetAmountEditText.text = SpannableStringBuilder("")
+                    placeOrderButton.isEnabled = false
+                } else {
+                    baseAssetAmountEditText.text = SpannableStringBuilder(newValue.removeTrailingZeros())
+                    placeOrderButton.isEnabled = true
+                }
             }
 
             if (marketPriceFiat != null) {
@@ -240,7 +254,6 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun initiateEditingFieldListener() {
-
         (activity as NativeTradeRootActivity).viewModel.isEditingBaseAmount().observe ( this, Observer { isEditingBaseAmount ->
             if (isEditingBaseAmount!!) {
                 editingAmountView = baseAssetAmountEditText
@@ -263,36 +276,28 @@ class OrderSubmissionFragment : Fragment() {
 
         (activity as NativeTradeRootActivity).viewModel.getSelectedPrice().observe( this, Observer { marketPrice ->
             fiatPriceTextView.text = marketPrice!!.first.formattedFiatString()
-            cryptoPriceTextView.text = marketPrice.second.toString()
+            cryptoPriceTextView.text = marketPrice.second.removeTrailingZeros()
         })
     }
 
     fun initializeAssetBalanceListener() {
         baseAssetBalanceTextView = mView.find<TextView>(R.id.baseAssetBalanceTextView)
         (activity as NativeTradeRootActivity).viewModel.getSelectedBaseAssetBalance().observe(this, Observer { balance ->
-            baseAssetBalanceTextView.text = balance?.toString()
+            baseAssetBalanceTextView.text = balance?.removeTrailingZeros()
         })
     }
 
     fun initiateOrderButton() {
-        mView.find<TextView>(R.id.placeOrderButton).setOnClickListener {
-            val vm = (activity as NativeTradeRootActivity).viewModel
-            val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
-            val price = cryptoPriceTextView.text.toString()
-            val side = "buy"
-            val wantAmount = (orderAssetAmountEditText.text.toString().toDouble() * 100000000.0).toLong().toString()
-            val orderType = "limit"
-            mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
-
-
-           /* SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
-                if(it.first != true) {
-                    //TODO: "Some serios error occured"
-                } else {
-                    mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_orderPlacedFragment)
-
-                }
-            }*/
+        placeOrderButton = mView.find<Button>(R.id.placeOrderButton)
+        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 == 0.0) {
+            placeOrderButton.isEnabled = false
+        }
+        placeOrderButton.setOnClickListener {
+            if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+                alert("You need a larger balance in your trading account").show()
+            } else {
+                mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
+            }
         }
     }
 
@@ -301,14 +306,14 @@ class OrderSubmissionFragment : Fragment() {
         mView = inflater.inflate(R.layout.native_trade_order_submission_fragment, container, false)
         totalFiatAmountTextView = mView.find(R.id.totalFiatAmountTextView)
         initializeBaseAssetContainer()
-        //initializeOrdersView()
+        initializeOrdersView()
         initializeOrderAmountSelector()
         initializeBaseAmountSelector()
+        initiateOrderButton()
         initiatePinPadButtons()
         initiateEditingFieldListener()
         initializeRealTimePriceListeners()
         initializeAssetBalanceListener()
-        initiateOrderButton()
 
         return mView
     }

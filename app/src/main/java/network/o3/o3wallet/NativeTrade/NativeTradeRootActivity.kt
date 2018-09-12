@@ -1,5 +1,6 @@
 package network.o3.o3wallet.NativeTrade
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.find
@@ -30,7 +32,6 @@ class NativeTradeRootActivity : AppCompatActivity() {
         }
 
         find<TextView>(R.id.orderAssetSymbolTextView).text = viewModel.orderAsset
-
         Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", viewModel.orderAsset))
                 .into(find<ImageView>(R.id.orderAssetLogo))
         setContentView(R.layout.native_trade_root_activity)
@@ -44,9 +45,21 @@ class NativeTradeRootActivity : AppCompatActivity() {
                                                                       destination ->
             if (destination.id == R.id.orderSubmissionFragment) {
                 find<ImageView>(R.id.pendingOrdersToolbarButton).visibility = View.VISIBLE
+                find<TextView>(R.id.pendingOrderCountBadge).visibility = View.VISIBLE
             } else {
                 find<ImageView>(R.id.pendingOrdersToolbarButton).visibility = View.GONE
+                find<TextView>(R.id.pendingOrderCountBadge).visibility = View.GONE
             }
         }
+    }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_White, true)
+        }
+        return theme
     }
 }

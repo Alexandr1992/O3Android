@@ -23,7 +23,7 @@ class NativeTradeViewModel: ViewModel() {
    // val selectedPriceFiat: Long
     //val selectedPrice: Double = 0.1
 
-    var selectedBaseAsset: MutableLiveData<String>? = null
+    var selectedBaseAsset: MutableLiveData<String> = MutableLiveData()
     var selectedBaseAssetAmount: MutableLiveData<Double> = MutableLiveData()
 
     var orderAssetAmount: MutableLiveData<Double> = MutableLiveData()
@@ -53,6 +53,8 @@ class NativeTradeViewModel: ViewModel() {
 
     init {
         estimatedFillAmount.value = 0.0
+        selectedBaseAsset.value = "NEO"
+        baseAssetImageUrl.value = "https://cdn.o3.network/img/neo/NEO.png"
     }
 
     var orderBook = listOf<Offer>()
@@ -62,14 +64,12 @@ class NativeTradeViewModel: ViewModel() {
     }
 
     fun getSelectedBaseAssetObserver(): LiveData<String> {
-        if (selectedBaseAsset == null) {
-            selectedBaseAsset = MutableLiveData()
-        }
         return selectedBaseAsset!!
     }
 
     fun setSelectedBaseAssetValue(value: String) {
         selectedBaseAsset!!.value = value
+        loadMarketPrice()
         selectedBaseAsset!!.postValue(value)
     }
 
@@ -102,8 +102,6 @@ class NativeTradeViewModel: ViewModel() {
 
     fun setSelectedBaseAssetAmount(amount: Double) {
         selectedBaseAssetAmount.value = amount
-        selectedBaseAssetAmount.postValue(amount)
-
         orderAssetAmount.value =  amount / selectedPrice?.value?.second!!
     }
 
@@ -113,10 +111,7 @@ class NativeTradeViewModel: ViewModel() {
 
     fun setOrderAssetAmount(amount: Double) {
         orderAssetAmount.value = amount
-        orderAssetAmount.postValue(amount)
-
         selectedBaseAssetAmount.value =  selectedPrice?.value?.second!! * amount
-
     }
 
     fun getSelectedPrice(): LiveData<Pair<Double, Double>> {
@@ -172,6 +167,9 @@ class NativeTradeViewModel: ViewModel() {
         selectedPrice?.value = Pair(fiatPrice, cryptoPrice)
         selectedPrice?.postValue(Pair(fiatPrice, cryptoPrice))
         updateMarketRateDifference(cryptoPrice)
+        if ((selectedBaseAssetAmount.value ?: 0.0) != 0.0) {
+            orderAssetAmount.postValue(orderAssetAmount.value)
+        }
     }
 
     fun getTradingAccountBalances(): LiveData<TradingAccount> {
@@ -235,6 +233,12 @@ class NativeTradeViewModel: ViewModel() {
     }
 
     fun calculateFillAmount() {
+        if (orderAssetAmount.value == null) {
+            estimatedFillAmount.value = 0.0
+            estimatedFillAmount.postValue(0.0)
+            return
+        }
+
         //Buy Side
         if (isBuyOrder) {
             var offersUnderPrice = mutableListOf<Offer>()
@@ -248,11 +252,11 @@ class NativeTradeViewModel: ViewModel() {
             var fillSum = offersUnderPrice.sumByDouble { it.offer_amount.toDouble() } / 100000000
 
             if (fillSum >= orderAssetAmount.value!!) {
-                estimatedFillAmount!!.value = 1.0
-                estimatedFillAmount!!.postValue(1.0)
+                estimatedFillAmount.value = 1.0
+                estimatedFillAmount.postValue(1.0)
             } else {
-                estimatedFillAmount!!.value = fillSum / orderAssetAmount.value!!
-                estimatedFillAmount!!.postValue(fillSum / orderAssetAmount.value!!)
+                estimatedFillAmount.value = fillSum / orderAssetAmount.value!!
+                estimatedFillAmount.postValue(fillSum / orderAssetAmount.value!!)
             }
         } else {
             var offersOverPrice = mutableListOf<Offer>()
@@ -266,11 +270,11 @@ class NativeTradeViewModel: ViewModel() {
             var fillSum = offersOverPrice.sumByDouble { it.want_amount.toDouble() } / 100000000
 
             if (fillSum >= orderAssetAmount.value!!) {
-                estimatedFillAmount!!.value = 1.0
-                estimatedFillAmount!!.postValue(1.0)
+                estimatedFillAmount.value = 1.0
+                estimatedFillAmount.postValue(1.0)
             } else {
-                estimatedFillAmount!!.value = fillSum / orderAssetAmount.value!!
-                estimatedFillAmount!!.postValue(fillSum / orderAssetAmount.value!!)
+                estimatedFillAmount.value = fillSum / orderAssetAmount.value!!
+                estimatedFillAmount.postValue(fillSum / orderAssetAmount.value!!)
             }
         }
     }

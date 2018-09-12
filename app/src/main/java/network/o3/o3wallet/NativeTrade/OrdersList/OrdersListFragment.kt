@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
@@ -31,6 +32,11 @@ class OrdersListFragment : Fragment() {
             onUiThread {
                 ordersListView.adapter = OrdersAdapter(it.first!!, this)
                 swipeContainer.isRefreshing = false
+                if (it.first!!.isEmpty()) {
+                    mView.find<TextView>(R.id.ordersEmptyTextView).visibility = View.VISIBLE
+                } else {
+                    mView.find<TextView>(R.id.ordersEmptyTextView).visibility = View.GONE
+                }
             }
         }
     }

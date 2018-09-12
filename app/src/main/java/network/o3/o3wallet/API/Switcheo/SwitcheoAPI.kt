@@ -25,6 +25,14 @@ class SwitcheoAPI {
         baseTestUrl
     }
 
+    val testNetContract = "a195c1549e7da61b8da315765a790ac7e7633b82"
+    val mainNetContract = "91b83e96f2a7c4fdf0c1688441ec61986c7cae26"
+    val defaultContract = if (PersistentStore.getNetworkType() == "Main") {
+        mainNetContract
+    } else {
+        testNetContract
+    }
+
     enum class Route {
         TICKERS,
         OFFERS,
@@ -46,8 +54,7 @@ class SwitcheoAPI {
         }
     }
 
-    val testNetContract = "a195c1549e7da61b8da315765a790ac7e7633b82"
-    val mainNetContract = "91b83e96f2a7c4fdf0c1688441ec61986c7cae26"
+
 
     //region Transaction Serialization
     fun toEvenHexString(value: Int): String {
@@ -206,7 +213,7 @@ class SwitcheoAPI {
     //endregion
 
     //region Offers
-    fun getOffersForPair(pair: String, blockchain: String = "neo", contract_hash: String = mainNetContract, completion: (Pair<Array<Offer>?, Error?>) -> (Unit)) {
+    fun getOffersForPair(pair: String, blockchain: String = "neo", contract_hash: String = defaultContract, completion: (Pair<Array<Offer>?, Error?>) -> (Unit)) {
         val url = baseURL + Route.OFFERS.routeName()
         var request = url.httpGet(
                 listOf("blockchain" to blockchain, "pair" to pair, "contract_hash" to contract_hash))
@@ -386,7 +393,7 @@ class SwitcheoAPI {
     //endregion
 
     //region Orders
-    fun getPendingOrders(contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<List<SwitcheoOrders>?, Error?>) -> (Unit)) {
+    fun getPendingOrders(contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<List<SwitcheoOrders>?, Error?>) -> (Unit)) {
         val parameters = listOf("blockchain" to blockchain,
                 "contract_hash" to contract_hash,
                 "address" to Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
@@ -416,7 +423,7 @@ class SwitcheoAPI {
     }
 
     fun submitOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
-                    contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<SwitcheoOrders?, Error?>) -> (Unit)) {
+                    contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<SwitcheoOrders?, Error?>) -> (Unit)) {
         bg {
             val (data, error) = (baseURL + "/" + Route.TIMESTAMP.routeName()).httpGet().responseString().third
             val timeStamp = Gson().fromJson<JsonObject>(data!!)["timestamp"].asLong
@@ -484,7 +491,7 @@ class SwitcheoAPI {
     }
 
     fun singleStepOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
-                        contract_hash: String = mainNetContract, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+                        contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
         submitOrder(pair, side, price, want_amount, orderType, use_native_tokens, contract_hash, blockchain) {
             if (it.second != null) {
@@ -556,7 +563,7 @@ class SwitcheoAPI {
     //endregion
 
     //region Balances
-    fun getBalances(addresses: Array<String> = arrayOf(Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase()), contract_hashes: Array<String> = arrayOf(mainNetContract), completion: (Pair<ContractBalance?, Error?>) -> (Unit)) {
+    fun getBalances(addresses: Array<String> = arrayOf(Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase()), contract_hashes: Array<String> = arrayOf(defaultContract), completion: (Pair<ContractBalance?, Error?>) -> (Unit)) {
         val url = baseURL + Route.BALANCES.routeName()
         val parameters = listOf("addresses" to addresses, "contract_hashes" to contract_hashes)
         url.httpGet(parameters).responseString { req, response, result ->

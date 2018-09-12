@@ -7,6 +7,7 @@
     <color name="colorAccentLight">#FFCC80</color>
     <color name="colorLoss">#d0011b</color>
     <color name="colorGain">#7ED321</color>
+    <color name="colorSell">#D32167</color>
     <color name="colorSubtitleGrey">#cecece</color>
     <color name="colorDisabled">#55cecece</color>
     <color name="colorWeakGrayBackground">#f6f6f6</color>
