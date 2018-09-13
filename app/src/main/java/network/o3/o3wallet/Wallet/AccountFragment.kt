@@ -190,6 +190,7 @@ class AccountFragment : Fragment() {
             } else {
                  (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
             }
+            accountViewModel.loadWalletAccountPriceData(it!!.assets)
             accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
                 (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
             })
@@ -202,6 +203,10 @@ class AccountFragment : Fragment() {
 
         accountViewModel.getTradingAccountPriceData().observe(this, Observer { priceData ->
             (assetListView.adapter as AccountAssetsAdapter).setTradingAccountPriceData(priceData!!)
+        })
+
+        accountViewModel.getWalletAccountPriceData().observe(this, Observer { priceData ->
+            (assetListView.adapter as AccountAssetsAdapter).setWalletAccountPriceData(priceData!!)
         })
     }
 

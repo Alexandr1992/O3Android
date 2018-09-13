@@ -118,6 +118,18 @@
                 app:layout_constraintBottom_toBottomOf="@+id/assetLogo4"
                 app:layout_constraintStart_toEndOf="@+id/assetLogo4"
                 app:layout_constraintTop_toTopOf="@+id/assetLogo4" />
+
+            <ImageView
+                android:id="@+id/imageView12"
+                android:layout_width="14dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:adjustViewBounds="true"
+                android:rotation="90"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_right_chevron" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

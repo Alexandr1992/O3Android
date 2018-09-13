@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Telephony
 import android.support.v7.widget.CardView
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -36,14 +38,14 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
     private var arrayOfAccountAssets = arrayListOf<TransferableAsset>()
     private var arrayOfTradingAccountAssets = listOf<TransferableAsset>()
+    private var walletAccountPriceData: PriceData? = null
     private var tradingAccountPriceData: PriceData? = null
     private var inboxList = listOf<O3InboxItem>()
     private val mFragment = mFragment
     private var isInitialLoad = true
-    private var isExpanded = false
+    private var currExpandedPosition = -1
 
     companion object {
-        val ASSETROW = 0
         val INBOXROW = 1
         val ACCOUNTROW = 2
     }
@@ -54,13 +56,13 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         if (inboxList.count() == list.count()) {
             return
         }
-        notifyItemRangeChanged(0, inboxList.count() + arrayOfAccountAssets.count())
+        notifyItemRangeChanged(0, inboxList.count())
     }
 
     @Synchronized
     fun setAssetsArray(assets: ArrayList<TransferableAsset>) {
         arrayOfAccountAssets = assets
-        notifyItemRangeChanged(inboxList.count(), arrayOfAccountAssets.count())
+        notifyItemChanged(inboxList.count())
     }
 
     fun setTradingAccountAssets(assets: List<TransferableAsset>) {
@@ -73,8 +75,13 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         notifyItemChanged(itemCount - 1)
     }
 
+    fun setWalletAccountPriceData(priceData: PriceData) {
+        walletAccountPriceData = priceData
+        notifyItemChanged(itemCount - 1)
+    }
+
     override fun getItemCount(): Int {
-        return arrayOfAccountAssets.count() + inboxList.count() + 1
+        return inboxList.count() + 2
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -83,48 +90,72 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         }
 
         if (inboxList.isEmpty()) {
-            return ASSETROW
+            return ACCOUNTROW
         } else if (position < inboxList.size) {
             return INBOXROW
         } else {
-            return ASSETROW
+            return ACCOUNTROW
         }
     }
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (inboxList.isNotEmpty() && position < inboxList.size) {
+            (holder as InboxHolder).bindInboxItem(inboxList[position])
+            return
+        }
+
+
         if(position == itemCount - 1) {
-            (holder as AccountHolder).bindAccount(arrayOfTradingAccountAssets, tradingAccountPriceData)
-            holder.itemView.isActivated = isExpanded
-            if (isExpanded) {
+            (holder as AccountHolder).bindAccount(arrayOfTradingAccountAssets, tradingAccountPriceData, mFragment.getString(R.string.WALLET_trading_account))
+            if (currExpandedPosition == position) {
                 holder.itemView.find<View>(R.id.accountAssetsRecyclerView).visibility = View.VISIBLE
             } else {
                 holder.itemView.find<View>(R.id.accountAssetsRecyclerView).visibility = View.GONE
             }
 
             holder.itemView.setOnClickListener {
-                isExpanded = true
-                TransitionManager.beginDelayedTransition(mFragment.assetListView)
-                notifyItemChanged(position)
+                if (currExpandedPosition == position) {
+                    currExpandedPosition = -1
+                    notifyItemChanged(position)
+                } else if (currExpandedPosition != -1) {
+                    val prevExpandedPosition = currExpandedPosition
+                    currExpandedPosition = position
+                    notifyItemChanged(position)
+                    notifyItemChanged(prevExpandedPosition)
+                } else {
+                    currExpandedPosition = position
+                    notifyItemChanged(position)
+                }
             }
-            return
-        }
-
-        if (inboxList.isEmpty()) {
-            (holder as AssetHolder).bindAsset(arrayOfAccountAssets[position])
-        } else if (position < inboxList.size) {
-            (holder as InboxHolder).bindInboxItem(inboxList[position])
         } else {
-            (holder as AssetHolder).bindAsset(arrayOfAccountAssets[position - inboxList.size])
+            (holder as AccountHolder).bindAccount(arrayOfAccountAssets, walletAccountPriceData, mFragment.getString(R.string.WALLET_my_o3_wallet))
+            if (currExpandedPosition == position) {
+                holder.itemView.find<View>(R.id.accountAssetsRecyclerView).visibility = View.VISIBLE
+            } else {
+                holder.itemView.find<View>(R.id.accountAssetsRecyclerView).visibility = View.GONE
+            }
+
+            holder.itemView.setOnClickListener {
+                if (currExpandedPosition == position) {
+                    currExpandedPosition = -1
+                    notifyItemChanged(position)
+                } else if (currExpandedPosition != -1) {
+                        val prevExpandedPosition = currExpandedPosition
+                        currExpandedPosition = position
+                        notifyItemChanged(position)
+                        notifyItemChanged(prevExpandedPosition)
+                } else {
+                    currExpandedPosition = position
+                    notifyItemChanged(position)
+                }
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        if (viewType == ASSETROW) {
-            val view = layoutInflater.inflate(R.layout.wallet_account_asset_row, parent, false)
-            return AssetHolder(view)
-        } else if (viewType == INBOXROW) {
+        if (viewType == INBOXROW) {
             val view = layoutInflater.inflate(R.layout.wallet_inbox_layout, parent, false)
             return InboxHolder(view)
         } else {
@@ -175,57 +206,6 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         }
     }
 
-    class AssetHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
-        private var view: View = v
-        private var asset: TransferableAsset? = null
-
-        init {
-            v.setOnClickListener(this)
-        }
-
-        val assetNameTextView = view.find<TextView>(R.id.assetName)
-        val assetAmountTextView = view.find<TextView>(R.id.assetAmount)
-        val logoImageView = view.find<ImageView>(R.id.coinLogoImageView)
-
-        override fun onClick(p0: View?) {
-            var detailURL = "https://public.o3.network/neo/assets/" + asset!!.symbol + "?address=" +
-                    Account.getWallet().address + "&theme=" + PersistentStore.getTheme()
-            if (asset!!.id.contains("00000000000")) {
-                detailURL = "https://public.o3.network/ont/assets/" + asset!!.symbol + "?address=" +
-                        Account.getWallet().address + "&theme=" + PersistentStore.getTheme()
-            }
-            val intent = Intent(view.context, DAppBrowserActivity::class.java)
-            intent.putExtra("url", detailURL)
-            view.context.startActivity(intent)
-        }
-
-
-        fun bindAsset(asset: TransferableAsset) {
-            this.asset = asset
-            if (asset.id.contains(NeoNodeRPC.Asset.NEO.assetID())) {
-                assetNameTextView.text = NeoNodeRPC.Asset.NEO.name
-                assetAmountTextView.text = "%d".format(asset.value.toInt())
-                val imageURL = "https://cdn.o3.network/img/neo/NEO.png"
-                Glide.with(view.context).load(imageURL).into(logoImageView)
-            } else if (asset.id.contains(NeoNodeRPC.Asset.GAS.assetID())) {
-                assetNameTextView.text = NeoNodeRPC.Asset.GAS.name
-                assetAmountTextView.text = "%.8f".format(asset.value)
-                val imageURL = "https://cdn.o3.network/img/neo/GAS.png"
-                Glide.with(view.context).load(imageURL).into(logoImageView)
-            } else {
-                assetNameTextView.text = asset.symbol
-                var formatter = NumberFormat.getNumberInstance()
-                formatter.maximumFractionDigits = asset.decimals
-                assetAmountTextView.text = formatter.format(asset.value)
-                val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", asset.symbol.toUpperCase())
-                Glide.with(view.context).load(imageURL).into(logoImageView)
-                if (asset.id.contains("000000000000")) {
-                    assetNameTextView.text = asset.symbol + " (M)"
-                }
-            }
-        }
-    }
-
     class AccountHolder(v: View, assets: List<TransferableAsset>, priceData: PriceData?) : RecyclerView.ViewHolder(v){
         private var mView: View = v
         private var mAssets = assets
@@ -272,16 +252,25 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         }
 
 
-        fun bindAccount(assets: List<TransferableAsset>, priceData: PriceData?) {
+        fun bindAccount(assets: List<TransferableAsset>, priceData: PriceData?, accountName: String) {
             mAssets = assets
             mPriceData = priceData
-            mView.findViewById<TextView>(R.id.accountTitleTextView).text = mView.context.getString(R.string.WALLET_trading_account)
+            mView.findViewById<TextView>(R.id.accountTitleTextView).text = accountName
             fillLogos()
             fillPrice()
-            if (mView.find<RecyclerView>(R.id.accountAssetsRecyclerView).adapter == null) {
-                mView.find<RecyclerView>(R.id.accountAssetsRecyclerView).adapter = SingleAccountAdapter(mAssets)
+
+
+            val recyclerView = mView.find<RecyclerView>(R.id.accountAssetsRecyclerView)
+            if (recyclerView.itemDecorationCount == 0) {
+                val itemDecorator = DividerItemDecoration(mView.context!!, DividerItemDecoration.VERTICAL)
+                itemDecorator.setDrawable(mView.context.getDrawable(R.drawable.vertical_divider)!!)
+                recyclerView.addItemDecoration(itemDecorator)
+            }
+
+            if (recyclerView.adapter == null) {
+                recyclerView.adapter = SingleAccountAdapter(mAssets)
             } else {
-                (mView.find<RecyclerView>(R.id.accountAssetsRecyclerView).adapter as SingleAccountAdapter).setAssets(assets)
+                (recyclerView.adapter as SingleAccountAdapter).setAssets(assets)
             }
 
             (mView.find<RecyclerView>(R.id.accountAssetsRecyclerView).adapter as SingleAccountAdapter).setAssets(assets)

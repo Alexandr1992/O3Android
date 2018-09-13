@@ -32,6 +32,7 @@ class AccountViewModel: ViewModel() {
     private var assets: MutableLiveData<TransferableAssets>? = null
     private var tradingAccountAssets: MutableLiveData<List<TransferableAsset>>? = null
     private var tradingAccountPriceData: MutableLiveData<PriceData> = MutableLiveData()
+    private var walletAccountPriceData: MutableLiveData<PriceData> = MutableLiveData()
 
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
@@ -108,6 +109,19 @@ class AccountViewModel: ViewModel() {
                 return@getPortfolio
             }
             tradingAccountPriceData!!.postValue(it.first!!.data.first())
+        }
+    }
+
+    fun getWalletAccountPriceData(): LiveData<PriceData> {
+        return walletAccountPriceData!!
+    }
+
+    fun loadWalletAccountPriceData(assets: List<TransferableAsset>) {
+        O3API().getPortfolio(assets as ArrayList<TransferableAsset>, "24h") {
+            if (it.second != null) {
+                return@getPortfolio
+            }
+            walletAccountPriceData!!.postValue(it.first!!.data.first())
         }
     }
 
