@@ -236,6 +236,9 @@
     <string name="WALLET_send_action_label" comment="Action button title to send NEO">Send</string>
     <string name="WALLET_token_sale_action_label" comment="Action button title to participate in a token sale">Token Sale</string>
 
+    <string name="WALLET_trading_account" comment="Trading Account card title">Trading Account</string>
+    <string name="WALLET_additonal_asset" comment="When you have more than 4 assets in an account">+ %d more</string>
+
     <!-- Wallet History -->
     <string name="WALLET_to" comment="to label in transaction history screen">To</string>>
     <string name="WALLET_to_formatted" comment="to label in transaction history screen and send screen">To: %1$s</string>

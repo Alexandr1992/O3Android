@@ -11,21 +11,27 @@ import neoutils.Neoutils
 import neoutils.Wallet
 import network.o3.o3wallet.API.NEO.Block
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
+import network.o3.o3wallet.API.O3.O3API
+import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.coroutines.experimental.bg
+import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.timerTask
+import kotlin.math.pow
 
 
 class AccountViewModel: ViewModel() {
     private var assets: MutableLiveData<TransferableAssets>? = null
+    private var tradingAccountAssets: MutableLiveData<List<TransferableAsset>>? = null
+    private var tradingAccountPriceData: MutableLiveData<PriceData> = MutableLiveData()
 
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
@@ -69,6 +75,39 @@ class AccountViewModel: ViewModel() {
             }
             PersistentStore.setLatestBalances(it.first)
             assets!!.postValue(it.first)
+        }
+    }
+
+    fun getTradingAccountAssets(): LiveData<List<TransferableAsset>> {
+        if (tradingAccountAssets == null) {
+            tradingAccountAssets = MutableLiveData()
+            loadTradingAccountAssets()
+        }
+        return tradingAccountAssets!!
+    }
+
+    fun loadTradingAccountAssets() {
+        O3PlatformClient().getTradingAccounts {
+            if (it.first != null) {
+                val dividedValues = mutableListOf<TransferableAsset>()
+                for (asset in it.first!!.switcheo.confirmed) {
+                    asset.value = asset.value.divide(10.0.pow(asset.decimals).toBigDecimal())
+                }
+                tradingAccountAssets!!.postValue(it.first!!.switcheo.confirmed)
+            }
+        }
+    }
+
+    fun getTradingAccountPriceData(): LiveData<PriceData> {
+        return tradingAccountPriceData!!
+    }
+
+    fun loadTradingAccountPriceData(assets: List<TransferableAsset>) {
+        O3API().getPortfolio(assets as ArrayList<TransferableAsset>, "24h") {
+            if (it.second != null) {
+                return@getPortfolio
+            }
+            tradingAccountPriceData!!.postValue(it.first!!.data.first())
         }
     }
 

@@ -37,6 +37,7 @@ import java.util.*
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
 import kotlinx.android.synthetic.main.wallet_account_header_layout.*
+import network.o3.o3wallet.API.O3.PriceData
 
 class AccountFragment : Fragment() {
     // toolbar items
@@ -46,7 +47,7 @@ class AccountFragment : Fragment() {
 
     //assets list
     private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var assetListView: RecyclerView
+    lateinit var assetListView: RecyclerView
 
     //Gas Claim Card NEO
     private lateinit var neoSyncButton: Button
@@ -192,6 +193,15 @@ class AccountFragment : Fragment() {
             accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
                 (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
             })
+        })
+
+        accountViewModel.getTradingAccountAssets().observe(this, Observer<List<TransferableAsset>> {
+            (assetListView.adapter as AccountAssetsAdapter).setTradingAccountAssets(it!!)
+             accountViewModel.loadTradingAccountPriceData(it!!)
+        })
+
+        accountViewModel.getTradingAccountPriceData().observe(this, Observer { priceData ->
+            (assetListView.adapter as AccountAssetsAdapter).setTradingAccountPriceData(priceData!!)
         })
     }
 
