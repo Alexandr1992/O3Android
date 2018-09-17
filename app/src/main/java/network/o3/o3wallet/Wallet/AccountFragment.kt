@@ -468,7 +468,7 @@ class AccountFragment : Fragment() {
     //endregion
 
     //region Toolbar Action Items
-    private fun showMyAddress() {
+    fun showMyAddress() {
         val addressBottomSheet = MyAddressFragment()
         addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
     }
@@ -482,7 +482,7 @@ class AccountFragment : Fragment() {
     }
 
 
-    private fun sendButtonTapped(payload: String) {
+    fun sendButtonTapped(payload: String) {
         val intent = Intent(activity, SendV2Activity::class.java)
         intent.putExtra("uri", payload)
         startActivity(intent)

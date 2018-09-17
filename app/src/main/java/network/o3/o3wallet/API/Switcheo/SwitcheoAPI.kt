@@ -303,7 +303,7 @@ class SwitcheoAPI {
     }
 
     fun singleStepDeposit(asset_id: String, amount: String,
-                          contract_hash: String, blockchain: String = "neo",
+                          contract_hash: String = defaultContract, blockchain: String = "neo",
                           completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
         submitDeposit(asset_id, amount, contract_hash, blockchain) {
@@ -334,6 +334,7 @@ class SwitcheoAPI {
                     "contract_hash" to contract_hash,
                     "timestamp" to timeStamp)
 
+            Log.d("Withdrawal: ", jsonPayload.toString())
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
             jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
@@ -377,7 +378,7 @@ class SwitcheoAPI {
     }
 
     fun singleStepWithdrawal(asset_id: String, amount: String,
-                             contract_hash: String, blockchain: String = "neo",
+                             contract_hash: String = defaultContract, blockchain: String = "neo",
                              completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
         submitWithdrawal(asset_id, amount, contract_hash, blockchain) {

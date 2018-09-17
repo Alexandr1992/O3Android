@@ -106,6 +106,7 @@ package="network.o3.o3wallet">
     <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
     <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
     <activity android:name=".Onboarding.PasscodeRequestActivity" />
+    <activity android:name=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity" />
     <activity android:name="network.o3.o3wallet.NativeTrade.NativeTradeRootActivity"
         android:screenOrientation="portrait"
         android:windowSoftInputMode="stateAlwaysHidden"

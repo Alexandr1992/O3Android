@@ -253,6 +253,8 @@
     <string name="WALLET_from_O3_wallet" comment="label for when transaction goes from O3 wallet">From: O3 Wallet</string>
     <string name="WALLET_block_number" comment="label for block number in transaction histoty">Block Number: %1$s</string>
     <string name="WALLET_Request" comment="lavel for the request button">Request</string>
+    <string name="WALLET_Withdraw" comment="label for when withdrawing from trading account">Withdraw</string>
+    <string name="WALLET_Deposit" comment="lavel for when depositing from trading account">Deposit</string>
 
     <string name="WALLET_Confirmed" comment="In Transaction History for confirmed transactions">Confirmed</string>
     <string name="WALLET_Pending" comment="In Transaction History for pending transactions">Pending</string>

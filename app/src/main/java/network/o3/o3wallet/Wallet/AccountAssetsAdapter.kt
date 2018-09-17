@@ -1,14 +1,10 @@
 package network.o3.o3wallet.Wallet
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.provider.Telephony
 import android.support.v7.widget.CardView
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,14 +16,10 @@ import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.O3InboxItem
-import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
-import org.jetbrains.anko.support.v4.find
-import java.math.BigDecimal
-import java.security.AccessControlContext
 import java.text.NumberFormat
 import kotlin.math.min
 
@@ -77,7 +69,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
     fun setWalletAccountPriceData(priceData: PriceData) {
         walletAccountPriceData = priceData
-        notifyItemChanged(itemCount - 1)
+        notifyItemChanged(itemCount - 2)
     }
 
     override fun getItemCount(): Int {
@@ -107,7 +99,8 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
 
         if(position == itemCount - 1) {
-            (holder as AccountHolder).bindAccount(arrayOfTradingAccountAssets, tradingAccountPriceData, mFragment.getString(R.string.WALLET_trading_account))
+            (holder as AccountHolder).bindAccount(arrayOfTradingAccountAssets,
+                    tradingAccountPriceData, mFragment.getString(R.string.WALLET_trading_account), false)
             if (currExpandedPosition == position) {
                 holder.itemView.find<View>(R.id.accountAssetsRecyclerView).visibility = View.VISIBLE
             } else {
@@ -129,7 +122,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 }
             }
         } else {
-            (holder as AccountHolder).bindAccount(arrayOfAccountAssets, walletAccountPriceData, mFragment.getString(R.string.WALLET_my_o3_wallet))
+            (holder as AccountHolder).bindAccount(arrayOfAccountAssets, walletAccountPriceData, mFragment.getString(R.string.WALLET_my_o3_wallet), true)
             if (currExpandedPosition == position) {
                 holder.itemView.find<View>(R.id.accountAssetsRecyclerView).visibility = View.VISIBLE
             } else {
@@ -160,7 +153,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             return InboxHolder(view)
         } else {
             val view = layoutInflater.inflate(R.layout.wallet_trading_account_card, parent, false)
-            return AccountHolder(view, arrayOfTradingAccountAssets, tradingAccountPriceData)
+            return AccountHolder(mFragment, view, arrayOfTradingAccountAssets, tradingAccountPriceData)
         }
     }
 
@@ -206,8 +199,9 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         }
     }
 
-    class AccountHolder(v: View, assets: List<TransferableAsset>, priceData: PriceData?) : RecyclerView.ViewHolder(v){
+    class AccountHolder(fragment: AccountFragment, v: View, assets: List<TransferableAsset>, priceData: PriceData?) : RecyclerView.ViewHolder(v){
         private var mView: View = v
+        private var mFragment = fragment
         private var mAssets = assets
         private var mPriceData = priceData
 
@@ -233,7 +227,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             }
 
             val additionalAssetsTextView = mView.find<TextView>(R.id.additionalAssetsTextView)
-            if (endIndex > 4) {
+            if (mAssets.size > 4) {
                 additionalAssetsTextView.visibility = View.VISIBLE
                 additionalAssetsTextView.text =
                         String.format(mView.context.getString(R.string.WALLET_additonal_asset), mAssets.size - 4)
@@ -251,13 +245,44 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
         }
 
+        fun initiateToolbarButtons(isWallet: Boolean) {
+            val leftToolbarButton = mView.find<Button>(R.id.leftToolbarButton)
+            val rightToolbarButton = mView.find<Button>(R.id.rightToolbarButton)
+            if (isWallet) {
+                leftToolbarButton.setOnClickListener { mFragment.showMyAddress() }
+                leftToolbarButton.text = mFragment.getString(R.string.WALLET_Request)
+                leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_request, 0, 0, 0)
 
-        fun bindAccount(assets: List<TransferableAsset>, priceData: PriceData?, accountName: String) {
+                rightToolbarButton.setOnClickListener { mFragment.sendButtonTapped("") }
+                rightToolbarButton.text = mFragment.getString(R.string.WALLET_send_action_label)
+                rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_send, 0, 0, 0)
+            } else {
+                leftToolbarButton.setOnClickListener {
+                    val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
+                    intent.putExtra("isDeposit", false)
+                    mView.context.startActivity(intent)
+                }
+                leftToolbarButton.text = mFragment.getString(R.string.WALLET_Withdraw)
+                leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_request, 0, 0, 0)
+
+                rightToolbarButton.setOnClickListener {
+                    val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
+                    intent.putExtra("isDeposit", true)
+                    mView.context.startActivity(intent)
+                }
+                rightToolbarButton.text = mFragment.getString(R.string.WALLET_Deposit)
+                rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_send, 0, 0, 0)
+            }
+        }
+
+
+        fun bindAccount(assets: List<TransferableAsset>, priceData: PriceData?, accountName: String, isWallet: Boolean) {
             mAssets = assets
             mPriceData = priceData
             mView.findViewById<TextView>(R.id.accountTitleTextView).text = accountName
             fillLogos()
             fillPrice()
+            initiateToolbarButtons(isWallet)
 
 
             val recyclerView = mView.find<RecyclerView>(R.id.accountAssetsRecyclerView)

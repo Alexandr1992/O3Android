@@ -80,34 +80,68 @@
                 app:layout_constraintTop_toBottomOf="@+id/accountBalanceTextView"
                 app:srcCompat="@color/colorAccent" />
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
                 android:id="@+id/linearLayout7"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <Button
-                    android:id="@+id/depositButton"
+                    android:id="@+id/leftToolbarButton"
+                    style="@style/BorderLessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Button"
-                    tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="16dp" />
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:drawableLeft="@drawable/ic_request"
+                    android:drawablePadding="8dp"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/WALLET_Request"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline6"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view5"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="?attr/primaryBackgroundColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/rightToolbarButton"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/leftToolbarButton"
+                    app:layout_constraintTop_toTopOf="parent" />
+
 
                 <Button
-                    android:id="@+id/withdrawButton"
+                    android:id="@+id/rightToolbarButton"
+                    style="@style/BorderLessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Button"
-                    tools:layout_editor_absoluteX="215dp"
-                    tools:layout_editor_absoluteY="16dp" />
-            </LinearLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:drawableLeft="@drawable/ic_request"
+                    android:drawablePadding="8dp"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/WALLET_Request"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.constraint.Guideline
+                    android:id="@+id/guideline6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/additionalAssetsTextView"

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
 import network.o3.o3wallet.R
 import java.text.NumberFormat
 
@@ -86,7 +87,12 @@ class AssetSelectorAdapter(context: Context, fragment: AssetSelectionBottomSheet
 
      private fun setListenerForRow(view: View, asset: TransferableAsset) {
         view.setOnClickListener {
-            (mContext as SendV2Activity).sendViewModel.setSelectedAsset(asset)
+            if (mContext is SendV2Activity) {
+                mContext.sendViewModel.setSelectedAsset(asset)
+            } else {
+                (mContext as DepositWithdrawalActivity).viewModel.setSelectedAsset(asset)
+            }
+
             mFragment.dismiss()
         }
     }

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/inputContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/withdrawalDepositAmountEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/zxing_transparent"
+            android:cursorVisible="false"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:hint="0"
+            android:inputType="numberDecimal"
+            android:textAlignment="center"
+            android:textAppearance="@style/RegularText"
+            android:textSize="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/assetSelectorContainer"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/assetSelectorContainer"
+            android:layout_width="112dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/withdrawalDepositAmountEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/withdrawalDepositAmountEditText">
+
+            <ImageView
+                android:id="@+id/assetLogoImageView"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@color/zxing_transparent"
+                app:layout_constraintBottom_toBottomOf="@+id/assetNameTextView"
+                app:layout_constraintEnd_toStartOf="@+id/assetNameTextView" />
+
+            <TextView
+                android:id="@+id/assetNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="NEO"
+                android:textAppearance="@style/RegularText"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView10"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_dropdown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/assetNameTextView" />
+
+            <View
+                android:id="@+id/view16"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:background="?attr/primaryBackgroundColor"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/assetBalanceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/SubtitleText"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputContainer"
+        app:layout_constraintTop_toBottomOf="@+id/inputContainer" />
+
+    <TextView
+        android:id="@+id/otherAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/SubtitleText"
+        android:textSize="14dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/inputContainer"
+        app:layout_constraintTop_toBottomOf="@+id/inputContainer" />
+
+    <TextView
+        android:id="@+id/sendPricingUnavailableTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/PORTFOLIO_pricing_not_available"
+        android:textAppearance="@style/SubtitleText"
+        android:textSize="14dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/inputContainer"
+        app:layout_constraintTop_toBottomOf="@+id/inputContainer" />
+
+
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/pinpadGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintGuide_percent="0.46"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/pinpad_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pinpadGuideline" />
+
+</android.support.constraint.ConstraintLayout>
