@@ -491,4 +491,12 @@
     <string name="NATIVE_TRADE_place_order">Place Order</string>
     <string name="NATIVE_TRADE_order_fill_amount">%s filled</string>
     <string name="NATIVE_TRADE_no_pending_orders">You currently have no pending orders</string>
+    <string name="NATIVE_TRADE_deposit_success_title">Deposit Successful</string>
+    <string name="NATIVE_TRADE_withdrawal_success_title">Withdrawal Successful</string>
+    <string name="NATIVE_TRADE_deposit_fail_title">Deposit Failed</string>
+    <string name="NATIVE_TRADE_withdrawal_fail_title">Withdrawal Failed</string>
+    <string name="NATIVE_TRADE_deposit_withdrawal_failure_subtitle">Please try again later</string>
+    <string name="NATIVE_TRADE_deposit_withdrawal_success_subtitle">It will take about 60 seconds to process</string>
+    <string name="NATIVE_TRADE_deposit_in_progress">Deposit Request in Progress</string>
+    <string name="NATIVE_TRADE_withdrawal_in_progress">Withdrawal Request in Progress</string>
 </resources>

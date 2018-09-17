@@ -209,7 +209,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         fun fillLogos() {
             val logoImageOne = mView.find<ImageView>(R.id.assetLogo1)
             val logoImageTwo = mView.find<ImageView>(R.id.assetLogo2)
-            val logoImageThree = mView.find<ImageView>(R.id.assetLogo3)
+            val logoImageThree = mView.find<ImageView>(R.id.baseAssetLogoImageView)
             val logoImageFour = mView.find<ImageView>(R.id.assetLogo4)
             val logos = arrayOf(logoImageOne, logoImageTwo, logoImageThree, logoImageFour)
             for (logo in logos) {
@@ -263,7 +263,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     mView.context.startActivity(intent)
                 }
                 leftToolbarButton.text = mFragment.getString(R.string.WALLET_Withdraw)
-                leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_request, 0, 0, 0)
+                leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_withdraw, 0, 0, 0)
 
                 rightToolbarButton.setOnClickListener {
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
@@ -271,7 +271,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     mView.context.startActivity(intent)
                 }
                 rightToolbarButton.text = mFragment.getString(R.string.WALLET_Deposit)
-                rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_send, 0, 0, 0)
+                rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_deposit, 0, 0, 0)
             }
         }
 

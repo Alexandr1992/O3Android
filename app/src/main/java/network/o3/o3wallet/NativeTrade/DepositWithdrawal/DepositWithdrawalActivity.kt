@@ -6,6 +6,7 @@ import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.v7.app.ActionBar
 import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.Button
@@ -227,24 +228,36 @@ class DepositWithdrawalActivity : AppCompatActivity() {
 
     fun initiateDepositWithdrawalButton() {
         depositWithDrawalButton = mView.find(R.id.placeOrderButton)
+        depositWithDrawalButton.isEnabled = false
         depositWithDrawalButton.setOnClickListener {
             val symbol = viewModel.selectedAsset!!.value!!.symbol.toUpperCase()
             val amount = (viewModel.toSendAmount * BigDecimal(100000000)).toLong().toString()
+            val bundle = Bundle()
             if (viewModel.isDeposit) {
+                val resultFragment = DepositWithdrawalResultDialog.newInstance()
+                bundle.putBoolean("isDeposit", true)
+                resultFragment.arguments = bundle
+                resultFragment.show(supportFragmentManager, "depositResult")
                 SwitcheoAPI().singleStepDeposit(symbol, amount) {
-                    if (it.first!! == true) {
-                        runOnUiThread {
-                            toast("successful Depost")
+                    runOnUiThread {
+                        if (it.first!! == true) {
+                            resultFragment.showSuccess()
+                        } else {
+                            resultFragment.showFailure()
                         }
                     }
                 }
             } else {
+                val resultFragment = DepositWithdrawalResultDialog.newInstance()
+                bundle.putBoolean("isDeposit", false)
+                resultFragment.arguments = bundle
+                resultFragment.show(supportFragmentManager, "depositResult")
                 SwitcheoAPI().singleStepWithdrawal(symbol, amount) {
-                    if (it.first!! == true) {
-                        runOnUiThread {
-                            runOnUiThread {
-                                toast("successful Withdrawawl")
-                            }
+                    runOnUiThread {
+                        if (it.first!! == true) {
+                            resultFragment.showSuccess()
+                        } else {
+                            resultFragment.showFailure()
                         }
                     }
                 }
@@ -252,6 +265,17 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         }
     }
 
+    fun initiateHeader() {
+        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.setCustomView(R.layout.actionbar_layout)
+
+        if (isDeposit) {
+            find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_Deposit)
+        } else {
+            find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_Withdraw)
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -264,6 +288,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         initiatePinPadButtons()
         initiateAssetSelector()
         listenForNewPricingData()
+        initiateHeader()
         setContentView(mView)
     }
 

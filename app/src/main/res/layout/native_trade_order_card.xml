@@ -128,12 +128,12 @@
                 android:layout_marginEnd="16dp"
                 android:text="TextView"
                 android:textAppearance="@style/RegularText"
-                app:layout_constraintBottom_toBottomOf="@+id/assetLogo3"
+                app:layout_constraintBottom_toBottomOf="@+id/baseAssetLogoImageView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/assetLogo3" />
+                app:layout_constraintTop_toTopOf="@+id/baseAssetLogoImageView" />
 
             <ImageView
-                android:id="@+id/assetLogo3"
+                android:id="@+id/baseAssetLogoImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="8dp"
@@ -150,7 +150,7 @@
                 android:layout_marginEnd="16dp"
                 android:textAppearance="@style/SubtitleText"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/assetLogo3" />
+                app:layout_constraintTop_toBottomOf="@+id/baseAssetLogoImageView" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline5"

@@ -7,6 +7,8 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView2"
+        style="@style/CardViewStyle"
+        app:cardCornerRadius="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -21,13 +23,13 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/assetLogo3"
-                app:layout_constraintStart_toEndOf="@+id/assetLogo3"
-                app:layout_constraintTop_toTopOf="@+id/assetLogo3"
+                app:layout_constraintBottom_toBottomOf="@+id/baseAssetLogoImageView"
+                app:layout_constraintStart_toEndOf="@+id/baseAssetLogoImageView"
+                app:layout_constraintTop_toTopOf="@+id/baseAssetLogoImageView"
                 app:srcCompat="@color/colorAccent" />
 
             <ImageView
-                android:id="@+id/assetLogo3"
+                android:id="@+id/baseAssetLogoImageView"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="8dp"
@@ -51,11 +53,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="CardTitle"
                 android:textAppearance="@style/RegularText"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/accountBalanceTextView"
@@ -82,65 +84,44 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/linearLayout7"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
                 android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/accountTitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="@+id/accountTitleTextView">
 
                 <Button
                     android:id="@+id/leftToolbarButton"
                     style="@style/BorderLessButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
                     android:drawableLeft="@drawable/ic_request"
                     android:drawablePadding="8dp"
                     android:gravity="left|center_vertical"
                     android:text="@string/WALLET_Request"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline6"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:id="@+id/view5"
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="?attr/primaryBackgroundColor"
+                    android:textAlignment="textStart"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/rightToolbarButton"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/leftToolbarButton"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
 
                 <Button
                     android:id="@+id/rightToolbarButton"
                     style="@style/BorderLessButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
                     android:drawableLeft="@drawable/ic_request"
                     android:drawablePadding="8dp"
                     android:gravity="left|center_vertical"
                     android:text="@string/WALLET_Request"
+                    android:textAlignment="viewStart"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintStart_toEndOf="@+id/leftToolbarButton"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.constraint.Guideline
-                    android:id="@+id/guideline6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.5" />
             </android.support.constraint.ConstraintLayout>
 
             <TextView
@@ -149,6 +130,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="TextView"
+                android:textAppearance="@style/RegularText"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/assetLogo4"
                 app:layout_constraintStart_toEndOf="@+id/assetLogo4"
                 app:layout_constraintTop_toTopOf="@+id/assetLogo4" />
@@ -158,11 +141,11 @@
                 android:layout_width="14dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
                 android:adjustViewBounds="true"
                 android:rotation="90"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/additionalAssetsTextView"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/additionalAssetsTextView"
                 app:srcCompat="@drawable/ic_right_chevron" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

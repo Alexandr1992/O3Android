@@ -27,6 +27,7 @@ class O3PlatformClient {
         UNBOUNDONG,
         HISTORY,
         TRADING,
+        ORDERS,
         UTXO;
 
 
@@ -295,6 +296,42 @@ class O3PlatformClient {
                 completion(Pair<TradingAccount?, Error?>(null, Error(error.localizedMessage)))
             }
 
+        }
+    }
+
+    fun getOrders(completion: (Pair<O3Orders?, Error?>) -> (Unit) ) {
+        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" +
+                Account.getWallet().address + "/" + Route.ORDERS.routeName()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val o3Orders = Gson().fromJson<O3Orders>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<O3Orders?, Error?>(o3Orders, null))
+            } else {
+                completion(Pair<O3Orders?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getPendingOrders(completion: (Pair<List<O3SwitcheoOrders>?, Error?>) -> (Unit)) {
+        getOrders {
+            if (it.second == null) {
+                val orders = it.first!!.switcheo
+                var pendingOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
+                for (order in orders) {
+                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } == null) {
+                            pendingOrders.add(order)
+                        }
+                    }
+                }
+                completion(Pair<List<O3SwitcheoOrders>?, Error?>(pendingOrders, null))
+            } else {
+                completion(Pair<List<O3SwitcheoOrders>?, Error?>(null, Error(it.second!!.localizedMessage)))
+            }
         }
     }
 }

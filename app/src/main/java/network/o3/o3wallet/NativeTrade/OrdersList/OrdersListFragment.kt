@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.wallet_fragment_account.*
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
 import network.o3.o3wallet.NativeTrade.NativeTradeBaseAssetBottomSheet
@@ -28,7 +30,7 @@ class OrdersListFragment : Fragment() {
     private lateinit var swipeContainer: SwipeRefreshLayout
 
     fun loadOrders() {
-        SwitcheoAPI().getPendingOrders {
+        O3PlatformClient().getPendingOrders {
             onUiThread {
                 ordersListView.adapter = OrdersAdapter(it.first!!, this)
                 swipeContainer.isRefreshing = false
@@ -65,7 +67,7 @@ class OrdersListFragment : Fragment() {
         return mView
     }
 
-    fun showOrderUpdateOptions(order: SwitcheoOrders) {
+    fun showOrderUpdateOptions(order: O3SwitcheoOrders) {
         val bundle = Bundle()
         val orderOptions = OrderUpdateOptionsBottomSheet()
         bundle.putString("id", order.id)
