@@ -195,7 +195,7 @@ class OrderSubmissionFragment : Fragment() {
             val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.first
             if (marketPriceCrypto != null) {
                 val newValue = baseAssetAmount!! / (marketPriceCrypto)
-                if (newValue == orderAssetAmountEditText.text.toString().toDouble()) {
+                if (newValue == orderAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0) {
                     return@Observer
                 }
                 if (newValue == 0.0) {

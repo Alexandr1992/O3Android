@@ -36,6 +36,8 @@ class NativeTradeViewModel: ViewModel() {
 
     var orderBookTopPrice: MutableLiveData<Double>? = null
 
+    var isOrdering: MutableLiveData<Boolean> = MutableLiveData()
+
    // val baseAssetTradeBalance: Long
    // val baseAssetAmount: Long
    // val baseAssetAmountFiat: Long
@@ -55,6 +57,7 @@ class NativeTradeViewModel: ViewModel() {
         estimatedFillAmount.value = 0.0
         selectedBaseAsset.value = "NEO"
         baseAssetImageUrl.value = "https://cdn.o3.network/img/neo/NEO.png"
+        marketRateDifference.value = 1.0
     }
 
     var orderBook = listOf<Offer>()
@@ -151,7 +154,7 @@ class NativeTradeViewModel: ViewModel() {
         }
 
         var cryptoPrice: Double = 0.0
-        O3PlatformClient().getRealTimePrice("QLC", selectedBaseAsset!!.value!!) {
+        O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset!!.value!!) {
             if (it.second != null) {
                 //TODO: SERIOUS ERROR OCCURRED HERE
             }
@@ -304,5 +307,13 @@ class NativeTradeViewModel: ViewModel() {
         val newDifference = newPrice / marketPrice!!.second
         marketRateDifference.value = newDifference
         marketRateDifference.postValue(newDifference)
+    }
+
+    fun getIsOrdering(): LiveData<Boolean> {
+        return isOrdering
+    }
+
+    fun setIsOrdering(isOrdering: Boolean) {
+        this.isOrdering.postValue(isOrdering)
     }
 }

@@ -1,6 +1,7 @@
 package network.o3.o3wallet.NativeTrade
 
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -36,14 +37,16 @@ class ReviewOrderFragment : Fragment() {
     fun initiatePricing() {
         mView.find<TextView>(R.id.reviewCryptoPriceTextView).text = vm.selectedPrice!!.value!!.second.removeTrailingZeros()
         mView.find<TextView>(R.id.reviewFiatPriceTextView).text = vm.selectedPrice!!.value!!.first.formattedFiatString()
-        if(vm.marketRateDifference.value!! > 0.0) {
+
+        val marketRatePercent = (vm.marketRateDifference.value!! - 1.0) * 100
+        if(marketRatePercent > 0.0) {
             mView.find<TextView>(R.id.reviewPercentAboveMedianTextView).text =
                     String.format(resources.getString(R.string.NATIVE_Trade_percent_above_market),
-                            vm.marketRateDifference.value!!.formattedPercentString())
+                            marketRatePercent.formattedPercentString())
         } else {
             mView.find<TextView>(R.id.reviewPercentAboveMedianTextView).text =
                     String.format(resources.getString(R.string.NATIVE_Trade_percent_below_market),
-                            vm.marketRateDifference.value!!.formattedPercentString())
+                            marketRatePercent.formattedPercentString())
         }
 
         mView.find<TextView>(R.id.reviewEstimatedFillTextView).text =
@@ -63,8 +66,19 @@ class ReviewOrderFragment : Fragment() {
 
     fun initiatePlaceOrderButton() {
         val placeOrderButton = mView.find<Button>(R.id.finalizeOrderButton)
+
+
+        val vm = (activity as NativeTradeRootActivity).viewModel
+        vm.getIsOrdering().observe (this, Observer {
+            if (it == true) {
+                placeOrderButton.isEnabled = false
+            } else {
+                placeOrderButton.isEnabled = true
+            }
+        })
+
         placeOrderButton.onClick {
-            val vm = (activity as NativeTradeRootActivity).viewModel
+
             val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
             val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros()
             var side = "buy"
@@ -74,16 +88,20 @@ class ReviewOrderFragment : Fragment() {
 
             val wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()
             val orderType = "limit"
+            vm.setIsOrdering(true)
 
             SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
                  if(it.first != true) {
                      alert ("Failed to submit order. Try Again later").show()
+                     vm.setIsOrdering(false)
                  } else {
                      onUiThread {
                          alert("Order Successfully Placed. Check on order status") {
                              yesButton {
+                                 vm.setIsOrdering(false)
                                  (activity as NativeTradeRootActivity).finish()
                              }
+                             vm.setIsOrdering(false)
                              noButton { (activity as NativeTradeRootActivity).finish()}
                          }.show()
                      }

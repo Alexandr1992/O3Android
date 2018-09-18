@@ -16,7 +16,7 @@ import java.net.URL
 import java.util.*
 
 class SwitcheoAPI {
-    val baseTestUrl = "https://api.switcheo.network/v2/"
+    val baseTestUrl = "https://test-api.switcheo.network/v2/"
     val baseMainUrl = "https://api.switcheo.network/v2/"
 
     val baseURL = if (PersistentStore.getNetworkType() == "Main") {
