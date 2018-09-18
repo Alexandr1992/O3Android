@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Typeface
+import android.media.Image
 import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -94,6 +95,12 @@ class DAppBrowserActivity : AppCompatActivity() {
         val showSearchBar = intent.getBooleanExtra("allowSearch", false)
         if (showSearchBar) {
             searchBar.visibility = View.VISIBLE
+            dappBrowserView.find<ImageButton>(R.id.refreshButton).visibility = View.VISIBLE
+            dappBrowserView.find<ImageButton>(R.id.refreshButton).setOnClickListener {
+                webView.reload()
+            }
+
+
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String): Boolean {
                     return true
@@ -107,7 +114,7 @@ class DAppBrowserActivity : AppCompatActivity() {
             })
         }
 
-
+        webView.webChromeClient = WebChromeClient()
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 webLoader.visibility = View.VISIBLE

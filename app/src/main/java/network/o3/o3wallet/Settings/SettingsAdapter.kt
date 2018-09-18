@@ -61,10 +61,10 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     override fun getCount(): Int {
-        if (BuildConfig.DEBUG) {
+       // if (BuildConfig.DEBUG) {
             return settingsTitles.count() + 1
-        }
-        return settingsTitles.count()
+       // }
+       // return settingsTitles.count()
     }
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {

@@ -141,6 +141,16 @@ class SendReviewFragment : Fragment() {
         })
     }
 
+    fun listenForSendinProgress() {
+        (activity as SendV2Activity).sendViewModel.getIsSending().observe(this, Observer {
+            if (it == true) {
+                mView.find<Button>(R.id.sendButton).isEnabled = false
+            } else {
+                mView.find<Button>(R.id.sendButton).isEnabled = true
+            }
+        })
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -148,6 +158,7 @@ class SendReviewFragment : Fragment() {
         initateSelectedBalanceDetails()
         initiateSelectedAssetDetails()
         initiateSelectedRecipientDetails()
+        listenForSendinProgress()
         initiateSendButton()
         initiateSendResultListener()
         initiateFeeCalculator()

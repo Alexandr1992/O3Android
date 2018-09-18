@@ -64,9 +64,14 @@ class DepositWithdrawalViewModel: ViewModel() {
         if (selectedAsset == null) {
             selectedAsset = MutableLiveData()
         }
+
+        selectedAssetDecimals = transferableAsset.decimals
+        if(transferableAsset.symbol.toUpperCase() == "NEO") {
+            selectedAssetDecimals = 0
+        }
+
         selectedAsset?.value = transferableAsset
         selectedAsset?.postValue(transferableAsset)
-        selectedAssetDecimals = transferableAsset.decimals
         O3PlatformClient().getRealTimePrice(transferableAsset.symbol, PersistentStore.getCurrency()) {
             if (it.first != null) {
                 realTimePrice?.postValue(it.first)

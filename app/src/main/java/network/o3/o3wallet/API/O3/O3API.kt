@@ -97,7 +97,7 @@ class O3API {
         if (PersistentStore.getNetworkType() == "Test") {
             url = "https://platform.o3.network/api/v1/neo/news/featured?network=test"
         } else if (PersistentStore.getNetworkType() == "Private") {
-            url = "https://platform.o3.network/api/v1/neo/news/featured?network=private"
+            url = "https://platform.o3.network/api/v1/neo/news/featured?network=test"
         }
         url.httpGet().responseString {request, response, result ->
             val (data, error) = result
@@ -117,7 +117,7 @@ class O3API {
         if (PersistentStore.getNetworkType() == "Test") {
             url = "https://platform.o3.network/api/v1/neo/" + address + "/tokensales?network=test"
         } else if (PersistentStore.getNetworkType() == "Private") {
-            url = "https://platform.o3.network/api/v1/neo/" + address + "tokensales?network=private"
+            url = "https://platform.o3.network/api/v1/neo/" + address + "tokensales?network=test"
         }
 
         var request = url.httpGet()

@@ -34,7 +34,6 @@ import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 
 class DepositWithdrawalActivity : AppCompatActivity() {
-    var isDeposit = true
     private lateinit var mView: View
     private lateinit var amountEditText: EditText
     private lateinit var decimalButton: ImageButton
@@ -133,15 +132,17 @@ class DepositWithdrawalActivity : AppCompatActivity() {
 
         viewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             formatter.maximumFractionDigits = selectedAsset!!.decimals
-            if (selectedAsset.decimals > 0) {
+
+            if (viewModel.selectedAssetDecimals > 0) {
                 decimalButton.visibility = View.VISIBLE
             } else {
                 decimalButton.visibility = View.INVISIBLE
             }
 
-            find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset.value)
+            find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset!!.value)
             find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
 
+            formatter.maximumFractionDigits = viewModel.selectedAssetDecimals
             if (firstLoad) {
                 if (viewModel.selectedAsset?.value != null) {
                     viewModel.setSelectedAsset(viewModel.selectedAsset?.value!!)
@@ -149,7 +150,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 val toSendAmount = viewModel.toSendAmount
                 if (toSendAmount != BigDecimal.ZERO) {
                     var formatter = NumberFormat.getNumberInstance()
-                    formatter.maximumFractionDigits = selectedAsset.decimals
+                    formatter.maximumFractionDigits = viewModel.selectedAssetDecimals
                     amountEditText.text = SpannableStringBuilder(formatter.format(toSendAmount))
                 }
                 firstLoad = false
@@ -269,7 +270,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
 
-        if (isDeposit) {
+        if (viewModel.isDeposit) {
             find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_Deposit)
         } else {
             find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_Withdraw)

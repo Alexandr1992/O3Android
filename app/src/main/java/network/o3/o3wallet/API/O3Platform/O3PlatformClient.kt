@@ -42,7 +42,7 @@ class O3PlatformClient {
         } else if (PersistentStore.getNetworkType() == "Test") {
             return "?network=test"
         } else {
-            return "?network=private"
+            return "?network=test"
         }
     }
 

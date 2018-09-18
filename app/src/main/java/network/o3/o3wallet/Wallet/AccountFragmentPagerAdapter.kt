@@ -37,5 +37,4 @@ class AccountFragmentPagerAdapter(fm: android.support.v4.app.FragmentManager, co
         // Generate title based on item position
         return tabTitles[position]
     }
-
 }

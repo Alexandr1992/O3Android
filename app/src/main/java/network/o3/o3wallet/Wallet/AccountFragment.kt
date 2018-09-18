@@ -144,6 +144,7 @@ class AccountFragment : Fragment() {
 
     fun setupAssetList() {
         assetListView = mView.findViewById(R.id.assetListView)
+        assetListView.itemAnimator?.changeDuration = 0
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
         itemDecorator.setDrawable(context!!.getDrawable(R.drawable.vertical_divider))
         assetListView.addItemDecoration(itemDecorator)
