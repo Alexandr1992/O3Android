@@ -2,6 +2,7 @@ package network.o3.o3wallet.API.O3
 
 import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
+import com.github.salomonbrys.kotson.get
 import com.google.gson.Gson
 import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.AccountAsset
@@ -23,6 +24,7 @@ class O3API {
     enum class Route {
         PRICE,
         HISTORICAL,
+        VALUE,
         FEED;
 
         fun routeName(): String {
@@ -77,6 +79,36 @@ class O3API {
         }
     }
 
+    fun getPortfolioValue(assets: ArrayList<TransferableAsset>, completion: (Pair<PortfolioValue?, Error?>) -> Unit) {
+        var queryString = String.format("?currency=%s", PersistentStore.getCurrency())
+        if(assets.isEmpty()) {
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", "NEO", 0.0)
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", "GAS", 0.0)
+        }
+
+        for (asset in assets) {
+            queryString = queryString + String.format(Locale.US, "&%s=%.8f", asset.symbol, asset.value)
+        }
+
+
+        val url = baseURL + Route.VALUE.routeName() + queryString
+        var request = url.httpGet()
+        request.responseString { request, response, result ->
+            // print (request)
+            // print (response)
+            val (data, error) = result
+            if (error == null) {
+                val gson = Gson()
+                val o3Response = gson.fromJson<PlatformResponse>(data!!)
+                val history = gson.fromJson<PortfolioValue>(o3Response.result["data"])
+                completion(Pair<PortfolioValue?, Error?>(history, null))
+            } else {
+                completion(Pair<PortfolioValue?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+
     fun getNewsFeed(completion: (Pair<FeedData?, Error?>) -> Unit) {
         val url = "https://api.o3.network/v1/feed/"/*baseURL + Route.FEED.routeName()*/
         url.httpGet().responseString { request, response, result ->
@@ -91,6 +123,8 @@ class O3API {
             }
         }
     }
+
+
 
     fun getFeatures(completion: (Pair<Array<Feature>?, Error?>) -> Unit) {
         var url = "https://platform.o3.network/api/v1/neo/news/featured"

@@ -27,6 +27,8 @@ data class Portfolio(val price: Map<String, PriceData>,
                           val firstPrice: Map<String, PriceData>,
                           val data: Array<PriceData>)
 
+data class PortfolioValue(val total: String, val currency: String)
+
 data class FeedData(val features: JsonArray, val items: Array<FeedItem>)
 
 data class NewsImage(val title: String, val url: String)

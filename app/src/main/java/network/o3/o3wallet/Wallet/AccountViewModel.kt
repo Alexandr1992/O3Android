@@ -17,6 +17,7 @@ import network.o3.o3wallet.API.O3Platform.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.formattedFiatString
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.math.BigDecimal
 import java.util.*
@@ -31,8 +32,8 @@ import kotlin.math.pow
 class AccountViewModel: ViewModel() {
     private var assets: MutableLiveData<TransferableAssets>? = null
     private var tradingAccountAssets: MutableLiveData<List<TransferableAsset>>? = null
-    private var tradingAccountPriceData: MutableLiveData<PriceData> = MutableLiveData()
-    private var walletAccountPriceData: MutableLiveData<PriceData> = MutableLiveData()
+    private var tradingAccountPriceData: MutableLiveData<String> = MutableLiveData()
+    private var walletAccountPriceData: MutableLiveData<String> = MutableLiveData()
 
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
@@ -99,29 +100,35 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-    fun getTradingAccountPriceData(): LiveData<PriceData> {
-        return tradingAccountPriceData!!
+    fun getTradingAccountPriceData(): LiveData<String> {
+        return tradingAccountPriceData
     }
 
     fun loadTradingAccountPriceData(assets: List<TransferableAsset>) {
-        O3API().getPortfolio(assets as ArrayList<TransferableAsset>, "24h") {
+        val cachedTradingAccountValue = PersistentStore.getTradingAccountValue()
+        tradingAccountPriceData.postValue(cachedTradingAccountValue.formattedFiatString())
+        O3API().getPortfolioValue(assets as ArrayList<TransferableAsset>) {
             if (it.second != null) {
-                return@getPortfolio
+                return@getPortfolioValue
             }
-            tradingAccountPriceData!!.postValue(it.first!!.data.first())
+            PersistentStore.setTradingAccountValue(it.first!!.total.toDouble())
+            tradingAccountPriceData.postValue(it.first!!.total.toDouble().formattedFiatString())
         }
     }
 
-    fun getWalletAccountPriceData(): LiveData<PriceData> {
+    fun getWalletAccountPriceData(): LiveData<String> {
         return walletAccountPriceData!!
     }
 
     fun loadWalletAccountPriceData(assets: List<TransferableAsset>) {
-        O3API().getPortfolio(assets as ArrayList<TransferableAsset>, "24h") {
+        val cachedWalletAccountValue = PersistentStore.getMainAccountValue()
+        walletAccountPriceData.postValue(cachedWalletAccountValue.formattedFiatString())
+        O3API().getPortfolioValue(assets as ArrayList<TransferableAsset>) {
             if (it.second != null) {
-                return@getPortfolio
+                return@getPortfolioValue
             }
-            walletAccountPriceData!!.postValue(it.first!!.data.first())
+            PersistentStore.setMainAccountValue(it.first!!.total.toDouble())
+            walletAccountPriceData!!.postValue(it.first!!.total.toDouble().formattedFiatString())
         }
     }
 

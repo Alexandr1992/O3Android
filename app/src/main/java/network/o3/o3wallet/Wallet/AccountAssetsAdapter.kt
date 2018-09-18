@@ -30,8 +30,8 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
     private var arrayOfAccountAssets = arrayListOf<TransferableAsset>()
     private var arrayOfTradingAccountAssets = listOf<TransferableAsset>()
-    private var walletAccountPriceData: PriceData? = null
-    private var tradingAccountPriceData: PriceData? = null
+    private var walletAccountPriceData: String? = null
+    private var tradingAccountPriceData: String? = null
     private var inboxList = listOf<O3InboxItem>()
     private val mFragment = mFragment
     private var isInitialLoad = true
@@ -62,12 +62,12 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         notifyItemChanged(itemCount - 1)
     }
 
-    fun setTradingAccountPriceData(priceData: PriceData) {
+    fun setTradingAccountPriceData(priceData: String) {
         tradingAccountPriceData = priceData
         notifyItemChanged(itemCount - 1)
     }
 
-    fun setWalletAccountPriceData(priceData: PriceData) {
+    fun setWalletAccountPriceData(priceData: String) {
         walletAccountPriceData = priceData
         notifyItemChanged(itemCount - 2)
     }
@@ -199,7 +199,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         }
     }
 
-    class AccountHolder(fragment: AccountFragment, v: View, assets: List<TransferableAsset>, priceData: PriceData?) : RecyclerView.ViewHolder(v){
+    class AccountHolder(fragment: AccountFragment, v: View, assets: List<TransferableAsset>, priceData: String?) : RecyclerView.ViewHolder(v){
         private var mView: View = v
         private var mFragment = fragment
         private var mAssets = assets
@@ -213,7 +213,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             val logoImageFour = mView.find<ImageView>(R.id.assetLogo4)
             val logos = arrayOf(logoImageOne, logoImageTwo, logoImageThree, logoImageFour)
             for (logo in logos) {
-                logo.visibility = View.GONE
+                logo.visibility = View.INVISIBLE
             }
 
             val endIndex = min(4, mAssets.size)
@@ -240,7 +240,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             if (mPriceData == null) {
                 mView.find<TextView>(R.id.accountBalanceTextView).text = ""
             } else {
-                mView.find<TextView>(R.id.accountBalanceTextView).text = mPriceData!!.average.formattedFiatString()
+                mView.find<TextView>(R.id.accountBalanceTextView).text = mPriceData
             }
 
         }
@@ -276,7 +276,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         }
 
 
-        fun bindAccount(assets: List<TransferableAsset>, priceData: PriceData?, accountName: String, isWallet: Boolean) {
+        fun bindAccount(assets: List<TransferableAsset>, priceData: String?, accountName: String, isWallet: Boolean) {
             mAssets = assets
             mPriceData = priceData
             mView.findViewById<TextView>(R.id.accountTitleTextView).text = accountName

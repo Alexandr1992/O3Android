@@ -8,18 +8,13 @@ import android.support.v4.app.Fragment
 import android.widget.*
 import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
-import android.net.Uri
 import android.os.Handler
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.CardView
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
-import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
@@ -28,16 +23,12 @@ import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
-import kotlinx.android.synthetic.main.wallet_account_header_layout.*
-import network.o3.o3wallet.API.O3.PriceData
 
 class AccountFragment : Fragment() {
     // toolbar items
