@@ -311,7 +311,7 @@ class SendWhatFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.send_what_fragment, container, false)
         amountEditText = mView.find(R.id.amountEditText)
-        reviewButton = mView.find(R.id.sendWhereButton)
+        reviewButton = mView.find(R.id.placeOrderButton)
         reviewButton.isEnabled = false
         reviewButton.setOnClickListener {
             mView.findNavController().navigate(R.id.action_sendWhatFragment_to_sendReviewFragment)

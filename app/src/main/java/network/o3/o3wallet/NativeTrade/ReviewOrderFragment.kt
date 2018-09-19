@@ -51,7 +51,7 @@ class ReviewOrderFragment : Fragment() {
 
         mView.find<TextView>(R.id.reviewEstimatedFillTextView).text =
                 String.format(resources.getString(R.string.NATIVE_TRADE_instant_fill_with_amount),
-                        vm.estimatedFillAmount.value!!.formattedPercentString())
+                        (vm.estimatedFillAmount.value!! * 100).formattedPercentString())
     }
 
     fun initiateBaseAssetDetails() {

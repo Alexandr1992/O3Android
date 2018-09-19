@@ -54,7 +54,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="CardTitle"
                 android:textAppearance="@style/RegularText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +63,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="$5.00"
                 android:textAppearance="@style/RegularText"
                 android:textSize="30sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -129,7 +127,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="TextView"
                 android:textAppearance="@style/RegularText"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/assetLogo4"

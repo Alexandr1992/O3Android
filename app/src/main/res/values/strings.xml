@@ -472,7 +472,8 @@
     <string name="NATIVE_TRADE_order_how_much">How Much</string>
     <string name="NATIVE_TRADE_order_price">Price</string>
     <string name="NATIVE_TRADE_order_price_difference">(%1$d) above median</string>
-    <string name="NATIVE_TRADE_order_base_asset">With</string>
+    <string name="NATIVE_TRADE_order_base_asset_buy">With</string>
+    <string name="NATIVE_TRADE_order_base_asset_sell">For</string>
     <string name="NATIVE_TRADE_median_price">Median Price</string>
     <string name="Native_TRADE_Buy">Buy</string>
     <string name="Native_TRADE_Sell">Sell</string>

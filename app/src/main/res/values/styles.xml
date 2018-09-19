@@ -32,6 +32,8 @@
         <item name="android:textColorHint">@color/colorSubtitleGrey</item>
         <item name="android:listDivider">@color/colorGhostWhite</item>
         <item name="android:dividerHeight">1.5dp</item>
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -57,6 +59,17 @@
         <item name="secondaryBackgroundColor">@color/colorWhite</item>
     </style>
 
+    <style name="MyPopupMenu"
+        parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">?attr/primaryBackgroundColor</item>
+
+    </style>
+    <!-- Popup Menu Text Color styles -->
+    <style name="TextAppearance">
+        <item name="android:textColor">?attr/defaultTextColor</item>
+        <item name="android:fontFamily">@font/muli</item>
+    </style>
+
     <style name="AppTheme.Dark" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorGhostBlack</item>
@@ -77,6 +90,8 @@
         <item name="android:listDivider">@color/colorBlack</item>
         <item name="colorControlNormal">@color/colorSubtitleGreyDark</item>
         <item name="android:dividerHeight">1.5dp</item>
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance</item>
     </style>
 
     <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light.Dialog">

@@ -13,7 +13,9 @@ import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_NORMAL
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_SMALL
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
+import android.text.Editable
 import java.security.MessageDigest
+import java.text.DecimalFormat
 
 
 /**
@@ -92,6 +94,24 @@ fun ByteArray.Hash256(): String {
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(this)
     return digest.fold("", { str, it -> str + "%02x".format(it) })
+}
+
+fun String.decimalNoGrouping(): String {
+    var replaced = this.replace(DecimalFormat().decimalFormatSymbols.groupingSeparator.toString(), "")
+    replaced = replaced.replace(DecimalFormat().decimalFormatSymbols.decimalSeparator.toString(), ".")
+    return replaced
+}
+
+fun Editable.decimalNoGrouping(): String {
+    var replaced = this.toString().replace(DecimalFormat().decimalFormatSymbols.groupingSeparator.toString(), "")
+    replaced = replaced.replace(DecimalFormat().decimalFormatSymbols.decimalSeparator.toString(), ".")
+    return replaced
+}
+
+fun CharSequence.decimalNoGrouping(): String {
+    var replaced = this.toString().replace(DecimalFormat().decimalFormatSymbols.groupingSeparator.toString(), "")
+    replaced = replaced.replace(DecimalFormat().decimalFormatSymbols.decimalSeparator.toString(), ".")
+    return replaced
 }
 
 fun Date.intervaledString(interval: String): String {

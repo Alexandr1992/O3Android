@@ -10,11 +10,11 @@
         android:id="@+id/include"
         layout="@layout/pinpad_layout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="265dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        />
 
 
     <android.support.constraint.Guideline
@@ -222,13 +222,12 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView35"
+                    android:id="@+id/orderTypeForBaseAsset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginBottom="4dp"
                     android:fontFamily="@font/muli_bold"
-                    android:text="@string/NATIVE_TRADE_order_base_asset"
                     android:textAppearance="@style/RegularText"
                     app:layout_constraintBottom_toTopOf="@+id/baseAssetLogo"
                     app:layout_constraintStart_toStartOf="parent" />

@@ -23,6 +23,7 @@ import android.support.design.internal.BottomNavigationMenu
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.CardView
 import android.widget.Button
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.R.id.searchView
@@ -91,10 +92,18 @@ class TokensFragment : Fragment() {
             }
         }
         tokensGridRecycler.setLayoutManager(layoutManager)
-
+        tokensGridRecycler.adapter = TokensAdapter(arrayListOf())
         model?.getListingData(true)?.observe(this, Observer { tokens ->
-            tokensGridRecycler.adapter = TokensAdapter(tokens?.toCollection(ArrayList())!!)
+            (tokensGridRecycler.adapter as TokensAdapter).
+                    setData(tokens?.toCollection(ArrayList())!!)
         })
+
+        model?.getSwitcheoTokenData(true)?.observe(this, Observer { tokens ->
+            (tokensGridRecycler.adapter as TokensAdapter).
+                    setSwitcheoData(tokens)
+        })
+
+
 
         return view
     }

@@ -26,6 +26,7 @@ import android.support.constraint.ConstraintSet
 import kotlinx.android.synthetic.main.pinpad_layout.*
 import network.o3.o3wallet.R.id.imageView
 import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.w3c.dom.Text
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,7 +39,7 @@ class PriceSelectionFragment : Fragment() {
     fun digitTapped(digit: String) {
         priceEditText.text = SpannableStringBuilder(priceEditText.text.toString() + digit)
         (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
-        if (priceEditText.text.toString().toDouble() > 0.0) {
+        if (priceEditText.text.decimalNoGrouping().toDouble() > 0.0) {
             placeOrderButton.isEnabled = true
         } else {
             placeOrderButton.isEnabled = false
@@ -73,10 +74,10 @@ class PriceSelectionFragment : Fragment() {
             if (priceEditText.text.toString() == "") {
                 (activity as NativeTradeRootActivity).viewModel.setManualPrice(0.0)
             } else {
-                (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
+                (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
             }
 
-            if (priceEditText.text.toString().toDoubleOrNull() ?: 0.0 == 0.0) {
+            if (priceEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 == 0.0) {
                 placeOrderButton.isEnabled = false
             } else {
                 placeOrderButton.isEnabled = true
@@ -86,7 +87,7 @@ class PriceSelectionFragment : Fragment() {
         mView.find<ImageButton>(R.id.buttonBackSpace).onLongClick {
             priceEditText.text = SpannableStringBuilder("")
             placeOrderButton.isEnabled = false
-            (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
+            (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
         }
 
         val decimalButton = mView.find<ImageButton>(R.id.buttonDecimal)
@@ -199,7 +200,7 @@ class PriceSelectionFragment : Fragment() {
         })
 
         topOrderLabel.setOnClickListener {
-            if (topOrderLabel.text.toString().toDoubleOrNull() != null) {
+            if (topOrderLabel.text.decimalNoGrouping().toDoubleOrNull() != null) {
                 priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
                 vm.setManualPrice(topOrderLabel.text.toString().toDoubleOrNull()!!)
             }
@@ -215,7 +216,22 @@ class PriceSelectionFragment : Fragment() {
     }
 
     fun initiateEstimatedFill() {
+        if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value == 0.0) {
+            mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
+            mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
+        } else {
+            mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.VISIBLE
+            mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
+        }
+
         (activity as NativeTradeRootActivity).viewModel.getFillAmount().observe(this, Observer { fillAmount ->
+            if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value == 0.0) {
+                mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
+                mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
+            } else {
+                mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.VISIBLE
+                mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
+            }
             mView.find<TextView>(R.id.estimatedFillAmount).text = (fillAmount!! * 100).formattedPercentString()
         })
     }

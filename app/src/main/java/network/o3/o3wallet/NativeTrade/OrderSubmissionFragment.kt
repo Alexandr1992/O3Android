@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.text.SpannableStringBuilder
+import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import java.nio.file.Files.find
+import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
 class OrderSubmissionFragment : Fragment() {
@@ -51,14 +53,16 @@ class OrderSubmissionFragment : Fragment() {
     var editingAmountView: EditText? = null
 
     fun updateAmountsBasedOnInput(amountString: String) {
-        val double = amountString.toDoubleOrNull() ?: 0.0
+        val double = amountString.decimalNoGrouping().toDoubleOrNull() ?: 0.0
         if (editingAmountView == baseAssetAmountEditText) {
             (activity as NativeTradeRootActivity).viewModel.setSelectedBaseAssetAmount(double)
         } else {
             (activity as NativeTradeRootActivity).viewModel.setOrderAssetAmount(double)
         }
 
-        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+        val baseAssetAmountWithoutGrouping = baseAssetAmountEditText.text.toString().decimalNoGrouping()
+        val baseAssetBalanceWithoutGrouping = baseAssetBalanceTextView.text.toString().decimalNoGrouping()
+        if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
             baseAssetAmountEditText.textColor = context!!.getColor(R.color.colorLoss)
         } else {
             baseAssetAmountEditText.textColor = context!!.getColor(R.color.colorPrimary)
@@ -66,14 +70,16 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun digitTapped(digit: String) {
-        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+        val baseAssetAmountWithoutGrouping = baseAssetAmountEditText.text.toString().decimalNoGrouping()
+        val baseAssetBalanceWithoutGrouping = baseAssetBalanceTextView.text.toString().decimalNoGrouping()
+        if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
             baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
             if (editingAmountView == baseAssetAmountEditText) {
                 return
             }
         }
 
-        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > 10000000) {
+        if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > 10000000) {
             baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
             return
         }
@@ -81,7 +87,7 @@ class OrderSubmissionFragment : Fragment() {
         editingAmountView?.text = SpannableStringBuilder(editingAmountView?.text.toString() + digit)
         updateAmountsBasedOnInput(editingAmountView?.text.toString())
 
-        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+        if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
             baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
         }
     }
@@ -140,6 +146,12 @@ class OrderSubmissionFragment : Fragment() {
     fun initializeBaseAssetContainer() {
         baseAssetSelectionContainer = mView.find(R.id.baseAssetSelectionContainer)
         baseAssetNameTextView = mView.find(R.id.baseAssetName)
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            mView.find<TextView>(R.id.orderTypeForBaseAsset).text = resources.getString(R.string.NATIVE_TRADE_order_base_asset_buy)
+        } else {
+            mView.find<TextView>(R.id.orderTypeForBaseAsset).text = resources.getString(R.string.NATIVE_TRADE_order_base_asset_sell)
+        }
+
 
         (activity as NativeTradeRootActivity).viewModel.getTradingAccountBalances().observe(this, Observer { tradingAccount ->
             baseAssetSelectionContainer.setNoDoubleClickListener(View.OnClickListener { v ->
@@ -195,7 +207,7 @@ class OrderSubmissionFragment : Fragment() {
             val marketPriceFiat = (activity as NativeTradeRootActivity).viewModel.selectedPrice?.value?.first
             if (marketPriceCrypto != null) {
                 val newValue = baseAssetAmount!! / (marketPriceCrypto)
-                if (newValue == orderAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0) {
+                if (newValue == orderAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     return@Observer
                 }
                 if (newValue == 0.0) {
@@ -289,11 +301,12 @@ class OrderSubmissionFragment : Fragment() {
 
     fun initiateOrderButton() {
         placeOrderButton = mView.find<Button>(R.id.placeOrderButton)
-        if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 == 0.0) {
+        if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 == 0.0) {
             placeOrderButton.isEnabled = false
         }
         placeOrderButton.setOnClickListener {
-            if (baseAssetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0 > baseAssetBalanceTextView.text.toString().toDoubleOrNull() ?: 0.0) {
+            if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
+                    baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                 alert("You need a larger balance in your trading account").show()
             } else {
                 mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)

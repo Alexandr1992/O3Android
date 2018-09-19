@@ -99,12 +99,12 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
             }
             val orderType = order.side.toUpperCase()
 
-            val orderAmount = order.want_amount.toDouble() / 100000000
+            val orderAmount = order.want_amount.toDouble() / order.wantAsset.decimals
             val orderAsset = order.wantAsset
             val orderCreatedTime = order.created_at
 
             val baseAsset = order.offerAsset
-            val baseAssetAmount = order.offer_amount.toDouble() / 100000000
+            val baseAssetAmount = order.offer_amount.toDouble() / order.offerAsset.decimals
             val percentFilled = calculatePercentFilled(order)
 
             mView.find<TextView>(R.id.orderTypeTextView).text = orderType
