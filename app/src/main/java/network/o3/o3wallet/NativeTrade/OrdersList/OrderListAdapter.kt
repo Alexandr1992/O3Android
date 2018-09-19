@@ -1,19 +1,28 @@
 package network.o3.o3wallet.NativeTrade.OrdersList
 
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
+import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.R
 import network.o3.o3wallet.formattedPercentString
 import network.o3.o3wallet.removeTrailingZeros
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
+import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.textColor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,7 +53,9 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
 
             var fillSum = 0.0
             for (make in order.makes) {
-                fillSum += make.filled_amount.toDouble()
+                for (trade in make.trades) {
+                    fillSum += trade["filled_amount"].asDouble
+                }
             }
 
             for (fill in order.fills) {
@@ -65,11 +76,28 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
             return rate.removeTrailingZeros()
         }
 
+        fun showOptionsMenu(order: O3SwitcheoOrders) {
+            val popup = PopupMenu(mView.context, mView)
+            popup.menuInflater.inflate(R.menu.orders_menu,popup.menu)
+            popup.setOnMenuItemClickListener {
+                val itemId = it.itemId
+
+                if (itemId == R.id.cancel_order_menu_item) {
+                    SwitcheoAPI().singleStepCancel(order.id) {
+                        mFragment.displayCancelResult(it.first ?: false)
+                    }
+                }
+                true
+            }
+            popup.show()
+        }
+
 
         fun bindOrder(order: O3SwitcheoOrders) {
+            mView.setOnClickListener {
+                showOptionsMenu(order)
+            }
             val orderType = order.side.toUpperCase()
-
-
 
             val orderAmount = order.want_amount.toDouble() / 100000000
             val orderAsset = order.wantAsset
@@ -113,14 +141,10 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
             val sdf =  SimpleDateFormat("MMM dd yyyy @ HH:mm", Locale.getDefault())
             val formatOut = sdf.format(date)
 
-            //val date = java.util.Date(orderCreatedTime.toLong())
+            //val da    te = java.util.Date(orderCreatedTime.toLong())
             mView.find<TextView>(R.id.orderTimeTextView).text = formatOut
             mView.find<TextView>(R.id.orderFillAmountTextView).text = String.format(mView.context.resources.getString(R.string.NATIVE_TRADE_order_fill_amount), percentFilled.formattedPercentString())
             mView.find<ProgressBar>(R.id.orderFillProgressBar).progress = percentFilled.toInt()
-
-            mView.setOnClickListener {
-                mFragment.showOrderUpdateOptions(order)
-            }
         }
     }
 }

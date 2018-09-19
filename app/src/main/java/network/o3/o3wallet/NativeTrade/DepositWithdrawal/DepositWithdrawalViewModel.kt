@@ -3,9 +3,11 @@ package network.o3.o3wallet.NativeTrade.DepositWithdrawal
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.github.salomonbrys.kotson.get
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import java.lang.Math.pow
@@ -29,9 +31,18 @@ class DepositWithdrawalViewModel: ViewModel() {
 
     fun loadOwnedAssets() {
         if (isDeposit) {
+            val supportedAssets = arrayListOf<TransferableAsset>()
             O3PlatformClient().getTransferableAssets(Account.getWallet().address) {
+                val walletAssets = it.first?.assets!!
+                SwitcheoAPI().getTokens {
+                    for (asset in walletAssets) {
+                        if (it.first!!.get(asset.symbol.toUpperCase()) != null) {
+                            supportedAssets.add(asset)
+                        }
+                    }
+                    ownedAssets?.postValue(supportedAssets)
+                }
                 PersistentStore.setLatestBalances(it.first)
-                ownedAssets?.postValue(it.first?.assets ?: arrayListOf())
             }
         } else {
             O3PlatformClient().getTradingAccounts {

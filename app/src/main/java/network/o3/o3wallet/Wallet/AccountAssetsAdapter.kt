@@ -1,5 +1,8 @@
 package network.o3.o3wallet.Wallet
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v7.widget.CardView
@@ -8,16 +11,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.O3InboxItem
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import java.text.NumberFormat
@@ -324,6 +327,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 return AssetHolder(view)
             }
 
+
             class AssetHolder(v: View) : RecyclerView.ViewHolder(v) {
                 private var mView = v
 
@@ -332,7 +336,38 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 val logoImageView = mView.find<ImageView>(R.id.coinLogoImageView)
 
 
+                fun showOptionsMenu(asset: TransferableAsset) {
+                    val popup = PopupMenu(mView.context, mView)
+                    popup.menuInflater.inflate(R.menu.trade_menu,popup.menu)
+                    popup.setOnMenuItemClickListener {
+                        val itemId = it.itemId
+
+                        if (itemId == R.id.buy_menu_item) {
+                            val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset.symbol)
+                            intent.putExtra("is_buy", true)
+                            mView.context.startActivity(intent)
+                        } else if (itemId == R.id.sell_menu_item) {
+                            val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset.symbol)
+                            intent.putExtra("is_buy", false)
+                            mView.context.startActivity(intent)
+                        } else if (itemId == R.id.withdraw_menu_item) {
+                            val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
+                            intent.putExtra("isDeposit", false)
+                            intent.putExtra("asset", asset.symbol)
+                            mView.context.startActivity(intent)
+                        }
+                        true
+                    }
+                    popup.show()
+                }
+
                 fun bindAsset(asset: TransferableAsset) {
+                    mView.setOnClickListener {
+                        showOptionsMenu(asset)
+                    }
+
                     if (asset.id.contains(NeoNodeRPC.Asset.NEO.assetID())) {
                         assetNameTextView.text = NeoNodeRPC.Asset.NEO.name
                         assetAmountTextView.text =  asset.value.toDouble().removeTrailingZeros()

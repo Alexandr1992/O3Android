@@ -40,7 +40,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
     private lateinit var depositWithDrawalButton: Button
     val viewModel = DepositWithdrawalViewModel()
 
-    private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
+    private var pricingData = O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
     var enteredCurrencyDouble = 0.0
     var firstLoad = true
 
@@ -104,16 +104,16 @@ class DepositWithdrawalActivity : AppCompatActivity() {
 
     fun initiateAssetSelector() {
         val assetContainer = mView.find<ConstraintLayout>(R.id.assetSelectorContainer)
-        val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", "NEO")
+        val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", pricingData.symbol)
         Glide.with(this).load(imageURL).into(mView.find(R.id.assetLogoImageView))
         var formatter = NumberFormat.getNumberInstance()
         viewModel.getOwnedAssets(true).observe ( this, Observer { ownedAssets ->
             if(viewModel.selectedAsset?.value == null) {
-                val neoAsset = ownedAssets?.find { it.symbol.toUpperCase() == "NEO" }
+                val defaultAsset = ownedAssets?.find { it.symbol.toUpperCase() == pricingData.symbol }
                 formatter.maximumFractionDigits = 0
-                find<TextView>(R.id.assetBalanceTextView).text = formatter.format(neoAsset?.value ?: 0)
-                if (neoAsset != null) {
-                    viewModel.setSelectedAsset(neoAsset)
+                find<TextView>(R.id.assetBalanceTextView).text = formatter.format(defaultAsset?.value ?: 0)
+                if (defaultAsset != null) {
+                    viewModel.setSelectedAsset(defaultAsset)
                 }
             }
         })
@@ -281,6 +281,10 @@ class DepositWithdrawalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.isDeposit = intent.getBooleanExtra("isDeposit", true)
+        val asset = intent.getStringExtra("asset")
+        if (asset != null) {
+            pricingData = O3RealTimePrice(asset, PersistentStore.getCurrency(), 0.0, 0)
+        }
 
         mView = layoutInflater.inflate(R.layout.native_trade_deposit_withdrawal_activity, null)
         amountEditText = mView.find(R.id.withdrawalDepositAmountEditText)

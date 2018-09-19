@@ -4,6 +4,7 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import network.o3.o3wallet.API.NEO.Transaction
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -147,7 +148,7 @@ data class O3SwitcheoOrders(
             val status: String,
             val created_at: String,
             val transaction_hash: String,
-            val trades: List<Any>
+            val trades: List<JsonObject>
     )
 }
 

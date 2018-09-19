@@ -21,7 +21,9 @@ import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
+import org.jetbrains.anko.yesButton
 
 class OrdersListFragment : Fragment() {
     private lateinit var mView: View
@@ -73,6 +75,20 @@ class OrdersListFragment : Fragment() {
         bundle.putString("id", order.id)
         orderOptions.arguments = bundle
         orderOptions.show(activity!!.supportFragmentManager, orderOptions.tag)
+    }
+
+    fun displayCancelResult(result: Boolean) {
+        onUiThread {
+            if (result == true) {
+                alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_succeeeded)) {
+                    yesButton {  }
+                }.show()
+            } else {
+                alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_failed)) {
+                    yesButton {  }
+                }.show()
+            }
+        }
     }
 
     companion object {

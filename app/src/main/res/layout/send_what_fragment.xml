@@ -236,6 +236,16 @@
         app:layout_constraintStart_toStartOf="@+id/amountEditText"
         app:layout_constraintTop_toBottomOf="@+id/assetSelectorContainer" />
 
+    <include
+        layout="@layout/pinpad_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/percentageButtonsLayout"
+        />
 
     <android.support.v7.widget.GridLayout
         android:id="@+id/gridLayout"

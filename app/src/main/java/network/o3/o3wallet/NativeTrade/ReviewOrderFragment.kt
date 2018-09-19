@@ -82,11 +82,12 @@ class ReviewOrderFragment : Fragment() {
             val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
             val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros()
             var side = "buy"
+            var wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()
             if (!vm.isBuyOrder) {
                 side = "sell"
+                wantAmount = (vm.selectedBaseAssetAmount.value!! * 100000000.0).toLong().toString()
             }
 
-            val wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()
             val orderType = "limit"
             vm.setIsOrdering(true)
 

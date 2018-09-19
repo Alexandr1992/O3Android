@@ -499,4 +499,7 @@
     <string name="NATIVE_TRADE_deposit_withdrawal_success_subtitle">It will take about 60 seconds to process</string>
     <string name="NATIVE_TRADE_deposit_in_progress">Deposit Request in Progress</string>
     <string name="NATIVE_TRADE_withdrawal_in_progress">Withdrawal Request in Progress</string>
+    <string name="NATIVE_TRADE_cancel_order">Cancel Order</string>
+    <string name="NATIVE_TRADE_cancel_order_succeeeded">Order Successfully Cancelled. Please wait a moment for it to be reflected in your orders list</string>
+    <string name="NATIVE_TRADE_cancel_order_failed">Failed to cancel order. Please try again later</string>
 </resources>
