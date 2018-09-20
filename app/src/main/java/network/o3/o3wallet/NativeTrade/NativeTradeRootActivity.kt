@@ -1,5 +1,6 @@
 package network.o3.o3wallet.NativeTrade
 
+import android.arch.lifecycle.Observer
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.ActionBar
@@ -12,6 +13,7 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.find
 
@@ -55,6 +57,11 @@ class NativeTradeRootActivity : AppCompatActivity() {
                 find<TextView>(R.id.pendingOrderCountBadge).visibility = View.GONE
             }
         }
+
+        viewModel.getError().observe(this, Observer { error ->
+            alert(error!!.localizedMessage) {}.show()
+            finish()
+        })
     }
 
     override fun getTheme(): Resources.Theme {

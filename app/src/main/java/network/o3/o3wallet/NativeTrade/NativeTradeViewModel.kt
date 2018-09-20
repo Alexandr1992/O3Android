@@ -53,6 +53,8 @@ class NativeTradeViewModel: ViewModel() {
 
     var estimatedFillAmount: MutableLiveData<Double> = MutableLiveData()
 
+    var error: MutableLiveData<Error> = MutableLiveData()
+
     init {
         estimatedFillAmount.value = 0.0
         selectedBaseAsset.value = "NEO"
@@ -86,6 +88,10 @@ class NativeTradeViewModel: ViewModel() {
 
     fun loadOrders() {
         SwitcheoAPI().getPendingOrders {
+            if (it.second != null) {
+                error.postValue(it.second)
+                return@getPendingOrders
+            }
             orders?.postValue(it.first)
         }
     }
@@ -144,10 +150,12 @@ class NativeTradeViewModel: ViewModel() {
         var fiatPrice: Double = 0.0
         O3PlatformClient().getRealTimePrice(orderAsset, PersistentStore.getCurrency()) {
             if (it.second != null) {
-                //TODO: SERIOUS ERROR OCCURRED HERE
+                error.postValue(it.second)
+                return@getRealTimePrice
             }
             if (it.first?.price == null) {
-                //TODO: SERIOUS ERROR OCCURRED HERE
+                error.postValue(Error("Unknown error occured"))
+                return@getRealTimePrice
             }
 
             fiatPrice = it.first!!.price
@@ -157,10 +165,12 @@ class NativeTradeViewModel: ViewModel() {
         var cryptoPrice: Double = 0.0
         O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset!!.value!!) {
             if (it.second != null) {
-                //TODO: SERIOUS ERROR OCCURRED HERE
+                error.postValue(it.second)
+                return@getRealTimePrice
             }
             if (it.first?.price == null) {
-                //TODO: SERIOUS ERROR OCCURRED HERE
+                error.postValue(Error("Unknown error occured"))
+                return@getRealTimePrice
             }
 
             cryptoPrice = it.first!!.price
@@ -186,8 +196,9 @@ class NativeTradeViewModel: ViewModel() {
 
     fun loadTradingAccountBalances() {
         O3PlatformClient().getTradingAccounts {
-            if (it.first != null) {
-                //TODO: SERIOUS ERROR OCCURRED HERE
+            if (it.second != null) {
+                error.postValue(it.second)
+                return@getTradingAccounts
             }
             //contractBalance?.value = it.first!!
             tradingAccount?.postValue(it.first!!)
@@ -210,6 +221,11 @@ class NativeTradeViewModel: ViewModel() {
     fun loadTopOrderBookPrice() {
         val pair = orderAsset + "_" + selectedBaseAsset!!.value
         SwitcheoAPI().getOffersForPair(pair) {
+            if (it.second != null) {
+                error.postValue(it.second)
+                return@getOffersForPair
+            }
+
             if (it.first != null) {
                 if (isBuyOrder) {
                     val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == orderAsset.toLowerCase() }
@@ -312,6 +328,10 @@ class NativeTradeViewModel: ViewModel() {
 
     fun getIsOrdering(): LiveData<Boolean> {
         return isOrdering
+    }
+
+    fun getError(): LiveData<Error> {
+        return error
     }
 
     fun setIsOrdering(isOrdering: Boolean) {
