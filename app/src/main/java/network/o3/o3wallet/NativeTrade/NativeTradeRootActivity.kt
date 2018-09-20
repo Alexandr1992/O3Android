@@ -16,6 +16,7 @@ import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.find
+import org.jetbrains.anko.yesButton
 
 class NativeTradeRootActivity : AppCompatActivity() {
     val viewModel = NativeTradeViewModel()
@@ -60,8 +61,11 @@ class NativeTradeRootActivity : AppCompatActivity() {
 
         viewModel.getError().observe(this, Observer { error ->
             runOnUiThread {
-                alert(error!!.localizedMessage) {}.show()
-                finish()
+                alert(error!!.localizedMessage) {
+                    yesButton {
+                        finish()
+                    }
+                }.show()
             }
         })
     }

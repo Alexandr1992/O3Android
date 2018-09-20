@@ -140,7 +140,7 @@ class NativeTradeViewModel: ViewModel() {
         selectedPrice?.postValue(Pair(newFiatPrice, newPrice))
         selectedPrice?.value = Pair(newFiatPrice, newPrice)
         updateMarketRateDifference(newPrice)
-        selectedBaseAssetAmount.value = selectedPrice?.value?.second!! * orderAssetAmount.value!!
+        selectedBaseAssetAmount.postValue(selectedPrice?.value?.second!! * orderAssetAmount.value!!)
         calculateFillAmount()
 
     }
@@ -263,25 +263,23 @@ class NativeTradeViewModel: ViewModel() {
         if (isBuyOrder) {
             var offersUnderPrice = mutableListOf<Offer>()
             for (offer in orderBook) {
-                if (offer.want_amount.toDouble() / offer.offer_amount.toDouble() <= selectedPrice!!.value!!.second) {
+                if (Math.abs(offer.want_amount.toDouble() / offer.offer_amount.toDouble() - selectedPrice!!.value!!.second) < 0.00000001) {
                     offersUnderPrice.add(offer)
                 } else {
                     break
                 }
             }
-            var fillSum = offersUnderPrice.sumByDouble { it.available_amount.toDouble() } / 100000000
+            var fillSum = offersUnderPrice.sumByDouble { it.offer_amount.toDouble() } / 100000000
 
             if (fillSum >= orderAssetAmount.value!!) {
-                estimatedFillAmount.value = 1.0
                 estimatedFillAmount.postValue(1.0)
             } else {
-                estimatedFillAmount.value = fillSum / orderAssetAmount.value!!
                 estimatedFillAmount.postValue(fillSum / orderAssetAmount.value!!)
             }
         } else {
             var offersOverPrice = mutableListOf<Offer>()
             for(offer in orderBook) {
-                if (offer.offer_amount.toDouble() / offer.want_amount.toDouble() >= selectedPrice!!.value!!.second) {
+                if (Math.abs(offer.offer_amount.toDouble() / offer.want_amount.toDouble() - selectedPrice!!.value!!.second) < 0.00000001) {
                     offersOverPrice.add(offer)
                 } else {
                     break
@@ -290,10 +288,8 @@ class NativeTradeViewModel: ViewModel() {
             var fillSum = offersOverPrice.sumByDouble { it.available_amount.toDouble() } / 100000000
 
             if (fillSum >= selectedBaseAssetAmount.value!!) {
-                estimatedFillAmount.value = 1.0
                 estimatedFillAmount.postValue(1.0)
             } else {
-                estimatedFillAmount.value = fillSum / selectedBaseAssetAmount.value!!
                 estimatedFillAmount.postValue(fillSum / selectedBaseAssetAmount.value!!)
             }
         }
