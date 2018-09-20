@@ -59,8 +59,10 @@ class NativeTradeRootActivity : AppCompatActivity() {
         }
 
         viewModel.getError().observe(this, Observer { error ->
-            alert(error!!.localizedMessage) {}.show()
-            finish()
+            runOnUiThread {
+                alert(error!!.localizedMessage) {}.show()
+                finish()
+            }
         })
     }
 
