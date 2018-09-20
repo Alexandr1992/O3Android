@@ -23,11 +23,13 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onFocusChange
 import org.jetbrains.anko.sdk15.coroutines.onLongClick
+import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
+import java.math.BigDecimal
 import java.nio.file.Files.find
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -39,6 +41,7 @@ class OrderSubmissionFragment : Fragment() {
     lateinit var orderAssetAmountEditText: EditText
 
     lateinit var baseAssetNameTextView: TextView
+    lateinit var orderAssetBalanceTextView: TextView
     lateinit var baseAssetAmountEditText: EditText
     lateinit var totalFiatAmountTextView: TextView
     lateinit var pendingOrdersContainer: ConstraintLayout
@@ -62,14 +65,24 @@ class OrderSubmissionFragment : Fragment() {
 
         val baseAssetAmountWithoutGrouping = baseAssetAmountEditText.text.toString().decimalNoGrouping()
         val baseAssetBalanceWithoutGrouping = baseAssetBalanceTextView.text.toString().decimalNoGrouping()
-        if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
+        if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0 &&
+                (activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
             baseAssetAmountEditText.textColor = context!!.getColor(R.color.colorLoss)
         } else {
             baseAssetAmountEditText.textColor = context!!.getColor(R.color.colorPrimary)
         }
+
+        val orderAssetAmountWithoutGrouping = orderAssetAmountEditText.text.toString().decimalNoGrouping()
+        val orderAssetBalanceWithoutGrouping = orderAssetBalanceTextView.text.toString().decimalNoGrouping()
+        if (orderAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > orderAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0 &&
+                !(activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            orderAssetAmountEditText.textColor = context!!.getColor(R.color.colorLoss)
+        } else {
+            orderAssetAmountEditText.textColor = context!!.getColor(R.color.colorPrimary)
+        }
     }
 
-    fun digitTapped(digit: String) {
+    fun digitTappedBuyOrder(digit: String) {
         val baseAssetAmountWithoutGrouping = baseAssetAmountEditText.text.toString().decimalNoGrouping()
         val baseAssetBalanceWithoutGrouping = baseAssetBalanceTextView.text.toString().decimalNoGrouping()
         if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
@@ -89,6 +102,32 @@ class OrderSubmissionFragment : Fragment() {
 
         if (baseAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > baseAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
             baseAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
+        }
+    }
+
+    fun digitTappedSellOrder(digit: String) {
+        val orderAssetAmountWithoutGrouping = orderAssetAmountEditText.text.toString().decimalNoGrouping()
+        val orderAssetBalanceWithoutGrouping = orderAssetBalanceTextView.text.toString().decimalNoGrouping()
+        if (orderAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > orderAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
+            orderAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
+            if (editingAmountView == orderAssetAmountEditText) {
+                return
+            }
+        }
+
+        editingAmountView?.text = SpannableStringBuilder(editingAmountView?.text.toString() + digit)
+        updateAmountsBasedOnInput(editingAmountView?.text.toString())
+
+        if (orderAssetAmountWithoutGrouping.toDoubleOrNull() ?: 0.0 > orderAssetBalanceWithoutGrouping.toDoubleOrNull() ?: 0.0) {
+            orderAssetAmountEditText.startAnimation(AnimationUtils.loadAnimation(context!!, R.anim.shake))
+        }
+    }
+
+    fun digitTapped(digit: String) {
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            digitTappedBuyOrder(digit)
+        } else {
+            digitTappedSellOrder(digit)
         }
     }
 
@@ -154,9 +193,14 @@ class OrderSubmissionFragment : Fragment() {
 
 
         (activity as NativeTradeRootActivity).viewModel.getTradingAccountBalances().observe(this, Observer { tradingAccount ->
+            val orderAsset = tradingAccount!!.switcheo.confirmed.
+                    find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.orderAsset}
+            orderAssetBalanceTextView.text = orderAsset?.value?.divide(BigDecimal(100000000.0)).toString()
+
             baseAssetSelectionContainer.setNoDoubleClickListener(View.OnClickListener { v ->
                 val args = Bundle()
                 args.putString("trading_account", Gson().toJson(tradingAccount!!))
+                args.putString("order_asset", orderAsset!!.symbol)
                 val assetSelectorSheet = NativeTradeBaseAssetBottomSheet()
                 assetSelectorSheet.arguments = args
                 assetSelectorSheet.show(activity!!.supportFragmentManager, assetSelectorSheet.tag)
@@ -185,10 +229,17 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun initializeOrderAmountSelector() {
+        orderAssetBalanceTextView = mView.find(R.id.orderAssetBalanceTextView)
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            orderAssetBalanceTextView.visibility = View.INVISIBLE
+        }
+
+
         orderAssetAmountEditText = mView.find(R.id.orderAssetAmountEditText)
         orderAssetAmountEditText.afterTextChanged {
             orderAssetAmountEditText.setSelection(orderAssetAmountEditText.text.length)
         }
+
 
         orderAssetAmountEditText.showSoftInputOnFocus = false
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
@@ -305,11 +356,21 @@ class OrderSubmissionFragment : Fragment() {
             placeOrderButton.isEnabled = false
         }
         placeOrderButton.setOnClickListener {
-            if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
-                    baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
-                alert("You need a larger balance in your trading account").show()
+
+            if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+                if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
+                        baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
+                    alert("You need a larger balance in your trading account").show()
+                } else {
+                    mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
+                }
             } else {
-                mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
+                if (orderAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
+                        orderAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
+                    alert("You need a larger balance in your trading account").show()
+                } else {
+                    mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
+                }
             }
         }
     }

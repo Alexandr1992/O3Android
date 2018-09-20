@@ -54,7 +54,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         mView.find<Button>(R.id.button0).setOnClickListener {
             val curVal = amountEditText.text.toString()
             if (curVal.isNotBlank()) {
-                amountEditText.text = SpannableStringBuilder(curVal + "0")
+                digitTapped("0")
             } else if (viewModel.selectedAssetDecimals > 0) {
                 amountEditText.text = SpannableStringBuilder(curVal + "0" + DecimalFormatSymbols().decimalSeparator)
             }

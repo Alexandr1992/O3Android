@@ -295,18 +295,13 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 recyclerView.addItemDecoration(itemDecorator)
             }
 
-            if (recyclerView.adapter == null) {
-                recyclerView.adapter = SingleAccountAdapter(mAssets)
-            } else {
-                (recyclerView.adapter as SingleAccountAdapter).setAssets(assets)
-            }
-
-            (mView.find<RecyclerView>(R.id.accountAssetsRecyclerView).adapter as SingleAccountAdapter).setAssets(assets)
+            recyclerView.adapter = SingleAccountAdapter(mAssets, isWallet)
         }
 
 
-        class SingleAccountAdapter(val assets: List<TransferableAsset>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        class SingleAccountAdapter(val assets: List<TransferableAsset>, isWallet: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             private var mAssets = assets
+            private var isWallet = isWallet
 
             fun setAssets(assets: List<TransferableAsset>) {
                 mAssets = assets
@@ -318,7 +313,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             }
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                (holder as AssetHolder).bindAsset(mAssets[position])
+                (holder as AssetHolder).bindAsset(mAssets[position], isWallet)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, p1: Int): AssetHolder {
@@ -363,9 +358,24 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     popup.show()
                 }
 
-                fun bindAsset(asset: TransferableAsset) {
+                fun showTokenDetails(asset: TransferableAsset) {
+                    var detailURL = "https://public.o3.network/neo/assets/" + asset.symbol+ "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
+                    if (asset.id.contains("00000000000")) {
+                        detailURL = "https://public.o3.network/ont/assets/" + asset.symbol + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
+                    }
+
+                    val intent = Intent(mView.context, DAppBrowserActivity::class.java)
+                    intent.putExtra("url", detailURL)
+                    mView.context.startActivity(intent)
+                }
+
+                fun bindAsset(asset: TransferableAsset, isWallet: Boolean) {
                     mView.setOnClickListener {
-                        showOptionsMenu(asset)
+                        if (isWallet) {
+                            showTokenDetails(asset)
+                        } else {
+                            showOptionsMenu(asset)
+                        }
                     }
 
                     if (asset.id.contains(NeoNodeRPC.Asset.NEO.assetID())) {

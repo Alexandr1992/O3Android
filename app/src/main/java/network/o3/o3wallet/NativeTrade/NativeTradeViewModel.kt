@@ -134,6 +134,7 @@ class NativeTradeViewModel: ViewModel() {
         selectedPrice?.postValue(Pair(newFiatPrice, newPrice))
         selectedPrice?.value = Pair(newFiatPrice, newPrice)
         updateMarketRateDifference(newPrice)
+        selectedBaseAssetAmount.value = selectedPrice?.value?.second!! * orderAssetAmount.value!!
         calculateFillAmount()
 
     }
@@ -190,7 +191,7 @@ class NativeTradeViewModel: ViewModel() {
             }
             //contractBalance?.value = it.first!!
             tradingAccount?.postValue(it.first!!)
-            val neoAsset = it.first!!.switcheo.confirmed.find { it.symbol.toLowerCase() == "neo" }
+            val neoAsset = it.first!!.switcheo.confirmed.find { it.symbol.toLowerCase() == selectedBaseAsset.value!!.toLowerCase() }
             if(neoAsset != null) {
                 setSelectedBaseAssetBalance(neoAsset.value.toDouble() / 100000000.0)
             } else {
@@ -252,7 +253,7 @@ class NativeTradeViewModel: ViewModel() {
                     break
                 }
             }
-            var fillSum = offersUnderPrice.sumByDouble { it.offer_amount.toDouble() } / 100000000
+            var fillSum = offersUnderPrice.sumByDouble { it.available_amount.toDouble() } / 100000000
 
             if (fillSum >= orderAssetAmount.value!!) {
                 estimatedFillAmount.value = 1.0
@@ -270,14 +271,14 @@ class NativeTradeViewModel: ViewModel() {
                     break
                 }
             }
-            var fillSum = offersOverPrice.sumByDouble { it.want_amount.toDouble() } / 100000000
+            var fillSum = offersOverPrice.sumByDouble { it.available_amount.toDouble() } / 100000000
 
-            if (fillSum >= orderAssetAmount.value!!) {
+            if (fillSum >= selectedBaseAssetAmount.value!!) {
                 estimatedFillAmount.value = 1.0
                 estimatedFillAmount.postValue(1.0)
             } else {
-                estimatedFillAmount.value = fillSum / orderAssetAmount.value!!
-                estimatedFillAmount.postValue(fillSum / orderAssetAmount.value!!)
+                estimatedFillAmount.value = fillSum / selectedBaseAssetAmount.value!!
+                estimatedFillAmount.postValue(fillSum / selectedBaseAssetAmount.value!!)
             }
         }
     }

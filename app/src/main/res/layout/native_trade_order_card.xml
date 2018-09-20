@@ -56,12 +56,16 @@
 
             <TextView
                 android:id="@+id/orderAssetAmountTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="TextView"
+                android:layout_marginEnd="4dp"
+                android:text="fdsfdsd"
+                android:textAlignment="viewStart"
                 android:textAppearance="@style/RegularText"
                 app:layout_constraintBottom_toBottomOf="@+id/orderAssetLogoImageView"
+                app:layout_constraintEnd_toStartOf="@+id/orderArrowImage"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/orderAssetLogoImageView"
                 app:layout_constraintTop_toTopOf="@+id/orderAssetLogoImageView" />
 
@@ -123,10 +127,11 @@
 
             <TextView
                 android:id="@+id/baseAssetAmountTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="TextView"
+                android:textAlignment="viewEnd"
                 android:textAppearance="@style/RegularText"
                 app:layout_constraintBottom_toBottomOf="@+id/baseAssetLogoImageView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -136,9 +141,12 @@
                 android:id="@+id/baseAssetLogoImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/orderArrowImage"
                 app:layout_constraintEnd_toStartOf="@+id/baseAssetAmountTextView"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/orderArrowImage"
                 app:layout_constraintTop_toTopOf="@+id/orderArrowImage"
                 app:srcCompat="?attr/colorAccent" />
 

@@ -24,7 +24,7 @@ import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.w3c.dom.Text
 
-class SendReviewFragment : Fragment() {
+class   SendReviewFragment : Fragment() {
     private lateinit var mView: View
 
 

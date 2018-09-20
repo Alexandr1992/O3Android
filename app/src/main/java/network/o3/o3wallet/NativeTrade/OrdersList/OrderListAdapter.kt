@@ -24,6 +24,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.textColor
+import java.lang.Math.pow
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -99,12 +100,12 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
             }
             val orderType = order.side.toUpperCase()
 
-            val orderAmount = order.want_amount.toDouble() / order.wantAsset.decimals
+            val orderAmount = order.want_amount.toDouble() / pow(10.0, order.wantAsset.decimals.toDouble())
             val orderAsset = order.wantAsset
             val orderCreatedTime = order.created_at
 
             val baseAsset = order.offerAsset
-            val baseAssetAmount = order.offer_amount.toDouble() / order.offerAsset.decimals
+            val baseAssetAmount = order.offer_amount.toDouble() / pow(10.0, order.offerAsset.decimals.toDouble())
             val percentFilled = calculatePercentFilled(order)
 
             mView.find<TextView>(R.id.orderTypeTextView).text = orderType
