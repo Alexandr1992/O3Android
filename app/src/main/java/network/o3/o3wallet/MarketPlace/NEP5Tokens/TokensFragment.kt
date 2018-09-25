@@ -69,12 +69,12 @@ class TokensFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                tokensGridRecycler.adapter = TokensAdapter(model!!.filteredTokens(newText).toCollection(ArrayList()))
+                (tokensGridRecycler.adapter as TokensAdapter).setData(model!!.filteredTokens(newText).toCollection(ArrayList()))
                 return true
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                tokensGridRecycler.adapter = TokensAdapter(model!!.filteredTokens(query).toCollection(ArrayList()))
+                (tokensGridRecycler.adapter as TokensAdapter).setData(model!!.filteredTokens(query).toCollection(ArrayList()))
                 return true
             }
         })
