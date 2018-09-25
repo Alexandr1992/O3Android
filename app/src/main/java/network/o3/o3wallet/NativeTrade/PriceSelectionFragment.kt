@@ -101,7 +101,11 @@ class PriceSelectionFragment : Fragment() {
 
         decimalButton.setOnClickListener {
             var currString = priceEditText.text.toString()
-            if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
+            if (currString.contains(DecimalFormatSymbols().decimalSeparator)) {
+                return@setOnClickListener
+            }
+            if (currString.isBlank()) {
+                digitTapped("0")
                 return@setOnClickListener
             }
             priceEditText.text = SpannableStringBuilder(SpannableStringBuilder(priceEditText.text.toString() + DecimalFormatSymbols().decimalSeparator))

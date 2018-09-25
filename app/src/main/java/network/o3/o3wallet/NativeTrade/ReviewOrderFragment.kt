@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalResultDialog
 import network.o3.o3wallet.R
 import network.o3.o3wallet.formattedFiatString
 import network.o3.o3wallet.formattedPercentString
@@ -72,8 +73,6 @@ class ReviewOrderFragment : Fragment() {
         vm.getIsOrdering().observe (this, Observer {
             if (it == true) {
                 placeOrderButton.isEnabled = false
-            } else {
-                placeOrderButton.isEnabled = true
             }
         })
 
@@ -91,22 +90,17 @@ class ReviewOrderFragment : Fragment() {
             val orderType = "limit"
             vm.setIsOrdering(true)
 
+            val resultFragment = OrderResultDialog.newInstance()
+            resultFragment.show(activity!!.supportFragmentManager, "depositResult")
             SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
-                 if(it.first != true) {
-                     alert ("Failed to submit order. Try Again later").show()
-                     vm.setIsOrdering(false)
-                 } else {
-                     onUiThread {
-                         alert("Order Successfully Placed. Check on order status") {
-                             yesButton {
-                                 vm.setIsOrdering(false)
-                                 (activity as NativeTradeRootActivity).finish()
-                             }
-                             vm.setIsOrdering(false)
-                             noButton { (activity as NativeTradeRootActivity).finish()}
-                         }.show()
-                     }
-                 }
+                onUiThread {
+                    vm.setIsOrdering(false)
+                    if (it.first!! != true) {
+                        resultFragment.showFailure()
+                    } else {
+                        resultFragment.showSuccess()
+                    }
+                }
              }
         }
     }

@@ -16,18 +16,9 @@ import android.view.View
 import android.view.ViewGroup
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import android.view.Gravity
-import android.support.v4.view.MenuItemCompat.getActionView
-import android.graphics.Color.parseColor
-import android.support.design.internal.BottomNavigationMenu
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.CardView
-import android.widget.Button
-import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.MainTabbedActivity
-import network.o3.o3wallet.R.id.searchView
-import org.jetbrains.anko.sdk25.coroutines.onFocusChange
 
 
 class TokensFragment : Fragment() {
@@ -102,8 +93,6 @@ class TokensFragment : Fragment() {
             (tokensGridRecycler.adapter as TokensAdapter).
                     setSwitcheoData(tokens)
         })
-
-
 
         return view
     }

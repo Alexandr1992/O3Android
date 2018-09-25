@@ -50,7 +50,6 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     var assetListAdapter: AssetListAdapter? = null
     var sparkView: SparkView? = null
     lateinit var recyclerView: RecyclerView
-
     lateinit var mView: View
 
     val needReloadWatchAddressReciever = object : BroadcastReceiver() {

@@ -22,64 +22,41 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/orderPercentageDifferenceTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:textAppearance="@style/SubtitleText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/orderFiatRateTextView" />
-
-            <TextView
-                android:id="@+id/orderTypeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/muli_bold"
-                android:text="TextView"
-                android:textAppearance="@style/RegularText"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <ImageView
                 android:id="@+id/orderAssetLogoImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/orderTypeTextView"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@+id/orderAssetAmountTextView"
+                app:layout_constraintStart_toStartOf="@+id/orderAssetAmountTextView"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/orderAssetAmountTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 android:text="fdsfdsd"
-                android:textAlignment="viewStart"
+                android:textAlignment="center"
                 android:textAppearance="@style/RegularText"
-                app:layout_constraintBottom_toBottomOf="@+id/orderAssetLogoImageView"
                 app:layout_constraintEnd_toStartOf="@+id/orderArrowImage"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/orderAssetLogoImageView"
-                app:layout_constraintTop_toTopOf="@+id/orderAssetLogoImageView" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/orderAssetLogoImageView" />
 
             <TextView
                 android:id="@+id/orderCryptoRateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="TextView"
                 android:textAppearance="@style/RegularText"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/orderAssetLogoImageView" />
+                app:layout_constraintTop_toBottomOf="@+id/orderAssetAmountTextView" />
 
             <TextView
                 android:id="@+id/orderFillAmountTextView"
@@ -96,14 +73,15 @@
 
             <ImageView
                 android:id="@+id/orderArrowImage"
-                android:layout_width="40dp"
+                android:layout_width="21dp"
                 android:layout_height="21dp"
-                app:layout_constraintBottom_toBottomOf="@+id/orderAssetLogoImageView"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/orderAssetAmountTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/orderAssetLogoImageView"
-                app:srcCompat="@color/colorAccent" />
+                app:srcCompat="@drawable/ic_trade_arrow" />
 
             <ProgressBar
                 android:id="@+id/orderFillProgressBar"
@@ -118,47 +96,36 @@
                 android:id="@+id/orderTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="TextView"
                 android:textAppearance="@style/SubtitleText"
+                app:layout_constraintBottom_toBottomOf="@+id/orderFillAmountTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/orderFillAmountTextView" />
 
             <TextView
                 android:id="@+id/baseAssetAmountTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="TextView"
-                android:textAlignment="viewEnd"
+                android:textAlignment="center"
                 android:textAppearance="@style/RegularText"
-                app:layout_constraintBottom_toBottomOf="@+id/baseAssetLogoImageView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/baseAssetLogoImageView" />
+                app:layout_constraintStart_toEndOf="@+id/orderArrowImage"
+                app:layout_constraintTop_toBottomOf="@+id/baseAssetLogoImageView" />
 
             <ImageView
                 android:id="@+id/baseAssetLogoImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/orderArrowImage"
-                app:layout_constraintEnd_toStartOf="@+id/baseAssetAmountTextView"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/orderArrowImage"
-                app:layout_constraintTop_toTopOf="@+id/orderArrowImage"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@+id/baseAssetAmountTextView"
+                app:layout_constraintStart_toStartOf="@+id/baseAssetAmountTextView"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="?attr/colorAccent" />
-
-            <TextView
-                android:id="@+id/orderFiatRateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:textAppearance="@style/SubtitleText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/baseAssetLogoImageView" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline5"

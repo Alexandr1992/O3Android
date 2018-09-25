@@ -95,9 +95,14 @@ class DepositWithdrawalActivity : AppCompatActivity() {
             }
 
             var currString = amountEditText.text.toString()
-            if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
+            if (currString.contains(DecimalFormatSymbols().decimalSeparator)) {
                 return@setOnClickListener
             }
+            if (currString.isBlank()) {
+                digitTapped("0")
+                return@setOnClickListener
+            }
+
             amountEditText.text = SpannableStringBuilder(SpannableStringBuilder(amountEditText.text.toString() + DecimalFormatSymbols().decimalSeparator))
         }
     }

@@ -503,4 +503,13 @@
     <string name="NATIVE_TRADE_cancel_order">Cancel Order</string>
     <string name="NATIVE_TRADE_cancel_order_succeeeded">Order Successfully Cancelled. Please wait a moment for it to be reflected in your orders list</string>
     <string name="NATIVE_TRADE_cancel_order_failed">Failed to cancel order. Please try again later</string>
+    <string name="NATIVE_TRADE_neo_buy_limitation">Due to limitations on our exchange services,
+        NEO buy orders must be made as GAS sell orders at this time</string>
+    <string name="NATIVE_TRADE_neo_sell_limitation">Due to limitations on our exchange services,
+        NEO sell orders must be made as GAS buy orders at this time</string>
+    <string name="NATIVE_TRADE_order_success_title">Order successfully placed!</string>
+    <string name="NATIVE_TRADE_order_success_subtitle">Check the status in your pending orders</string>
+    <string name="NATIVE_TRADE_order_fail_title">Order Failed</string>
+    <string name="NATIVE_TRADE_order_failure_subtitle">Please try again later</string>
+    <string name="NATIVE_TRADE_order_in_progress">Submitting your order</string>
 </resources>

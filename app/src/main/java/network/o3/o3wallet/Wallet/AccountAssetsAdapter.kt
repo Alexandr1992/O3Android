@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.CardView
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
@@ -22,7 +23,9 @@ import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
+import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import kotlin.math.min
 
@@ -341,12 +344,28 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
                             intent.putExtra("is_buy", true)
-                            mView.context.startActivity(intent)
+                            if (asset.symbol.toUpperCase() == "NEO") {
+                                //TODO: NO direct neo market so we have to go around it
+                                val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", "GAS")
+                                intent.putExtra("is_buy", false )
+                                mView.context.startActivity(intent)
+                            } else {
+                                mView.context.startActivity(intent)
+                            }
                         } else if (itemId == R.id.sell_menu_item) {
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
                             intent.putExtra("is_buy", false)
-                            mView.context.startActivity(intent)
+                            if (asset.symbol.toUpperCase() == "NEO") {
+                                //TODO: NO direct neo market so we have to go around it
+                                val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", "GAS")
+                                intent.putExtra("is_buy", true)
+                                mView.context.startActivity(intent)
+                            }  else {
+                                mView.context.startActivity(intent)
+                            }
                         } else if (itemId == R.id.withdraw_menu_item) {
                             val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                             intent.putExtra("isDeposit", false)

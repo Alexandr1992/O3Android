@@ -51,7 +51,7 @@ class NativeTradeBaseAssetSelectionAdapter(context: Context,
         view.find<TextView>(R.id.baseAssetName).text = item.first
         view.find<TextView>(R.id.baseAssetBalance).text = (item.second!! / 100000000).toString()
         Glide.with(view.context).load(String.format("https://cdn.o3.network/img/neo/%s.png", item.first)).
-                into(view.find<ImageView>(R.id.baseAssetlogoImageView))
+                into(view.find(R.id.baseAssetlogoImageView))
 
 
         return view

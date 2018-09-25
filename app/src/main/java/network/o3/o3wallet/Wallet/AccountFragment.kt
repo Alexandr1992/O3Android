@@ -152,6 +152,7 @@ class AccountFragment : Fragment() {
         swipeContainer.setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
         swipeContainer.setOnRefreshListener {
             accountViewModel.loadAssets()
+            accountViewModel.loadTradingAccountAssets()
         }
         assetListView.adapter = AccountAssetsAdapter(this)
     }

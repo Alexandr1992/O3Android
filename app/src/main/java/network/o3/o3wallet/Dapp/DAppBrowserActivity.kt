@@ -57,26 +57,55 @@ class DAppBrowserActivity : AppCompatActivity() {
             SwitcheoAPI().getTokens {
                 runOnUiThread {
                     val asset = uri.lastPathSegment!!
-                    if (it.first?.get(asset.toUpperCase()) != null) {
+
+
+                    //TODO: Since there is no existing NEO to GAS market
+                    if (asset.toUpperCase() == "NEO") {
                         dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
                         dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
-                            val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                            intent.putExtra("asset", asset)
-                            intent.putExtra("is_buy", true)
-                            startActivity(intent)
+                            alert(resources.getString(R.string.NATIVE_TRADE_neo_buy_limitation)) {
+                                yesButton {
+                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                    intent.putExtra("asset", "GAS")
+                                    intent.putExtra("is_buy", false)
+                                    startActivity(intent)
+                                }
+                            }.show()
                         }
 
                         dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
-                            val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                            intent.putExtra("asset", asset)
-                            intent.putExtra("is_buy", false)
-                            startActivity(intent)
+                            alert(resources.getString(R.string.NATIVE_TRADE_neo_sell_limitation)) {
+                                yesButton {
+                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                    intent.putExtra("asset", "GAS")
+                                    intent.putExtra("is_buy", true)
+                                    startActivity(intent)
+                                }
+                            }.show()
                         }
                     } else {
-                        dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+                        if (it.first?.get(asset.toUpperCase()) != null) {
+                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+                            dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
+                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", asset)
+                                intent.putExtra("is_buy", true)
+                                startActivity(intent)
+                            }
+
+                            dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
+                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", asset)
+                                intent.putExtra("is_buy", false)
+                                startActivity(intent)
+                            }
+                        } else {
+                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+                        }
                     }
                 }
             }
+
         } else {
             dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
         }
@@ -95,8 +124,6 @@ class DAppBrowserActivity : AppCompatActivity() {
         val currentUrlRoute = URL(url)
         setVerifiedHeaderUrl(url)
         initiateTradeFooter(Uri.parse(url))
-
-
 
         dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
             if (webView.canGoBack()) {

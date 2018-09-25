@@ -26,8 +26,8 @@ class NativeTradeRootActivity : AppCompatActivity() {
         viewModel.orderAsset = intent.getStringExtra("asset")
         viewModel.isBuyOrder = intent.getBooleanExtra("is_buy", true)
         if (viewModel.orderAsset == "NEO") {
-            viewModel.setSelectedBaseAssetImageUrl("https://cdn.o3.network/img/neo/GAS.png")
-            viewModel.setSelectedBaseAssetValue("GAS")
+            viewModel.setSelectedBaseAssetImageUrl("https://cdn.o3.network/img/neo/NEO.png")
+            viewModel.setSelectedBaseAssetValue("NEO")
         }
 
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)

@@ -174,9 +174,14 @@ class OrderSubmissionFragment : Fragment() {
 
         decimalButton.setOnClickListener {
             var currString = editingAmountView?.text.toString()
-            if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
+            if (currString.contains(DecimalFormatSymbols().decimalSeparator)) {
                 return@setOnClickListener
             }
+            if (currString.isBlank()) {
+                digitTapped("0")
+                return@setOnClickListener
+            }
+
             editingAmountView?.text = SpannableStringBuilder(SpannableStringBuilder(editingAmountView?.text.toString() + DecimalFormatSymbols().decimalSeparator))
             updateAmountsBasedOnInput(editingAmountView?.text.toString())
         }
