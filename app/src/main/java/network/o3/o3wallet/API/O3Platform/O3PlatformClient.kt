@@ -315,6 +315,21 @@ class O3PlatformClient {
             }
         }
     }
+    fun calculatePercentFilled(order: O3SwitcheoOrders): Double {
+        var fillSum = 0.0
+        for (make in order.makes) {
+            for (trade in make.trades) {
+                fillSum += trade["filled_amount"].asDouble
+            }
+        }
+
+        for (fill in order.fills) {
+            fillSum  += fill.filled_amount.toDouble()
+        }
+        val percentFilled = (fillSum / order.want_amount.toDouble()) * 100
+        return percentFilled
+    }
+
 
     fun getPendingOrders(completion: (Pair<List<O3SwitcheoOrders>?, Error?>) -> (Unit)) {
         getOrders {
@@ -324,7 +339,9 @@ class O3PlatformClient {
                 for (order in orders) {
                     if (order.makes!!.count() > 0 && order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } == null) {
-                            pendingOrders.add(order)
+                           if (100.0 - calculatePercentFilled(order) >= 0.00000001) {
+                               pendingOrders.add(order)
+                           }
                         }
                     }
                 }

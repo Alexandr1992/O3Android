@@ -17,6 +17,7 @@ import network.o3.o3wallet.R
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.alert
@@ -53,20 +54,28 @@ class DAppBrowserActivity : AppCompatActivity() {
 
     fun initiateTradeFooter(uri: Uri) {
         if (uri.authority == "public.o3.network") {
-            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
-            val asset = uri.lastPathSegment
-            dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
-                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                intent.putExtra("asset", asset)
-                intent.putExtra("is_buy", true)
-                startActivity(intent)
-            }
+            SwitcheoAPI().getTokens {
+                runOnUiThread {
+                    val asset = uri.lastPathSegment!!
+                    if (it.first?.get(asset.toUpperCase()) != null) {
+                        dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+                        dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
+                            val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset)
+                            intent.putExtra("is_buy", true)
+                            startActivity(intent)
+                        }
 
-            dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
-                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                intent.putExtra("asset", asset)
-                intent.putExtra("is_buy", false)
-                startActivity(intent)
+                        dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
+                            val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset)
+                            intent.putExtra("is_buy", false)
+                            startActivity(intent)
+                        }
+                    } else {
+                        dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+                    }
+                }
             }
         } else {
             dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE

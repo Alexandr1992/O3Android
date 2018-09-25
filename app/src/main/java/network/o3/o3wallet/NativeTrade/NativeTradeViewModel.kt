@@ -140,7 +140,9 @@ class NativeTradeViewModel: ViewModel() {
         selectedPrice?.postValue(Pair(newFiatPrice, newPrice))
         selectedPrice?.value = Pair(newFiatPrice, newPrice)
         updateMarketRateDifference(newPrice)
-        selectedBaseAssetAmount.postValue(selectedPrice?.value?.second!! * orderAssetAmount.value!!)
+        if (orderAssetAmount.value != null) {
+            selectedBaseAssetAmount.postValue(selectedPrice?.value?.second!! * orderAssetAmount.value!!)
+        }
         calculateFillAmount()
 
     }
@@ -253,9 +255,7 @@ class NativeTradeViewModel: ViewModel() {
     }
 
     fun calculateFillAmount() {
-        if (orderAssetAmount.value == null) {
-            estimatedFillAmount.value = 0.0
-            estimatedFillAmount.postValue(0.0)
+        if (orderAssetAmount.value == null || orderAssetAmount.value == 0.0) {
             return
         }
 

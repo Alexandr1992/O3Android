@@ -26,6 +26,7 @@ import android.support.constraint.ConstraintSet
 import kotlinx.android.synthetic.main.pinpad_layout.*
 import network.o3.o3wallet.R.id.imageView
 import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.support.v4.onUiThread
 import org.w3c.dom.Text
 
 
@@ -216,16 +217,18 @@ class PriceSelectionFragment : Fragment() {
     }
 
     fun initiateEstimatedFill() {
-        if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value == 0.0) {
-            mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
-            mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
-        } else {
-            mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.VISIBLE
-            mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
+        onUiThread {
+            if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value ?: 0.0 == 0.0) {
+                mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
+                mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
+            } else {
+                mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.VISIBLE
+                mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
+            }
         }
 
         (activity as NativeTradeRootActivity).viewModel.getFillAmount().observe(this, Observer { fillAmount ->
-            if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value == 0.0) {
+            if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value ?: 0.0 == 0.0) {
                 mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
                 mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
             } else {
@@ -239,6 +242,7 @@ class PriceSelectionFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.native_trade_price_selection_fragment, container, false)
+
         initiateEstimatedFill()
         initiatePinPadButtons()
         initiatePriceEditText()

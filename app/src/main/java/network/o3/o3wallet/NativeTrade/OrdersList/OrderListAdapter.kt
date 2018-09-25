@@ -1,6 +1,5 @@
 package network.o3.o3wallet.NativeTrade.OrdersList
 
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -10,19 +9,13 @@ import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
-import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
-import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.R
 import network.o3.o3wallet.formattedPercentString
 import network.o3.o3wallet.removeTrailingZeros
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.textColor
 import java.lang.Math.pow
 import java.text.SimpleDateFormat
@@ -35,7 +28,6 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.native_trade_order_card, parent, false)
         return OrderHolder(view, mFragment)
-
     }
 
     override fun getItemCount(): Int {
@@ -51,7 +43,6 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
         val mFragment = fragment
 
         fun calculatePercentFilled(order: O3SwitcheoOrders): Double {
-
             var fillSum = 0.0
             for (make in order.makes) {
                 for (trade in make.trades) {
@@ -120,7 +111,6 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
                 val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
                 Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
                 Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
-
             } else {
                 mView.find<TextView>(R.id.orderTypeTextView).textColor = mView.context.getColor(R.color.colorSell)
                 mView.find<TextView>(R.id.orderAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + " " + baseAsset.symbol.toUpperCase()
@@ -134,8 +124,6 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
                 Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
                 Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
             }
-
-
 
             val sdfInput =  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             val date = sdfInput.parse(orderCreatedTime)
