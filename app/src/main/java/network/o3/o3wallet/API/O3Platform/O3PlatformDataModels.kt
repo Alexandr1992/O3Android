@@ -148,7 +148,7 @@ data class O3SwitcheoOrders(
             val status: String,
             val created_at: String,
             val transaction_hash: String,
-            val trades: List<JsonObject>
+            val trades: List<JsonObject>?
     )
 }
 

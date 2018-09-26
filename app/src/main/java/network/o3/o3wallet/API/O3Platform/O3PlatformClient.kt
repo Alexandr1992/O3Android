@@ -318,15 +318,15 @@ class O3PlatformClient {
     fun calculatePercentFilled(order: O3SwitcheoOrders): Double {
         var fillSum = 0.0
         for (make in order.makes) {
-            for (trade in make.trades) {
-                fillSum += trade["filled_amount"].asDouble
+            for (trade in make.trades ?: listOf()) {
+                fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
             }
         }
 
         for (fill in order.fills) {
-            fillSum  += fill.filled_amount.toDouble()
+            fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
         }
-        val percentFilled = (fillSum / order.want_amount.toDouble()) * 100
+        val percentFilled = fillSum * 100
         return percentFilled
     }
 
@@ -336,6 +336,7 @@ class O3PlatformClient {
             if (it.second == null) {
                 val orders = it.first!!.switcheo
                 var pendingOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
+                //open not filled
                 for (order in orders) {
                     if (order.makes!!.count() > 0 && order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } == null) {
@@ -345,6 +346,30 @@ class O3PlatformClient {
                         }
                     }
                 }
+                //closed orders
+                var closedOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
+                for (order in orders) {
+                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } != null) {
+                            if (calculatePercentFilled(order) > 0.0) {
+                                pendingOrders.add(order)
+                            }
+                        }
+                    }
+                }
+                //fully filled
+                for (order in orders) {
+                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } == null) {
+                            if (100.0 - calculatePercentFilled(order) < 0.00000001) {
+                                closedOrders.add(order)
+                            }
+                        }
+                    }
+                }
+                closedOrders.sortBy { it.created_at.toLong() }
+                pendingOrders.addAll(closedOrders)
+
                 completion(Pair<List<O3SwitcheoOrders>?, Error?>(pendingOrders, null))
             } else {
                 completion(Pair<List<O3SwitcheoOrders>?, Error?>(null, Error(it.second!!.localizedMessage)))

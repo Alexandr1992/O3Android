@@ -10,6 +10,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import neoutils.Neoutils
 import network.o3.o3wallet.*
+import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.math.BigDecimal
 import java.net.URL
@@ -394,6 +395,21 @@ class SwitcheoAPI {
     //endregion
 
     //region Orders
+    fun calculatePercentFilled(order: SwitcheoOrders): Double {
+        var fillSum = 0.0
+        for (make in order.makes) {
+            for (trade in make.trades ?: listOf()) {
+                fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
+            }
+        }
+
+        for (fill in order.fills) {
+            fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
+        }
+        val percentFilled = fillSum * 100
+        return percentFilled
+    }
+
     fun getPendingOrders(contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<List<SwitcheoOrders>?, Error?>) -> (Unit)) {
         val parameters = listOf("blockchain" to blockchain,
                 "contract_hash" to contract_hash,
@@ -405,13 +421,15 @@ class SwitcheoAPI {
 
         request.responseString { req, response, result ->
             val (data, error) = result
+            var pendingOrders: MutableList<SwitcheoOrders> = mutableListOf()
             if (error == null) {
                 val orders = Gson().fromJson<List<SwitcheoOrders>>(data!!)
-                var pendingOrders: MutableList<SwitcheoOrders> = mutableListOf()
                 for (order in orders) {
                     if (order.makes!!.count() > 0 && order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } == null) {
-                            pendingOrders.add(order)
+                            if (100.0 - calculatePercentFilled(order) >= 0.00000001) {
+                                pendingOrders.add(order)
+                            }
                         }
                     }
                 }
