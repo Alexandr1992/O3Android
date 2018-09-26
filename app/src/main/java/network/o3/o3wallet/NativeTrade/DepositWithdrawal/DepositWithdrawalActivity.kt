@@ -15,8 +15,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.dialog_backup_key_fragment.*
-import kotlinx.android.synthetic.main.send_success_fragment.*
-import kotlinx.android.synthetic.main.send_what_fragment.*
+import kotlinx.android.synthetic.main.native_trade_deposit_withdrawal_activity.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
@@ -280,7 +279,18 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         } else {
             find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_Withdraw)
         }
+    }
 
+    fun initiateWithDrawAllButton() {
+        val withdrawAllButton = mView.find<Button>(R.id.withdrawAllButton)
+        if (viewModel.isDeposit) {
+            withdrawAllButton.visibility = View.INVISIBLE
+        }  else {
+            withdrawAllButton.setOnClickListener {
+                amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
+                calculateAndDisplaySendAmount()
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -299,6 +309,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         initiateAssetSelector()
         listenForNewPricingData()
         initiateHeader()
+        initiateWithDrawAllButton()
         setContentView(mView)
     }
 

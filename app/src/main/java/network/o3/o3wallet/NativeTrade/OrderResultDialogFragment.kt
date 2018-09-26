@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 
@@ -57,7 +58,7 @@ class OrderResultDialog() : DialogFragment() {
         titleView.text = resources.getString(R.string.NATIVE_TRADE_order_fail_title)
         subtitleView.text = resources.getString(R.string.NATIVE_TRADE_order_failure_subtitle)
         subtitleView.visibility = View.VISIBLE
-        animationView.setAnimation(R.raw.claim_success)
+        animationView.setAnimation(R.raw.task_failed)
         animationView.playAnimation()
         finishButton.isEnabled = true
     }
@@ -69,7 +70,11 @@ class OrderResultDialog() : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog)
+        if (PersistentStore.getTheme() == "Dark") {
+            setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog_Dark)
+        } else {
+            setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog_Light)
+        }
     }
 
     companion object {

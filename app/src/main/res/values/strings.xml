@@ -515,4 +515,5 @@
     <string name="NATIVE_TRADE_closed">Closed</string>
     <string name="NATIVE_TRADE_hide_orders">Hide Closed Orders</string>
     <string name="NATIVE_TRADE_show_orders">Show Closed Orders</string>
+    <string name="NATIVE_TRADE_withdraw_all">Withdraw All</string>
 </resources>

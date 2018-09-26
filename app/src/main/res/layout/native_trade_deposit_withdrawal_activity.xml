@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/input_container"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,10 +80,10 @@
                 android:id="@+id/view16"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
-                android:background="?attr/primaryBackgroundColor"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
+                android:background="?attr/primaryBackgroundColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -125,9 +125,6 @@
         app:layout_constraintTop_toBottomOf="@+id/inputContainer" />
 
 
-
-
-
     <include
         android:id="@+id/include"
         layout="@layout/pinpad_layout"
@@ -135,7 +132,18 @@
         android:layout_height="265dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/withdrawAllButton"
+        style="@style/BorderLessButton.Accent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/NATIVE_TRADE_withdraw_all"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-         />
+        app:layout_constraintTop_toBottomOf="@+id/inputContainer" />
 
 </android.support.constraint.ConstraintLayout>

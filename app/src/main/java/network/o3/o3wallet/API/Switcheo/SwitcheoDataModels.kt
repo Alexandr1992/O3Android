@@ -60,7 +60,7 @@ data class SwitcheoOrders(
             val offer_amount: String,
             val want_asset_id: String,
             val want_amount: String,
-            val filled_amount: String,  
+            val filled_amount: String,
             val txn: Any?,
             val cancel_txn: Any?,
             val price: String,

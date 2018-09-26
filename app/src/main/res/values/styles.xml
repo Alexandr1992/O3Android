@@ -94,11 +94,18 @@
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
     </style>
 
-    <style name = "AppTheme.Dialog" parent ="Theme.AppCompat.Light.Dialog">
+    <style name = "AppTheme.Dialog.Light" parent ="Theme.AppCompat.Light.Dialog">
         <item name="defaultTextColor">@color/colorBlack</item>
         <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
         <item name="primaryBackgroundColor">@color/colorWhite</item>
         <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
+    </style>
+
+    <style name = "AppTheme.Dialog.Dark" parent ="Theme.AppCompat.Light.Dialog">
+        <item name="defaultTextColor">@color/colorWhite</item>
+        <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
+        <item name="primaryBackgroundColor">@color/colorBlack</item>
+        <item name="secondaryBackgroundColor">@color/colorGhostBlack</item>
     </style>
 
     <style name="AppTheme.NoTopBar" parent="Theme.AppCompat.Light.NoActionBar">
