@@ -9,7 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
+import com.github.salomonbrys.kotson.jsonObject
+import com.github.salomonbrys.kotson.toMap
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalResultDialog
 import network.o3.o3wallet.R
@@ -22,6 +25,7 @@ import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
 import org.w3c.dom.Text
 
 class ReviewOrderFragment : Fragment() {
@@ -99,6 +103,12 @@ class ReviewOrderFragment : Fragment() {
                         resultFragment.showFailure()
                     } else {
                         resultFragment.showSuccess()
+                        val loggedJson = jsonObject(
+                                "pair" to pair,
+                                "price" to price,
+                                "side" to side,
+                                "wantAmount" to wantAmount)
+                        Amplitude.getInstance().logEvent("Native_Order_Placed",JSONObject(loggedJson.toMap()))
                     }
                 }
              }

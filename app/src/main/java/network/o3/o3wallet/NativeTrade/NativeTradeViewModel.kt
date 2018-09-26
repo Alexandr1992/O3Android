@@ -16,43 +16,22 @@ class NativeTradeViewModel: ViewModel() {
     val availableBaseAssets = arrayOf(Pair<String, Double?>("NEO", null), Pair<String, Double?>("GAS", null))
 
     var isBuyOrder: Boolean = true
-   // val selectedTradeAsset: TransferableAsset
-   // val selectedTradeAssetAmount: Long
-
-   // val selectedPriceCrypto: Long
-   // val selectedPriceFiat: Long
-    //val selectedPrice: Double = 0.1
 
     var selectedBaseAsset: MutableLiveData<String> = MutableLiveData()
     var selectedBaseAssetAmount: MutableLiveData<Double> = MutableLiveData()
-
     var orderAssetAmount: MutableLiveData<Double> = MutableLiveData()
-
     var orders: MutableLiveData<List<SwitcheoOrders>>? = null
-
     var selectedPrice: MutableLiveData<Pair<Double, Double>>? = null
     var marketPrice: Pair<Double, Double>? = null
     var orderAsset = "QLC"
-
     var orderBookTopPrice: MutableLiveData<Double>? = null
-
     var isOrdering: MutableLiveData<Boolean> = MutableLiveData()
-
-   // val baseAssetTradeBalance: Long
-   // val baseAssetAmount: Long
-   // val baseAssetAmountFiat: Long
-
     var tradingAccount: MutableLiveData<TradingAccount>? = null
-
     var editingBaseAmount: MutableLiveData<Boolean> = MutableLiveData()
-
     var baseAssetBalance: MutableLiveData<Double?> = MutableLiveData()
     var baseAssetImageUrl: MutableLiveData<String> = MutableLiveData()
-
     var marketRateDifference: MutableLiveData<Double> = MutableLiveData()
-
     var estimatedFillAmount: MutableLiveData<Double> = MutableLiveData()
-
     var error: MutableLiveData<Error> = MutableLiveData()
 
     init {
