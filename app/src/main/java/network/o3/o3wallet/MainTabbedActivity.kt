@@ -40,6 +40,7 @@ import android.content.IntentFilter
 import android.content.res.Resources
 import android.os.Handler
 import android.util.Log
+import android.widget.ImageButton
 import com.amplitude.api.Amplitude
 import com.tapadoo.alerter.Alerter
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
@@ -151,6 +152,7 @@ class MainTabbedActivity : AppCompatActivity() {
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
+        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -171,6 +173,7 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabPosition = 0
                         tabName = "Home"
                         find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
+                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
 
                     }
                     R.id.action_item2 -> {
@@ -179,6 +182,7 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabPosition = 1
                         tabName = "Wallet"
                         find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_my_o3_wallet)
+                        find<ImageButton>(R.id.rightNavButton).visibility = View.VISIBLE
                     }
                     R.id.action_item3 -> {
                         switchFragment(2)
@@ -186,6 +190,7 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabPosition = 2
                         tabName = "Marketplace"
                         find<TextView>(R.id.mytext).text = resources.getString(R.string.MARKETPLACE_marketplace)
+                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
                     }
                     R.id.action_item4 -> {
                         switchFragment(3)
@@ -193,6 +198,7 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabPosition = 3
                         tabName = "News"
                         find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_news_feed)
+                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
                     }
                     R.id.action_item5 -> {
                         switchFragment(4)
@@ -200,6 +206,7 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabPosition = 4
                         tabName = ""
                         find<TextView>(R.id.mytext).text = resources.getString(R.string.SETTINGS_more)
+                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
                     }
                 }
                 Answers().logCustom(CustomEvent("Tab Tapped")

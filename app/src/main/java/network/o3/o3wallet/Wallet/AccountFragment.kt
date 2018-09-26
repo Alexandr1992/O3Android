@@ -29,6 +29,7 @@ import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
+import org.jetbrains.anko.support.v4.find
 
 class AccountFragment : Fragment() {
     // toolbar items
@@ -92,6 +93,7 @@ class AccountFragment : Fragment() {
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
         scanButton.setOnClickListener { scanAddressTapped() }
+        activity!!.find<ImageButton>(R.id.rightNavButton).setOnClickListener { scanAddressTapped() }
 
     }
 
