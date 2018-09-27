@@ -28,6 +28,7 @@ import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
+import java.lang.Math.floor
 import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
@@ -137,11 +138,18 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         viewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             formatter.maximumFractionDigits = selectedAsset!!.decimals
 
+            if (selectedAsset!!.symbol == "NEO" && !viewModel.isDeposit) {
+                find<TextView>(R.id.neoWithdrawWarningTextView).visibility = View.VISIBLE
+            } else {
+                find<TextView>(R.id.neoWithdrawWarningTextView).visibility = View.INVISIBLE
+            }
+
             if (viewModel.selectedAssetDecimals > 0) {
                 decimalButton.visibility = View.VISIBLE
             } else {
                 decimalButton.visibility = View.INVISIBLE
             }
+
 
             find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset!!.value)
             find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
@@ -287,7 +295,14 @@ class DepositWithdrawalActivity : AppCompatActivity() {
             withdrawAllButton.visibility = View.INVISIBLE
         }  else {
             withdrawAllButton.setOnClickListener {
-                amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
+                if (viewModel.selectedAsset!!.value!!.symbol == "NEO") {
+                    amountEditText.text = SpannableStringBuilder(
+                            floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
+                    )
+                } else {
+                    amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
+                }
+
                 calculateAndDisplaySendAmount()
             }
         }

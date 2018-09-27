@@ -316,22 +316,27 @@ class O3PlatformClient {
             }
         }
     }
-    fun calculatePercentFilled(order: O3SwitcheoOrders): Double {
+    fun calculatePercentFilled(order: O3SwitcheoOrders): Pair<Double, Double> {
         var fillSum = 0.0
+        var errorMargin = 0.0
         for (make in order.makes) {
             for (trade in make.trades ?: listOf()) {
+                errorMargin += 1
                 fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
             }
         }
 
         for (fill in order.fills) {
-            fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
+            errorMargin +=1
+            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
         }
         val percentFilled = fillSum * 100
-        return percentFilled
+        return Pair(percentFilled, errorMargin)
     }
 
-
+    //SWITCHEO API currently has an error margin of 0.000001 percent on each make and trade
+    //we have to account for this to make sure a "filled" order is not mistreeated as
+    //still open
     fun getPendingOrders(completion: (Pair<List<O3SwitcheoOrders>?, Error?>) -> (Unit)) {
         getOrders {
             if (it.second == null) {
@@ -339,9 +344,10 @@ class O3PlatformClient {
                 var pendingOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
                 //open not filled
                 for (order in orders) {
-                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                    if (order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } == null) {
-                           if (100.0 - calculatePercentFilled(order) >= 0.00000001) {
+                            val percentFilledAndError = calculatePercentFilled(order)
+                           if (100.0 - percentFilledAndError.first >= 0.000001 * percentFilledAndError.second) {
                                pendingOrders.add(order)
                            }
                         }
@@ -350,28 +356,30 @@ class O3PlatformClient {
                 //closed orders
                 var closedOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
                 for (order in orders) {
-                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                    if (order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } != null) {
-                            if (calculatePercentFilled(order) > 0.0) {
-                                pendingOrders.add(order)
+                            if (calculatePercentFilled(order).first > 0.0) {
+                                closedOrders.add(order)
                             }
                         }
                     }
                 }
                 //fully filled
                 for (order in orders) {
-                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                    if (order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } == null) {
-                            if (100.0 - calculatePercentFilled(order) < 0.00000001) {
+                            val percentFilledAndError = calculatePercentFilled(order)
+                            if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
                                 closedOrders.add(order)
                             }
                         }
                     }
                 }
                 val df1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                closedOrders.sortBy {
-                    df1.parse(it.created_at).time
-                }
+                pendingOrders.sortBy { df1.parse(it.created_at).time}
+                pendingOrders.reverse()
+                closedOrders.sortBy { df1.parse(it.created_at).time }
+                closedOrders.reverse()
                 pendingOrders.addAll(closedOrders)
 
                 completion(Pair<List<O3SwitcheoOrders>?, Error?>(pendingOrders, null))

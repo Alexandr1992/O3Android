@@ -28,34 +28,37 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
 
     private var openOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
 
-    fun orderIsClosed(order: O3SwitcheoOrders): Boolean {
-        if (order.makes!!.count() > 0 && order.status == "processed") {
-            if (order.makes.find { it.status == "cancelled" } != null) {
-                if (calculatePercentFilled(order) > 0.0) {
-                    return true
-                }
-            } else if (100.0 - calculatePercentFilled(order) < 0.00000001) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun calculatePercentFilled(order: O3SwitcheoOrders): Double {
+    fun calculatePercentFilled(order: O3SwitcheoOrders): Pair<Double, Double> {
         var fillSum = 0.0
+        var errorMargin = 0.0
         for (make in order.makes) {
             for (trade in make.trades ?: listOf()) {
+                errorMargin += 1
                 fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
             }
         }
 
         for (fill in order.fills) {
-            fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
+            errorMargin +=1
+            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
         }
         val percentFilled = fillSum * 100
-        return percentFilled
+        return Pair(percentFilled, errorMargin)
     }
 
+    fun orderIsClosed(order: O3SwitcheoOrders): Boolean {
+        if (order.status == "processed") {
+            val percentFilledAndError = calculatePercentFilled(order)
+            if (order.makes.find { it.status == "cancelled" } != null) {
+                if (percentFilledAndError.first > 0.0) {
+                    return true
+                }
+            } else if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
+                return true
+            }
+        }
+        return false
+    }
 
     init {
         for (order in orders) {
@@ -135,39 +138,40 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
         val mView = v
         val mFragment = fragment
 
-        fun calculatePercentFilled(order: O3SwitcheoOrders): Double {
+        fun calculatePercentFilled(order: O3SwitcheoOrders): Pair<Double, Double> {
             var fillSum = 0.0
+            var errorMargin = 0.0
             for (make in order.makes) {
                 for (trade in make.trades ?: listOf()) {
+                    errorMargin += 1
                     fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
                 }
             }
 
             for (fill in order.fills) {
-                fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
+                errorMargin +=1
+                fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
             }
             val percentFilled = fillSum * 100
-            return percentFilled
+            return Pair(percentFilled, errorMargin)
         }
 
-        fun getRate(order: O3SwitcheoOrders): String {
-            var rate = 0.0
-            if(order.side == "buy") {
-                rate = order.makes[0].offer_amount.toDouble() / order.makes[0].want_amount.toDouble()
-            } else {
-                rate = order.makes[0].want_amount.toDouble()  / order.makes[0].offer_amount.toDouble()
-            }
+        fun getRate(order: O3SwitcheoOrders, baseAssetAmount: Double, orderAssetAmount: Double): String {
+            return (baseAssetAmount / orderAssetAmount).removeTrailingZeros()
 
-            return rate.removeTrailingZeros()
         }
 
+        //SWITCHEO API currently has an error margin of 0.00000001 on each make and trade
+        //we have to account for this to make sure a "filled" order is not mistreeated as
+        //still open
         fun orderIsClosed(order: O3SwitcheoOrders): Boolean {
-            if (order.makes!!.count() > 0 && order.status == "processed") {
+            if (order.status == "processed") {
+                val percentFilledAndError = calculatePercentFilled(order)
                 if (order.makes.find { it.status == "cancelled" } != null) {
-                    if (calculatePercentFilled(order) > 0.0) {
+                    if (percentFilledAndError.first > 0.0) {
                         return true
                     }
-                } else if (100.0 - calculatePercentFilled(order) < 0.00000001) {
+                } else if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
                     return true
                 }
             }
@@ -196,40 +200,43 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
             }
             val orderType = order.side.toUpperCase()
 
-            val orderAmount = order.want_amount.toDouble() / pow(10.0, order.wantAsset.decimals.toDouble())
+            var orderAmount = order.want_amount.toDouble() / pow(10.0, order.wantAsset.decimals.toDouble())
             val orderAsset = order.wantAsset
             val orderCreatedTime = order.created_at
 
             val baseAsset = order.offerAsset
-            val baseAssetAmount = order.offer_amount.toDouble() / pow(10.0, order.offerAsset.decimals.toDouble())
+            var baseAssetAmount = order.offer_amount.toDouble() / pow(10.0, order.offerAsset.decimals.toDouble())
             val percentFilled = calculatePercentFilled(order)
 
             if (orderIsClosed(order)) {
                 mView.find<TextView>(R.id.orderIsClosedTextView).visibility = View.VISIBLE
                 mView.setOnClickListener {  }
+                orderAmount = orderAmount * percentFilled.first / 100
+                baseAssetAmount = baseAssetAmount * percentFilled.first / 100
+                mView.find<ProgressBar>(R.id.orderFillProgressBar).visibility = View.INVISIBLE
+                mView.find<TextView>(R.id.orderFillAmountTextView).visibility = View.INVISIBLE
             } else {
                 mView.find<TextView>(R.id.orderIsClosedTextView).visibility = View.INVISIBLE
                 mView.setOnClickListener { showOptionsMenu(order) }
+                mView.find<ProgressBar>(R.id.orderFillProgressBar).visibility = View.VISIBLE
+                mView.find<TextView>(R.id.orderFillAmountTextView).visibility = View.VISIBLE
             }
 
+            mView.find<TextView>(R.id.orderAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + "\n" + baseAsset.symbol.toUpperCase()
+            mView.find<TextView>(R.id.baseAssetAmountTextView).text = orderAmount.removeTrailingZeros() + "\n" + orderAsset.symbol.toUpperCase()
+
+            val orderAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
+            val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", orderAsset.symbol.toUpperCase())
+            Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
+            Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
+
+
             if (orderType == "BUY") {
-                mView.find<TextView>(R.id.orderAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + "\n" + baseAsset.symbol.toUpperCase()
-                mView.find<TextView>(R.id.baseAssetAmountTextView).text = orderAmount.removeTrailingZeros() + "\n" + orderAsset.symbol.toUpperCase()
-                val orderAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
-                val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", orderAsset.symbol.toUpperCase())
-                Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
-                Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
                 mView.find<TextView>(R.id.orderCryptoRateTextView).text =
-                        getRate(order) +  " " + baseAsset.symbol.toUpperCase()  + "/" + orderAsset.symbol.toUpperCase()
+                        getRate(order, baseAssetAmount, orderAmount) +  " " + baseAsset.symbol.toUpperCase()  + "/" + orderAsset.symbol.toUpperCase()
             } else {
-                mView.find<TextView>(R.id.orderAssetAmountTextView).text = orderAmount.removeTrailingZeros() + "\n" + orderAsset.symbol.toUpperCase()
-                mView.find<TextView>(R.id.baseAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + "\n" + baseAsset.symbol.toUpperCase()
-                val orderAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", orderAsset.symbol.toUpperCase())
-                val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
-                Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
-                Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
                 mView.find<TextView>(R.id.orderCryptoRateTextView).text =
-                        getRate(order) +  " " + orderAsset.symbol.toUpperCase()  + "/" + baseAsset.symbol.toUpperCase()
+                        getRate(order, orderAmount, baseAssetAmount) +  " " + orderAsset.symbol.toUpperCase()  + "/" + baseAsset.symbol.toUpperCase()
             }
 
 
@@ -240,8 +247,8 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
 
             //val date = java.util.Date(orderCreatedTime.toLong())
             mView.find<TextView>(R.id.orderTimeTextView).text = formatOut
-            mView.find<TextView>(R.id.orderFillAmountTextView).text = String.format(mView.context.resources.getString(R.string.NATIVE_TRADE_order_fill_amount), percentFilled.formattedPercentString())
-            mView.find<ProgressBar>(R.id.orderFillProgressBar).progress = percentFilled.toInt()
+            mView.find<TextView>(R.id.orderFillAmountTextView).text = String.format(mView.context.resources.getString(R.string.NATIVE_TRADE_order_fill_amount), percentFilled.first.formattedPercentString())
+            mView.find<ProgressBar>(R.id.orderFillProgressBar).progress = percentFilled.first.toInt()
         }
     }
 }

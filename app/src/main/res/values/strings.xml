@@ -512,8 +512,9 @@
     <string name="NATIVE_TRADE_order_fail_title">Order Failed</string>
     <string name="NATIVE_TRADE_order_failure_subtitle">Please try again later</string>
     <string name="NATIVE_TRADE_order_in_progress">Submitting your order</string>
-    <string name="NATIVE_TRADE_closed">Closed</string>
-    <string name="NATIVE_TRADE_hide_orders">Hide Closed Orders</string>
-    <string name="NATIVE_TRADE_show_orders">Show Closed Orders</string>
+    <string name="NATIVE_TRADE_Completed">Completed</string>
+    <string name="NATIVE_TRADE_hide_orders">Hide Completed Orders</string>
+    <string name="NATIVE_TRADE_show_orders">Show Completed Orders</string>
     <string name="NATIVE_TRADE_withdraw_all">Withdraw All</string>
+    <string name="NATIVE_TRADE_Neo_withdraw_warning">When withdrawing to your wallet, you must withdraw a whole amount of NEO</string>
 </resources>
