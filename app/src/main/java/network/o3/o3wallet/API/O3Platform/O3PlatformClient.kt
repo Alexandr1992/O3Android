@@ -8,6 +8,7 @@ import network.o3.o3wallet.API.O3.TokenSaleLogSigned
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -367,7 +368,10 @@ class O3PlatformClient {
                         }
                     }
                 }
-                closedOrders.sortBy { it.created_at.toLong() }
+                val df1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                closedOrders.sortBy {
+                    df1.parse(it.created_at).time
+                }
                 pendingOrders.addAll(closedOrders)
 
                 completion(Pair<List<O3SwitcheoOrders>?, Error?>(pendingOrders, null))

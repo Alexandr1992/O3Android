@@ -95,7 +95,22 @@ class AccountViewModel: ViewModel() {
                 for (asset in it.first!!.switcheo.confirmed) {
                     asset.value = asset.value.divide(10.0.pow(asset.decimals).toBigDecimal())
                 }
-                tradingAccountAssets!!.postValue(it.first!!.switcheo.confirmed)
+                val sortedAssets = mutableListOf<TransferableAsset>() //it.first!!.switcheo.confirmed
+                val neoAsset = it.first!!.switcheo.confirmed.find { it.symbol.toUpperCase() == "NEO" }
+                val gasAsset = it.first!!.switcheo.confirmed.find { it.symbol.toUpperCase() == "GAS" }
+                if (neoAsset != null) {
+                    sortedAssets.add(neoAsset)
+                }
+                if (gasAsset != null) {
+                    sortedAssets.add(gasAsset)
+                }
+                val interAssets = it.first!!.switcheo.confirmed.sortedBy { it.symbol }
+                for (asset in interAssets) {
+                    if (asset != neoAsset && asset != gasAsset) {
+                        sortedAssets.add(asset)
+                    }
+                }
+                tradingAccountAssets!!.postValue(sortedAssets)
             }
         }
     }

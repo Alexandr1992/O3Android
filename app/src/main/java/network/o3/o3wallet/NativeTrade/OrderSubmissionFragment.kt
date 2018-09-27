@@ -198,14 +198,14 @@ class OrderSubmissionFragment : Fragment() {
 
 
         (activity as NativeTradeRootActivity).viewModel.getTradingAccountBalances().observe(this, Observer { tradingAccount ->
-            val orderAsset = tradingAccount!!.switcheo.confirmed.
-                    find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.orderAsset}
-            orderAssetBalanceTextView.text = orderAsset?.value?.divide(BigDecimal(100000000.0)).toString()
+            val orderAsset = tradingAccount!!.switcheo.confirmed.find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.orderAsset}
 
+
+            orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: 0.0)  .toString()
             baseAssetSelectionContainer.setNoDoubleClickListener(View.OnClickListener { v ->
                 val args = Bundle()
                 args.putString("trading_account", Gson().toJson(tradingAccount!!))
-                args.putString("order_asset", orderAsset!!.symbol)
+                args.putString("order_asset", orderAsset?.symbol ?: "")
                 val assetSelectorSheet = NativeTradeBaseAssetBottomSheet()
                 assetSelectorSheet.arguments = args
                 assetSelectorSheet.show(activity!!.supportFragmentManager, assetSelectorSheet.tag)
@@ -238,7 +238,6 @@ class OrderSubmissionFragment : Fragment() {
         if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
             orderAssetBalanceTextView.visibility = View.INVISIBLE
         }
-
 
         orderAssetAmountEditText = mView.find(R.id.orderAssetAmountEditText)
         orderAssetAmountEditText.afterTextChanged {
@@ -350,6 +349,10 @@ class OrderSubmissionFragment : Fragment() {
 
     fun initializeAssetBalanceListener() {
         baseAssetBalanceTextView = mView.find<TextView>(R.id.baseAssetBalanceTextView)
+        if (!(activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            baseAssetBalanceTextView.visibility = View.INVISIBLE
+        }
+
         (activity as NativeTradeRootActivity).viewModel.getSelectedBaseAssetBalance().observe(this, Observer { balance ->
             baseAssetBalanceTextView.text = balance?.removeTrailingZeros()
         })
