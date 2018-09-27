@@ -2,9 +2,12 @@ package network.o3.o3wallet.NativeTrade
 
 
 import android.arch.lifecycle.Observer
+import android.graphics.Color
+import android.graphics.ColorFilter
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.TextUtils.replace
 import android.view.LayoutInflater
@@ -227,8 +230,18 @@ class OrderSubmissionFragment : Fragment() {
             if (orders == null) {
                 context?.toast("ERROR")
             } else {
-                (activity as NativeTradeRootActivity).find<TextView>(R.id.pendingOrderCountBadge).text = orders.count().toString()
-                (activity as NativeTradeRootActivity).find<TextView>(R.id.pendingOrderCountBadge).visibility = View.VISIBLE
+                val pendingButton = (activity as NativeTradeRootActivity).find<ImageView>(R.id.pendingOrdersToolbarButton)
+                val pendingBadge = (activity as NativeTradeRootActivity).find<TextView>(R.id.pendingOrderCountBadge)
+                if (orders.count() > 0) {
+                    pendingButton.setColorFilter(ContextCompat.getColor(context!!, R.color.colorPrimary))
+                    pendingButton.isEnabled = true
+                    pendingBadge.text = orders.count().toString()
+                    pendingBadge.visibility = View.VISIBLE
+                } else {
+                    pendingButton.isEnabled = false
+                    pendingButton.setColorFilter(ContextCompat.getColor(context!!, R.color.colorSubtitleGrey))
+                    pendingBadge.visibility = View.GONE
+                }
             }
         })
     }

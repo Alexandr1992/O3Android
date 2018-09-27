@@ -77,16 +77,18 @@ class OrdersListFragment : Fragment() {
         orderOptions.show(activity!!.supportFragmentManager, orderOptions.tag)
     }
 
-    fun displayCancelResult(result: Boolean) {
-        onUiThread {
-            if (result == true) {
-                alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_succeeeded)) {
-                    yesButton {  }
-                }.show()
-            } else {
-                alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_failed)) {
-                    yesButton {  }
-                }.show()
+    fun cancelOrder(orderId: String) {
+        SwitcheoAPI().singleStepCancel(orderId) {
+            onUiThread {
+                if (it.first == true) {
+                    alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_succeeeded)) {
+                        yesButton { }
+                    }.show()
+                } else {
+                    alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_failed)) {
+                        yesButton { }
+                    }.show()
+                }
             }
         }
     }

@@ -395,19 +395,22 @@ class SwitcheoAPI {
     //endregion
 
     //region Orders
-    fun calculatePercentFilled(order: SwitcheoOrders): Double {
+    fun calculatePercentFilled(order: SwitcheoOrders): Pair<Double, Double> {
         var fillSum = 0.0
+        var errorMargin = 0.0
         for (make in order.makes) {
             for (trade in make.trades ?: listOf()) {
+                errorMargin += 1
                 fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
             }
         }
 
         for (fill in order.fills) {
-            fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
+            errorMargin +=1
+            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
         }
         val percentFilled = fillSum * 100
-        return percentFilled
+        return Pair(percentFilled, errorMargin)
     }
 
     fun getPendingOrders(contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<List<SwitcheoOrders>?, Error?>) -> (Unit)) {
@@ -425,9 +428,10 @@ class SwitcheoAPI {
             if (error == null) {
                 val orders = Gson().fromJson<List<SwitcheoOrders>>(data!!)
                 for (order in orders) {
-                    if (order.makes!!.count() > 0 && order.status == "processed") {
+                    if (order.status == "processed") {
                         if (order.makes.find { it.status == "cancelled" } == null) {
-                            if (100.0 - calculatePercentFilled(order) >= 0.00000001) {
+                            val percentFilledAndError = calculatePercentFilled(order)
+                            if (100.0 - percentFilledAndError.first >= 0.000001 * percentFilledAndError.second) {
                                 pendingOrders.add(order)
                             }
                         }

@@ -185,9 +185,7 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
                 val itemId = it.itemId
 
                 if (itemId == R.id.cancel_order_menu_item) {
-                    SwitcheoAPI().singleStepCancel(order.id) {
-                        mFragment.displayCancelResult(it.first ?: false)
-                    }
+                    mFragment.cancelOrder(order.id)
                 }
                 true
             }
