@@ -212,14 +212,26 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
                 mView.setOnClickListener { showOptionsMenu(order) }
             }
 
-            mView.find<TextView>(R.id.orderAssetAmountTextView).text = orderAmount.removeTrailingZeros() + "\n" + orderAsset.symbol.toUpperCase()
-            mView.find<TextView>(R.id.baseAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + "\n" + baseAsset.symbol.toUpperCase()
-            mView.find<TextView>(R.id.orderCryptoRateTextView).text =
+            if (orderType == "BUY") {
+                mView.find<TextView>(R.id.orderAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + "\n" + baseAsset.symbol.toUpperCase()
+                mView.find<TextView>(R.id.baseAssetAmountTextView).text = orderAmount.removeTrailingZeros() + "\n" + orderAsset.symbol.toUpperCase()
+                val orderAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
+                val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", orderAsset.symbol.toUpperCase())
+                Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
+                Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
+                mView.find<TextView>(R.id.orderCryptoRateTextView).text =
                         getRate(order) +  " " + baseAsset.symbol.toUpperCase()  + "/" + orderAsset.symbol.toUpperCase()
-            val orderAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", orderAsset.symbol.toUpperCase())
-            val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
-            Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
-            Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
+            } else {
+                mView.find<TextView>(R.id.orderAssetAmountTextView).text = orderAmount.removeTrailingZeros() + "\n" + orderAsset.symbol.toUpperCase()
+                mView.find<TextView>(R.id.baseAssetAmountTextView).text = baseAssetAmount.removeTrailingZeros() + "\n" + baseAsset.symbol.toUpperCase()
+                val orderAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", orderAsset.symbol.toUpperCase())
+                val baseAssetURL = String.format("https://cdn.o3.network/img/neo/%s.png", baseAsset.symbol.toUpperCase())
+                Glide.with(mView.context).load(orderAssetURL).into(mView.find(R.id.orderAssetLogoImageView))
+                Glide.with(mView.context).load(baseAssetURL).into(mView.find(R.id.baseAssetLogoImageView))
+                mView.find<TextView>(R.id.orderCryptoRateTextView).text =
+                        getRate(order) +  " " + orderAsset.symbol.toUpperCase()  + "/" + baseAsset.symbol.toUpperCase()
+            }
+
 
             val sdfInput =  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             val date = sdfInput.parse(orderCreatedTime)
