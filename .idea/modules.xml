@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/O3Android.iml" filepath="$PROJECT_DIR$/O3Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/O3Wallet.iml" filepath="$PROJECT_DIR$/O3Wallet.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/channel/channel.iml" filepath="$PROJECT_DIR$/channel/channel.iml" />

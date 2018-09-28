@@ -43,7 +43,7 @@ class SendFailedFragment : Fragment() {
             if (result != null) {
                 sendActivity.sendingToast?.cancel()
                 mView.findNavController().navigate(R.id.action_sendFailedFragment_to_sendSuccessFragment)
-            } else {
+            } else if (PersistentStore.getNetworkType() != "Private") {
                 O3PlatformClient().getChainNetworks {
                     updatePageForSecondFailure()
                     sendActivity.sendingToast?.cancel()

@@ -245,7 +245,6 @@ object PersistentStore {
         val pendingTx = Gson().toJson(transactions)
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
                 .putString("PENDING_TRANSACTIONS", pendingTx).apply()
-
     }
 
     fun clearPendingTransactions() {
@@ -261,5 +260,25 @@ object PersistentStore {
     fun getTheme(): String {
         return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
                 .getString("THEME", "Light")
+    }
+
+    fun getTradingAccountValue(): Double {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("TRADING_ACCOUNT_VALUE", "")?.toDoubleOrNull() ?: 0.0
+    }
+
+    fun getMainAccountValue(): Double {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("MAIN_ACCOUNT_VALUE", "")?.toDoubleOrNull() ?: 0.0
+    }
+
+    fun setTradingAccountValue(value: Double) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putString("TRADING_ACCOUNT_VALUE", value.toString()).apply()
+    }
+
+    fun setMainAccountValue(value: Double) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putString("MAIN_ACCOUNT_VALUE", value.toString()).apply()
     }
 }

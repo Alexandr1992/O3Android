@@ -8,18 +8,13 @@ import android.support.v4.app.Fragment
 import android.widget.*
 import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
-import android.net.Uri
 import android.os.Handler
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.CardView
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
-import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
@@ -28,15 +23,13 @@ import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.yesButton
 import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
-import kotlinx.android.synthetic.main.wallet_account_header_layout.*
+import org.jetbrains.anko.support.v4.find
 
 class AccountFragment : Fragment() {
     // toolbar items
@@ -46,7 +39,7 @@ class AccountFragment : Fragment() {
 
     //assets list
     private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var assetListView: RecyclerView
+    lateinit var assetListView: RecyclerView
 
     //Gas Claim Card NEO
     private lateinit var neoSyncButton: Button
@@ -100,6 +93,7 @@ class AccountFragment : Fragment() {
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
         scanButton.setOnClickListener { scanAddressTapped() }
+        activity!!.find<ImageButton>(R.id.rightNavButton).setOnClickListener { scanAddressTapped() }
 
     }
 
@@ -143,6 +137,7 @@ class AccountFragment : Fragment() {
 
     fun setupAssetList() {
         assetListView = mView.findViewById(R.id.assetListView)
+        assetListView.itemAnimator?.changeDuration = 0
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
         itemDecorator.setDrawable(context!!.getDrawable(R.drawable.vertical_divider))
         assetListView.addItemDecoration(itemDecorator)
@@ -159,6 +154,7 @@ class AccountFragment : Fragment() {
         swipeContainer.setProgressBackgroundColorSchemeColor(context!!.getColorFromAttr(R.attr.secondaryBackgroundColor))
         swipeContainer.setOnRefreshListener {
             accountViewModel.loadAssets()
+            accountViewModel.loadTradingAccountAssets()
         }
         assetListView.adapter = AccountAssetsAdapter(this)
     }
@@ -189,9 +185,29 @@ class AccountFragment : Fragment() {
             } else {
                  (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
             }
+            accountViewModel.loadWalletAccountPriceData(it!!.assets)
             accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
                 (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
             })
+        })
+
+        accountViewModel.getTradingAccountAssets().observe(this, Observer<List<TransferableAsset>> {
+            onUiThread {
+                (assetListView.adapter as AccountAssetsAdapter).setTradingAccountAssets(it!!)
+            }
+            accountViewModel.loadTradingAccountPriceData(it!!)
+        })
+
+        accountViewModel.getTradingAccountPriceData().observe(this, Observer { priceData ->
+            onUiThread {
+                (assetListView.adapter as AccountAssetsAdapter).setTradingAccountPriceData(priceData!!)
+            }
+        })
+
+        accountViewModel.getWalletAccountPriceData().observe(this, Observer { priceData ->
+            onUiThread {
+                (assetListView.adapter as AccountAssetsAdapter).setWalletAccountPriceData(priceData!!)
+            }
         })
     }
 
@@ -453,7 +469,7 @@ class AccountFragment : Fragment() {
     //endregion
 
     //region Toolbar Action Items
-    private fun showMyAddress() {
+    fun showMyAddress() {
         val addressBottomSheet = MyAddressFragment()
         addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
     }
@@ -467,7 +483,7 @@ class AccountFragment : Fragment() {
     }
 
 
-    private fun sendButtonTapped(payload: String) {
+    fun sendButtonTapped(payload: String) {
         val intent = Intent(activity, SendV2Activity::class.java)
         intent.putExtra("uri", payload)
         startActivity(intent)

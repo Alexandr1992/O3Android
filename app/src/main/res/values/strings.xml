@@ -236,6 +236,9 @@
     <string name="WALLET_send_action_label" comment="Action button title to send NEO">Send</string>
     <string name="WALLET_token_sale_action_label" comment="Action button title to participate in a token sale">Token Sale</string>
 
+    <string name="WALLET_trading_account" comment="Trading Account card title">Trading Account</string>
+    <string name="WALLET_additonal_asset" comment="When you have more than 4 assets in an account">+ %d more</string>
+
     <!-- Wallet History -->
     <string name="WALLET_to" comment="to label in transaction history screen">To</string>>
     <string name="WALLET_to_formatted" comment="to label in transaction history screen and send screen">To: %1$s</string>
@@ -250,6 +253,8 @@
     <string name="WALLET_from_O3_wallet" comment="label for when transaction goes from O3 wallet">From: O3 Wallet</string>
     <string name="WALLET_block_number" comment="label for block number in transaction histoty">Block Number: %1$s</string>
     <string name="WALLET_Request" comment="lavel for the request button">Request</string>
+    <string name="WALLET_Withdraw" comment="label for when withdrawing from trading account">Withdraw</string>
+    <string name="WALLET_Deposit" comment="lavel for when depositing from trading account">Deposit</string>
 
     <string name="WALLET_Confirmed" comment="In Transaction History for confirmed transactions">Confirmed</string>
     <string name="WALLET_Pending" comment="In Transaction History for pending transactions">Pending</string>
@@ -461,6 +466,55 @@
     <string name="DAPP_logout_warning">Are you sure you want to logout of this dapp?</string>
     <string name="Portfolio_trading_title">TRADING IN O3 IS HERE!</string>
     <string name="PORTFOLIO_trading_subtitle">O3 has partnered with Switcheo to allow trading directly in O3 apps.</string>
-
     <string name="PORTFOLIO_are_you_sure_switcheo">Are you sure you want to dismiss this notification? You can always access Switcheo trading in the O3 Marketplace.</string>
+
+    <string name="NATIVE_TRADE_pendings_orders_count">Open Orders (%1$d)</string>
+    <string name="NATIVE_TRADE_order_how_much">How Much</string>
+    <string name="NATIVE_TRADE_order_price">Price</string>
+    <string name="NATIVE_TRADE_order_price_difference">(%1$d) above median</string>
+    <string name="NATIVE_TRADE_order_base_asset_buy">With</string>
+    <string name="NATIVE_TRADE_order_base_asset_sell">For</string>
+    <string name="NATIVE_TRADE_median_price">Median Price</string>
+    <string name="Native_TRADE_Buy">Buy</string>
+    <string name="Native_TRADE_Sell">Sell</string>
+    <string name="NATIVE_TRADE_orders">Orders</string>
+    <string name="NATIVE_TRADE_plus_percent">+1%</string>
+    <string name="NATIVE_TRADE_minus_percent">-1%</string>
+    <string name="NATIVE_TRADE_instant_fill">Instant fill (estimated)</string>
+    <string name="NATIVE_TRADE_instant_fill_with_amount">%s Instant fill (estimated)</string>
+    <string name="NATIVE_TRADE_current_median">Current median price</string>
+    <string name="NATIVE_TRADE_current_top_order">Current top order</string>
+    <string name="NATIVE_TRADE_tokens_value">%s tokens value</string>
+    <string name="NATIVE_Trade_percent_above_market">%s above market rate</string>
+    <string name="NATIVE_Trade_percent_below_market">%s below market rate</string>
+    <string name="NATIVE_TRADE_Price">Price</string>
+    <string name="NATIVE_TRADE_total_cost">Total Cost:</string>
+    <string name="NATIVE_TRADE_place_order">Place Order</string>
+    <string name="NATIVE_TRADE_order_fill_amount">%s filled</string>
+    <string name="NATIVE_TRADE_no_pending_orders">You currently have no pending orders</string>
+    <string name="NATIVE_TRADE_deposit_success_title">Deposit Successful</string>
+    <string name="NATIVE_TRADE_withdrawal_success_title">Withdrawal Successful</string>
+    <string name="NATIVE_TRADE_deposit_fail_title">Deposit Failed</string>
+    <string name="NATIVE_TRADE_withdrawal_fail_title">Withdrawal Failed</string>
+    <string name="NATIVE_TRADE_deposit_withdrawal_failure_subtitle">Please try again later</string>
+    <string name="NATIVE_TRADE_deposit_withdrawal_success_subtitle">It will take about 60 seconds to process</string>
+    <string name="NATIVE_TRADE_deposit_in_progress">Deposit Request in Progress</string>
+    <string name="NATIVE_TRADE_withdrawal_in_progress">Withdrawal Request in Progress</string>
+    <string name="NATIVE_TRADE_cancel_order">Cancel Order</string>
+    <string name="NATIVE_TRADE_cancel_order_succeeeded">Order Successfully Cancelled. Please wait a moment for it to be reflected in your orders list</string>
+    <string name="NATIVE_TRADE_cancel_order_failed">Failed to cancel order. Please try again later</string>
+    <string name="NATIVE_TRADE_neo_buy_limitation">Due to limitations on our exchange services,
+        NEO buy orders must be made as GAS sell orders at this time</string>
+    <string name="NATIVE_TRADE_neo_sell_limitation">Due to limitations on our exchange services,
+        NEO sell orders must be made as GAS buy orders at this time</string>
+    <string name="NATIVE_TRADE_order_success_title">Order successfully placed!</string>
+    <string name="NATIVE_TRADE_order_success_subtitle">Check the status in your pending orders</string>
+    <string name="NATIVE_TRADE_order_fail_title">Order Failed</string>
+    <string name="NATIVE_TRADE_order_failure_subtitle">Please try again later</string>
+    <string name="NATIVE_TRADE_order_in_progress">Submitting your order</string>
+    <string name="NATIVE_TRADE_Completed">Completed</string>
+    <string name="NATIVE_TRADE_hide_orders">Hide Completed Orders</string>
+    <string name="NATIVE_TRADE_show_orders">Show Completed Orders</string>
+    <string name="NATIVE_TRADE_withdraw_all">Withdraw All</string>
+    <string name="NATIVE_TRADE_Neo_withdraw_warning">When withdrawing to your wallet, you must withdraw a whole amount of NEO</string>
 </resources>

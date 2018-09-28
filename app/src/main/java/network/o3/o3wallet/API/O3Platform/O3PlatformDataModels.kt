@@ -4,6 +4,7 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import network.o3.o3wallet.API.NEO.Transaction
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -22,6 +23,18 @@ data class TransactionHistoryEntry(val blockchain: String, val txid: String, val
                                    val blockHeight: Long, val asset: TokenListing,
                                    val amount: String, val to: String,
                                    val from: String)
+
+data class TradingAccount(val switcheo: TradingAcountAssets)
+data class TradingAcountAssets(val confirming: List<ConfirmingAsset>,
+                               val confirmed: List<TransferableAsset>,
+                               val locked: List<TransferableAsset>)
+
+data class ConfirmingAsset(val symbol: ConfirmingAsset,
+                           val eventType: String,
+                           val hash: String,
+                           val amount: Long,
+                           val TXID: String,
+                           val createdAt: String)
 
 
 data class TokenListingsData(val data: TokenListings)
@@ -73,6 +86,77 @@ data class NetworkStatus(val blockcount: Int, val best: String, val nodes: List<
 
 data class OntologyClaimableGasData(val data: OntologyClaimableGas)
 data class OntologyClaimableGas(val ong: String, val calculated: Boolean)
+
+data class O3Orders(val switcheo: List<O3SwitcheoOrders>)
+
+data class O3SwitcheoOrders(
+        val id: String,
+        val blockchain: String,
+        val contract_hash: String,
+        val address: String,
+        val side: String,
+        val offerAsset: TransferableAsset,
+        val offer_asset_id: String,
+        val want_asset_id: String,
+        val wantAsset: TransferableAsset,
+        val offer_amount: String,
+        val want_amount: String,
+        val transfer_amount: String,
+        val priority_gas_amount: String,
+        val use_native_token: Boolean,
+        val native_fee_transfer_amount: Int,
+        val deposit_txn: Any?,
+        val created_at: String,
+        val status: String,
+        val fills: List<Fill>,
+        val makes: List<Make>
+) {
+
+    data class Fill(
+            val id: String,
+            val offer_hash: String,
+            val offer_asset_id: String,
+            val offerAsset: TransferableAsset,
+            val want_asset_id: String,
+            val fill_amount: String,
+            val wantAsset: TransferableAsset,
+            val want_amount: String,
+            val filled_amount: String,
+            val fee_asset_id: String,
+            val fee_amount: String,
+            val price: String,
+            val txn: Any?,
+            val status: String,
+            val created_at: String,
+            val transaction_hash: String
+    )
+
+    data class Make(
+            val id: String,
+            val offer_hash: String,
+            val available_amount: String,
+            val offer_asset_id: String,
+            val offerAsset: TransferableAsset,
+            val wantAsset: TransferableAsset,
+            val offer_amount: String,
+            val want_asset_id: String,
+            val want_amount: String,
+            val filled_amount: String,
+            val txn: Any?,
+            val cancel_txn: Any?,
+            val price: String,
+            val status: String,
+            val created_at: String,
+            val transaction_hash: String,
+            val trades: List<JsonObject>?
+    )
+}
+
+
+
+
+
+
 
 class TransferableAssets(private val balances: TransferableBalances) {
     var version: String

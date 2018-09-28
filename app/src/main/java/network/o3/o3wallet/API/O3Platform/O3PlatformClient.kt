@@ -8,6 +8,7 @@ import network.o3.o3wallet.API.O3.TokenSaleLogSigned
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -26,6 +27,8 @@ class O3PlatformClient {
         NODES,
         UNBOUNDONG,
         HISTORY,
+        TRADING,
+        ORDERS,
         UTXO;
 
 
@@ -40,7 +43,7 @@ class O3PlatformClient {
         } else if (PersistentStore.getNetworkType() == "Test") {
             return "?network=test"
         } else {
-            return "?network=private"
+            return "?network=test"
         }
     }
 
@@ -190,7 +193,7 @@ class O3PlatformClient {
     }
 
     fun getRealTimePrice(token: String, currency: String, completion: (Pair<O3RealTimePrice?, Error?>) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token + "/" + currency + networkQueryString()
+        val url = "https://platform.o3.network/api/v1/" + Route.PRICING.routeName() + "/"  + token.toLowerCase() + "/" + currency.toLowerCase() + networkQueryString()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.timeout(600000).responseString {_, _, result ->
@@ -276,6 +279,112 @@ class O3PlatformClient {
                 completion(Pair<TransactionHistory?, Error?>(history, null))
             } else {
                 completion(Pair<TransactionHistory?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getTradingAccounts(completion: (Pair<TradingAccount?, Error?>) -> (Unit)) {
+        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" + Account.getWallet().address + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val tradingAccount = Gson().fromJson<TradingAccount>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<TradingAccount?, Error?>(tradingAccount, null))
+            } else {
+                completion(Pair<TradingAccount?, Error?>(null, Error(error.localizedMessage)))
+            }
+
+        }
+    }
+
+    fun getOrders(completion: (Pair<O3Orders?, Error?>) -> (Unit) ) {
+        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" +
+                Account.getWallet().address + "/" + Route.ORDERS.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val o3Orders = Gson().fromJson<O3Orders>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<O3Orders?, Error?>(o3Orders, null))
+            } else {
+                completion(Pair<O3Orders?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+    fun calculatePercentFilled(order: O3SwitcheoOrders): Pair<Double, Double> {
+        var fillSum = 0.0
+        var errorMargin = 0.0
+        for (make in order.makes) {
+            for (trade in make.trades ?: listOf()) {
+                errorMargin += 1
+                fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
+            }
+        }
+
+        for (fill in order.fills) {
+            errorMargin +=1
+            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
+        }
+        val percentFilled = fillSum * 100
+        return Pair(percentFilled, errorMargin)
+    }
+
+    //SWITCHEO API currently has an error margin of 0.000001 percent on each make and trade
+    //we have to account for this to make sure a "filled" order is not mistreeated as
+    //still open
+    fun getPendingOrders(completion: (Pair<List<O3SwitcheoOrders>?, Error?>) -> (Unit)) {
+        getOrders {
+            if (it.second == null) {
+                val orders = it.first!!.switcheo
+                var pendingOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
+                //open not filled
+                for (order in orders) {
+                    if (order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } == null) {
+                            val percentFilledAndError = calculatePercentFilled(order)
+                           if (100.0 - percentFilledAndError.first >= 0.000001 * percentFilledAndError.second) {
+                               pendingOrders.add(order)
+                           }
+                        }
+                    }
+                }
+                //closed orders
+                var closedOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
+                for (order in orders) {
+                    if (order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } != null) {
+                            if (calculatePercentFilled(order).first > 0.0) {
+                                closedOrders.add(order)
+                            }
+                        }
+                    }
+                }
+                //fully filled
+                for (order in orders) {
+                    if (order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } == null) {
+                            val percentFilledAndError = calculatePercentFilled(order)
+                            if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
+                                closedOrders.add(order)
+                            }
+                        }
+                    }
+                }
+                val df1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                pendingOrders.sortBy { df1.parse(it.created_at).time}
+                pendingOrders.reverse()
+                closedOrders.sortBy { df1.parse(it.created_at).time }
+                closedOrders.reverse()
+                pendingOrders.addAll(closedOrders)
+
+                completion(Pair<List<O3SwitcheoOrders>?, Error?>(pendingOrders, null))
+            } else {
+                completion(Pair<List<O3SwitcheoOrders>?, Error?>(null, Error(it.second!!.localizedMessage)))
             }
         }
     }

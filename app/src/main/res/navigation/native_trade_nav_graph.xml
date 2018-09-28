@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/native_trade_nav_graph"
+    app:startDestination="@id/orderSubmissionFragment">
+
+    <fragment
+        android:id="@+id/orderSubmissionFragment"
+        android:name="network.o3.o3wallet.NativeTrade.OrderSubmissionFragment"
+        android:label="native_trade_order_submission_fragment"
+        tools:layout="@layout/native_trade_order_submission_fragment" >
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_priceSelectionFragment"
+            app:destination="@+id/priceSelectionFragment"
+            app:enterAnim="@anim/belvedere_show_menu_item"
+            app:popExitAnim="@anim/belvedere_hide_menu_item" />
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_ordersListFragment"
+            app:destination="@id/ordersListFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
+        <action
+            android:id="@+id/action_orderSubmissionFragment_to_reviewOrderFragment"
+            app:destination="@id/reviewOrderFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/priceSelectionFragment"
+        android:name="network.o3.o3wallet.NativeTrade.PriceSelectionFragment"
+        android:label="native_trade_price_selection_fragment"
+        tools:layout="@layout/native_trade_price_selection_fragment" />
+
+    <fragment
+        android:id="@+id/orderPlacedFragment"
+        android:name="network.o3.o3wallet.NativeTrade.OrderPlacedFragment"
+        android:label="native_trade_price_selection_fragment"
+        tools:layout="@layout/native_trade_price_selection_fragment" />
+
+    <fragment
+        android:id="@+id/ordersListFragment"
+        android:name="network.o3.o3wallet.NativeTrade.OrdersList.OrdersListFragment"
+        android:label="native_trade_orders_list_fragment"
+        tools:layout="@layout/native_trade_orders_list_fragment" />
+    <fragment
+        android:id="@+id/reviewOrderFragment"
+        android:name="network.o3.o3wallet.NativeTrade.ReviewOrderFragment"
+        android:label="native_trade_review_order_fragment"
+        tools:layout="@layout/native_trade_review_order_fragment" >
+        <action
+            android:id="@+id/action_reviewOrderFragment_to_orderPlacedFragment"
+            app:destination="@id/orderPlacedFragment" />
+    </fragment>
+</navigation>

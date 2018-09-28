@@ -9,11 +9,14 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
 
 class TokensAdapter(private var tokens: ArrayList<TokenListing>):
@@ -21,11 +24,18 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
     private val HEADER = 0
     private val ITEM = 1
 
+    private var switcheoTokens: JsonObject? = null
 
     fun setData(tokens: ArrayList<TokenListing>) {
         this.tokens = tokens
         notifyDataSetChanged()
     }
+
+    fun setSwitcheoData(tokens: JsonObject?) {
+        this.switcheoTokens = tokens
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return tokens.count() + 1
     }
@@ -38,8 +48,8 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-       if (holder is FeatureHolder) {
-           holder.bindFeature(tokens[position - 1])
+       if (holder is TokenHolder) {
+           holder.bindToken(tokens[position - 1], switcheoTokens)
        } else if (holder is HeaderHolder) {
            holder.bindHeader()
        }
@@ -52,7 +62,7 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
             return HeaderHolder(view)
         } else {
             val view = layoutInflater.inflate(R.layout.martketplace_token_grid_cell, parent, false)
-            return FeatureHolder(view)
+            return TokenHolder(view)
         }
     }
 
@@ -61,16 +71,17 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
 
         fun bindHeader() {
             view.find<Button>(R.id.tradeNowButton).setOnClickListener {
-                val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivity::class.java)
-                intent.putExtra("url", url)
-                intent.putExtra("allowSearch", false)
-                view.context.startActivity(intent)
+                //val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
+                //val intent = Intent(view.context, DAppBrowserActivity::class.java)
+                //intent.putExtra("url", url)
+                //intent.putExtra("allowSearch", false)
+                //view.context.startActivity(intent)
+                view.context.startActivity(Intent(view.context, NativeTradeRootActivity::class.java))
             }
         }
     }
 
-    class FeatureHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    class TokenHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
         private var view: View = v
         private var token: TokenListing? = null
 
@@ -89,12 +100,16 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
             private val FEATURE_KEY = "FEATURE"
         }
 
-        fun bindFeature(token: TokenListing?) {
+        fun bindToken(token: TokenListing?, switcheoTokens: JsonObject?) {
             this.token = token
             view.find<TextView>(R.id.tokenSymbolTextView).text = token?.symbol ?: ""
-
             val imageView = view.findViewById<ImageView>(R.id.tokenLogoImageView)
             Glide.with(view.context).load(token?.logoURL).into(imageView)
+            if (switcheoTokens != null && switcheoTokens[token!!.symbol] != null) {
+                view.find<ImageView>(R.id.tradeableBadge).visibility = View.VISIBLE
+            } else {
+                view.find<ImageView>(R.id.tradeableBadge).visibility = View.INVISIBLE
+            }
         }
     }
 }

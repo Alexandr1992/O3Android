@@ -5,31 +5,26 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Typeface
 import android.net.Uri
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v4.content.LocalBroadcastManager
 import android.view.View
 import android.webkit.*
+import android.widget.*
 import network.o3.o3wallet.R
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.SearchView
-import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
-import network.o3.o3wallet.Account
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
+import java.io.InputStream
 import java.net.URL
 
 
@@ -45,6 +40,77 @@ class DAppBrowserActivity : AppCompatActivity() {
             "neonewstoday.com", "public.o3.network", "explorer.ont.io")
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
 
+    data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String )
+
+    val localResources = arrayOf(
+            ResourceObject("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css", "text/css", R.raw.bootstrap, "UTF-8"),
+            ResourceObject("https://d3js.org/d3.v4.min.js", "text/javascript", R.raw.d3, "UTF-8"),
+            ResourceObject("https://cdn.jsdelivr.net/npm/vue", "text/javascript", R.raw.vue, "UTF-8"),
+            ResourceObject("https://unpkg.com/axios/dist/axios.min.js", "text/javascript", R.raw.axios, "UTF-8"),
+            ResourceObject("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js", "text/javascript", R.raw.moment, "UTF-8"),
+            ResourceObject("https://cdn.o3.network/assets/fa/js/fontawesome-all.min.js", "text/javascript", R.raw.font_awesome, "UTF-8"),
+            ResourceObject("https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js", "text/javascript", R.raw.bodymovin, "UTF-8")
+    )
+
+    fun initiateTradeFooter(uri: Uri) {
+        if (uri.authority == "public.o3.network") {
+            SwitcheoAPI().getTokens {
+                runOnUiThread {
+                    val asset = uri.lastPathSegment!!
+
+
+                    //TODO: Since there is no existing NEO to GAS market
+                    if (asset.toUpperCase() == "NEO") {
+                        dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+                        dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
+                            alert(resources.getString(R.string.NATIVE_TRADE_neo_buy_limitation)) {
+                                yesButton {
+                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                    intent.putExtra("asset", "GAS")
+                                    intent.putExtra("is_buy", false)
+                                    startActivity(intent)
+                                }
+                            }.show()
+                        }
+
+                        dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
+                            alert(resources.getString(R.string.NATIVE_TRADE_neo_sell_limitation)) {
+                                yesButton {
+                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                    intent.putExtra("asset", "GAS")
+                                    intent.putExtra("is_buy", true)
+                                    startActivity(intent)
+                                }
+                            }.show()
+                        }
+                    } else {
+                        if (it.first?.get(asset.toUpperCase()) != null) {
+                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+                            dappBrowserView.find<Button>(R.id.buyButton).setOnClickListener {
+                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", asset)
+                                intent.putExtra("is_buy", true)
+                                startActivity(intent)
+                            }
+
+                            dappBrowserView.find<Button>(R.id.sellButton).setOnClickListener {
+                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", asset)
+                                intent.putExtra("is_buy", false)
+                                startActivity(intent)
+                            }
+                        } else {
+                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+                        }
+                    }
+                }
+            }
+
+        } else {
+            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dapp_browser_activity)
@@ -57,7 +123,7 @@ class DAppBrowserActivity : AppCompatActivity() {
         val url = intent.getStringExtra("url")
         val currentUrlRoute = URL(url)
         setVerifiedHeaderUrl(url)
-
+        initiateTradeFooter(Uri.parse(url))
 
         dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
             if (webView.canGoBack()) {
@@ -72,6 +138,12 @@ class DAppBrowserActivity : AppCompatActivity() {
         val showSearchBar = intent.getBooleanExtra("allowSearch", false)
         if (showSearchBar) {
             searchBar.visibility = View.VISIBLE
+            dappBrowserView.find<ImageButton>(R.id.refreshButton).visibility = View.VISIBLE
+            dappBrowserView.find<ImageButton>(R.id.refreshButton).setOnClickListener {
+                webView.reload()
+            }
+
+
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String): Boolean {
                     return true
@@ -85,7 +157,7 @@ class DAppBrowserActivity : AppCompatActivity() {
             })
         }
 
-
+        webView.webChromeClient = WebChromeClient()
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 webLoader.visibility = View.VISIBLE
@@ -93,6 +165,7 @@ class DAppBrowserActivity : AppCompatActivity() {
                 val urlToLoad = request.url.toString()
                 //we are in our own app, open a new browser
 
+                initiateTradeFooter(Uri.parse(urlToLoad))
                 if (!urlToLoad.startsWith("http") && !urlToLoad.startsWith("https")) {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToLoad))
                     val activityToUse = intent.resolveActivity(packageManager)
@@ -115,12 +188,33 @@ class DAppBrowserActivity : AppCompatActivity() {
                 return false // then it is not handled by default action
             }
 
+
+            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                val localResource = localResources.find{ it.url == request!!.url.toString()}
+                if (localResource != null) {
+                    val inputStream: InputStream = resources.openRawResource(localResource.resourceID)
+                    val statusCode = 200
+                    val reasonPhase = "OK";
+                    val responseHeaders = mutableMapOf<String, String>()
+                    responseHeaders.put("Access-Control-Allow-Origin", "*");
+                    return WebResourceResponse(localResource.mimeType, localResource.encoding, statusCode, reasonPhase, responseHeaders, inputStream)
+                }
+                return super.shouldInterceptRequest(view, request)
+            }
+
             override fun onPageCommitVisible(view: WebView?, url: String?) {
                 super.onPageCommitVisible(view, url)
                 webLoader.visibility = View.GONE
             }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                webView.visibility = View.VISIBLE
+            }
         }
 
+
+        webView.visibility = View.INVISIBLE
         webView.loadUrl(url)
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true

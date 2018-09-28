@@ -52,6 +52,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
                 availableTokens = it.first!!.nep5tokens
             }
         }
+        transactionHistoryEntries.sortBy { it.time }
     }
 
     fun pendingHeaderPosition(): Int? {

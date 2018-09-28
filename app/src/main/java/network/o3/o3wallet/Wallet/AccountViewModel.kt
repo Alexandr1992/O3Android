@@ -11,21 +11,29 @@ import neoutils.Neoutils
 import neoutils.Wallet
 import network.o3.o3wallet.API.NEO.Block
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
+import network.o3.o3wallet.API.O3.O3API
+import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.formattedFiatString
 import org.jetbrains.anko.coroutines.experimental.bg
+import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.timerTask
+import kotlin.math.pow
 
 
 class AccountViewModel: ViewModel() {
     private var assets: MutableLiveData<TransferableAssets>? = null
+    private var tradingAccountAssets: MutableLiveData<List<TransferableAsset>>? = null
+    private var tradingAccountPriceData: MutableLiveData<String> = MutableLiveData()
+    private var walletAccountPriceData: MutableLiveData<String> = MutableLiveData()
 
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
@@ -69,6 +77,73 @@ class AccountViewModel: ViewModel() {
             }
             PersistentStore.setLatestBalances(it.first)
             assets!!.postValue(it.first)
+        }
+    }
+
+    fun getTradingAccountAssets(): LiveData<List<TransferableAsset>> {
+        if (tradingAccountAssets == null) {
+            tradingAccountAssets = MutableLiveData()
+            loadTradingAccountAssets()
+        }
+        return tradingAccountAssets!!
+    }
+
+    fun loadTradingAccountAssets() {
+        O3PlatformClient().getTradingAccounts {
+            if (it.first != null) {
+                val dividedValues = mutableListOf<TransferableAsset>()
+                for (asset in it.first!!.switcheo.confirmed) {
+                    asset.value = asset.value.divide(10.0.pow(asset.decimals).toBigDecimal())
+                }
+                val sortedAssets = mutableListOf<TransferableAsset>() //it.first!!.switcheo.confirmed
+                val neoAsset = it.first!!.switcheo.confirmed.find { it.symbol.toUpperCase() == "NEO" }
+                val gasAsset = it.first!!.switcheo.confirmed.find { it.symbol.toUpperCase() == "GAS" }
+                if (neoAsset != null) {
+                    sortedAssets.add(neoAsset)
+                }
+                if (gasAsset != null) {
+                    sortedAssets.add(gasAsset)
+                }
+                val interAssets = it.first!!.switcheo.confirmed.sortedBy { it.symbol }
+                for (asset in interAssets) {
+                    if (asset.symbol.toUpperCase() != "NEO" && asset.symbol != "GAS") {
+                        sortedAssets.add(asset)
+                    }
+                }
+                tradingAccountAssets!!.postValue(sortedAssets)
+            }
+        }
+    }
+
+    fun getTradingAccountPriceData(): LiveData<String> {
+        return tradingAccountPriceData
+    }
+
+    fun loadTradingAccountPriceData(assets: List<TransferableAsset>) {
+        val cachedTradingAccountValue = PersistentStore.getTradingAccountValue()
+        tradingAccountPriceData.postValue(cachedTradingAccountValue.formattedFiatString())
+        O3API().getPortfolioValue(assets as ArrayList<TransferableAsset>) {
+            if (it.second != null) {
+                return@getPortfolioValue
+            }
+            PersistentStore.setTradingAccountValue(it.first!!.total.toDouble())
+            tradingAccountPriceData.postValue(it.first!!.total.toDouble().formattedFiatString())
+        }
+    }
+
+    fun getWalletAccountPriceData(): LiveData<String> {
+        return walletAccountPriceData!!
+    }
+
+    fun loadWalletAccountPriceData(assets: List<TransferableAsset>) {
+        val cachedWalletAccountValue = PersistentStore.getMainAccountValue()
+        walletAccountPriceData.postValue(cachedWalletAccountValue.formattedFiatString())
+        O3API().getPortfolioValue(assets as ArrayList<TransferableAsset>) {
+            if (it.second != null) {
+                return@getPortfolioValue
+            }
+            PersistentStore.setMainAccountValue(it.first!!.total.toDouble())
+            walletAccountPriceData!!.postValue(it.first!!.total.toDouble().formattedFiatString())
         }
     }
 

@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Wallet.SendV2.SendWhatFragment">
 
-    <Button
-        android:id="@+id/sendWhereButton"
-        style="@style/AccentButton.Rounded"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/disable_accent_button"
-        android:text="@string/SEND_Review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <EditText
         android:id="@+id/amountEditText"
         android:layout_width="0dp"
@@ -236,221 +221,24 @@
         app:layout_constraintStart_toStartOf="@+id/amountEditText"
         app:layout_constraintTop_toBottomOf="@+id/assetSelectorContainer" />
 
-
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/gridLayout"
+    <include
+        android:id="@+id/pinpadLayout"
+        layout="@layout/pinpad_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:columnCount="3"
-        app:layout_constraintBottom_toTopOf="@+id/sendWhereButton"
+        android:layout_height="265dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/percentageButtonsLayout"
-        app:orientation="vertical"
-        app:rowCount="4">
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/button1"
-            style="@style/PinPadButton"
-            android:gravity="center"
-            android:text="@string/PINPAD_1"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="0"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button2"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_2"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="0"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button3"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_3"
-            app:layout_column="2"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="0"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button7"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_7"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="2"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button4"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_4"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="1"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button5"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_5"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="1"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button6"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_6"
-            app:layout_column="2"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="1"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button8"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_8"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="2"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button9"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_9"
-            app:layout_column="2"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="2"
-            app:layout_rowWeight="1" />
-
-        <ImageButton
-            android:id="@+id/buttonDecimal"
-            style="@style/PinPadButton"
-            android:src="@drawable/ic_decimal"
-            android:visibility="invisible"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="3"
-            app:layout_rowWeight="1" />
-
-        <Button
-            android:id="@+id/button0"
-            style="@style/PinPadButton"
-            android:text="@string/PINPAD_0"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="3"
-            app:layout_rowWeight="1" />
-
-        <ImageButton
-            android:id="@+id/buttonBackSpace"
-
-            style="@style/PinPadButton"
-            android:src="@drawable/ic_backspace"
-            app:layout_column="2"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill_horizontal"
-            app:layout_row="3"
-            app:layout_rowWeight="1" />
-
-    </android.support.v7.widget.GridLayout>
-
-    <View
-        android:id="@+id/view9"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/secondaryBackgroundColor"
-        app:layout_constraintBottom_toTopOf="@id/sendWhereButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.33"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gridLayout"/>
-
-    <View
-        android:id="@+id/view15"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/secondaryBackgroundColor"
-        app:layout_constraintBottom_toTopOf="@id/sendWhereButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.66"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gridLayout" />
-
-    <View
-        android:id="@+id/view10"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/secondaryBackgroundColor"
-        app:layout_constraintBottom_toBottomOf="@id/gridLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gridLayout"
-        app:layout_constraintVertical_bias="0.75" />
-
-    <View
-        android:id="@+id/view11"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/secondaryBackgroundColor"
-        app:layout_constraintBottom_toBottomOf="@id/gridLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gridLayout"
-        app:layout_constraintVertical_bias="0.50" />
-
-    <View
-        android:id="@+id/view12"
-        android:layout_width="0dp"
-
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/secondaryBackgroundColor"
-        app:layout_constraintBottom_toBottomOf="@id/gridLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gridLayout"
-        app:layout_constraintVertical_bias="0.25" />
 
     <LinearLayout
         android:id="@+id/percentageButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+        app:layout_constraintBottom_toTopOf="@+id/pinpadLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/twentyFivePercentButton"
@@ -494,7 +282,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.39" />
+        app:layout_constraintGuide_percent="0.35" />
 
 
 </android.support.constraint.ConstraintLayout>

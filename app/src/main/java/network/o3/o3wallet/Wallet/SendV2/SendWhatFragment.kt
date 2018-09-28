@@ -49,12 +49,13 @@ class SendWhatFragment : Fragment() {
     private lateinit var otherAmountTextView: TextView
     private lateinit var reviewButton: Button
     private lateinit var decimalButton: ImageButton
-    private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
+
     var currentAssetFilters: Array<InputFilter>? = null
     var currentAssetInputType =  (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NULL)
     var firstLoad = true
 
     var ownedAssets: ArrayList<TransferableAsset> = arrayListOf()
+    private var pricingData =  O3RealTimePrice("NEO", PersistentStore.getCurrency(), 0.0, 0)
     var enteredCurrencyDouble = 0.0
 
     fun setupFiatEntrySwap() {
@@ -113,7 +114,12 @@ class SendWhatFragment : Fragment() {
             }
 
             var currString = amountEditText.text.toString()
-            if (currString.isBlank() || currString.contains(DecimalFormatSymbols().decimalSeparator)) {
+            if (currString.contains(DecimalFormatSymbols().decimalSeparator)) {
+                return@setOnClickListener
+            }
+
+            if (currString.isBlank()) {
+                digitTapped("0")
                 return@setOnClickListener
             }
             amountEditText.text = SpannableStringBuilder(SpannableStringBuilder(amountEditText.text.toString() + DecimalFormatSymbols().decimalSeparator))
@@ -310,7 +316,7 @@ class SendWhatFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.send_what_fragment, container, false)
         amountEditText = mView.find(R.id.amountEditText)
-        reviewButton = mView.find(R.id.sendWhereButton)
+        reviewButton = mView.find(R.id.placeOrderButton)
         reviewButton.isEnabled = false
         reviewButton.setOnClickListener {
             mView.findNavController().navigate(R.id.action_sendWhatFragment_to_sendReviewFragment)

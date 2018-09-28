@@ -54,6 +54,11 @@ class SelectingBestNode : AppCompatActivity() {
     }
 
     fun getBestNode() {
+        if (PersistentStore.getNetworkType() == "Private") {
+            gotBestNode(PersistentStore.getNodeURL())
+            return
+        }
+
         O3PlatformClient().getChainNetworks {
             if (it.first == null) {
                 getBestNode()

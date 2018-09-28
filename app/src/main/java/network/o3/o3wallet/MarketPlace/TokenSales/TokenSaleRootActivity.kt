@@ -19,6 +19,11 @@ class TokenSaleRootActivity : AppCompatActivity() {
     lateinit var tokenSale: TokenSale
 
     fun resetBestNode() {
+        if (PersistentStore.getNetworkType() == "Private") {
+            PersistentStore.setNodeURL(PersistentStore.getNodeURL())
+            return
+        }
+
         O3PlatformClient().getChainNetworks {
             if (it.first == null) {
                 return@getChainNetworks

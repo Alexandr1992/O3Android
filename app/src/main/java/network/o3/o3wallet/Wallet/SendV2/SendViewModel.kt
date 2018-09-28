@@ -25,7 +25,7 @@ class SendViewModel: ViewModel() {
     var verifiedAddress: MutableLiveData<VerifiedAddress?>? = null
     var realTimePrice: MutableLiveData<O3RealTimePrice>? = null
 
-    //var sendInProgress: MutableLiveData<Boolean>? = null
+    var sendInProgress: MutableLiveData<Boolean> = MutableLiveData()
     var sendResult: MutableLiveData<String?>? = MutableLiveData()
     var ontologyNetworkFee: MutableLiveData<Double>? = null
 
@@ -174,8 +174,8 @@ class SendViewModel: ViewModel() {
             } else {
                 sendResult?.postValue(null)
             }
+            setSendInProgress(false)
         }
-
     }
 
     fun sendNativeNeoAsset() {
@@ -189,8 +189,7 @@ class SendViewModel: ViewModel() {
 
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount()
-        NeoNodeRPC(PersistentStore.getNodeURL()).
-                sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
+        NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
             val error = it.second
             val txid = it.first
             if (txid != null) {
@@ -200,6 +199,7 @@ class SendViewModel: ViewModel() {
                 txID = ""
                 sendResult?.postValue(null)
             }
+            setSendInProgress(false)
         }
     }
 
@@ -218,6 +218,7 @@ class SendViewModel: ViewModel() {
                 } else {
                     sendResult?.postValue(null)
                 }
+                setSendInProgress(false)
             }
         } else {
             O3PlatformClient().getUTXOS(wallet.address) {
@@ -235,6 +236,7 @@ class SendViewModel: ViewModel() {
                         } else {
                             sendResult?.postValue(null)
                         }
+                        setSendInProgress(false)
                     }
                 }
             }
@@ -302,8 +304,17 @@ class SendViewModel: ViewModel() {
         return false
     }
 
+    fun getIsSending(): LiveData<Boolean> {
+        return sendInProgress!!
+    }
+
+    fun setSendInProgress(isSending: Boolean) {
+        sendInProgress.postValue(isSending)
+    }
+
     fun send() {
         val toSendAsset = selectedAsset!!.value!!
+        setSendInProgress(true)
         if (isOntAsset()) {
             sendOntAsset()
         } else if (toSendAsset.symbol.toUpperCase() == "GAS"

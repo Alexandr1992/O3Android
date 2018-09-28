@@ -87,6 +87,13 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         callback(message.command, json, null, false)
     }
 
+    fun handleConnectedNodeRequest(message: O3Message) {
+        val json = JsonObject()
+        json.put("network" to PersistentStore.getNetworkType())
+        json.put("node" to PersistentStore.getNodeURL())
+        callback(message.command, json, null, true)
+    }
+
     fun handleAccountsRequest(message: O3Message) {
         val blockchains = jsonObject("neo" to currentAccount())
         val dic = jsonObject( "accounts" to jsonArray(blockchains))
@@ -188,7 +195,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         val message = gson.fromJson<O3Message>(jsonString)
         //Toast.makeText(context, message!!.command, Toast.LENGTH_LONG).show()
         val availableCommands = arrayOf("init", "requestToConnect", "getPlatform", "getAccounts",
-                "getBalances", "isAppAvailable", "requestToSign", "getDeviceInfo", "verifySession")
+                "getBalances", "isAppAvailable", "requestToSign", "getDeviceInfo", "verifySession", "getLastConnectedNode")
         if (!availableCommands.contains(message.command)) {
             callback(message.command, JsonObject(), "Unsupported command", false)
             return
@@ -218,6 +225,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         //login necessary
         when(message.command) {
             "getPlatform" -> handlePlatformRequest(message)
+            "getLastConnectedNode" -> handleConnectedNodeRequest(message)
             "getAccounts" -> handleAccountsRequest(message)
             "getBalances" -> handleBalancesRequest(message)
             "isAppAvailable" -> handleAppIsAvailableRequest(message)

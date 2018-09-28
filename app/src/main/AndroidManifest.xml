@@ -1,118 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="network.o3.o3wallet">
+xmlns:tools="http://schemas.android.com/tools"
+package="network.o3.o3wallet">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-feature android:name="android.hardware.camera" />
+<uses-feature android:name="android.hardware.camera" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.hardware.camera.autofocus" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.hardware.camera.autofocus" />
 
-    <application
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:name=".O3Wallet"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+<application
+    android:networkSecurityConfig="@xml/network_security_config"
+    android:name=".O3Wallet"
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme">
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"
-                tools:replace="android:resource" />
-        </provider>
-        <activity
-            android:name=".Onboarding.LandingActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Onboarding.LoginActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".MainTabbedActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
-        <activity
-            android:name=".Settings.AddWatchAddress"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"
-            />
-        <activity
-            android:name=".Settings.AddContact"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"
-            />
-        <activity
-            android:name=".Wallet.SendV2.SendV2Activity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme.Dark">
-            <nav-graph android:value="@navigation/send_nav_graph" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="neo" />
-            </intent-filter>
-        </activity>
-        <activity xmlns:tools="http://schemas.android.com/tools"
-            android:name="com.journeyapps.barcodescanner.CaptureActivity"
-            android:screenOrientation="portrait"
-            tools:replace="screenOrientation" />
-
-        <service
-            android:name=".Wallet.O3FirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="${applicationId}"
+        android:exported="false"
+        android:grantUriPermissions="true"
+        tools:replace="android:authorities">
         <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_stat_notification" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorPrimary" />
-        <activity android:name=".Onboarding.SelectingBestNode"
-            android:theme="@style/AppTheme.Dark"
-            />
-        <activity android:name=".MarketPlace.TokenSales.TokenSaleRootActivity"
-            android:theme="@style/AppTheme.Dark"
-            />
-        <activity android:name=".Settings.AdvancedSettingsActivity" />
-        <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
-        <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
-        <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
-        <activity android:name=".Onboarding.PasscodeRequestActivity" />
-        <activity
-            android:name=".Dapp.DAppBrowserActivity"
-            android:label="@string/title_activity_dapp_browser"
-            android:hardwareAccelerated="true"
-            android:theme="@style/AppTheme.NoTopBar.White" />
-    </application>
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths"
+            tools:replace="android:resource" />
+    </provider>
 
+    <activity
+        android:name=".Onboarding.LandingActivity"
+        android:screenOrientation="portrait">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity
+        android:name=".Onboarding.LoginActivity"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="adjustResize" />
+    <activity
+        android:name=".MainTabbedActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.Dark" />
+    <activity
+        android:name=".Settings.AddWatchAddress"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.Dark" />
+    <activity
+        android:name=".Settings.AddContact"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.Dark" />
+    <activity
+        android:name=".Wallet.SendV2.SendV2Activity"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="adjustResize"
+        android:theme="@style/AppTheme.Dark">
+        <nav-graph android:value="@navigation/send_nav_graph" />
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data android:scheme="neo" />
+        </intent-filter>
+    </activity>
+    <activity xmlns:tools="http://schemas.android.com/tools"
+        android:name="com.journeyapps.barcodescanner.CaptureActivity"
+        android:screenOrientation="portrait"
+        tools:replace="screenOrientation" />
+
+    <service android:name=".Wallet.O3FirebaseMessagingService">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/ic_stat_notification" />
+    <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@color/colorPrimary" />
+
+    <activity
+        android:name=".Onboarding.SelectingBestNode"
+        android:theme="@style/AppTheme.Dark" />
+    <activity
+        android:name=".MarketPlace.TokenSales.TokenSaleRootActivity"
+        android:theme="@style/AppTheme.Dark" />
+    <activity android:name=".Settings.AdvancedSettingsActivity" />
+    <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
+    <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
+    <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
+    <activity android:name=".Onboarding.PasscodeRequestActivity" />
+    <activity android:name=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity" />
+    <activity android:name="network.o3.o3wallet.NativeTrade.NativeTradeRootActivity"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="stateAlwaysHidden"
+        android:theme="@style/AppTheme.Dark">
+        <nav-graph android:value="@navigation/send_nav_graph" />
+    </activity>
+    <activity
+        android:name=".Dapp.DAppBrowserActivity"
+        android:label="@string/title_activity_dapp_browser"
+        android:hardwareAccelerated="true"
+        android:theme="@style/AppTheme.NoTopBar.White"
+        />
+</application>
 </manifest>
+

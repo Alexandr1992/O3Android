@@ -31,7 +31,7 @@ class DialogWalletGeneratedFragment() : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog)
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog_Light)
     }
 
     companion object {

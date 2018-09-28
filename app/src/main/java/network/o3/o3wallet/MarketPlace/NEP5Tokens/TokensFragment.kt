@@ -16,17 +16,9 @@ import android.view.View
 import android.view.ViewGroup
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import android.view.Gravity
-import android.support.v4.view.MenuItemCompat.getActionView
-import android.graphics.Color.parseColor
-import android.support.design.internal.BottomNavigationMenu
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.CardView
-import android.widget.Button
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.MainTabbedActivity
-import network.o3.o3wallet.R.id.searchView
-import org.jetbrains.anko.sdk25.coroutines.onFocusChange
 
 
 class TokensFragment : Fragment() {
@@ -68,12 +60,12 @@ class TokensFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                tokensGridRecycler.adapter = TokensAdapter(model!!.filteredTokens(newText).toCollection(ArrayList()))
+                (tokensGridRecycler.adapter as TokensAdapter).setData(model!!.filteredTokens(newText).toCollection(ArrayList()))
                 return true
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                tokensGridRecycler.adapter = TokensAdapter(model!!.filteredTokens(query).toCollection(ArrayList()))
+                (tokensGridRecycler.adapter as TokensAdapter).setData(model!!.filteredTokens(query).toCollection(ArrayList()))
                 return true
             }
         })
@@ -91,9 +83,15 @@ class TokensFragment : Fragment() {
             }
         }
         tokensGridRecycler.setLayoutManager(layoutManager)
-
+        tokensGridRecycler.adapter = TokensAdapter(arrayListOf())
         model?.getListingData(true)?.observe(this, Observer { tokens ->
-            tokensGridRecycler.adapter = TokensAdapter(tokens?.toCollection(ArrayList())!!)
+            (tokensGridRecycler.adapter as TokensAdapter).
+                    setData(tokens?.toCollection(ArrayList())!!)
+        })
+
+        model?.getSwitcheoTokenData(true)?.observe(this, Observer { tokens ->
+            (tokensGridRecycler.adapter as TokensAdapter).
+                    setSwitcheoData(tokens)
         })
 
         return view

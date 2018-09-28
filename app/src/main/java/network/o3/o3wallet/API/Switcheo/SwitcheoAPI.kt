@@ -10,6 +10,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import neoutils.Neoutils
 import network.o3.o3wallet.*
+import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.math.BigDecimal
 import java.net.URL
@@ -17,12 +18,20 @@ import java.util.*
 
 class SwitcheoAPI {
     val baseTestUrl = "https://test-api.switcheo.network/v2/"
-    val baseMainUrl = "https://test-api.switcheo.network/v2/"
+    val baseMainUrl = "https://api.switcheo.network/v2/"
 
     val baseURL = if (PersistentStore.getNetworkType() == "Main") {
         baseMainUrl
     } else {
         baseTestUrl
+    }
+
+    val testNetContract = "a195c1549e7da61b8da315765a790ac7e7633b82"
+    val mainNetContract = "91b83e96f2a7c4fdf0c1688441ec61986c7cae26"
+    val defaultContract = if (PersistentStore.getNetworkType() == "Main") {
+        mainNetContract
+    } else {
+        testNetContract
     }
 
     enum class Route {
@@ -45,6 +54,8 @@ class SwitcheoAPI {
             return this.name.toLowerCase(Locale.US)
         }
     }
+
+
 
     //region Transaction Serialization
     fun toEvenHexString(value: Int): String {
@@ -203,10 +214,10 @@ class SwitcheoAPI {
     //endregion
 
     //region Offers
-    fun getOffersForPair(pair: String, blockchain: String = "neo", completion: (Pair<Array<Offer>?, Error?>) -> (Unit)) {
+    fun getOffersForPair(pair: String, blockchain: String = "neo", contract_hash: String = defaultContract, completion: (Pair<Array<Offer>?, Error?>) -> (Unit)) {
         val url = baseURL + Route.OFFERS.routeName()
         var request = url.httpGet(
-                listOf("blockchain" to blockchain, "pair" to pair))
+                listOf("blockchain" to blockchain, "pair" to pair, "contract_hash" to contract_hash))
 
         request.responseString { req, response, result ->
             val (data, error) = result
@@ -293,14 +304,14 @@ class SwitcheoAPI {
     }
 
     fun singleStepDeposit(asset_id: String, amount: String,
-                          contract_hash: String, blockchain: String = "neo",
+                          contract_hash: String = defaultContract, blockchain: String = "neo",
                           completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
         submitDeposit(asset_id, amount, contract_hash, blockchain) {
             if (it.second != null) {
                 completion(Pair<Boolean?, Error?>(false, it.second))
             } else {
-                executeDeposit(it.first!!.id, it.first!!.transaction) {
+                executeDeposit(it.first!!.id, it.first!!.transaction!!) {
                     completion(Pair<Boolean?, Error?>(it.first, it.second))
                 }
             }
@@ -324,6 +335,7 @@ class SwitcheoAPI {
                     "contract_hash" to contract_hash,
                     "timestamp" to timeStamp)
 
+            Log.d("Withdrawal: ", jsonPayload.toString())
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
             jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
@@ -367,7 +379,7 @@ class SwitcheoAPI {
     }
 
     fun singleStepWithdrawal(asset_id: String, amount: String,
-                             contract_hash: String, blockchain: String = "neo",
+                             contract_hash: String = defaultContract, blockchain: String = "neo",
                              completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
         submitWithdrawal(asset_id, amount, contract_hash, blockchain) {
@@ -383,26 +395,58 @@ class SwitcheoAPI {
     //endregion
 
     //region Orders
-    fun getOrders(contract_hash: String, completion: (Pair<List<SwitcheoOrderRequest>?, Error?>) -> (Unit)) {
-        val jsonPayload = jsonObject("address" to Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase(),
-                "contract_hash" to contract_hash)
+    fun calculatePercentFilled(order: SwitcheoOrders): Pair<Double, Double> {
+        var fillSum = 0.0
+        var errorMargin = 0.0
+        for (make in order.makes) {
+            for (trade in make.trades ?: listOf()) {
+                errorMargin += 1
+                fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
+            }
+        }
+
+        for (fill in order.fills) {
+            errorMargin +=1
+            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
+        }
+        val percentFilled = fillSum * 100
+        return Pair(percentFilled, errorMargin)
+    }
+
+    fun getPendingOrders(contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<List<SwitcheoOrders>?, Error?>) -> (Unit)) {
+        val parameters = listOf("blockchain" to blockchain,
+                "contract_hash" to contract_hash,
+                "address" to Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
+
         val url = baseURL + Route.ORDERS.routeName()
-        val request = url.httpPost().body(jsonPayload.toString())
+        val request = url.httpGet(parameters)
         request.headers["Content-Type"] = "application/json"
 
         request.responseString { req, response, result ->
             val (data, error) = result
+            var pendingOrders: MutableList<SwitcheoOrders> = mutableListOf()
             if (error == null) {
-                val orders = Gson().fromJson<List<SwitcheoOrderRequest>>(data!!)
-                completion(Pair<List<SwitcheoOrderRequest>?, Error?>(orders, null))
+                val orders = Gson().fromJson<List<SwitcheoOrders>>(data!!)
+                for (order in orders) {
+                    if (order.status == "processed") {
+                        if (order.makes.find { it.status == "cancelled" } == null) {
+                            val percentFilledAndError = calculatePercentFilled(order)
+                            if (100.0 - percentFilledAndError.first >= 0.000001 * percentFilledAndError.second) {
+                                pendingOrders.add(order)
+                            }
+                        }
+                    }
+                }
+
+                completion(Pair<List<SwitcheoOrders>?, Error?>(pendingOrders, null))
             } else {
-                completion(Pair<List<SwitcheoOrderRequest>?, Error?>(null, Error(error.localizedMessage)))
+                completion(Pair<List<SwitcheoOrders>?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }
 
-    fun submitOrder(pair: String, side: String, price: String, want_amount: String, use_native_tokens: Boolean = false,
-                    orderType: String, contract_hash: String, blockchain: String = "neo", completion: (Pair<SwitcheoOrderRequest?, Error?>) -> (Unit)) {
+    fun submitOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
+                    contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<SwitcheoOrders?, Error?>) -> (Unit)) {
         bg {
             val (data, error) = (baseURL + "/" + Route.TIMESTAMP.routeName()).httpGet().responseString().third
             val timeStamp = Gson().fromJson<JsonObject>(data!!)["timestamp"].asLong
@@ -415,7 +459,7 @@ class SwitcheoAPI {
                     "timestamp" to timeStamp,
                     "use_native_tokens" to use_native_tokens,
                     "want_amount" to want_amount)
-
+            Log.d("JSON PAYLOD: ",jsonPayload.toString())
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
             jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
@@ -426,28 +470,28 @@ class SwitcheoAPI {
             request.responseString { req, response, result ->
                 val (data, error) = result
                 if (error == null) {
-                    val orderRequest = Gson().fromJson<SwitcheoOrderRequest>(data!!)
-                    completion(Pair<SwitcheoOrderRequest?, Error?>(orderRequest, null))
+                    val orderRequest = Gson().fromJson<SwitcheoOrders>(data!!)
+                    completion(Pair<SwitcheoOrders?, Error?>(orderRequest, null))
                 } else {
-                    completion(Pair<SwitcheoOrderRequest?, Error?>(null, Error(error.localizedMessage)))
+                    completion(Pair<SwitcheoOrders?, Error?>(null, Error(error.localizedMessage)))
                 }
             }
         }
     }
 
-    fun executeOrder(orderRequest: SwitcheoOrderRequest, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+    fun executeOrder(orderRequest: SwitcheoOrders   , completion: (Pair<Boolean?, Error?>) -> (Unit)) {
         val makesObject = jsonObject()
-        for (makeTx in orderRequest.makes) {
-            val makeId = makeTx.id
-            val jsonPayloadBytes = serializeTransactionFromJson(makeTx.txn)
+        for (makeTx in orderRequest.makes!!) {
+            val makeId = makeTx!!.id
+            val jsonPayloadBytes = serializeTransactionFromJson(Gson().toJsonTree(makeTx.txn!!).asJsonObject)
             val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             makesObject.addProperty(makeId, signature)
         }
 
         val fillsObject = jsonObject()
-        for (fillTx in orderRequest.fills) {
-            val fillId = fillTx.id
-            val jsonPayloadBytes = serializeTransactionFromJson(fillTx.txn)
+        for (fillTx in orderRequest.fills!!) {
+            val fillId = fillTx!!.id
+            val jsonPayloadBytes = serializeTransactionFromJson(Gson().toJsonTree(fillTx.txn!!).asJsonObject)
             val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             fillsObject.addProperty(fillId, signature)
         }
@@ -469,10 +513,10 @@ class SwitcheoAPI {
         }
     }
 
-    fun singleStepOrder(pair: String, side: String, price: String, want_amount: String, use_native_tokens: Boolean = false,
-                        orderType: String, contract_hash: String, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+    fun singleStepOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
+                        contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
 
-        submitOrder(pair, side, price, want_amount, use_native_tokens, orderType, contract_hash, blockchain) {
+        submitOrder(pair, side, price, want_amount, orderType, use_native_tokens, contract_hash, blockchain) {
             if (it.second != null) {
                 completion(Pair<Boolean?, Error?>(false, it.second))
             } else {
@@ -487,14 +531,14 @@ class SwitcheoAPI {
         bg {
             val (data, error) = (baseURL + "/" + Route.TIMESTAMP.routeName()).httpGet().responseString().third
             val timeStamp = Gson().fromJson<JsonObject>(data!!)["timestamp"].asLong
-            val jsonPayload = jsonObject("id" to orderId,
+            val jsonPayload = jsonObject("order_id" to orderId,
                     "timestamp" to timeStamp)
 
             val signedHex = getSignatureForJsonPayload(jsonPayload)
             jsonPayload.addProperty("signature", signedHex)
             jsonPayload.addProperty("address", Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase())
 
-            val url = baseURL + Route.CANCELLATIONS.routeName() + "/" + orderId + "/broadcast"
+            val url = baseURL + Route.CANCELLATIONS.routeName()
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
             request.responseString { req, response, result ->
@@ -533,7 +577,7 @@ class SwitcheoAPI {
             if (it.second != null) {
                 completion(Pair<Boolean?, Error?>(false, it.second))
             } else {
-                executeCancelOrder(orderId, it.first!!.transaction) {
+                executeCancelOrder(it.first!!.id, it.first!!.transaction!!) {
                     completion(Pair<Boolean?, Error?>(it.first, it.second))
                 }
             }
@@ -542,7 +586,7 @@ class SwitcheoAPI {
     //endregion
 
     //region Balances
-    fun getBalances(addresses: Array<String>, contract_hashes: Array<String>, completion: (Pair<ContractBalance?, Error?>) -> (Unit)) {
+    fun getBalances(addresses: Array<String> = arrayOf(Account.getWallet().hashedSignature.reversedArray().toHex().toLowerCase()), contract_hashes: Array<String> = arrayOf(defaultContract), completion: (Pair<ContractBalance?, Error?>) -> (Unit)) {
         val url = baseURL + Route.BALANCES.routeName()
         val parameters = listOf("addresses" to addresses, "contract_hashes" to contract_hashes)
         url.httpGet(parameters).responseString { req, response, result ->
