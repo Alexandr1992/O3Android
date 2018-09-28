@@ -106,7 +106,7 @@ class AccountViewModel: ViewModel() {
                 }
                 val interAssets = it.first!!.switcheo.confirmed.sortedBy { it.symbol }
                 for (asset in interAssets) {
-                    if (asset != neoAsset && asset != gasAsset) {
+                    if (asset.symbol.toUpperCase() != "NEO" && asset.symbol != "GAS") {
                         sortedAssets.add(asset)
                     }
                 }

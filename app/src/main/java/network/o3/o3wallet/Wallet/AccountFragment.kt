@@ -192,16 +192,22 @@ class AccountFragment : Fragment() {
         })
 
         accountViewModel.getTradingAccountAssets().observe(this, Observer<List<TransferableAsset>> {
-            (assetListView.adapter as AccountAssetsAdapter).setTradingAccountAssets(it!!)
-             accountViewModel.loadTradingAccountPriceData(it!!)
+            onUiThread {
+                (assetListView.adapter as AccountAssetsAdapter).setTradingAccountAssets(it!!)
+            }
+            accountViewModel.loadTradingAccountPriceData(it!!)
         })
 
         accountViewModel.getTradingAccountPriceData().observe(this, Observer { priceData ->
-            (assetListView.adapter as AccountAssetsAdapter).setTradingAccountPriceData(priceData!!)
+            onUiThread {
+                (assetListView.adapter as AccountAssetsAdapter).setTradingAccountPriceData(priceData!!)
+            }
         })
 
         accountViewModel.getWalletAccountPriceData().observe(this, Observer { priceData ->
-            (assetListView.adapter as AccountAssetsAdapter).setWalletAccountPriceData(priceData!!)
+            onUiThread {
+                (assetListView.adapter as AccountAssetsAdapter).setWalletAccountPriceData(priceData!!)
+            }
         })
     }
 
