@@ -71,12 +71,11 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
 
         fun bindHeader() {
             view.find<Button>(R.id.tradeNowButton).setOnClickListener {
-                //val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                //val intent = Intent(view.context, DAppBrowserActivity::class.java)
-                //intent.putExtra("url", url)
-                //intent.putExtra("allowSearch", false)
-                //view.context.startActivity(intent)
-                view.context.startActivity(Intent(view.context, NativeTradeRootActivity::class.java))
+                val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
+                val intent = Intent(view.context, DAppBrowserActivity::class.java)
+                intent.putExtra("url", url)
+                intent.putExtra("allowSearch", false)
+                view.context.startActivity(intent)
             }
         }
     }

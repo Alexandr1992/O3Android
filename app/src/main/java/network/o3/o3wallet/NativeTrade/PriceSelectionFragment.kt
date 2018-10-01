@@ -39,7 +39,7 @@ class PriceSelectionFragment : Fragment() {
 
     fun digitTapped(digit: String) {
         priceEditText.text = SpannableStringBuilder(priceEditText.text.toString() + digit)
-        (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
+        (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
         if (priceEditText.text.decimalNoGrouping().toDouble() > 0.0) {
             placeOrderButton.isEnabled = true
         } else {
@@ -222,9 +222,12 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiateEstimatedFill() {
         onUiThread {
+            mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
+            mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
+        }
+            //TODO: MAYBE readd Instant fill in the future
+            /*
             if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value ?: 0.0 == 0.0) {
-                mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
-                mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
             } else {
                 mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.VISIBLE
                 mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
@@ -240,7 +243,8 @@ class PriceSelectionFragment : Fragment() {
                 mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
             }
             mView.find<TextView>(R.id.estimatedFillAmount).text = (fillAmount!! * 100).formattedPercentString()
-        })
+        })*/
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
