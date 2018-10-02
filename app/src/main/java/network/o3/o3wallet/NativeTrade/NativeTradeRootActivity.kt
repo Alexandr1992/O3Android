@@ -50,7 +50,7 @@ class NativeTradeRootActivity : AppCompatActivity() {
 
         findNavController(R.id.orderSubmissionFragment).addOnNavigatedListener { controller,
                                                                       destination ->
-            if (destination.id == R.id.orderSubmissionFragment) {
+            if (destination.id == R.id.orderSubmissionFragment && viewModel.orders?.value?.count() ?: 0 > 0) {
                 find<ImageView>(R.id.pendingOrdersToolbarButton).visibility = View.VISIBLE
                 find<TextView>(R.id.pendingOrderCountBadge).visibility = View.VISIBLE
             } else {

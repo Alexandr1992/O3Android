@@ -460,8 +460,8 @@
     <string name="fifty_percent">50%</string>
     <string name="seventy_five_percent">75%</string>
     <string name="one_hundred_percent">100%</string>
-    <string name="Marketplace_switcheo_title">You can now trade your favorite tokens straight from your O3 wallet with Switcheo Decentralized Exchange!</string>
-    <string name="Marketplace_switcheo_subtitle">It\'s fast, simple, and safe. Try it out!</string>
+    <string name="Marketplace_switcheo_title">You can now trade your favorite tokens straight from your O3 wallet with Switcheo Decentralized Exchange. Any token with the green trading icon is available for trading.</string>
+    <string name="Marketplace_switcheo_subtitle">It\'s fast, simple, and safe. Tap one and find out more!</string>
     <string name="Marketplace_trade_now">Trade Now With Switcheo</string>
     <string name="DAPP_logout_warning">Are you sure you want to logout of this dapp?</string>
     <string name="Portfolio_trading_title">TRADING IN O3 IS HERE!</string>

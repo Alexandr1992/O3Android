@@ -48,6 +48,11 @@ class OrderSubmissionFragment : Fragment() {
     lateinit var baseAssetAmountEditText: EditText
     lateinit var totalFiatAmountTextView: TextView
     lateinit var pendingOrdersContainer: ConstraintLayout
+    lateinit var percentageButtonsLayout: LinearLayout
+    lateinit var twentyFivePercentButton: Button
+    lateinit var fiftyPercentButton: Button
+    lateinit var seventyFivePercentButton: Button
+    lateinit var oneHundredPercentButton: Button
 
     lateinit var baseAssetBalanceTextView: TextView
 
@@ -181,7 +186,7 @@ class OrderSubmissionFragment : Fragment() {
                 return@setOnClickListener
             }
             if (currString.isBlank()) {
-                digitTapped("0")
+                editingAmountView?.text = SpannableStringBuilder("0" + DecimalFormatSymbols().decimalSeparator)
                 return@setOnClickListener
             }
 
@@ -204,7 +209,7 @@ class OrderSubmissionFragment : Fragment() {
             val orderAsset = tradingAccount!!.switcheo.confirmed.find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.orderAsset}
 
 
-            orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: 0.0)  .toString()
+            orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: BigDecimal.ZERO).toDouble().removeTrailingZeros()
             baseAssetSelectionContainer.setNoDoubleClickListener(View.OnClickListener { v ->
                 val args = Bundle()
                 args.putString("trading_account", Gson().toJson(tradingAccount!!))
@@ -337,8 +342,18 @@ class OrderSubmissionFragment : Fragment() {
         (activity as NativeTradeRootActivity).viewModel.isEditingBaseAmount().observe ( this, Observer { isEditingBaseAmount ->
             if (isEditingBaseAmount!!) {
                 editingAmountView = baseAssetAmountEditText
+                if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+                    percentageButtonsLayout.visibility = View.VISIBLE
+                } else {
+                    percentageButtonsLayout.visibility = View.GONE
+                }
             } else {
                 editingAmountView = orderAssetAmountEditText
+                if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+                    percentageButtonsLayout.visibility = View.GONE
+                } else {
+                    percentageButtonsLayout.visibility = View.VISIBLE
+                }
             }
         })
         (activity as NativeTradeRootActivity).viewModel.setIsEditingBaseAmount(false)
@@ -396,6 +411,48 @@ class OrderSubmissionFragment : Fragment() {
         }
     }
 
+    fun percentageTapped(ratio: Double) {
+        val vm = (activity as NativeTradeRootActivity).viewModel
+        val isBuyOrder = vm.isBuyOrder
+        if (isBuyOrder) {
+            val baseAssetBalance = baseAssetBalanceTextView.text.toString().decimalNoGrouping().toDouble()
+            var doubleString = (baseAssetBalance * ratio).toString().replace(',', DecimalFormatSymbols().decimalSeparator)
+            doubleString = doubleString.replace('.', DecimalFormatSymbols().decimalSeparator)
+            baseAssetAmountEditText.text = SpannableStringBuilder(doubleString)
+        } else {
+            val orderAssetBalance = orderAssetBalanceTextView.text.toString().decimalNoGrouping().toDouble()
+            var doubleString = (orderAssetBalance * ratio).toString().replace(',', DecimalFormatSymbols().decimalSeparator)
+            doubleString = doubleString.replace('.', DecimalFormatSymbols().decimalSeparator)
+            orderAssetAmountEditText.text = SpannableStringBuilder(doubleString)
+        }
+        updateAmountsBasedOnInput(editingAmountView?.text.toString())
+    }
+
+    fun initiatePercentageButtons() {
+        percentageButtonsLayout = mView.find(R.id.percentageButtonsLayout)
+        twentyFivePercentButton = mView.find(R.id.twentyFivePercentButton)
+        fiftyPercentButton = mView.find(R.id.fiftyPercentButton)
+        seventyFivePercentButton = mView.find(R.id.seventyFivePercentButton)
+        oneHundredPercentButton = mView.find(R.id.oneHundredPercentButton)
+
+
+        twentyFivePercentButton.setOnClickListener {
+            percentageTapped(0.25)
+        }
+
+        fiftyPercentButton.setOnClickListener {
+            percentageTapped(0.5)
+        }
+
+        seventyFivePercentButton.setOnClickListener {
+            percentageTapped(0.75)
+        }
+
+        oneHundredPercentButton.setOnClickListener {
+            percentageTapped(1.0)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.native_trade_order_submission_fragment, container, false)
@@ -409,7 +466,7 @@ class OrderSubmissionFragment : Fragment() {
         initiateEditingFieldListener()
         initializeRealTimePriceListeners()
         initializeAssetBalanceListener()
-
+        initiatePercentageButtons()
         return mView
     }
 }

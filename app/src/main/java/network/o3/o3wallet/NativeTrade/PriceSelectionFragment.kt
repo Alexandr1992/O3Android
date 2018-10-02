@@ -105,7 +105,7 @@ class PriceSelectionFragment : Fragment() {
                 return@setOnClickListener
             }
             if (currString.isBlank()) {
-                digitTapped("0")
+                priceEditText.text = SpannableStringBuilder("0" + DecimalFormatSymbols().decimalSeparator)
                 return@setOnClickListener
             }
             priceEditText.text = SpannableStringBuilder(SpannableStringBuilder(priceEditText.text.toString() + DecimalFormatSymbols().decimalSeparator))

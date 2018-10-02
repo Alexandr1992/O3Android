@@ -99,7 +99,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (currString.isBlank()) {
-                digitTapped("0")
+                amountEditText.text = SpannableStringBuilder("0" + DecimalFormatSymbols().decimalSeparator)
                 return@setOnClickListener
             }
 

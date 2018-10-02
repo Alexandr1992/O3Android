@@ -13,12 +13,9 @@ import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.jsonObject
 import com.github.salomonbrys.kotson.toMap
+import network.o3.o3wallet.*
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalResultDialog
-import network.o3.o3wallet.R
-import network.o3.o3wallet.formattedFiatString
-import network.o3.o3wallet.formattedPercentString
-import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.sdk15.coroutines.onClick
@@ -86,7 +83,7 @@ class ReviewOrderFragment : Fragment() {
         placeOrderButton.onClick {
 
             val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
-            val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros()
+            val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros().decimalNoGrouping()
             var side = "buy"
             var wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()
             if (!vm.isBuyOrder) {

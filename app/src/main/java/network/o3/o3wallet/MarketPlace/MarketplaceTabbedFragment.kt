@@ -26,7 +26,7 @@ class MarketplaceTabbedFragment: Fragment() {
         //android keeps one fragment on either side so if you select the third tab and select first tab again.
         //fragment will be created causing to load the data again.
         //use this offScreenPageLimit to tell it to keep 2 fragments instead
-        viewPager.offscreenPageLimit = 1
+        viewPager.offscreenPageLimit = 2
         tabLayout.setupWithViewPager(viewPager)
     }
 
