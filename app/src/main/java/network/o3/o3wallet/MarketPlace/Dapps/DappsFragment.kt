@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.MarketPlace.NEP5Tokens.TokensFragment
 
 import network.o3.o3wallet.R
@@ -34,7 +35,9 @@ class DappsFragment : Fragment() {
         val dappsRecycler = mView.find<RecyclerView>(R.id.dappsRecyclerView)
         dappsRecycler.layoutManager = LinearLayoutManager(context)
         (dappsRecycler.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.VERTICAL
-        dappsRecycler.adapter = DappsAdapter(arrayListOf())
+        O3PlatformClient().getDapps {
+            dappsRecycler.adapter = DappsAdapter(it.first!!)
+        }
         return mView
     }
 

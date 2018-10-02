@@ -9,19 +9,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import network.o3.o3wallet.API.O3Platform.Dapp
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.R
 import network.o3.o3wallet.R.id.view
 import org.jetbrains.anko.find
 
-class DappsAdapter(private val dapps: ArrayList<Int>): RecyclerView.Adapter<DappsAdapter.DappHolder>() {
+class DappsAdapter(private val dapps: List<Dapp>): RecyclerView.Adapter<DappsAdapter.DappHolder>() {
 
     override fun getItemCount(): Int {
-        return 3 /*dapps.count()*/
+        return dapps.count()
     }
 
     override fun onBindViewHolder(holder: DappHolder, position: Int) {
-        holder.bindDapp(position)
+        holder.bindDapp(dapps[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DappHolder {
@@ -33,35 +34,14 @@ class DappsAdapter(private val dapps: ArrayList<Int>): RecyclerView.Adapter<Dapp
     class DappHolder(v: View) : RecyclerView.ViewHolder(v) {
         private var view: View = v
 
-        fun bindDapp(position: Int) {
+        fun bindDapp(dapp: Dapp) {
             val imageView = view.findViewById<ImageView>(R.id.dappSquareImage)
-            if (position == 0) {
-                view.find<TextView>(R.id.dappNameTextView).text = "Switcheo"
-                view.find<TextView>(R.id.dappDescriptionTextView).text =
-                        "A decentralized exchange that lets you trade directly from your mobile wallet"
-                Glide.with(view.context).load("https://cdn.o3.network/img/neo/SWTH.png").into(imageView)
-            } else if (position == 1) {
-                view.find<TextView>(R.id.dappNameTextView).text = "NeoTracker"
-                view.find<TextView>(R.id.dappDescriptionTextView).text =
-                        "The best block explorer on the NEO platform"
-                Glide.with(view.context).load("https://pbs.twimg.com/profile_images/888004106245201920/vMRWDGRt_400x400.jpg").into(imageView)
-            } else {
-                view.find<TextView>(R.id.dappNameTextView).text = "NNS"
-                view.find<TextView>(R.id.dappDescriptionTextView).text =
-                        "Register your NNS domain name, for a user friendly handle for your neo address"
-                Glide.with(view.context).load("https://cdn.o3.network/img/neo/NNC.png").into(imageView)
-            }
-
+            view.find<TextView>(R.id.dappNameTextView).text = dapp.name
+            view.find<TextView>(R.id.dappDescriptionTextView).text = dapp.description
+            Glide.with(view.context).load(dapp.iconURL).into(imageView)
             view.setOnClickListener {
                 val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
-
-                if (position == 0) {
-                    browserIntent.putExtra("url", "https://www.switcheo.exchange")
-                } else if (position == 1) {
-                    browserIntent.putExtra("url", "https://neotracker.io/")
-                } else {
-                    browserIntent.putExtra("url", "https://wallet.nel.group/")
-                }
+                browserIntent.putExtra("url", dapp.url)
                 view.context.startActivity(browserIntent)
             }
         }

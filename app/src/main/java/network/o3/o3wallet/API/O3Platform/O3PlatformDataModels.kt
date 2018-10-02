@@ -29,10 +29,10 @@ data class TradingAcountAssets(val confirming: List<ConfirmingAsset>,
                                val confirmed: List<TransferableAsset>,
                                val locked: List<TransferableAsset>)
 
-data class ConfirmingAsset(val symbol: ConfirmingAsset,
+data class ConfirmingAsset(val symbol: String,
                            val eventType: String,
                            val hash: String,
-                           val amount: Long,
+                           val amount: String,
                            val TXID: String,
                            val createdAt: String)
 
@@ -88,6 +88,8 @@ data class OntologyClaimableGasData(val data: OntologyClaimableGas)
 data class OntologyClaimableGas(val ong: String, val calculated: Boolean)
 
 data class O3Orders(val switcheo: List<O3SwitcheoOrders>)
+
+data class Dapp(val name: String, val description: String, val url: String, val iconURL: String)
 
 data class O3SwitcheoOrders(
         val id: String,
@@ -151,11 +153,6 @@ data class O3SwitcheoOrders(
             val trades: List<JsonObject>?
     )
 }
-
-
-
-
-
 
 
 class TransferableAssets(private val balances: TransferableBalances) {
