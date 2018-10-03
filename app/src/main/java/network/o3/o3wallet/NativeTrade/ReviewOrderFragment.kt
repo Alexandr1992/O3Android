@@ -4,6 +4,7 @@ package network.o3.o3wallet.NativeTrade
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,7 +72,11 @@ class ReviewOrderFragment : Fragment() {
 
     fun initiatePlaceOrderButton() {
         val placeOrderButton = mView.find<Button>(R.id.finalizeOrderButton)
-
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.buy_button_background)
+        } else {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.sell_button_background)
+        }
 
         val vm = (activity as NativeTradeRootActivity).viewModel
         vm.getIsOrdering().observe (this, Observer {

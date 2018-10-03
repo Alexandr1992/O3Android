@@ -38,6 +38,10 @@ class PriceSelectionFragment : Fragment() {
     lateinit var fiatPriceTextView: TextView
 
     fun digitTapped(digit: String) {
+        if (priceEditText?.text.toString().hasMaxDecimals(8)) {
+            return
+        }
+
         priceEditText.text = SpannableStringBuilder(priceEditText.text.toString() + digit)
         (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
         if (priceEditText.text.decimalNoGrouping().toDouble() > 0.0) {
@@ -207,7 +211,7 @@ class PriceSelectionFragment : Fragment() {
         topOrderLabel.setOnClickListener {
             if (topOrderLabel.text.decimalNoGrouping().toDoubleOrNull() != null) {
                 priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
-                vm.setManualPrice(topOrderLabel.text.toString().toDoubleOrNull()!!)
+                vm.setManualPrice(topOrderLabel.text.decimalNoGrouping().toDoubleOrNull()!!)
             }
         }
 

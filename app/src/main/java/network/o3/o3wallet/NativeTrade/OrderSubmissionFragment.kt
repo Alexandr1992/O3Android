@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.navigation.findNavController
+import com.afollestad.materialdialogs.Theme
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.native_trade_order_card.*
@@ -132,6 +133,10 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun digitTapped(digit: String) {
+        if (editingAmountView?.text.toString().hasMaxDecimals(8)) {
+            return
+        }
+
         if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
             digitTappedBuyOrder(digit)
         } else {
@@ -242,10 +247,12 @@ class OrderSubmissionFragment : Fragment() {
                     pendingButton.isEnabled = true
                     pendingBadge.text = orders.count().toString()
                     pendingBadge.visibility = View.VISIBLE
+                    pendingButton.visibility = View.VISIBLE
                 } else {
                     pendingButton.isEnabled = false
                     pendingButton.setColorFilter(ContextCompat.getColor(context!!, R.color.colorSubtitleGrey))
                     pendingBadge.visibility = View.GONE
+                    pendingButton.visibility = View.GONE
                 }
             }
         })
@@ -388,6 +395,12 @@ class OrderSubmissionFragment : Fragment() {
 
     fun initiateOrderButton() {
         placeOrderButton = mView.find<Button>(R.id.placeOrderButton)
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.buy_button_background)
+        } else {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.sell_button_background)
+        }
+
         if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 == 0.0) {
             placeOrderButton.isEnabled = false
         }

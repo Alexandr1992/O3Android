@@ -483,9 +483,10 @@ class AccountFragment : Fragment() {
     }
 
 
-    fun sendButtonTapped(payload: String) {
+    fun sendButtonTapped(payload: String, assetId: String? = null) {
         val intent = Intent(activity, SendV2Activity::class.java)
         intent.putExtra("uri", payload)
+        intent.putExtra("assetID", assetId ?: "")
         startActivity(intent)
     }
 

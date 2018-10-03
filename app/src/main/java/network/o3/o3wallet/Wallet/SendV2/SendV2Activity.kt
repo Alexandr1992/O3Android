@@ -51,9 +51,15 @@ class SendV2Activity : AppCompatActivity() {
         resetBestNode()
         if (intent.extras != null) {
             val uri = intent.getStringExtra("uri")
+            val assetID = intent.getStringExtra("assetID")
             if (uri != "") {
                 parseQRPayload(uri)
                 //give sometime to load eveything up
+                Thread.sleep(2000)
+            }
+
+            if(assetID != "") {
+                parseQRPayload("", assetID)
                 Thread.sleep(2000)
             }
         }
@@ -61,8 +67,30 @@ class SendV2Activity : AppCompatActivity() {
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
     }
 
+    fun setWithAssetId(assetId: String) {
+        runOnUiThread {
+            sendViewModel.getOwnedAssets(false).observe ( this, Observer { ownedAssets ->
+                if (assetId == "neo" || assetId == "gas") {
+                    val nativeAsset = ownedAssets?.find { it.symbol.toUpperCase() == assetId.toUpperCase() }
+                    if (nativeAsset != null) {
+                        sendViewModel.setSelectedAsset(nativeAsset)
+                    }
+                } else {
+                    val tokenAsset = ownedAssets?.find { it.id == assetId }
+                    if (tokenAsset != null) {
+                        sendViewModel.setSelectedAsset(tokenAsset)
+                    }
+                }
+            })
+        }
+    }
 
-    fun parseQRPayload(payload: String) {
+    fun parseQRPayload(payload: String, assetId: String? = null) {
+        if (assetId != null) {
+            setWithAssetId(assetId)
+            return
+        }
+
         if (Neoutils.validateNEOAddress(payload)) {
             sendViewModel.setSelectedAddress(payload)
         } else try {

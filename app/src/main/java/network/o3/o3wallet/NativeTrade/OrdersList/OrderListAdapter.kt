@@ -11,6 +11,8 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3.FooterRow
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
+import network.o3.o3wallet.API.O3Platform.calculatePercentFilled
+import network.o3.o3wallet.API.O3Platform.orderIsClosed
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.OrderResultDialog
 import network.o3.o3wallet.R
@@ -21,48 +23,17 @@ import java.lang.Math.pow
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFragment: OrdersListFragment):
+class OrdersAdapter(var orders: List<O3SwitcheoOrders>, private var mFragment: OrdersListFragment):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var showClosedOrders = false
 
     private var openOrders: MutableList<O3SwitcheoOrders> = mutableListOf()
 
-    fun calculatePercentFilled(order: O3SwitcheoOrders): Pair<Double, Double> {
-        var fillSum = 0.0
-        var errorMargin = 0.0
-        for (make in order.makes) {
-            for (trade in make.trades ?: listOf()) {
-                errorMargin += 1
-                fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
-            }
-        }
-
-        for (fill in order.fills) {
-            errorMargin +=1
-            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
-        }
-        val percentFilled = fillSum * 100
-        return Pair(percentFilled, errorMargin)
-    }
-
-    fun orderIsClosed(order: O3SwitcheoOrders): Boolean {
-        if (order.status == "processed") {
-            val percentFilledAndError = calculatePercentFilled(order)
-            if (order.makes.find { it.status == "cancelled" } != null) {
-                if (percentFilledAndError.first > 0.0) {
-                    return true
-                }
-            } else if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
-                return true
-            }
-        }
-        return false
-    }
 
     init {
         for (order in orders) {
-            if (!orderIsClosed(order)) {
+            if (!order.orderIsClosed()) {
                 openOrders.add(order)
             }
         }
@@ -127,6 +98,15 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
                 footerButton.text = mView.resources.getString(R.string.NATIVE_TRADE_show_orders)
             }
 
+            if (mAdapter.orders.isEmpty()) {
+                mView.find<TextView>(R.id.ordersEmptyTextView).visibility = View.VISIBLE
+                footerButton.visibility = View.INVISIBLE
+            } else {
+                mView.find<TextView>(R.id.ordersEmptyTextView).visibility = View.GONE
+                footerButton.visibility = View.VISIBLE
+            }
+
+
             footerButton.setOnClickListener {
                 mAdapter.showClosedOrders = !mAdapter.showClosedOrders
                 mAdapter.notifyDataSetChanged()
@@ -138,44 +118,11 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
         val mView = v
         val mFragment = fragment
 
-        fun calculatePercentFilled(order: O3SwitcheoOrders): Pair<Double, Double> {
-            var fillSum = 0.0
-            var errorMargin = 0.0
-            for (make in order.makes) {
-                for (trade in make.trades ?: listOf()) {
-                    errorMargin += 1
-                    fillSum += trade["filled_amount"].asDouble / order.want_amount.toDouble()
-                }
-            }
 
-            for (fill in order.fills) {
-                errorMargin +=1
-                fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
-            }
-            val percentFilled = fillSum * 100
-            return Pair(percentFilled, errorMargin)
-        }
 
         fun getRate(order: O3SwitcheoOrders, baseAssetAmount: Double, orderAssetAmount: Double): String {
             return (baseAssetAmount / orderAssetAmount).removeTrailingZeros()
 
-        }
-
-        //SWITCHEO API currently has an error margin of 0.00000001 on each make and trade
-        //we have to account for this to make sure a "filled" order is not mistreeated as
-        //still open
-        fun orderIsClosed(order: O3SwitcheoOrders): Boolean {
-            if (order.status == "processed") {
-                val percentFilledAndError = calculatePercentFilled(order)
-                if (order.makes.find { it.status == "cancelled" } != null) {
-                    if (percentFilledAndError.first > 0.0) {
-                        return true
-                    }
-                } else if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
-                    return true
-                }
-            }
-            return false
         }
 
         fun showOptionsMenu(order: O3SwitcheoOrders) {
@@ -204,9 +151,9 @@ class OrdersAdapter(private var orders: List<O3SwitcheoOrders>, private var mFra
 
             val baseAsset = order.offerAsset
             var baseAssetAmount = order.offer_amount.toDouble() / pow(10.0, order.offerAsset.decimals.toDouble())
-            val percentFilled = calculatePercentFilled(order)
+            val percentFilled = order.calculatePercentFilled()
 
-            if (orderIsClosed(order)) {
+            if (order.orderIsClosed()) {
                 mView.find<TextView>(R.id.orderIsClosedTextView).visibility = View.VISIBLE
                 mView.setOnClickListener {  }
                 orderAmount = orderAmount * percentFilled.first / 100

@@ -46,6 +46,9 @@ class DepositWithdrawalActivity : AppCompatActivity() {
 
 
     fun digitTapped(digit: String) {
+        if (amountEditText?.text.toString().hasMaxDecimals(8)) {
+            return
+        }
         amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + digit)
         calculateAndDisplaySendAmount()
     }
@@ -292,19 +295,21 @@ class DepositWithdrawalActivity : AppCompatActivity() {
     fun initiateWithDrawAllButton() {
         val withdrawAllButton = mView.find<Button>(R.id.withdrawAllButton)
         if (viewModel.isDeposit) {
-            withdrawAllButton.visibility = View.INVISIBLE
+            withdrawAllButton.text = resources.getString(R.string.NATIVE_TRADE_deposit_all)
         }  else {
-            withdrawAllButton.setOnClickListener {
-                if (viewModel.selectedAsset!!.value!!.symbol == "NEO") {
-                    amountEditText.text = SpannableStringBuilder(
-                            floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
-                    )
-                } else {
-                    amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
-                }
+            withdrawAllButton.text = resources.getString(R.string.NATIVE_TRADE_withdraw_all)
+        }
 
-                calculateAndDisplaySendAmount()
+        withdrawAllButton.setOnClickListener {
+            if (viewModel.selectedAsset!!.value!!.symbol == "NEO") {
+                amountEditText.text = SpannableStringBuilder(
+                        floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
+                )
+            } else {
+                amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
             }
+
+            calculateAndDisplaySendAmount()
         }
     }
 

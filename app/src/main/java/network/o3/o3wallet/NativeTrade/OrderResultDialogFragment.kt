@@ -70,6 +70,7 @@ class OrderResultDialog() : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        isCancelable = false
         if (PersistentStore.getTheme() == "Dark") {
             setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog_Dark)
         } else {

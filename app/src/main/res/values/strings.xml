@@ -258,6 +258,7 @@
 
     <string name="WALLET_Confirmed" comment="In Transaction History for confirmed transactions">Confirmed</string>
     <string name="WALLET_Pending" comment="In Transaction History for pending transactions">Pending</string>
+    <string name="WALLET_view_details" comment="Menu item to view token details">View Token Details</string>
 
     <!-- Wallet Send -->
     <string name="SEND_send" comment="Send label in send screen">Send</string>
@@ -417,7 +418,7 @@
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
     <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It may incur a fee of 0.01 ONG</string>
     <string name="WALLET_sync_ontology_gas">Are you sure you want to sync your ONG? It will cost (0.01) ONG to do so</string>
-    <string name="WALLET_sync_ontology_error">You must have generated at least 0.01 ONG in order to sync. Check back soon!</string>
+    <string name="WALLET_sync_ontology_error">You must have generated at least 0.02 ONG in order to sync. Check back soon!</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
     <string name="DIALOG_confirm_backup">My Private Key is backed up in a safe place</string>
@@ -491,7 +492,9 @@
     <string name="NATIVE_TRADE_total_cost">Total Cost:</string>
     <string name="NATIVE_TRADE_place_order">Place Order</string>
     <string name="NATIVE_TRADE_order_fill_amount">%s filled</string>
-    <string name="NATIVE_TRADE_no_pending_orders">You currently have no pending orders</string>
+    <string name="NATIVE_TRADE_no_pending_orders">You currently have no open orders.\n\n
+        You can create orders by selecting a token in the marketplace you wish to buy or sell
+        \n\nDon\'t forget to top up your trading account with tokens you wish to trade. </string>
     <string name="NATIVE_TRADE_deposit_success_title">Deposit Successful</string>
     <string name="NATIVE_TRADE_withdrawal_success_title">Withdrawal Successful</string>
     <string name="NATIVE_TRADE_deposit_fail_title">Deposit Failed</string>
@@ -516,5 +519,7 @@
     <string name="NATIVE_TRADE_hide_orders">Hide Completed Orders</string>
     <string name="NATIVE_TRADE_show_orders">Show Completed Orders</string>
     <string name="NATIVE_TRADE_withdraw_all">Withdraw All</string>
+    <string name="NATIVE_TRADE_deposit_all">Deposit All</string>
     <string name="NATIVE_TRADE_Neo_withdraw_warning">When withdrawing to your wallet, you must withdraw a whole amount of NEO</string>
+    <string name="WALLET_Account_Empty_State">Get started by depositing funds to your account</string>
 </resources>

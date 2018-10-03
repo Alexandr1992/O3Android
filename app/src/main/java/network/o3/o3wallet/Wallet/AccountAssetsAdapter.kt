@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
+import io.reactivex.internal.operators.maybe.MaybeIsEmpty
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3.PriceData
@@ -211,7 +212,6 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         private var mAssets = assets
         private var mPriceData = priceData
 
-
         fun fillLogos() {
             val logoImageOne = mView.find<ImageView>(R.id.assetLogo1)
             val logoImageTwo = mView.find<ImageView>(R.id.assetLogo2)
@@ -255,13 +255,13 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             val leftToolbarButton = mView.find<Button>(R.id.leftToolbarButton)
             val rightToolbarButton = mView.find<Button>(R.id.rightToolbarButton)
             if (isWallet) {
-                leftToolbarButton.setOnClickListener { mFragment.showMyAddress() }
-                leftToolbarButton.text = mFragment.getString(R.string.WALLET_Request)
-                leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_request, 0, 0, 0)
+                leftToolbarButton.setOnClickListener { mFragment.sendButtonTapped("") }
+                leftToolbarButton.text = mFragment.getString(R.string.WALLET_send_action_label)
+                leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_send, 0, 0, 0)
 
-                rightToolbarButton.setOnClickListener { mFragment.sendButtonTapped("") }
-                rightToolbarButton.text = mFragment.getString(R.string.WALLET_send_action_label)
-                rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_send, 0, 0, 0)
+                rightToolbarButton.setOnClickListener { mFragment.showMyAddress() }
+                rightToolbarButton.text = mFragment.getString(R.string.WALLET_Request)
+                rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_request, 0, 0, 0)
             } else {
                 leftToolbarButton.setOnClickListener {
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
@@ -281,6 +281,21 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             }
         }
 
+        fun setEmptyState(isWallet: Boolean, isEmpty: Boolean) {
+            val leftToolbarButton = mView.find<Button>(R.id.leftToolbarButton)
+            val dropDownImageView = mView.find<ImageView>(R.id.assetsDropDownImageView)
+            val emptyStateText = mView.find<TextView>(R.id.accountEmptyStateTextView)
+            if (isWallet || !isEmpty) {
+                leftToolbarButton.visibility = View.VISIBLE
+                dropDownImageView.visibility = View.VISIBLE
+                emptyStateText.visibility = View.INVISIBLE
+            } else if (isEmpty == true){
+                leftToolbarButton.visibility = View.INVISIBLE
+                emptyStateText.visibility = View.VISIBLE
+                dropDownImageView.visibility = View.INVISIBLE
+            }
+        }
+
 
         fun bindAccount(assets: List<TransferableAsset>, priceData: String?, accountName: String, isWallet: Boolean) {
             mAssets = assets
@@ -289,7 +304,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             fillLogos()
             fillPrice()
             initiateToolbarButtons(isWallet)
-
+            setEmptyState(isWallet, assets.isEmpty())
 
             val recyclerView = mView.find<RecyclerView>(R.id.accountAssetsRecyclerView)
             if (recyclerView.itemDecorationCount == 0) {
@@ -298,13 +313,14 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 recyclerView.addItemDecoration(itemDecorator)
             }
 
-            recyclerView.adapter = SingleAccountAdapter(mAssets, isWallet)
+            recyclerView.adapter = SingleAccountAdapter(mAssets, isWallet, mFragment)
         }
 
 
-        class SingleAccountAdapter(val assets: List<TransferableAsset>, isWallet: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        class SingleAccountAdapter(val assets: List<TransferableAsset>, isWallet: Boolean, fragment: AccountFragment): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             private var mAssets = assets
             private var isWallet = isWallet
+            private var mFragment = fragment
 
             fun setAssets(assets: List<TransferableAsset>) {
                 mAssets = assets
@@ -316,7 +332,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             }
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                (holder as AssetHolder).bindAsset(mAssets[position], isWallet)
+                (holder as AssetHolder).bindAsset(mAssets[position], isWallet, mFragment)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, p1: Int): AssetHolder {
@@ -388,10 +404,41 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     mView.context.startActivity(intent)
                 }
 
-                fun bindAsset(asset: TransferableAsset, isWallet: Boolean) {
+                fun showWalletOptionsMenu(asset: TransferableAsset, mFragment: AccountFragment) {
+                    val popup = PopupMenu(mView.context, mView)
+                    popup.menuInflater.inflate(R.menu.wallet_menu,popup.menu)
+                    popup.setOnMenuItemClickListener {
+                        val itemId = it.itemId
+
+                        if (itemId == R.id.send_menu_item) {
+                            mFragment.sendButtonTapped("", asset.id)
+
+                            /*val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset.symbol)
+                            intent.putExtra("is_buy", true)
+                            if (asset.symbol.toUpperCase() == "NEO") {
+                                //TODO: NO direct neo market so we have to go around it
+                                val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", "GAS")
+                                intent.putExtra("is_buy", false )
+                                mView.context.startActivity(intent)
+                            } else {
+                                mView.context.startActivity(intent)
+                            }*/
+                        } else if (itemId == R.id.request_menu_item) {
+                            mFragment.showMyAddress()
+                        } else if (itemId == R.id.view_details_menu_item) {
+                            showTokenDetails(asset)
+                        }
+                        true
+                    }
+                    popup.show()
+                }
+
+                fun bindAsset(asset: TransferableAsset, isWallet: Boolean, mFragment: AccountFragment) {
                     mView.setOnClickListener {
                         if (isWallet) {
-                            showTokenDetails(asset)
+                            showWalletOptionsMenu(asset, mFragment)
                         } else {
                             showOptionsMenu(asset)
                         }

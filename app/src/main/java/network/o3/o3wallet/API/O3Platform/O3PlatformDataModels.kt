@@ -232,4 +232,40 @@ class TransferableAsset(val asset: TransferableBalance) {
     }
 }
 
+//SWITCHEO API currently has an error margin of 0.00000001 on each make and trade
+//we have to account for this to make sure a "filled" order is not mistreeated as
+//still open
+fun O3SwitcheoOrders.calculatePercentFilled(): Pair<Double, Double> {
+    var fillSum = 0.0
+    var errorMargin = 0.0
+    for (make in this.makes) {
+        for (trade in make.trades ?: listOf()) {
+            errorMargin += 1
+            fillSum += trade["filled_amount"].asDouble / this.want_amount.toDouble()
+        }
+    }
+
+    for (fill in this.fills) {
+        errorMargin +=1
+        fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / this.want_amount.toDouble()
+    }
+    val percentFilled = fillSum * 100
+    return Pair(percentFilled, errorMargin)
+}
+
+fun O3SwitcheoOrders.orderIsClosed(): Boolean {
+    if (this.status == "processed") {
+        val percentFilledAndError = this.calculatePercentFilled()
+        if (this.makes.find { it.status == "cancelled" } != null) {
+            if (percentFilledAndError.first > 0.0) {
+                return true
+            }
+        } else if (100.0 - percentFilledAndError.first < 0.000001 * percentFilledAndError.second) {
+            return true
+        }
+    }
+    return false
+}
+
+
 
