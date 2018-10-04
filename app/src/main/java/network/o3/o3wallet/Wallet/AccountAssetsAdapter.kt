@@ -300,10 +300,12 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 leftToolbarButton.visibility = View.VISIBLE
                 dropDownImageView.visibility = View.VISIBLE
                 emptyStateText.visibility = View.INVISIBLE
+                additionalAssetsTextView.visibility = View.VISIBLE
             } else if (isEmpty == true){
                 leftToolbarButton.visibility = View.INVISIBLE
                 emptyStateText.visibility = View.VISIBLE
                 dropDownImageView.visibility = View.INVISIBLE
+                additionalAssetsTextView.visibility = View.INVISIBLE
             }
         }
 
