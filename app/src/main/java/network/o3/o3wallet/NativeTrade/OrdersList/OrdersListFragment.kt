@@ -12,20 +12,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.amplitude.api.Amplitude
 import kotlinx.android.synthetic.main.wallet_fragment_account.*
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import network.o3.o3wallet.API.O3Platform.orderIsClosed
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
+import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.NativeTrade.NativeTradeBaseAssetBottomSheet
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.getColorFromAttr
+import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
 
 class OrdersListFragment : Fragment() {
     private lateinit var mView: View
@@ -40,9 +44,15 @@ class OrdersListFragment : Fragment() {
                 count ++
             }
         }
-        if (count > 0) {
-            activity?.find<TabLayout>(R.id.tabLayout)?.getTabAt(2)?.text =
-                    resources.getString(R.string.NATIVE_TRADE_orders) + " (" + count.toString() + ")"
+        if (activity is MainTabbedActivity) {
+            val tab = activity?.find<TabLayout>(R.id.tabLayout)?.getTabAt(2)
+            if (tab != null) {
+                if (count > 0) {
+                    tab.text = resources.getString(R.string.NATIVE_TRADE_orders) + " (" + count.toString() + ")"
+                } else {
+                    tab.text = resources.getString(R.string.NATIVE_TRADE_orders)
+                }
+            }
         }
     }
 
@@ -85,6 +95,8 @@ class OrdersListFragment : Fragment() {
         SwitcheoAPI().singleStepCancel(orderId) {
             onUiThread {
                 if (it.first == true) {
+                    val orderDetailsAttrs = mapOf("order_id" to orderId)
+                    Amplitude.getInstance().logEvent("Order Cancelled", JSONObject(orderDetailsAttrs))
                     alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_succeeeded)) {
                         yesButton { }
                     }.show()

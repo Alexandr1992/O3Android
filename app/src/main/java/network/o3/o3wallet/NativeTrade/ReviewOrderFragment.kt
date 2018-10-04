@@ -104,19 +104,22 @@ class ReviewOrderFragment : Fragment() {
             SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
                 onUiThread {
                     vm.setIsOrdering(false)
-                    if (it.first!! != true) {
+                    if (it.first == null) {
                         resultFragment.showFailure()
                     } else {
-                        resultFragment.showSuccess()
+                        resultFragment.showSuccess(it.first!!)
                         val loggedJson = jsonObject(
-                                "pair" to pair,
-                                "price" to price,
+                                "order_id" to it.first!!.id,
+                                "datetime" to it.first!!.created_at,
                                 "side" to side,
-                                "wantAmount" to wantAmount)
-                        Amplitude.getInstance().logEvent("Native_Order_Placed",JSONObject(loggedJson.toMap()))
+                                "pair" to pair,
+                                "base_currency" to vm.selectedBaseAsset.value!!,
+                                "quantity" to vm.orderAssetAmount.value!!,
+                                "price_selection" to (activity as NativeTradeRootActivity).viewModel.priceSelectionType)
+                        Amplitude.getInstance().logEvent("Native_Order_Placed", JSONObject(loggedJson.toMap()))
                     }
                 }
-             }
+            }
         }
     }
 

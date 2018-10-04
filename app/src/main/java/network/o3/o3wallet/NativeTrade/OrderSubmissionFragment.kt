@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.navigation.findNavController
 import com.afollestad.materialdialogs.Theme
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.native_trade_order_card.*
@@ -394,7 +395,7 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun initiateOrderButton() {
-        placeOrderButton = mView.find<Button>(R.id.placeOrderButton)
+        placeOrderButton = mView.find(R.id.placeOrderButton)
         if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
             placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.buy_button_background)
         } else {
@@ -410,6 +411,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
+                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }
@@ -417,6 +419,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (orderAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         orderAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
+                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }

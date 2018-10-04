@@ -38,6 +38,7 @@ class PriceSelectionFragment : Fragment() {
     lateinit var fiatPriceTextView: TextView
 
     fun digitTapped(digit: String) {
+        (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "manual"
         if (priceEditText?.text.toString().hasMaxDecimals(8)) {
             return
         }
@@ -138,6 +139,7 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiateIncrementButtons() {
         mView.find<Button>(R.id.plusButton).setOnClickListener {
+            (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "percentage"
             val vm = (activity as NativeTradeRootActivity).viewModel
             var currentDifference = vm.marketRateDifference.value!!
             currentDifference += 0.01
@@ -148,6 +150,7 @@ class PriceSelectionFragment : Fragment() {
         }
 
         mView.find<Button>(R.id.minusButton).setOnClickListener {
+            (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "percentage"
             val vm = (activity as NativeTradeRootActivity).viewModel
             var currentDifference = vm.marketRateDifference.value!!
             currentDifference -= 0.01
@@ -205,11 +208,14 @@ class PriceSelectionFragment : Fragment() {
         val vm = (activity as NativeTradeRootActivity).viewModel
         val topOrderLabel = mView.find<TextView>(R.id.topOrderBookPrice)
         vm.getOrderBookTopPrice().observe(this, Observer { rate ->
-            topOrderLabel.text = rate!!.removeTrailingZeros()
+            onUiThread {
+                topOrderLabel.text = rate!!.removeTrailingZeros()
+            }
         })
 
         topOrderLabel.setOnClickListener {
             if (topOrderLabel.text.decimalNoGrouping().toDoubleOrNull() != null) {
+                (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "top_order"
                 priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
                 vm.setManualPrice(topOrderLabel.text.decimalNoGrouping().toDoubleOrNull()!!)
             }
@@ -219,6 +225,7 @@ class PriceSelectionFragment : Fragment() {
         medianPriceLabel.text =
                 vm.marketPrice!!.second.removeTrailingZeros()
         medianPriceLabel.setOnClickListener {
+            (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "median"
             priceEditText.text = SpannableStringBuilder(medianPriceLabel.text)
             vm.setManualPrice(vm.marketPrice!!.second)
         }

@@ -45,7 +45,6 @@ class NativeTradeRootActivity : AppCompatActivity() {
 
         find<ImageView>(R.id.pendingOrdersToolbarButton).setOnClickListener {
             findNavController(R.id.orderSubmissionFragment).navigate(R.id.action_orderSubmissionFragment_to_ordersListFragment)
-            //find<ImageView>(R.id.pendingOrdersToolbarButton).visibility = View.GONE
         }
 
         findNavController(R.id.orderSubmissionFragment).addOnNavigatedListener { controller,

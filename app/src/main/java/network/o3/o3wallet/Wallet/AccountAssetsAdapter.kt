@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import io.reactivex.internal.operators.maybe.MaybeIsEmpty
 import network.o3.o3wallet.*
@@ -27,6 +28,7 @@ import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
 import java.text.NumberFormat
 import kotlin.math.min
 
@@ -61,19 +63,20 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
     @Synchronized
     fun setAssetsArray(assets: ArrayList<TransferableAsset>) {
         arrayOfAccountAssets = assets
-        notifyItemChanged(inboxList.count())
     }
 
+    @Synchronized
     fun setTradingAccountAssets(assets: List<TransferableAsset>) {
         arrayOfTradingAccountAssets = assets
-        notifyItemChanged(itemCount - 1)
     }
 
+    @Synchronized
     fun setTradingAccountPriceData(priceData: String) {
         tradingAccountPriceData = priceData
         notifyItemChanged(itemCount - 1)
     }
 
+    @Synchronized
     fun setWalletAccountPriceData(priceData: String) {
         walletAccountPriceData = priceData
         notifyItemChanged(itemCount - 2)
@@ -234,11 +237,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
             val additionalAssetsTextView = mView.find<TextView>(R.id.additionalAssetsTextView)
             if (mAssets.size > 4) {
-                additionalAssetsTextView.visibility = View.VISIBLE
                 additionalAssetsTextView.text =
                         String.format(mView.context.getString(R.string.WALLET_additonal_asset), mAssets.size - 4)
             } else {
-                additionalAssetsTextView.visibility = View.GONE
+                additionalAssetsTextView.text = ""
             }
         }
 
@@ -264,6 +266,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 rightToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_request, 0, 0, 0)
             } else {
                 leftToolbarButton.setOnClickListener {
+                    val withdrawAttrs = mapOf(
+                            "asset" to "",
+                            "source" to "trading_account")
+                    Amplitude.getInstance().logEvent("Withdraw_Initiated", JSONObject(withdrawAttrs))
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                     intent.putExtra("isDeposit", false)
                     mView.context.startActivity(intent)
@@ -272,6 +278,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                 leftToolbarButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_withdraw, 0, 0, 0)
 
                 rightToolbarButton.setOnClickListener {
+                    val depositAttrs = mapOf(
+                            "asset" to "",
+                            "source" to "trading_account")
+                    Amplitude.getInstance().logEvent("Deposit_Initiated", JSONObject(depositAttrs))
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                     intent.putExtra("isDeposit", true)
                     mView.context.startActivity(intent)
@@ -285,6 +295,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             val leftToolbarButton = mView.find<Button>(R.id.leftToolbarButton)
             val dropDownImageView = mView.find<ImageView>(R.id.assetsDropDownImageView)
             val emptyStateText = mView.find<TextView>(R.id.accountEmptyStateTextView)
+            val additionalAssetsTextView = mView.find<TextView>(R.id.additionalAssetsTextView)
             if (isWallet || !isEmpty) {
                 leftToolbarButton.visibility = View.VISIBLE
                 dropDownImageView.visibility = View.VISIBLE
@@ -322,10 +333,6 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             private var isWallet = isWallet
             private var mFragment = fragment
 
-            fun setAssets(assets: List<TransferableAsset>) {
-                mAssets = assets
-                notifyDataSetChanged()
-            }
 
             override fun getItemCount(): Int {
                  return mAssets.size
@@ -357,6 +364,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                         val itemId = it.itemId
 
                         if (itemId == R.id.buy_menu_item) {
+                            val buyAttrs = mapOf(
+                                    "asset" to asset.symbol,
+                                    "source" to "trading_account_menu_item")
+                            Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
                             intent.putExtra("is_buy", true)
@@ -373,6 +384,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
                             intent.putExtra("is_buy", false)
+                            val sellAttrs = mapOf(
+                                    "asset" to asset.symbol,
+                                    "source" to "trading_account_menu_item")
+                            Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
                             if (asset.symbol.toUpperCase() == "NEO") {
                                 //TODO: NO direct neo market so we have to go around it
                                 val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
@@ -384,6 +399,10 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                             }
                         } else if (itemId == R.id.withdraw_menu_item) {
                             val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
+                            val withdrawAttrs = mapOf(
+                                    "asset" to asset.symbol,
+                                    "source" to "trading_account_menu_item")
+                            Amplitude.getInstance().logEvent("Withdraw_Initiated", JSONObject(withdrawAttrs))
                             intent.putExtra("isDeposit", false)
                             intent.putExtra("asset", asset.symbol)
                             mView.context.startActivity(intent)
@@ -398,7 +417,8 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     if (asset.id.contains("00000000000")) {
                         detailURL = "https://public.o3.network/ont/assets/" + asset.symbol + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
                     }
-
+                    val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "wallet_account_menu_item")
+                    Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
                     val intent = Intent(mView.context, DAppBrowserActivity::class.java)
                     intent.putExtra("url", detailURL)
                     mView.context.startActivity(intent)

@@ -479,7 +479,7 @@ class SwitcheoAPI {
         }
     }
 
-    fun executeOrder(orderRequest: SwitcheoOrders   , completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+    fun executeOrder(orderRequest: SwitcheoOrders, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
         val makesObject = jsonObject()
         for (makeTx in orderRequest.makes!!) {
             val makeId = makeTx!!.id
@@ -514,14 +514,19 @@ class SwitcheoAPI {
     }
 
     fun singleStepOrder(pair: String, side: String, price: String, want_amount: String, orderType: String, use_native_tokens: Boolean = false,
-                        contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<Boolean?, Error?>) -> (Unit)) {
+                        contract_hash: String = defaultContract, blockchain: String = "neo", completion: (Pair<SwitcheoOrders?, Error?>) -> (Unit)) {
 
         submitOrder(pair, side, price, want_amount, orderType, use_native_tokens, contract_hash, blockchain) {
             if (it.second != null) {
-                completion(Pair<Boolean?, Error?>(false, it.second))
+                completion(Pair<SwitcheoOrders?, Error?>(null, it.second))
             } else {
-                executeOrder(it.first!!) {
-                    completion(Pair<Boolean?, Error?>(it.first, it.second))
+                val order = it.first!!
+                executeOrder(order) {
+                    if (it.first == true) {
+                        completion(Pair<SwitcheoOrders?, Error?>(order, it.second))
+                    } else {
+                        completion(Pair<SwitcheoOrders?, Error?>(null, it.second))
+                    }
                 }
             }
         }
@@ -600,6 +605,24 @@ class SwitcheoAPI {
         }
     }
     //endregion
+}
+
+fun SwitcheoOrders.calculatePercentFilled(): Pair<Double, Double> {
+    var fillSum = 0.0
+    var errorMargin = 0.0
+    for (make in this.makes) {
+        for (trade in make.trades ?: listOf()) {
+            errorMargin += 1
+            fillSum += trade["filled_amount"].asDouble / this.want_amount.toDouble()
+        }
+    }
+
+    for (fill in this.fills) {
+        errorMargin +=1
+        fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / this.want_amount.toDouble()
+    }
+    val percentFilled = fillSum * 100
+    return Pair(percentFilled, errorMargin)
 }
 
 

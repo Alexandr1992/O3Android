@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.TokenListing
@@ -18,6 +19,7 @@ import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
+import org.json.JSONObject
 
 class TokensAdapter(private var tokens: ArrayList<TokenListing>):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -89,6 +91,8 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
         }
 
         override fun onClick(v: View) {
+            val tokenDetailsAttrs = mapOf("asset" to token!!.symbol, "source" to "marketplace_card")
+            Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
             val detailURL = token?.url!! + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
             val intent = Intent(v.context, DAppBrowserActivity::class.java)
             intent.putExtra("url", detailURL)
