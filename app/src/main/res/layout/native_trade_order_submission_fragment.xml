@@ -6,6 +6,52 @@
     android:layout_height="match_parent"
     tools:context=".NativeTrade.OrderSubmissionFragment">
 
+    <LinearLayout
+        android:id="@+id/percentageButtonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/twentyFivePercentButton"
+            style="@style/BorderLessButton.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/twenty_five_oercent"
+            android:textColor="@color/colorSubtitleGrey" />
+
+        <Button
+            android:id="@+id/fiftyPercentButton"
+            style="@style/BorderLessButton.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/fifty_percent"
+            android:textColor="@color/colorSubtitleGrey" />
+
+        <Button
+            android:id="@+id/seventyFivePercentButton"
+            style="@style/BorderLessButton.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/seventy_five_percent"
+            android:textColor="@color/colorSubtitleGrey" />
+
+        <Button
+            android:id="@+id/oneHundredPercentButton"
+            style="@style/BorderLessButton.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/one_hundred_percent"
+            android:textColor="@color/colorSubtitleGrey" />
+    </LinearLayout>
+
     <include
         android:id="@+id/include"
         layout="@layout/pinpad_layout"

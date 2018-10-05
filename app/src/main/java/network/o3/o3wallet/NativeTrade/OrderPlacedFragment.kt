@@ -16,6 +16,4 @@ class OrderPlacedFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.native_trade_order_placed_fragment, container, false)
     }
-
-
 }

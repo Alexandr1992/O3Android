@@ -17,6 +17,8 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.navigation.findNavController
+import com.afollestad.materialdialogs.Theme
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.native_trade_order_card.*
@@ -48,6 +50,11 @@ class OrderSubmissionFragment : Fragment() {
     lateinit var baseAssetAmountEditText: EditText
     lateinit var totalFiatAmountTextView: TextView
     lateinit var pendingOrdersContainer: ConstraintLayout
+    lateinit var percentageButtonsLayout: LinearLayout
+    lateinit var twentyFivePercentButton: Button
+    lateinit var fiftyPercentButton: Button
+    lateinit var seventyFivePercentButton: Button
+    lateinit var oneHundredPercentButton: Button
 
     lateinit var baseAssetBalanceTextView: TextView
 
@@ -127,6 +134,10 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun digitTapped(digit: String) {
+        if (editingAmountView?.text.toString().hasMaxDecimals(8)) {
+            return
+        }
+
         if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
             digitTappedBuyOrder(digit)
         } else {
@@ -181,7 +192,7 @@ class OrderSubmissionFragment : Fragment() {
                 return@setOnClickListener
             }
             if (currString.isBlank()) {
-                digitTapped("0")
+                editingAmountView?.text = SpannableStringBuilder("0" + DecimalFormatSymbols().decimalSeparator)
                 return@setOnClickListener
             }
 
@@ -204,7 +215,7 @@ class OrderSubmissionFragment : Fragment() {
             val orderAsset = tradingAccount!!.switcheo.confirmed.find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.orderAsset}
 
 
-            orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: 0.0)  .toString()
+            orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: BigDecimal.ZERO).toDouble().removeTrailingZeros()
             baseAssetSelectionContainer.setNoDoubleClickListener(View.OnClickListener { v ->
                 val args = Bundle()
                 args.putString("trading_account", Gson().toJson(tradingAccount!!))
@@ -237,10 +248,12 @@ class OrderSubmissionFragment : Fragment() {
                     pendingButton.isEnabled = true
                     pendingBadge.text = orders.count().toString()
                     pendingBadge.visibility = View.VISIBLE
+                    pendingButton.visibility = View.VISIBLE
                 } else {
                     pendingButton.isEnabled = false
                     pendingButton.setColorFilter(ContextCompat.getColor(context!!, R.color.colorSubtitleGrey))
                     pendingBadge.visibility = View.GONE
+                    pendingButton.visibility = View.GONE
                 }
             }
         })
@@ -337,8 +350,18 @@ class OrderSubmissionFragment : Fragment() {
         (activity as NativeTradeRootActivity).viewModel.isEditingBaseAmount().observe ( this, Observer { isEditingBaseAmount ->
             if (isEditingBaseAmount!!) {
                 editingAmountView = baseAssetAmountEditText
+                if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+                    percentageButtonsLayout.visibility = View.VISIBLE
+                } else {
+                    percentageButtonsLayout.visibility = View.GONE
+                }
             } else {
                 editingAmountView = orderAssetAmountEditText
+                if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+                    percentageButtonsLayout.visibility = View.GONE
+                } else {
+                    percentageButtonsLayout.visibility = View.VISIBLE
+                }
             }
         })
         (activity as NativeTradeRootActivity).viewModel.setIsEditingBaseAmount(false)
@@ -372,7 +395,13 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun initiateOrderButton() {
-        placeOrderButton = mView.find<Button>(R.id.placeOrderButton)
+        placeOrderButton = mView.find(R.id.placeOrderButton)
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.buy_button_background)
+        } else {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.sell_button_background)
+        }
+
         if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 == 0.0) {
             placeOrderButton.isEnabled = false
         }
@@ -382,6 +411,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
+                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }
@@ -389,10 +419,53 @@ class OrderSubmissionFragment : Fragment() {
                 if (orderAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         orderAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
+                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }
             }
+        }
+    }
+
+    fun percentageTapped(ratio: Double) {
+        val vm = (activity as NativeTradeRootActivity).viewModel
+        val isBuyOrder = vm.isBuyOrder
+        if (isBuyOrder) {
+            val baseAssetBalance = baseAssetBalanceTextView.text.toString().decimalNoGrouping().toDouble()
+            var doubleString = (baseAssetBalance * ratio).toString().replace(',', DecimalFormatSymbols().decimalSeparator)
+            doubleString = doubleString.replace('.', DecimalFormatSymbols().decimalSeparator)
+            baseAssetAmountEditText.text = SpannableStringBuilder(doubleString)
+        } else {
+            val orderAssetBalance = orderAssetBalanceTextView.text.toString().decimalNoGrouping().toDouble()
+            var doubleString = (orderAssetBalance * ratio).toString().replace(',', DecimalFormatSymbols().decimalSeparator)
+            doubleString = doubleString.replace('.', DecimalFormatSymbols().decimalSeparator)
+            orderAssetAmountEditText.text = SpannableStringBuilder(doubleString)
+        }
+        updateAmountsBasedOnInput(editingAmountView?.text.toString())
+    }
+
+    fun initiatePercentageButtons() {
+        percentageButtonsLayout = mView.find(R.id.percentageButtonsLayout)
+        twentyFivePercentButton = mView.find(R.id.twentyFivePercentButton)
+        fiftyPercentButton = mView.find(R.id.fiftyPercentButton)
+        seventyFivePercentButton = mView.find(R.id.seventyFivePercentButton)
+        oneHundredPercentButton = mView.find(R.id.oneHundredPercentButton)
+
+
+        twentyFivePercentButton.setOnClickListener {
+            percentageTapped(0.25)
+        }
+
+        fiftyPercentButton.setOnClickListener {
+            percentageTapped(0.5)
+        }
+
+        seventyFivePercentButton.setOnClickListener {
+            percentageTapped(0.75)
+        }
+
+        oneHundredPercentButton.setOnClickListener {
+            percentageTapped(1.0)
         }
     }
 
@@ -409,7 +482,7 @@ class OrderSubmissionFragment : Fragment() {
         initiateEditingFieldListener()
         initializeRealTimePriceListeners()
         initializeAssetBalanceListener()
-
+        initiatePercentageButtons()
         return mView
     }
 }

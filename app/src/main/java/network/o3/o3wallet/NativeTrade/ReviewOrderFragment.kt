@@ -4,6 +4,7 @@ package network.o3.o3wallet.NativeTrade
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,12 +14,9 @@ import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.jsonObject
 import com.github.salomonbrys.kotson.toMap
+import network.o3.o3wallet.*
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalResultDialog
-import network.o3.o3wallet.R
-import network.o3.o3wallet.formattedFiatString
-import network.o3.o3wallet.formattedPercentString
-import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.sdk15.coroutines.onClick
@@ -54,9 +52,12 @@ class ReviewOrderFragment : Fragment() {
                             marketRatePercent.formattedPercentString())
         }
 
-        mView.find<TextView>(R.id.reviewEstimatedFillTextView).text =
+        //TODO: Readd instant fill in the future maybe
+        mView.find<TextView>(R.id.reviewEstimatedFillTextView).visibility = View.GONE
+       /* mView.find<TextView>(R.id.reviewEstimatedFillTextView).text =
                 String.format(resources.getString(R.string.NATIVE_TRADE_instant_fill_with_amount),
-                        (vm.estimatedFillAmount.value!! * 100).formattedPercentString())
+                       (vm.estimatedFillAmount.value!! * 100).formattedPercentString())
+        */
     }
 
     fun initiateBaseAssetDetails() {
@@ -71,7 +72,11 @@ class ReviewOrderFragment : Fragment() {
 
     fun initiatePlaceOrderButton() {
         val placeOrderButton = mView.find<Button>(R.id.finalizeOrderButton)
-
+        if ((activity as NativeTradeRootActivity).viewModel.isBuyOrder) {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.buy_button_background)
+        } else {
+            placeOrderButton.background = ContextCompat.getDrawable(this.activity!!, R.drawable.sell_button_background)
+        }
 
         val vm = (activity as NativeTradeRootActivity).viewModel
         vm.getIsOrdering().observe (this, Observer {
@@ -83,7 +88,7 @@ class ReviewOrderFragment : Fragment() {
         placeOrderButton.onClick {
 
             val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
-            val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros()
+            val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros().decimalNoGrouping()
             var side = "buy"
             var wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()
             if (!vm.isBuyOrder) {
@@ -99,19 +104,22 @@ class ReviewOrderFragment : Fragment() {
             SwitcheoAPI().singleStepOrder(pair, side, price, wantAmount, orderType) {
                 onUiThread {
                     vm.setIsOrdering(false)
-                    if (it.first!! != true) {
+                    if (it.first == null) {
                         resultFragment.showFailure()
                     } else {
-                        resultFragment.showSuccess()
+                        resultFragment.showSuccess(it.first!!)
                         val loggedJson = jsonObject(
-                                "pair" to pair,
-                                "price" to price,
+                                "order_id" to it.first!!.id,
+                                "datetime" to it.first!!.created_at,
                                 "side" to side,
-                                "wantAmount" to wantAmount)
-                        Amplitude.getInstance().logEvent("Native_Order_Placed",JSONObject(loggedJson.toMap()))
+                                "pair" to pair,
+                                "base_currency" to vm.selectedBaseAsset.value!!,
+                                "quantity" to vm.orderAssetAmount.value!!,
+                                "price_selection" to (activity as NativeTradeRootActivity).viewModel.priceSelectionType)
+                        Amplitude.getInstance().logEvent("Native_Order_Placed", JSONObject(loggedJson.toMap()))
                     }
                 }
-             }
+            }
         }
     }
 

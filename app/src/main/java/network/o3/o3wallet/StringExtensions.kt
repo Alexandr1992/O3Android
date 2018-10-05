@@ -125,6 +125,17 @@ fun Date.intervaledString(interval: String): String {
     return "since " + dateFormatter.format(this)
 }
 
+fun String.hasMaxDecimals(decimals: Int): Boolean {
+    var replaced = this.replace(DecimalFormat().decimalFormatSymbols.groupingSeparator.toString(), "")
+    replaced = replaced.replace(DecimalFormat().decimalFormatSymbols.decimalSeparator.toString(), ".")
+    val decimalIndex = replaced.indexOf(".")
+    if (decimalIndex == -1) {
+        return false
+    }
+    val substr = replaced.substringAfter(".")
+    return substr.count() >= decimals
+}
+
 
 
 class DecimalDigitsInputFilter(digitsBeforeZero: Int, digitsAfterZero: Int) : InputFilter {

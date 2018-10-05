@@ -29,6 +29,7 @@ class O3PlatformClient {
         HISTORY,
         TRADING,
         ORDERS,
+        DAPPS,
         UTXO;
 
 
@@ -282,6 +283,23 @@ class O3PlatformClient {
             }
         }
     }
+
+    fun getDapps(completion: (Pair<List<Dapp>?, Error?>) -> (Unit)) {
+        val url = "https://platform.o3.network/api/v1/" + Route.DAPPS.routeName() + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val dapps = Gson().fromJson<List<Dapp>>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<List<Dapp>?, Error?>(dapps, null))
+            } else {
+                completion(Pair<List<Dapp>?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
 
     fun getTradingAccounts(completion: (Pair<TradingAccount?, Error?>) -> (Unit)) {
         val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" + Account.getWallet().address + networkQueryString()

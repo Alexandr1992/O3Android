@@ -179,16 +179,20 @@ class AccountFragment : Fragment() {
 
     fun setupAssetListener() {
         accountViewModel.getAssets().observe(this, Observer<TransferableAssets?> {
-            swipeContainer.isRefreshing = false
-            if (it == null) {
-                context?.toast(accountViewModel.getLastError().localizedMessage)
-            } else {
-                 (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
+            onUiThread {
+                swipeContainer.isRefreshing = false
+                if (it == null) {
+                    context?.toast(accountViewModel.getLastError().localizedMessage)
+                } else {
+                     (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
+                }
+                accountViewModel.loadWalletAccountPriceData(it!!.assets)
+                accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
+                    onUiThread {
+                        (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
+                    }
+                })
             }
-            accountViewModel.loadWalletAccountPriceData(it!!.assets)
-            accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
-                (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
-            })
         })
 
         accountViewModel.getTradingAccountAssets().observe(this, Observer<List<TransferableAsset>> {
@@ -483,9 +487,10 @@ class AccountFragment : Fragment() {
     }
 
 
-    fun sendButtonTapped(payload: String) {
+    fun sendButtonTapped(payload: String, assetId: String? = null) {
         val intent = Intent(activity, SendV2Activity::class.java)
         intent.putExtra("uri", payload)
+        intent.putExtra("assetID", assetId ?: "")
         startActivity(intent)
     }
 

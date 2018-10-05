@@ -33,6 +33,7 @@ class NativeTradeViewModel: ViewModel() {
     var marketRateDifference: MutableLiveData<Double> = MutableLiveData()
     var estimatedFillAmount: MutableLiveData<Double> = MutableLiveData()
     var error: MutableLiveData<Error> = MutableLiveData()
+    var priceSelectionType = "default"
 
     init {
         estimatedFillAmount.value = 0.0

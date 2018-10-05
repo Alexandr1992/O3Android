@@ -38,8 +38,13 @@ class PriceSelectionFragment : Fragment() {
     lateinit var fiatPriceTextView: TextView
 
     fun digitTapped(digit: String) {
+        (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "manual"
+        if (priceEditText?.text.toString().hasMaxDecimals(8)) {
+            return
+        }
+
         priceEditText.text = SpannableStringBuilder(priceEditText.text.toString() + digit)
-        (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.toString().toDouble())
+        (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
         if (priceEditText.text.decimalNoGrouping().toDouble() > 0.0) {
             placeOrderButton.isEnabled = true
         } else {
@@ -105,7 +110,7 @@ class PriceSelectionFragment : Fragment() {
                 return@setOnClickListener
             }
             if (currString.isBlank()) {
-                digitTapped("0")
+                priceEditText.text = SpannableStringBuilder("0" + DecimalFormatSymbols().decimalSeparator)
                 return@setOnClickListener
             }
             priceEditText.text = SpannableStringBuilder(SpannableStringBuilder(priceEditText.text.toString() + DecimalFormatSymbols().decimalSeparator))
@@ -134,6 +139,7 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiateIncrementButtons() {
         mView.find<Button>(R.id.plusButton).setOnClickListener {
+            (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "percentage"
             val vm = (activity as NativeTradeRootActivity).viewModel
             var currentDifference = vm.marketRateDifference.value!!
             currentDifference += 0.01
@@ -144,6 +150,7 @@ class PriceSelectionFragment : Fragment() {
         }
 
         mView.find<Button>(R.id.minusButton).setOnClickListener {
+            (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "percentage"
             val vm = (activity as NativeTradeRootActivity).viewModel
             var currentDifference = vm.marketRateDifference.value!!
             currentDifference -= 0.01
@@ -201,13 +208,16 @@ class PriceSelectionFragment : Fragment() {
         val vm = (activity as NativeTradeRootActivity).viewModel
         val topOrderLabel = mView.find<TextView>(R.id.topOrderBookPrice)
         vm.getOrderBookTopPrice().observe(this, Observer { rate ->
-            topOrderLabel.text = rate!!.removeTrailingZeros()
+            onUiThread {
+                topOrderLabel.text = rate!!.removeTrailingZeros()
+            }
         })
 
         topOrderLabel.setOnClickListener {
             if (topOrderLabel.text.decimalNoGrouping().toDoubleOrNull() != null) {
+                (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "top_order"
                 priceEditText.text = SpannableStringBuilder(topOrderLabel.text)
-                vm.setManualPrice(topOrderLabel.text.toString().toDoubleOrNull()!!)
+                vm.setManualPrice(topOrderLabel.text.decimalNoGrouping().toDoubleOrNull()!!)
             }
         }
 
@@ -215,6 +225,7 @@ class PriceSelectionFragment : Fragment() {
         medianPriceLabel.text =
                 vm.marketPrice!!.second.removeTrailingZeros()
         medianPriceLabel.setOnClickListener {
+            (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "median"
             priceEditText.text = SpannableStringBuilder(medianPriceLabel.text)
             vm.setManualPrice(vm.marketPrice!!.second)
         }
@@ -222,9 +233,12 @@ class PriceSelectionFragment : Fragment() {
 
     fun initiateEstimatedFill() {
         onUiThread {
+            mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
+            mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
+        }
+            //TODO: MAYBE readd Instant fill in the future
+            /*
             if ((activity as NativeTradeRootActivity).viewModel.orderAssetAmount.value ?: 0.0 == 0.0) {
-                mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.GONE
-                mView.find<TextView>(R.id.instantFillLabel).visibility = View.GONE
             } else {
                 mView.find<TextView>(R.id.estimatedFillAmount).visibility = View.VISIBLE
                 mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
@@ -240,7 +254,8 @@ class PriceSelectionFragment : Fragment() {
                 mView.find<TextView>(R.id.instantFillLabel).visibility = View.VISIBLE
             }
             mView.find<TextView>(R.id.estimatedFillAmount).text = (fillAmount!! * 100).formattedPercentString()
-        })
+        })*/
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

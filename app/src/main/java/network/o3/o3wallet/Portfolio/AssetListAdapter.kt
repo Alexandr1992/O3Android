@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.robinhood.spark.SparkView
 import com.robinhood.spark.animation.MorphSparkAnimator
@@ -23,6 +24,7 @@ import network.o3.o3wallet.Settings.WatchAddressFragment
 import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
+import org.json.JSONObject
 import java.text.NumberFormat
 
 /**
@@ -162,6 +164,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                     detailURL = "https://public.o3.network/ont/assets/" + tableCellData.assetSymbol + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
                 }
 
+                val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "portfolio_row")
+                Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
                 val intent = Intent(view.context, DAppBrowserActivity::class.java)
                 intent.putExtra("url", detailURL)
                 view.context.startActivity(intent)

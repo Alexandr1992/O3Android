@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.dialog_backup_key_fragment.*
 import kotlinx.android.synthetic.main.native_trade_deposit_withdrawal_activity.*
@@ -28,6 +29,7 @@ import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
+import org.json.JSONObject
 import java.lang.Math.floor
 import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
@@ -46,6 +48,9 @@ class DepositWithdrawalActivity : AppCompatActivity() {
 
 
     fun digitTapped(digit: String) {
+        if (amountEditText?.text.toString().hasMaxDecimals(8)) {
+            return
+        }
         amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + digit)
         calculateAndDisplaySendAmount()
     }
@@ -99,7 +104,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (currString.isBlank()) {
-                digitTapped("0")
+                amountEditText.text = SpannableStringBuilder("0" + DecimalFormatSymbols().decimalSeparator)
                 return@setOnClickListener
             }
 
@@ -254,6 +259,8 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 SwitcheoAPI().singleStepDeposit(symbol, amount) {
                     runOnUiThread {
                         if (it.first!! == true) {
+                            val depositAttrs = mapOf("asset" to symbol, "amount" to viewModel.toSendAmount.toDouble())
+                            Amplitude.getInstance().logEvent("Deposit", JSONObject(depositAttrs))
                             resultFragment.showSuccess()
                         } else {
                             resultFragment.showFailure()
@@ -268,6 +275,8 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 SwitcheoAPI().singleStepWithdrawal(symbol, amount) {
                     runOnUiThread {
                         if (it.first!! == true) {
+                            val withdrawAttrs = mapOf("asset" to symbol, "amount" to viewModel.toSendAmount.toDouble())
+                            Amplitude.getInstance().logEvent("Withdraw", JSONObject(withdrawAttrs))
                             resultFragment.showSuccess()
                         } else {
                             resultFragment.showFailure()
@@ -292,19 +301,21 @@ class DepositWithdrawalActivity : AppCompatActivity() {
     fun initiateWithDrawAllButton() {
         val withdrawAllButton = mView.find<Button>(R.id.withdrawAllButton)
         if (viewModel.isDeposit) {
-            withdrawAllButton.visibility = View.INVISIBLE
+            withdrawAllButton.text = resources.getString(R.string.NATIVE_TRADE_deposit_all)
         }  else {
-            withdrawAllButton.setOnClickListener {
-                if (viewModel.selectedAsset!!.value!!.symbol == "NEO") {
-                    amountEditText.text = SpannableStringBuilder(
-                            floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
-                    )
-                } else {
-                    amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
-                }
+            withdrawAllButton.text = resources.getString(R.string.NATIVE_TRADE_withdraw_all)
+        }
 
-                calculateAndDisplaySendAmount()
+        withdrawAllButton.setOnClickListener {
+            if (viewModel.selectedAsset!!.value!!.symbol == "NEO") {
+                amountEditText.text = SpannableStringBuilder(
+                        floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
+                )
+            } else {
+                amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
             }
+
+            calculateAndDisplaySendAmount()
         }
     }
 

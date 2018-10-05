@@ -266,7 +266,6 @@ class MainTabbedActivity : AppCompatActivity() {
         }
     }
 
-
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (Alerter.isShowing) {

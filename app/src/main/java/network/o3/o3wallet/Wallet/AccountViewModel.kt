@@ -35,6 +35,9 @@ class AccountViewModel: ViewModel() {
     private var tradingAccountPriceData: MutableLiveData<String> = MutableLiveData()
     private var walletAccountPriceData: MutableLiveData<String> = MutableLiveData()
 
+    var cachedTradingAccountValue: Double? = null
+    var cachedWalletAccountValue: Double? = null
+
     //ChainSyncProcess
     private var utxos: MutableLiveData<UTXOS>? = null
     private var claims: MutableLiveData<ClaimData>? = null
@@ -120,8 +123,11 @@ class AccountViewModel: ViewModel() {
     }
 
     fun loadTradingAccountPriceData(assets: List<TransferableAsset>) {
-        val cachedTradingAccountValue = PersistentStore.getTradingAccountValue()
-        tradingAccountPriceData.postValue(cachedTradingAccountValue.formattedFiatString())
+        if (cachedTradingAccountValue == null) {
+            cachedTradingAccountValue = PersistentStore.getTradingAccountValue()
+            tradingAccountPriceData.postValue(cachedTradingAccountValue!!.formattedFiatString())
+        }
+
         O3API().getPortfolioValue(assets as ArrayList<TransferableAsset>) {
             if (it.second != null) {
                 return@getPortfolioValue
@@ -136,8 +142,10 @@ class AccountViewModel: ViewModel() {
     }
 
     fun loadWalletAccountPriceData(assets: List<TransferableAsset>) {
-        val cachedWalletAccountValue = PersistentStore.getMainAccountValue()
-        walletAccountPriceData.postValue(cachedWalletAccountValue.formattedFiatString())
+        if (cachedWalletAccountValue == null) {
+            cachedWalletAccountValue = PersistentStore.getMainAccountValue()
+            walletAccountPriceData.postValue(cachedWalletAccountValue!!.formattedFiatString())
+        }
         O3API().getPortfolioValue(assets as ArrayList<TransferableAsset>) {
             if (it.second != null) {
                 return@getPortfolioValue

@@ -258,6 +258,7 @@
 
     <string name="WALLET_Confirmed" comment="In Transaction History for confirmed transactions">Confirmed</string>
     <string name="WALLET_Pending" comment="In Transaction History for pending transactions">Pending</string>
+    <string name="WALLET_view_details" comment="Menu item to view token details">View Token Details</string>
 
     <!-- Wallet Send -->
     <string name="SEND_send" comment="Send label in send screen">Send</string>
@@ -417,7 +418,7 @@
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
     <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It may incur a fee of 0.01 ONG</string>
     <string name="WALLET_sync_ontology_gas">Are you sure you want to sync your ONG? It will cost (0.01) ONG to do so</string>
-    <string name="WALLET_sync_ontology_error">You must have generated at least 0.01 ONG in order to sync. Check back soon!</string>
+    <string name="WALLET_sync_ontology_error">You must have generated at least 0.02 ONG in order to sync. Check back soon!</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
     <string name="DIALOG_confirm_backup">My Private Key is backed up in a safe place</string>
@@ -460,8 +461,8 @@
     <string name="fifty_percent">50%</string>
     <string name="seventy_five_percent">75%</string>
     <string name="one_hundred_percent">100%</string>
-    <string name="Marketplace_switcheo_title">You can now trade your favorite tokens straight from your O3 wallet with Switcheo Decentralized Exchange!</string>
-    <string name="Marketplace_switcheo_subtitle">It\'s fast, simple, and safe. Try it out!</string>
+    <string name="Marketplace_switcheo_title">You can now trade your favorite tokens straight from your O3 wallet with Switcheo Decentralized Exchange. Any token with the green trading icon is available for trading.</string>
+    <string name="Marketplace_switcheo_subtitle">It\'s fast, simple, and safe. Tap one and find out more!</string>
     <string name="Marketplace_trade_now">Trade Now With Switcheo</string>
     <string name="DAPP_logout_warning">Are you sure you want to logout of this dapp?</string>
     <string name="Portfolio_trading_title">TRADING IN O3 IS HERE!</string>
@@ -491,7 +492,9 @@
     <string name="NATIVE_TRADE_total_cost">Total Cost:</string>
     <string name="NATIVE_TRADE_place_order">Place Order</string>
     <string name="NATIVE_TRADE_order_fill_amount">%s filled</string>
-    <string name="NATIVE_TRADE_no_pending_orders">You currently have no pending orders</string>
+    <string name="NATIVE_TRADE_no_pending_orders">You currently have no open orders.\n\n
+        You can create orders by selecting a token in the marketplace you wish to buy or sell
+        \n\nDon\'t forget to top up your trading account with tokens you wish to trade. </string>
     <string name="NATIVE_TRADE_deposit_success_title">Deposit Successful</string>
     <string name="NATIVE_TRADE_withdrawal_success_title">Withdrawal Successful</string>
     <string name="NATIVE_TRADE_deposit_fail_title">Deposit Failed</string>
@@ -508,7 +511,9 @@
     <string name="NATIVE_TRADE_neo_sell_limitation">Due to limitations on our exchange services,
         NEO sell orders must be made as GAS buy orders at this time</string>
     <string name="NATIVE_TRADE_order_success_title">Order successfully placed!</string>
-    <string name="NATIVE_TRADE_order_success_subtitle">Check the status in your pending orders</string>
+    <string name="NATIVE_TRADE_order_success_subtitle_no_fill">Order submitted. Check the status of your order under My O3 Wallet > Orders Tab.</string>
+    <string name="NATIVE_TRADE_order_success_subtitle_partial_fill">%s\%% of your order instantly filled and has been deposited into your trading account! Check the status of remaining order under My O3 Wallet > Orders Tab.</string>
+    <string name="NATIVE_TRADE_order_success_subtitle_all_fill">Your order has been instantly filled and deposited into your trading account! 🎉💃</string>
     <string name="NATIVE_TRADE_order_fail_title">Order Failed</string>
     <string name="NATIVE_TRADE_order_failure_subtitle">Please try again later</string>
     <string name="NATIVE_TRADE_order_in_progress">Submitting your order</string>
@@ -516,5 +521,7 @@
     <string name="NATIVE_TRADE_hide_orders">Hide Completed Orders</string>
     <string name="NATIVE_TRADE_show_orders">Show Completed Orders</string>
     <string name="NATIVE_TRADE_withdraw_all">Withdraw All</string>
+    <string name="NATIVE_TRADE_deposit_all">Deposit All</string>
     <string name="NATIVE_TRADE_Neo_withdraw_warning">When withdrawing to your wallet, you must withdraw a whole amount of NEO</string>
+    <string name="WALLET_Account_Empty_State">Get started by depositing funds to your account</string>
 </resources>

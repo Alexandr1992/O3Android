@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import network.o3.o3wallet.API.O3.TokenSale
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.onUiThread
+import org.jetbrains.anko.support.v4.uiThread
 
 class TokenSalesFragment : Fragment() {
 
@@ -30,8 +32,10 @@ class TokenSalesFragment : Fragment() {
         listingsView.adapter = TokenSalesAdapter(tokenSales, "https://cdn.o3.network/newsletters/tokensales/index.html")
         model = TokenSalesViewModel()
         model?.getTokenSales(true)?.observe(this, Observer { tokenSales ->
-            (listingsView.adapter as TokenSalesAdapter).setData(tokenSales?.live?.toCollection(ArrayList())!!,
-                    tokenSales!!.subscribeURL)
+            onUiThread {
+                (listingsView.adapter as TokenSalesAdapter).setData(tokenSales?.live?.toCollection(ArrayList())!!,
+                        tokenSales!!.subscribeURL)
+            }
         })
     }
 
