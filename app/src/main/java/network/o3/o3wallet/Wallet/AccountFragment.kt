@@ -261,6 +261,8 @@ class AccountFragment : Fragment() {
         if (amount > 0) {
             neoSyncButton.visibility = View.VISIBLE
             neoGasProgress.visibility = View.GONE
+        } else {
+            neoGasProgress.visibility = View.GONE
         }
 
         this.neoSyncButton.isEnabled = !(amount == 0.0 || unclaimedGASTicker.visibility == View.GONE)
