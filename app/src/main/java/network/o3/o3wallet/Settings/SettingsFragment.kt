@@ -64,7 +64,7 @@ class SettingsFragment : Fragment() {
 
         qrImageView.setOnClickListener{
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address),Account.getWallet()!!.address)
+            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address), Account.getWallet().address)
             clipboard.primaryClip = clip
             context?.toast(resources.getString(R.string.WALLET_copied_address))
         }

@@ -143,7 +143,7 @@ class HomeViewModelV2: ViewModel() {
             for (asset in assetsReadOnlyIntermediate) {
                 assetsReadOnly?.add(asset.deepCopy())
             }
-            assetsReadOnlyIntermediate?.clear()
+            assetsReadOnlyIntermediate.clear()
 
             if (displayType == DisplayType.COMBINED) {
                 combineReadOnlyAndWritable()

@@ -30,7 +30,7 @@ class NativeTradeRootActivity : AppCompatActivity() {
             viewModel.setSelectedBaseAssetValue("NEO")
         }
 
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout_trade)
         if (viewModel.isBuyOrder) {
             find<TextView>(R.id.orderTypeTextView).text = resources.getString(R.string.Native_TRADE_Buy)

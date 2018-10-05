@@ -15,7 +15,7 @@ import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 
-class DepositWithdrawalResultDialog() : DialogFragment() {
+class DepositWithdrawalResultDialog : DialogFragment() {
 
     private var isDeposit: Boolean = true
     private lateinit var titleView: TextView

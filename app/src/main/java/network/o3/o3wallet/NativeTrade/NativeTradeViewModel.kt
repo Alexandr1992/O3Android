@@ -45,17 +45,17 @@ class NativeTradeViewModel: ViewModel() {
     var orderBook = listOf<Offer>()
 
     fun getSelectedBaseAssetValue(): String? {
-        return selectedBaseAsset!!.value
+        return selectedBaseAsset.value
     }
 
     fun getSelectedBaseAssetObserver(): LiveData<String> {
-        return selectedBaseAsset!!
+        return selectedBaseAsset
     }
 
     fun setSelectedBaseAssetValue(value: String) {
-        selectedBaseAsset!!.value = value
+        selectedBaseAsset.value = value
         loadMarketPrice()
-        selectedBaseAsset!!.postValue(value)
+        selectedBaseAsset.postValue(value)
     }
 
     fun getOrders(): LiveData<List<SwitcheoOrders>> {
@@ -145,7 +145,7 @@ class NativeTradeViewModel: ViewModel() {
         }
 
         var cryptoPrice: Double = 0.0
-        O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset!!.value!!) {
+        O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset.value!!) {
             if (it.second != null) {
                 error.postValue(it.second)
                 return@getRealTimePrice
@@ -201,7 +201,7 @@ class NativeTradeViewModel: ViewModel() {
     }
 
     fun loadTopOrderBookPrice() {
-        val pair = orderAsset + "_" + selectedBaseAsset!!.value
+        val pair = orderAsset + "_" + selectedBaseAsset.value
         SwitcheoAPI().getOffersForPair(pair) {
             if (it.second != null) {
                 error.postValue(it.second)
@@ -218,7 +218,7 @@ class NativeTradeViewModel: ViewModel() {
                         calculateFillAmount()
                     }
                 } else {
-                    val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == selectedBaseAsset!!.value!!.toLowerCase() }
+                    val filtered = it.first!!.filter { it.offer_asset.toLowerCase() == selectedBaseAsset.value!!.toLowerCase() }
                     if (filtered.isNotEmpty()) {
                         val sorted = filtered.sortedBy { it.want_amount.toDouble() / it.offer_amount.toDouble() }
                         orderBookTopPrice!!.postValue(sorted[0].offer_amount.toDouble() / sorted[0].want_amount.toDouble())
@@ -292,7 +292,7 @@ class NativeTradeViewModel: ViewModel() {
     }
 
     fun getMarketRatePercentDifference(): LiveData<Double> {
-        return marketRateDifference!!
+        return marketRateDifference
 
     }
 

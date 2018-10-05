@@ -215,7 +215,7 @@ class NeoNodeRPC {
                 }
             }
         } else {
-            val payload = generateClaimTransactionPayload(wallet, storedClaims!!)
+            val payload = generateClaimTransactionPayload(wallet, storedClaims)
             sendRawTransaction(payload, payload) {
                 var txid = it.first
                 var error = it.second
@@ -346,7 +346,7 @@ class NeoNodeRPC {
         var numberOfAttributes: Int = 0
         var attributesPayload: ByteArray = ByteArray(0)
         if (attributes != null) {
-            for (attribute in attributes!!) {
+            for (attribute in attributes) {
                 if (attribute.data != null) {
                     attributesPayload += attribute.data!!
                     numberOfAttributes += 1

@@ -87,19 +87,11 @@ class TokenSaleReviewFragment : Fragment() {
         }
 
         o3AgreementCheckbox.setOnClickListener {
-            if (o3AgreementCheckbox.isChecked && issuerAgreementCheckbox.isChecked) {
-                participateButton.isEnabled = true
-            } else {
-                participateButton.isEnabled = false
-            }
+            participateButton.isEnabled = o3AgreementCheckbox.isChecked && issuerAgreementCheckbox.isChecked
         }
 
         issuerAgreementCheckbox.setOnClickListener {
-            if (o3AgreementCheckbox.isChecked && issuerAgreementCheckbox.isChecked) {
-                participateButton.isEnabled = true
-            } else {
-                participateButton.isEnabled = false
-            }
+            participateButton.isEnabled = o3AgreementCheckbox.isChecked && issuerAgreementCheckbox.isChecked
         }
 
         //TODO: READD WHITELISTING WHEN SHIPPING

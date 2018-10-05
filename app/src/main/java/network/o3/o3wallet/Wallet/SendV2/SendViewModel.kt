@@ -189,7 +189,7 @@ class SendViewModel: ViewModel() {
 
         val recipientAddress = selectedAddress!!.value!!
         val amount = getSelectedSendAmount()
-        NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(wallet!!, toSendAsset, amount, recipientAddress, null, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
+        NeoNodeRPC(PersistentStore.getNodeURL()).sendNativeAssetTransaction(wallet, toSendAsset, amount, recipientAddress, null, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
             val error = it.second
             val txid = it.first
             if (txid != null) {
@@ -210,7 +210,7 @@ class SendViewModel: ViewModel() {
         val amount = getSelectedSendAmount()
 
         if (neoNetworkFee?.value ?: 0.0 == 0.0) {
-            NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, null, toSendAsset.id, wallet.address, recipientAddress, amount, toSendAsset.decimals, BigDecimal.ZERO) {
+            NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet, null, toSendAsset.id, wallet.address, recipientAddress, amount, toSendAsset.decimals, BigDecimal.ZERO) {
                 val error = it.second
                 val txid = it.first
                 if (txid != null) {
@@ -227,7 +227,7 @@ class SendViewModel: ViewModel() {
                 if (error != null) {
                     sendResult?.postValue(null)
                 } else {
-                    NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet!!, assets, toSendAsset.id, wallet.address,
+                    NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(wallet, assets, toSendAsset.id, wallet.address,
                             recipientAddress, amount, toSendAsset.decimals, BigDecimal(neoNetworkFee?.value ?: 0.0)) {
                         val error = it.second
                         val txid = it.first
@@ -305,7 +305,7 @@ class SendViewModel: ViewModel() {
     }
 
     fun getIsSending(): LiveData<Boolean> {
-        return sendInProgress!!
+        return sendInProgress
     }
 
     fun setSendInProgress(isSending: Boolean) {

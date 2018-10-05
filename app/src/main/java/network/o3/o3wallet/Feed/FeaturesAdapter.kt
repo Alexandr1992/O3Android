@@ -28,11 +28,11 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: FeatureHolder, position: Int) {
-        holder?.bindFeature(features[position])
+        holder.bindFeature(features[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeatureHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.news_feature_item, parent, false)
         return FeatureHolder(view)
     }

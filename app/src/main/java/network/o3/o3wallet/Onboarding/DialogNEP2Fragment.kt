@@ -37,7 +37,7 @@ private const val ARG_PARAM2 = "param2"
  * A simple [Fragment] subclass.
  *
  */
-class DialogNEP2Fragment() : DialogFragment() {
+class DialogNEP2Fragment : DialogFragment() {
     var encryptedKey: String = ""
     var decryptedKey: String = ""
     // Non loading Views
@@ -117,7 +117,7 @@ class DialogNEP2Fragment() : DialogFragment() {
 
     fun decryptionSuccessful(decryptedKey: String) {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
         activity?.supportFragmentManager?.popBackStack()
         val intent = Intent(activity, SelectingBestNode::class.java)
         (activity as LoginActivity).startActivity(intent)

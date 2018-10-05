@@ -144,7 +144,7 @@ class AccountFragment : Fragment() {
 
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        assetListView.setLayoutManager(layoutManager)
+        assetListView.layoutManager = layoutManager
         swipeContainer = mView.findViewById(R.id.swipeContainer)
         swipeContainer.setColorSchemeResources(R.color.colorPrimary,
                 R.color.colorPrimary,
@@ -166,7 +166,7 @@ class AccountFragment : Fragment() {
             val doubleValue = it!!.ong.toLong() / OntologyClient().DecimalDivisor
             accountViewModel.ontologyCanNotSync = doubleValue <= 0.02
             val typedValue = TypedValue()
-            activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
+            activity!!.theme.resolveAttribute(R.attr.defaultTextColor, typedValue, true)
             ontologyTicker.textColor = context!!.getColor(typedValue.resourceId)
             // ready to claim
             if (it.calculated == false) {
@@ -304,7 +304,7 @@ class AccountFragment : Fragment() {
                 neoClaimButton.visibility = View.INVISIBLE
             }
             val typedValue = TypedValue()
-            activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
+            activity!!.theme.resolveAttribute(R.attr.defaultTextColor, typedValue, true)
 
             unclaimedGASTicker.textColor = context!!.getColor(typedValue.resourceId)
             neoSyncButton.visibility = View.GONE
@@ -383,7 +383,7 @@ class AccountFragment : Fragment() {
                 ontologyTicker.text = "%.8f".format(amount)
             }
             val typedValue = TypedValue()
-            activity!!.getTheme().resolveAttribute(R.attr.defaultTextColor, typedValue, true)
+            activity!!.theme.resolveAttribute(R.attr.defaultTextColor, typedValue, true)
             ontologyTicker.textColor = context!!.getColor(typedValue.resourceId)
             ontologySyncButton.visibility = View.GONE
             ontologyClaimButton.visibility = View.VISIBLE

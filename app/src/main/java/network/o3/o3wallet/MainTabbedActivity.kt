@@ -149,14 +149,14 @@ class MainTabbedActivity : AppCompatActivity() {
         setupKeyboardDetector()
         setupChannel()
         setupZendesk()
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
         find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED)
+        bottomNavigationView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
         bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var selectedFragment: Fragment? = null

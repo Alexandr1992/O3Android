@@ -42,7 +42,7 @@ class TokenSaleRootActivity : AppCompatActivity() {
         resetBestNode()
         tokenSale = Gson().fromJson(intent.getStringExtra("TOKENSALE_JSON"))
         setContentView(R.layout.token_sale_root_activity)
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.TOKENSALE_Token_Sale)
     }

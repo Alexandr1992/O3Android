@@ -78,7 +78,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         if (viewType == TRANSACTION_ENTRY_VIEW) {
             val view = layoutInflater.inflate(R.layout.wallet_transaction_history_row_layout, parent, false)
             return TransactionHistoryAdapter.TransactionViewHolder(view)
@@ -114,7 +114,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
                 return
             } else {
                 (holder as TransactionViewHolder).bindTransaction(
-                        transactionHistoryEntries[position - PersistentStore.getPendingTransactions()!!.count() - 2], availableTokens)
+                        transactionHistoryEntries[position - PersistentStore.getPendingTransactions().count() - 2], availableTokens)
                 return
             }
         } else {
@@ -128,7 +128,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
         if (isLoadingAdded) {
             footerInserted = 1
         }
-        return transactionHistoryEntries.count() + PersistentStore.getPendingTransactions()!!.count() + footerInserted + headerCount()
+        return transactionHistoryEntries.count() + PersistentStore.getPendingTransactions().count() + footerInserted + headerCount()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -140,7 +140,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             return SECTION_HEADER
         }
 
-        return if (position == transactionHistoryEntries.count() + PersistentStore.getPendingTransactions()!!.count() + headerCount()
+        return if (position == transactionHistoryEntries.count() + PersistentStore.getPendingTransactions().count() + headerCount()
                 && isLoadingAdded) {
             LOADING_FOOTER_VIEW
         } else {

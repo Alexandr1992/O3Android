@@ -229,9 +229,9 @@ class DAppBrowserActivity : AppCompatActivity() {
                 if (localResource != null) {
                     val inputStream: InputStream = resources.openRawResource(localResource.resourceID)
                     val statusCode = 200
-                    val reasonPhase = "OK";
+                    val reasonPhase = "OK"
                     val responseHeaders = mutableMapOf<String, String>()
-                    responseHeaders.put("Access-Control-Allow-Origin", "*");
+                    responseHeaders.put("Access-Control-Allow-Origin", "*")
                     return WebResourceResponse(localResource.mimeType, localResource.encoding, statusCode, reasonPhase, responseHeaders, inputStream)
                 }
                 return super.shouldInterceptRequest(view, request)
@@ -253,9 +253,9 @@ class DAppBrowserActivity : AppCompatActivity() {
         webView.loadUrl(url)
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
-        webSettings.setDomStorageEnabled(true)
+        webSettings.domStorageEnabled = true
         jsInterface = DappBrowserJSInterface(this, webView)
-        webView!!.addJavascriptInterface(jsInterface, "O3AndroidInterface")
+        webView.addJavascriptInterface(jsInterface, "O3AndroidInterface")
         WebView.setWebContentsDebuggingEnabled(true)
     }
 

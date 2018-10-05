@@ -40,8 +40,8 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
 
     fun currentAccount(): JsonObject {
         val json = JsonObject()
-        json.put("address" to wallet!!.address)
-        json.put("publicKey" to wallet!!.publicKey.toHex())
+        json.put("address" to wallet.address)
+        json.put("publicKey" to wallet.publicKey.toHex())
         return json
     }
 
@@ -101,7 +101,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     }
 
     fun handleBalancesRequest(message: O3Message) {
-        O3PlatformClient().getTransferableAssets(wallet!!.address) {
+        O3PlatformClient().getTransferableAssets(wallet.address) {
             if(it.second != null) {
                 callback(message.command, JsonObject(), it.second!!.localizedMessage, true)
             } else {
@@ -173,7 +173,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         context.alert(authenticateMessage) {
             yesButton {
                 try {
-                    val signed = Neoutils.sign(unsignedHex, wallet!!.privateKey.toHex())
+                    val signed = Neoutils.sign(unsignedHex, wallet.privateKey.toHex())
                     val signedTxJson = jsonObject (
                             "signatureData" to signed.toHex(),
                             "account" to currentAccount()

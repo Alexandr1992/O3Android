@@ -27,7 +27,7 @@ class SelectingBestNode : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.portfolio_activity_selecting_best_node)
         val sharedPref = O3Wallet.appContext!!.defaultSharedPreferences
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_my_o3_wallet)
         with (sharedPref.edit()) {

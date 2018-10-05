@@ -481,16 +481,16 @@ class SwitcheoAPI {
 
     fun executeOrder(orderRequest: SwitcheoOrders, completion: (Pair<Boolean?, Error?>) -> (Unit)) {
         val makesObject = jsonObject()
-        for (makeTx in orderRequest.makes!!) {
-            val makeId = makeTx!!.id
+        for (makeTx in orderRequest.makes) {
+            val makeId = makeTx.id
             val jsonPayloadBytes = serializeTransactionFromJson(Gson().toJsonTree(makeTx.txn!!).asJsonObject)
             val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             makesObject.addProperty(makeId, signature)
         }
 
         val fillsObject = jsonObject()
-        for (fillTx in orderRequest.fills!!) {
-            val fillId = fillTx!!.id
+        for (fillTx in orderRequest.fills) {
+            val fillId = fillTx.id
             val jsonPayloadBytes = serializeTransactionFromJson(Gson().toJsonTree(fillTx.txn!!).asJsonObject)
             val signature = Neoutils.sign(jsonPayloadBytes, Account.getWallet().privateKey.toHex()).toHex().toLowerCase()
             fillsObject.addProperty(fillId, signature)

@@ -62,11 +62,11 @@ class ReviewOrderFragment : Fragment() {
 
     fun initiateBaseAssetDetails() {
         mView.find<TextView>(R.id.reviewBaseAssetAmountTextView).text = vm.selectedBaseAssetAmount.value!!.removeTrailingZeros()
-        mView.find<TextView>(R.id.reviewBaseAssetNameTextView).text = vm.selectedBaseAsset!!.value
+        mView.find<TextView>(R.id.reviewBaseAssetNameTextView).text = vm.selectedBaseAsset.value
         val newTotalFiat = vm.orderAssetAmount.value!! * vm.selectedPrice!!.value!!.first
         mView.find<TextView>(R.id.reviewBaseAssetFiatAmountTextView).text = newTotalFiat.formattedFiatString()
 
-        Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", vm.selectedBaseAsset!!.value!!))
+        Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", vm.selectedBaseAsset.value!!))
                 .into(mView.find(R.id.reviewBaseAssetLogoImageView))
     }
 
@@ -87,7 +87,7 @@ class ReviewOrderFragment : Fragment() {
 
         placeOrderButton.onClick {
 
-            val pair = vm.orderAsset + "_" + vm.selectedBaseAsset?.value!!
+            val pair = vm.orderAsset + "_" + vm.selectedBaseAsset.value!!
             val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros().decimalNoGrouping()
             var side = "buy"
             var wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()

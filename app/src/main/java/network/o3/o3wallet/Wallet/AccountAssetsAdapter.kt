@@ -203,7 +203,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
             val learnURL = inboxItem.readmoreURL
             view.find<Button>(R.id.tokenSwapLearnmoreButton).setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.setData(Uri.parse(learnURL))
+                intent.data = Uri.parse(learnURL)
                 view.context.startActivity(intent)
             }
         }

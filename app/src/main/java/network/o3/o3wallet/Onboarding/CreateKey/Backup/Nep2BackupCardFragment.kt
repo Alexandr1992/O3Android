@@ -108,7 +108,7 @@ class Nep2BackupCardFragment : Fragment() {
 
 
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-        intent.setType("message/rfc822")
+        intent.type = "message/rfc822"
         intent.putExtra(Intent.EXTRA_SUBJECT, "O3 Wallet Encrypted Backup")
         intent.putExtra(Intent.EXTRA_TEXT, String.format(resources.getString(R.string.ONBOARDING_backup_email_body), nep2.encryptedKey))
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(imageUri, contentUri))
@@ -151,7 +151,7 @@ class Nep2BackupCardFragment : Fragment() {
                 passwordField.transformationMethod = null
                 hidePasswordButton.alpha = 1.0f
             }
-            passwordField.setSelection(passwordField?.text?.length ?: 0)
+            passwordField.setSelection(passwordField.text?.length ?: 0)
         }
 
         return view

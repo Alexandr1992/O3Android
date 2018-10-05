@@ -29,7 +29,7 @@ class TokensFragment : Fragment() {
     private lateinit var tokensGridRecycler: RecyclerView
 
     fun getSizeName(context: Context): String {
-        var screenLayout = context.getResources().getConfiguration().screenLayout
+        var screenLayout = context.resources.configuration.screenLayout
         screenLayout = screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
 
         when (screenLayout) {
@@ -83,7 +83,7 @@ class TokensFragment : Fragment() {
                 return if (position == 0 ) 3 else 1
             }
         }
-        tokensGridRecycler.setLayoutManager(layoutManager)
+        tokensGridRecycler.layoutManager = layoutManager
         tokensGridRecycler.adapter = TokensAdapter(arrayListOf())
         model?.getListingData(true)?.observe(this, Observer { tokens ->
             onUiThread {

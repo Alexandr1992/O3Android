@@ -218,7 +218,7 @@ class OrderSubmissionFragment : Fragment() {
             orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: BigDecimal.ZERO).toDouble().removeTrailingZeros()
             baseAssetSelectionContainer.setNoDoubleClickListener(View.OnClickListener { v ->
                 val args = Bundle()
-                args.putString("trading_account", Gson().toJson(tradingAccount!!))
+                args.putString("trading_account", Gson().toJson(tradingAccount))
                 args.putString("order_asset", orderAsset?.symbol ?: "")
                 val assetSelectorSheet = NativeTradeBaseAssetBottomSheet()
                 assetSelectorSheet.arguments = args

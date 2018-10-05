@@ -36,7 +36,7 @@ class AddWatchAddress : AppCompatActivity() {
         val saveButton = findViewById<Button>(R.id.AddButton)
         val scanAddressButton = findViewById<Button>(R.id.scanAddressButton)
 
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.SETTINGS_watch_address)
         scanAddressButton.setOnClickListener {

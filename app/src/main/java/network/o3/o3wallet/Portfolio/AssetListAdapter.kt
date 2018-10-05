@@ -116,8 +116,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
             if (portfolio != null) {
                 if (referenceCurrency == CurrencyType.FIAT) {
-                    val latestPrice = portfolio!!.price[asset.symbol]?.averageUSD ?: 0.0
-                    val firstPrice = portfolio!!.firstPrice[asset.symbol]?.averageUSD ?: 0.0
+                    val latestPrice = portfolio.price[asset.symbol]?.averageUSD ?: 0.0
+                    val firstPrice = portfolio.firstPrice[asset.symbol]?.averageUSD ?: 0.0
                     assetData.assetPrice = latestPrice
                     assetData.totalValue = latestPrice * assetData.assetAmount
                     if (firstPrice == 0.0 ) {
@@ -127,8 +127,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                     }
 
                 } else {
-                    val latestPrice = portfolio!!.price[asset.symbol]?.averageBTC ?: 0.0
-                    val firstPrice = portfolio!!.firstPrice[asset.symbol]?.averageBTC ?: 0.0
+                    val latestPrice = portfolio.price[asset.symbol]?.averageBTC ?: 0.0
+                    val firstPrice = portfolio.firstPrice[asset.symbol]?.averageBTC ?: 0.0
                     assetData.assetPrice = latestPrice
                     assetData.totalValue = latestPrice * assetData.assetAmount
                     if (firstPrice == 0.0 ) {

@@ -39,17 +39,13 @@ class PriceSelectionFragment : Fragment() {
 
     fun digitTapped(digit: String) {
         (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "manual"
-        if (priceEditText?.text.toString().hasMaxDecimals(8)) {
+        if (priceEditText.text.toString().hasMaxDecimals(8)) {
             return
         }
 
         priceEditText.text = SpannableStringBuilder(priceEditText.text.toString() + digit)
         (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
-        if (priceEditText.text.decimalNoGrouping().toDouble() > 0.0) {
-            placeOrderButton.isEnabled = true
-        } else {
-            placeOrderButton.isEnabled = false
-        }
+        placeOrderButton.isEnabled = priceEditText.text.decimalNoGrouping().toDouble() > 0.0
     }
 
     fun initiatePinPadButtons() {
@@ -73,9 +69,9 @@ class PriceSelectionFragment : Fragment() {
         mView.find<Button>(R.id.button9).setOnClickListener { digitTapped("9") }
 
         mView.find<ImageButton>(R.id.buttonBackSpace).setOnClickListener {
-            val curVal = priceEditText?.text.toString()
+            val curVal = priceEditText.text.toString()
             if (curVal.isNotBlank()) {
-                priceEditText?.text = SpannableStringBuilder(curVal.substring(0, curVal.length - 1))
+                priceEditText.text = SpannableStringBuilder(curVal.substring(0, curVal.length - 1))
             }
             if (priceEditText.text.toString() == "") {
                 (activity as NativeTradeRootActivity).viewModel.setManualPrice(0.0)
@@ -83,11 +79,7 @@ class PriceSelectionFragment : Fragment() {
                 (activity as NativeTradeRootActivity).viewModel.setManualPrice(priceEditText.text.decimalNoGrouping().toDouble())
             }
 
-            if (priceEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 == 0.0) {
-                placeOrderButton.isEnabled = false
-            } else {
-                placeOrderButton.isEnabled = true
-            }
+            placeOrderButton.isEnabled = priceEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 != 0.0
         }
 
         mView.find<ImageButton>(R.id.buttonBackSpace).onLongClick {

@@ -15,7 +15,7 @@ import network.o3.o3wallet.Onboarding.SelectingBestNode
 import org.jetbrains.anko.find
 
 
-class DialogCompletedBackupFragment(): DialogFragment() {
+class DialogCompletedBackupFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

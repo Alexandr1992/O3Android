@@ -47,7 +47,7 @@ class CreateNewWalletActivity : AppCompatActivity() {
             progressTutorialForward()
         }
 
-        learnMoreButton.setPaintFlags(learnMoreButton.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
+        learnMoreButton.paintFlags = learnMoreButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
 
         initiateViewPager()
@@ -118,16 +118,16 @@ class CreateNewWalletActivity : AppCompatActivity() {
 
 
     fun hideElements() {
-        createWalletTitle.animate().alpha(0f).setDuration(500)
-        createWalletSubInfo.animate().alpha(0f).setDuration(500)
-        createWalletInfo.animate().alpha(0f).setDuration(500)
-        learnMoreButton.animate().alpha(0f).setDuration(500)
+        createWalletTitle.animate().alpha(0f).duration = 500
+        createWalletSubInfo.animate().alpha(0f).duration = 500
+        createWalletInfo.animate().alpha(0f).duration = 500
+        learnMoreButton.animate().alpha(0f).duration = 500
     }
 
     fun showElements() {
-        createWalletTitle.animate().alpha(1f).setDuration(500)
-        createWalletSubInfo.animate().alpha(1f).setDuration(500)
-        createWalletInfo.animate().alpha(1f).setDuration(500)
-        learnMoreButton.animate().alpha(1f).setDuration(500)
+        createWalletTitle.animate().alpha(1f).duration = 500
+        createWalletSubInfo.animate().alpha(1f).duration = 500
+        createWalletInfo.animate().alpha(1f).duration = 500
+        learnMoreButton.animate().alpha(1f).duration = 500
     }
 }

@@ -54,7 +54,7 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         if (viewType == TOKEN_SALE_VIEW) {
             val view = layoutInflater.inflate(R.layout.tokensales_listing_row, parent, false)
             return TokenSaleViewHolder(view)
@@ -96,7 +96,7 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
             weblinkButton.paintFlags = (weblinkButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG)
             weblinkButton.setOnClickListener {
                 val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
-                browserIntent.putExtra("url", tokenSale.webURL!!)
+                browserIntent.putExtra("url", tokenSale.webURL)
                 view.context.startActivity(browserIntent)
             }
             daysLeftTextView.text = String.format(view.context.resources.getString(R.string.TOKENSALE_Days_Remaining), ((tokenSale.endTime - (System.currentTimeMillis()/1000)) / 3600 / 24).toString())

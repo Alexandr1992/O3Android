@@ -11,7 +11,6 @@ import network.o3.o3wallet.API.O3.TokenSale
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
-import org.jetbrains.anko.support.v4.uiThread
 
 class TokenSalesFragment : Fragment() {
 

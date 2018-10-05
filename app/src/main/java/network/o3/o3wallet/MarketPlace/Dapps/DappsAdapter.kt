@@ -26,7 +26,7 @@ class DappsAdapter(private val dapps: List<Dapp>): RecyclerView.Adapter<DappsAda
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DappHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.marketplace_dapp_card, parent, false)
         return DappHolder(view)
     }

@@ -36,7 +36,7 @@ class AddContact : AppCompatActivity() {
 
         val scanAddressButton = findViewById<Button>(R.id.scanAddressButton)
         val pasteAddressButton = findViewById<Button>(R.id.pasteAddressButton)
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
         find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_address_book)
 

@@ -143,11 +143,7 @@ class   SendReviewFragment : Fragment() {
 
     fun listenForSendinProgress() {
         (activity as SendV2Activity).sendViewModel.getIsSending().observe(this, Observer {
-            if (it == true) {
-                mView.find<Button>(R.id.sendButton).isEnabled = false
-            } else {
-                mView.find<Button>(R.id.sendButton).isEnabled = true
-            }
+            mView.find<Button>(R.id.sendButton).isEnabled = it != true
         })
     }
 

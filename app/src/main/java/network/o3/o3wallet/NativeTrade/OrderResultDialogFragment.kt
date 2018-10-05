@@ -15,7 +15,7 @@ import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 
-class OrderResultDialog() : DialogFragment() {
+class OrderResultDialog : DialogFragment() {
 
 
     private lateinit var titleView: TextView

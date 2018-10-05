@@ -11,7 +11,7 @@ import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 
 
-class DialogWalletGeneratedFragment() : DialogFragment() {
+class DialogWalletGeneratedFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

@@ -32,7 +32,7 @@ class SendSuccessFragment : Fragment() {
 
         (activity as SendV2Activity).sendViewModel.getRealTimePrice(false).observe(this, Observer { realTimePrice ->
             if (realTimePrice != null) {
-                val fiatAmount = realTimePrice!!.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount().toDouble()
+                val fiatAmount = realTimePrice.price * (activity as SendV2Activity).sendViewModel.getSelectedSendAmount().toDouble()
                 mView.find<TextView>(R.id.receiptFiatAmountTextView).text = fiatAmount.formattedFiatString()
             }
         })
@@ -65,7 +65,7 @@ class SendSuccessFragment : Fragment() {
         }
         val pendingTxEntry = TransactionHistoryEntry(blockchain = "", txid = (activity as SendV2Activity).sendViewModel.txID.toLowerCase(),
                 time = System.currentTimeMillis() / 1000, blockHeight = 0,
-                asset = TokenListing(logoURL =  String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset!!.symbol),
+                asset = TokenListing(logoURL =  String.format("https://cdn.o3.network/img/neo/%s.png", selectedAsset.symbol),
                         symbol = selectedAsset.symbol, decimal = selectedAsset.decimals, name = selectedAsset.name,
                         logoSVG = "", url = "", tokenHash = selectedAsset.id, totalSupply = 0),
                 amount = amount,

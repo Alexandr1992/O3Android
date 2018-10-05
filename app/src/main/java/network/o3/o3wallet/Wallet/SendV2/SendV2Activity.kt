@@ -63,7 +63,7 @@ class SendV2Activity : AppCompatActivity() {
                 Thread.sleep(2000)
             }
         }
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
     }
 

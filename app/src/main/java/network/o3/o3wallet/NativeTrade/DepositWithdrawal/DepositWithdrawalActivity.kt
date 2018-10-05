@@ -48,7 +48,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
 
 
     fun digitTapped(digit: String) {
-        if (amountEditText?.text.toString().hasMaxDecimals(8)) {
+        if (amountEditText.text.toString().hasMaxDecimals(8)) {
             return
         }
         amountEditText.text = SpannableStringBuilder(amountEditText.text.toString() + digit)
@@ -143,7 +143,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         viewModel.getSelectedAsset().observe(this, Observer { selectedAsset ->
             formatter.maximumFractionDigits = selectedAsset!!.decimals
 
-            if (selectedAsset!!.symbol == "NEO" && !viewModel.isDeposit) {
+            if (selectedAsset.symbol == "NEO" && !viewModel.isDeposit) {
                 find<TextView>(R.id.neoWithdrawWarningTextView).visibility = View.VISIBLE
             } else {
                 find<TextView>(R.id.neoWithdrawWarningTextView).visibility = View.INVISIBLE
@@ -156,8 +156,8 @@ class DepositWithdrawalActivity : AppCompatActivity() {
             }
 
 
-            find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset!!.value)
-            find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
+            find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset.value)
+            find<TextView>(R.id.assetNameTextView).text = selectedAsset.symbol
 
             formatter.maximumFractionDigits = viewModel.selectedAssetDecimals
             if (firstLoad) {
@@ -190,7 +190,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 otherAmountTextView.visibility = View.INVISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.VISIBLE
             } else {
-                pricingData = realTimePrice!!
+                pricingData = realTimePrice
                 otherAmountTextView.visibility = View.VISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
@@ -288,7 +288,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
     }
 
     fun initiateHeader() {
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
 
         if (viewModel.isDeposit) {

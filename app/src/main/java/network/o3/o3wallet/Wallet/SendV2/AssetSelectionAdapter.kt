@@ -48,7 +48,7 @@ class AssetSelectorAdapter(context: Context, fragment: AssetSelectionBottomSheet
         val view = inflator.inflate(R.layout.wallet_send_fragment_native_asset_row, parent, false)
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", item!!.symbol)
         Glide.with(mContext).load(imageURL).into(view.findViewById(R.id.logoImageView))
-        view.findViewById<TextView>(R.id.nativeAssetName).text = item!!.name
+        view.findViewById<TextView>(R.id.nativeAssetName).text = item.name
         var formatter = NumberFormat.getNumberInstance()
         formatter.maximumFractionDigits = item.decimals
         view.findViewById<TextView>(R.id.assetAmountTextView).text = formatter.format(item.value)

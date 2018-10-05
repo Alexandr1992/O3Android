@@ -144,7 +144,7 @@ class SendWhatFragment : Fragment() {
             return
         }
 
-        if (selectedAsset?.symbol == "ONG") {
+        if (selectedAsset.symbol == "ONG") {
             cryptoAmount = cryptoAmount - 0.01
         }
 
@@ -223,7 +223,7 @@ class SendWhatFragment : Fragment() {
             }
 
             find<TextView>(R.id.assetBalanceTextView).text = formatter.format(selectedAsset.value)
-            find<TextView>(R.id.assetNameTextView).text = selectedAsset!!.symbol
+            find<TextView>(R.id.assetNameTextView).text = selectedAsset.symbol
 
             if (firstLoad) {
                 if ((activity as SendV2Activity).sendViewModel.selectedAsset?.value != null) {
@@ -255,7 +255,7 @@ class SendWhatFragment : Fragment() {
                 otherAmountTextView.visibility = View.INVISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.VISIBLE
             } else {
-                pricingData = realTimePrice!!
+                pricingData = realTimePrice
                 otherAmountTextView.visibility = View.VISIBLE
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
