@@ -14,6 +14,7 @@ import network.o3.o3wallet.MarketPlace.NEP5Tokens.TokensFragment
 import network.o3.o3wallet.R
 import org.jetbrains.anko.Orientation
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.onUiThread
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,7 +37,9 @@ class DappsFragment : Fragment() {
         dappsRecycler.layoutManager = LinearLayoutManager(context)
         (dappsRecycler.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.VERTICAL
         O3PlatformClient().getDapps {
-            dappsRecycler.adapter = DappsAdapter(it.first!!)
+            onUiThread {
+                dappsRecycler.adapter = DappsAdapter(it.first!!)
+            }
         }
         return mView
     }

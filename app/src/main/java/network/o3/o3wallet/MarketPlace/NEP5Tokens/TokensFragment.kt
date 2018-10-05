@@ -19,6 +19,7 @@ import org.jetbrains.anko.find
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.CardView
 import network.o3.o3wallet.MainTabbedActivity
+import org.jetbrains.anko.support.v4.onUiThread
 
 
 class TokensFragment : Fragment() {
@@ -85,13 +86,17 @@ class TokensFragment : Fragment() {
         tokensGridRecycler.setLayoutManager(layoutManager)
         tokensGridRecycler.adapter = TokensAdapter(arrayListOf())
         model?.getListingData(true)?.observe(this, Observer { tokens ->
-            (tokensGridRecycler.adapter as TokensAdapter).
-                    setData(tokens?.toCollection(ArrayList())!!)
+            onUiThread {
+                (tokensGridRecycler.adapter as TokensAdapter).
+                        setData(tokens?.toCollection(ArrayList())!!)
+            }
         })
 
         model?.getSwitcheoTokenData(true)?.observe(this, Observer { tokens ->
-            (tokensGridRecycler.adapter as TokensAdapter).
-                    setSwitcheoData(tokens)
+            onUiThread {
+                (tokensGridRecycler.adapter as TokensAdapter).
+                        setSwitcheoData(tokens)
+            }
         })
 
         return view
