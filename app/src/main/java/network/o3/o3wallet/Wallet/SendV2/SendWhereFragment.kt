@@ -22,6 +22,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
+import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.experimental.channels.Send
 import neoutils.Neoutils
@@ -32,6 +33,7 @@ import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.support.v4.act
+import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 
 class SendWhereFragment : Fragment() {
@@ -40,6 +42,8 @@ class SendWhereFragment : Fragment() {
     lateinit var mView: View
     lateinit var nicknameBadge: ImageView
     lateinit var continueToSendReviewButton: Button
+    lateinit var nnsStatusTextView: TextView
+    lateinit var nnsLoadingIndicator: LottieAnimationView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,7 +51,12 @@ class SendWhereFragment : Fragment() {
         mView =  inflater.inflate(R.layout.send_where_fragment, container, false)
         continueToSendReviewButton = mView.find(R.id.continueToSendReviewButton)
         continueToSendReviewButton.setOnClickListener {
-            (activity as SendV2Activity).sendViewModel.setSelectedAddress(addressEditText.text.toString().trim())
+            if ((activity as SendV2Activity).sendViewModel.nnsResolvedAddress?.value != null) {
+                (activity as SendV2Activity).sendViewModel.setSelectedAddress(nnsStatusTextView.text.toString())
+            } else {
+                (activity as SendV2Activity).sendViewModel.setSelectedAddress(addressEditText.text.toString().trim())
+            }
+
             val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             //Find the currently focused view, so we can grab the correct window token from it.
             var view = activity?.currentFocus
@@ -70,7 +79,7 @@ class SendWhereFragment : Fragment() {
         addressEditText = mView.find(R.id.addressEntryEditText)
         setupContactListener()
         setupOtherAddressListener()
-        setupVerifiedListener()
+        setupNNSListener()
         setupAddressEditText()
 
         return mView
@@ -87,7 +96,9 @@ class SendWhereFragment : Fragment() {
         }
     }
 
-    fun checkEnableSendButton() {
+    fun validateNormalAddress() {
+        (activity as SendV2Activity).sendViewModel.nnsResolvedAddress?.value = null
+        (activity as SendV2Activity).sendViewModel.nnsName = ""
         continueToSendReviewButton.isEnabled = (Neoutils.validateNEOAddress(addressEditText.text.trim().toString()))
         (activity as SendV2Activity).sendViewModel.setSelectedAddress(addressEditText.text.trim().toString())
         if (continueToSendReviewButton.isEnabled) {
@@ -96,6 +107,18 @@ class SendWhereFragment : Fragment() {
         } else {
             val colorStateList = ColorStateList.valueOf(context!!.getColorFromAttr(R.attr.defaultSubtitleTextColor))
             addressEditText.backgroundTintList = colorStateList
+        }
+    }
+
+    fun validateNNSAddress(nnsAddr: String) {
+        (activity as SendV2Activity).sendViewModel.loadResolvedNNS(nnsAddr)
+    }
+
+    fun checkEnableSendButton() {
+        if(addressEditText.text.trim().toString().endsWith(".neo")) {
+            validateNNSAddress(addressEditText.text.trim().toString())
+        } else {
+            validateNormalAddress()
         }
     }
 
@@ -118,7 +141,7 @@ class SendWhereFragment : Fragment() {
         (activity as SendV2Activity).sendViewModel.getSelectedAddress().observe(this, Observer { address ->
             nicknameField.text = ""
             nicknameBadge.visibility = View.GONE
-            if(addressEditText.text.toString() != address) {
+            if(addressEditText.text.toString() != address && !addressEditText.text.toString().endsWith(".neo")) {
                 addressEditText.text = SpannableStringBuilder(address)
             }
 
@@ -134,8 +157,34 @@ class SendWhereFragment : Fragment() {
         })
     }
 
-    fun setupVerifiedListener() {
+    fun setupNNSListener() {
+        nnsStatusTextView = mView.find(R.id.nnsAddressTextView)
+        nnsLoadingIndicator = mView.find(R.id.nnsLoadingIndicator)
+        nnsStatusTextView.visibility = View.INVISIBLE
+        (activity as SendV2Activity).sendViewModel.getResolvedNNS().observe(this, Observer { address ->
+            if(!addressEditText.text.toString().endsWith(".neo")) {
+                nnsStatusTextView.visibility = View.INVISIBLE
+                return@Observer
+            }
+            nnsStatusTextView.visibility = View.VISIBLE
+            if (address != null) {
+                nnsStatusTextView.text = address
+                nnsStatusTextView.textColor = context!!.getColor(R.color.colorGain)
+                (activity as SendV2Activity).sendViewModel.selectedAddress?.postValue(address)
+                continueToSendReviewButton.isEnabled = true
+            } else {
+                nnsStatusTextView.text = resources.getString(R.string.SEND_could_not_resolve)
+                nnsStatusTextView.textColor = context!!.getColor(R.color.colorLoss)
+            }
+        })
 
+        (activity as SendV2Activity).sendViewModel.getNNSLoadingStatus().observe(this, Observer { isLoading ->
+            if (isLoading!!) {
+                nnsLoadingIndicator.visibility = View.VISIBLE
+            } else {
+                nnsLoadingIndicator.visibility = View.INVISIBLE
+            }
+        })
     }
 
     fun showContactsModal() {

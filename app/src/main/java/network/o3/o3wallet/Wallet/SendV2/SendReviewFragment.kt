@@ -75,6 +75,9 @@ class   SendReviewFragment : Fragment() {
         if (contact != null) {
             mView.find<TextView>(R.id.reviewSelectedAddressTextView).text = contact.address
             mView.find<TextView>(R.id.reviewNicknameTextView).text = contact.nickname
+        } else if ((activity as SendV2Activity).sendViewModel.nnsName != "") {
+            mView.find<TextView>(R.id.reviewNicknameTextView).text = (activity as SendV2Activity).sendViewModel.nnsName
+            mView.find<TextView>(R.id.reviewSelectedAddressTextView).text = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
         } else {
             val address = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
             mView.find<TextView>(R.id.reviewNicknameTextView).visibility = View.INVISIBLE

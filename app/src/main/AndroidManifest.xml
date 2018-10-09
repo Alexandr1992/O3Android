@@ -116,6 +116,7 @@ package="network.o3.o3wallet">
     <activity
         android:name=".Dapp.DAppBrowserActivity"
         android:label="@string/title_activity_dapp_browser"
+        android:screenOrientation="portrait"
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme.NoTopBar.White"
         />

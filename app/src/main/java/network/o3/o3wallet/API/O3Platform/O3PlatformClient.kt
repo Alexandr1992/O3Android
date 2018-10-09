@@ -30,6 +30,7 @@ class O3PlatformClient {
         TRADING,
         ORDERS,
         DAPPS,
+        NNS,
         UTXO;
 
 
@@ -403,6 +404,39 @@ class O3PlatformClient {
                 completion(Pair<List<O3SwitcheoOrders>?, Error?>(pendingOrders, null))
             } else {
                 completion(Pair<List<O3SwitcheoOrders>?, Error?>(null, Error(it.second!!.localizedMessage)))
+            }
+        }
+    }
+
+    //nns address must end in .neo
+    fun resolveNNS(nnsQuery: String, completion: (Pair<String?, Error?>) -> Unit) {
+        val url =  "https://platform.o3.network/api/v1/neo/" + Route.NNS.routeName() + "/" + nnsQuery + networkQueryString()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val nns = Gson().fromJson<ResolvedNNS>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<String?, Error?>(nns.address, null))
+            } else {
+                completion(Pair<String?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun nnsReverseLookup(address: String, completion: (Pair<List<ReverseLookupNNS>?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/neo/" + Route.NNS.routeName() +  "/" + address + "/domains"
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val domains = Gson().fromJson<List<ReverseLookupNNS>>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<List<ReverseLookupNNS>?, Error?>(domains, null))
+            } else {
+                completion(Pair<List<ReverseLookupNNS>?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }

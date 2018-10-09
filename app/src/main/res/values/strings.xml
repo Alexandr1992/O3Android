@@ -179,6 +179,10 @@
     <string name="SETTINGS_Light">Light</string>
     <string name="SETTINGS_View_In_Explorer">View In Explorer</string>
     <string name="SETTINGS_Save_To_Contacts">Save To Contacts</string>
+    <string name="SETTINGS_nns_names">%s  +%s more</string>
+    <string name="SETTINGS_registered_domains">Registered Domains</string>
+    <string name="SETTINGS_nns_share">My .neo name is %s, you can send funds here if you have a NNS compatible wallet or to my regular address %s</string>
+    <string name="SEND_could_not_resolve">We could not resolve this .neo address, please double check it</string>
 
 
     <!-- Settings: Private Key -->
@@ -448,7 +452,7 @@
     <string name="SEND_Where">Where?</string>
     <string name="SEND_Review">Review</string>
     <string name="SEND_contacts">Contacts</string>
-    <string name="SEND_Neo_Address">Enter NEO Address</string>
+    <string name="SEND_Neo_Address">Enter NEO Address or NNS Name</string>
     <string name="SEND_please_review">Please carefully review your transaction details. Once sent, this transaction cannot be reversed.</string>
     <string name="DAPP_connection_request">%s want\'s to connect to your O3 app. Allow?</string>
     <string name="DAPP_transaction_signing_request">The app is requesting that you accept the transaction. Allow?</string>

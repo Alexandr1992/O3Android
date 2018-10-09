@@ -24,6 +24,9 @@ data class TransactionHistoryEntry(val blockchain: String, val txid: String, val
                                    val amount: String, val to: String,
                                    val from: String)
 
+data class ResolvedNNS(val address: String, val expiration: String)
+data class ReverseLookupNNS(val address: String, val expiration: String, val domain: String)
+
 data class TradingAccount(val switcheo: TradingAcountAssets)
 data class TradingAcountAssets(val confirming: List<ConfirmingAsset>,
                                val confirmed: List<TransferableAsset>,

@@ -33,6 +33,10 @@ class SendViewModel: ViewModel() {
 
     var mempoolHeight: MutableLiveData<Int?>? = null
 
+    var nnsResolvedAddress: MutableLiveData<String>? = null
+    var nnsLoadingStatus: MutableLiveData<Boolean> = MutableLiveData()
+    var nnsName: String = ""
+
     var selectedAssetDecimals: Int = 0
 
     var toSendAmount: BigDecimal = BigDecimal.ZERO
@@ -284,6 +288,28 @@ class SendViewModel: ViewModel() {
                 ontologyNetworkFee?.postValue(it.first!! * 20000.0)
             }
         }
+    }
+
+    fun loadResolvedNNS(nnsQuery: String) {
+        nnsLoadingStatus.postValue(true)
+        O3PlatformClient().resolveNNS(nnsQuery) {
+            if(it.first != null) {
+                nnsName = nnsQuery
+            }
+            nnsLoadingStatus.postValue(false)
+            nnsResolvedAddress?.postValue(it.first)
+        }
+    }
+
+    fun getResolvedNNS(): LiveData<String> {
+        if (nnsResolvedAddress == null ) {
+            nnsResolvedAddress = MutableLiveData()
+        }
+        return nnsResolvedAddress!!
+    }
+
+    fun getNNSLoadingStatus(): LiveData<Boolean> {
+        return nnsLoadingStatus
     }
 
     fun isOntAsset(): Boolean {
