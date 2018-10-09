@@ -133,9 +133,9 @@ class MainTabbedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tabbar_activity_main_tabbed)
-       // if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
-        //}
+        }
 
         val selectedFragment = fragments!!.get(0)
         val transaction = supportFragmentManager.beginTransaction()
