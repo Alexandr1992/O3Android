@@ -202,11 +202,17 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
             var toNickname = PersistentStore.getContacts().find { it.address == tx.to }?.nickname
             if (toNickname == null) {
                 toNickname = PersistentStore.getWatchAddresses().find {it.address == tx.to}?.nickname
+                if (tx.to == "AKJQMHma9MA8KK5M8iQg8ASeg3KZLsjwvB") {
+                    toNickname = "Switcheo"
+                }
             }
 
             var fromNickname = PersistentStore.getContacts().find { it.address == tx.from }?.nickname
             if (fromNickname == null) {
                 fromNickname = PersistentStore.getWatchAddresses().find {it.address == tx.from }?.nickname
+                if (tx.from == "AKJQMHma9MA8KK5M8iQg8ASeg3KZLsjwvB") {
+                    fromNickname = "Switcheo"
+                }
             }
 
             var otherPartyAddressOrName = ""

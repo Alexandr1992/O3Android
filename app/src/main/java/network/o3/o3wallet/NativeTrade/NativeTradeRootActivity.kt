@@ -23,9 +23,9 @@ class NativeTradeRootActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.orderAsset = intent.getStringExtra("asset")
+        viewModel.setOrderAsset(intent.getStringExtra("asset"))
         viewModel.isBuyOrder = intent.getBooleanExtra("is_buy", true)
-        if (viewModel.orderAsset == "NEO") {
+        if (viewModel.getOrderAsset() == "NEO") {
             viewModel.setSelectedBaseAssetImageUrl("https://cdn.o3.network/img/neo/NEO.png")
             viewModel.setSelectedBaseAssetValue("NEO")
         }
@@ -38,8 +38,8 @@ class NativeTradeRootActivity : AppCompatActivity() {
             find<TextView>(R.id.orderTypeTextView).text = resources.getString(R.string.Native_TRADE_Sell)
         }
 
-        find<TextView>(R.id.orderAssetSymbolTextView).text = viewModel.orderAsset
-        Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", viewModel.orderAsset))
+        find<TextView>(R.id.orderAssetSymbolTextView).text = viewModel.getOrderAsset()
+        Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", viewModel.getOrderAsset()))
                 .into(find<ImageView>(R.id.orderAssetLogo))
         setContentView(R.layout.native_trade_root_activity)
 

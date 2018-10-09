@@ -212,7 +212,7 @@ class OrderSubmissionFragment : Fragment() {
 
 
         (activity as NativeTradeRootActivity).viewModel.getTradingAccountBalances().observe(this, Observer { tradingAccount ->
-            val orderAsset = tradingAccount!!.switcheo.confirmed.find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.orderAsset}
+            val orderAsset = tradingAccount!!.switcheo.confirmed.find { it.symbol.toUpperCase() ==  (activity as NativeTradeRootActivity).viewModel.getOrderAsset()}
 
 
             orderAssetBalanceTextView.text = (orderAsset?.value?.divide(BigDecimal(100000000.0)) ?: BigDecimal.ZERO).toDouble().removeTrailingZeros()

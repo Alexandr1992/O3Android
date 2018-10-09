@@ -3,6 +3,7 @@ package network.o3.o3wallet.NativeTrade
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.github.salomonbrys.kotson.get
 import com.google.common.graph.MutableValueGraph
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TradingAccount
@@ -23,7 +24,7 @@ class NativeTradeViewModel: ViewModel() {
     var orders: MutableLiveData<List<SwitcheoOrders>>? = null
     var selectedPrice: MutableLiveData<Pair<Double, Double>>? = null
     var marketPrice: Pair<Double, Double>? = null
-    var orderAsset = "QLC"
+    private var orderAsset = "QLC"
     var orderBookTopPrice: MutableLiveData<Double>? = null
     var isOrdering: MutableLiveData<Boolean> = MutableLiveData()
     var tradingAccount: MutableLiveData<TradingAccount>? = null
@@ -56,6 +57,14 @@ class NativeTradeViewModel: ViewModel() {
         selectedBaseAsset.value = value
         loadMarketPrice()
         selectedBaseAsset.postValue(value)
+    }
+
+    fun setOrderAsset(asset: String) {
+        orderAsset = asset
+    }
+
+    fun getOrderAsset(): String {
+        return orderAsset
     }
 
     fun getOrders(): LiveData<List<SwitcheoOrders>> {

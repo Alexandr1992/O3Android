@@ -51,7 +51,7 @@ class OrderResultDialog : DialogFragment() {
         val percentFilled = order.calculatePercentFilled()
         if (percentFilled.first.toInt() == 0) {
             subtitleView.text = resources.getString(R.string.NATIVE_TRADE_order_success_subtitle_no_fill)
-        } else if (percentFilled.first.toInt() == 100) {
+        } else if (percentFilled.first.toInt() >= 100) {
             subtitleView.text = resources.getString(R.string.NATIVE_TRADE_order_success_subtitle_all_fill)
         } else {
             subtitleView.text = String.format(resources.getString(R.string.NATIVE_TRADE_order_success_subtitle_partial_fill), percentFilled.first.toInt().toString())

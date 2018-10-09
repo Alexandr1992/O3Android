@@ -32,8 +32,8 @@ class ReviewOrderFragment : Fragment() {
 
     fun initiateOrderAssetDetails() {
         mView.find<TextView>(R.id.reviewTotalAmountTextView).text = vm.orderAssetAmount.value!!.removeTrailingZeros()
-        mView.find<TextView>(R.id.reviewOrderNameTextView).text = vm.orderAsset
-        Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", vm.orderAsset))
+        mView.find<TextView>(R.id.reviewOrderNameTextView).text = vm.getOrderAsset()
+        Glide.with(this).load(String.format("https://cdn.o3.network/img/neo/%s.png", vm.getOrderAsset()))
                 .into(mView.find(R.id.reviewOrderLogoImageView))
     }
 
@@ -87,7 +87,7 @@ class ReviewOrderFragment : Fragment() {
 
         placeOrderButton.onClick {
 
-            val pair = vm.orderAsset + "_" + vm.selectedBaseAsset.value!!
+            val pair = vm.getOrderAsset() + "_" + vm.selectedBaseAsset.value!!
             val price = vm.selectedPrice!!.value!!.second.removeTrailingZeros().decimalNoGrouping()
             var side = "buy"
             var wantAmount = (vm.orderAssetAmount.value!! * 100000000.0).toLong().toString()
