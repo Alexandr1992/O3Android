@@ -1,7 +1,6 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout7"
     android:layout_width="match_parent"
@@ -9,8 +8,6 @@
     android:clipToPadding="false"
     android:tag="accountFragment"
     tools:context=".Wallet.AccountFragment">
-
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
         android:layout_width="wrap_content"
@@ -32,7 +29,6 @@
                 android:layout_height="wrap_content"
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
-
                 <include
                     layout="@layout/wallet_account_header_layout"
                     android:layout_width="match_parent"

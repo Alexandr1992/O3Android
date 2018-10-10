@@ -46,8 +46,8 @@ class SendSuccessFragment : Fragment() {
             mView.find<TextView>(R.id.receiptNicknameTextView).text = contact.nickname
             addToContactCheckbox.visibility = View.INVISIBLE
         } else if ((activity as SendV2Activity).sendViewModel.nnsName != "") {
-            mView.find<TextView>(R.id.reviewNicknameTextView).text = (activity as SendV2Activity).sendViewModel.nnsName
-            mView.find<TextView>(R.id.reviewSelectedAddressTextView).text = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
+            mView.find<TextView>(R.id.receiptNicknameTextView).text = (activity as SendV2Activity).sendViewModel.nnsName
+            mView.find<TextView>(R.id.receiptSelectedAddressTextView).text = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
         }else {
             val address = (activity as SendV2Activity).sendViewModel.getSelectedAddress().value!!
             mView.find<TextView>(R.id.receiptNicknameTextView).visibility = View.INVISIBLE
