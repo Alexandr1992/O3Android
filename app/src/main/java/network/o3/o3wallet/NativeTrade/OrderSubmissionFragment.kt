@@ -220,6 +220,7 @@ class OrderSubmissionFragment : Fragment() {
                 val args = Bundle()
                 args.putString("trading_account", Gson().toJson(tradingAccount))
                 args.putString("order_asset", orderAsset?.symbol ?: "")
+                args.putBoolean("is_buy_order", (activity as NativeTradeRootActivity).viewModel.isBuyOrder)
                 val assetSelectorSheet = NativeTradeBaseAssetBottomSheet()
                 assetSelectorSheet.arguments = args
                 assetSelectorSheet.show(activity!!.supportFragmentManager, assetSelectorSheet.tag)

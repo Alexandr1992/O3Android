@@ -30,6 +30,7 @@ class NativeTradeBaseAssetBottomSheet : RoundedBottomSheetDialogFragment() {
 
         val tradingAccount = Gson().fromJson<TradingAccount>(arguments!!.getString("trading_account"))
         val orderasset = arguments!!.getString("order_asset")
+        val isBuyOrder = arguments!!.getBoolean("is_buy_order")
         var gasPair = Pair("GAS", 0.0)
         var neoPair = Pair("NEO", 0.0)
         val confirmedGas = tradingAccount.switcheo.confirmed.find { it.symbol.toLowerCase() == "gas" }
@@ -37,13 +38,17 @@ class NativeTradeBaseAssetBottomSheet : RoundedBottomSheetDialogFragment() {
         val basePairs = arrayListOf<Pair<String, Double>>()
         if (confirmedGas != null && orderasset.toUpperCase() != "GAS") {
             basePairs.add(Pair("GAS", confirmedGas.value.toDouble()))
+        } else if (!isBuyOrder) {
+            basePairs.add(gasPair)
         }
 
         if (confirmedNeo != null && orderasset.toUpperCase() != "NEO") {
             basePairs.add(Pair("NEO", confirmedNeo.value.toDouble()))
+        } else if(!isBuyOrder) {
+            basePairs.add(neoPair)
         }
 
-        listView.adapter = NativeTradeBaseAssetSelectionAdapter(this.context!!, this, basePairs.toTypedArray())
+        listView.adapter = NativeTradeBaseAssetSelectionAdapter(this.context!!, this, basePairs.toTypedArray(), isBuyOrder)
 
         return view
     }

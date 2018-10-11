@@ -115,8 +115,8 @@ class ReviewOrderFragment : Fragment() {
                                 "pair" to pair,
                                 "base_currency" to vm.selectedBaseAsset.value!!,
                                 "quantity" to vm.orderAssetAmount.value!!,
-                                "price_selection" to (activity as NativeTradeRootActivity).viewModel.priceSelectionType)
-                        Amplitude.getInstance().logEvent("Native_Order_Placed", JSONObject(loggedJson.toMap()))
+                                "price_selection" to (activity as NativeTradeRootActivity).viewModel.priceSelectionType).toString()
+                        Amplitude.getInstance().logEvent("Native_Order_Placed", JSONObject(loggedJson))
                     }
                 }
             }

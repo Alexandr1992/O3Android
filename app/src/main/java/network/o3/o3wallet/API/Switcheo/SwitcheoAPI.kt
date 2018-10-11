@@ -201,6 +201,7 @@ class SwitcheoAPI {
     fun getDailyTickers(completion: (Pair<Array<Ticker>?, Error?>) -> (Unit)) {
         val url = baseURL + Route.TICKERS.routeName() + "/last_24_hours"
         var request = url.httpGet()
+        request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
         request.responseString { request, response, result ->
             val (data, error) = result
             if (error == null) {
@@ -218,7 +219,7 @@ class SwitcheoAPI {
         val url = baseURL + Route.OFFERS.routeName()
         var request = url.httpGet(
                 listOf("blockchain" to blockchain, "pair" to pair, "contract_hash" to contract_hash))
-
+        request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
         request.responseString { req, response, result ->
             val (data, error) = result
             if (error == null) {
@@ -269,6 +270,7 @@ class SwitcheoAPI {
 
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
+            request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
             request.responseString { req, response, result ->
                 Log.d("SWITCHEO:", response.toString())
                 val (data, error) = result
@@ -292,6 +294,7 @@ class SwitcheoAPI {
         val jsonPayload = jsonObject("signature" to signature)
         val request = url.httpPost().body(jsonPayload.toString())
         request.headers["Content-Type"] = "application/json"
+        request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
         request.responseString { req, response, result ->
             Log.d("SWITCHEO:", response.toString())
             val (data, error) = result
@@ -342,6 +345,7 @@ class SwitcheoAPI {
 
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
+            request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
             request.responseString { req, response, result ->
                 val (data, error) = result
                 if (error == null) {
@@ -367,6 +371,7 @@ class SwitcheoAPI {
             val url = baseURL + Route.WITHDRAWALS.routeName() + "/" + withdrawalId + "/broadcast"
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
+            request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
             request.responseString { req, response, result ->
                 val (data, error) = result
                 if (error == null) {
@@ -421,6 +426,7 @@ class SwitcheoAPI {
         val url = baseURL + Route.ORDERS.routeName()
         val request = url.httpGet(parameters)
         request.headers["Content-Type"] = "application/json"
+        request.headers["HTTP_X_REFERRAL_SOURCE"] = "O3Android"
 
         request.responseString { req, response, result ->
             val (data, error) = result
@@ -467,6 +473,7 @@ class SwitcheoAPI {
             val url = baseURL + Route.ORDERS.routeName()
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
+            request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
             request.responseString { req, response, result ->
                 val (data, error) = result
                 if (error == null) {
@@ -503,6 +510,7 @@ class SwitcheoAPI {
         val url = baseURL + Route.ORDERS.routeName() + "/" + orderRequest.id + "/broadcast"
         val request = url.httpPost().body(executionsObject.toString())
         request.headers["Content-Type"] = "application/json"
+        request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
         request.responseString { req, response, result ->
             val (data, error) = result
             if (error == null) {
@@ -546,6 +554,7 @@ class SwitcheoAPI {
             val url = baseURL + Route.CANCELLATIONS.routeName()
             val request = url.httpPost().body(jsonPayload.toString())
             request.headers["Content-Type"] = "application/json"
+            request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
             request.responseString { req, response, result ->
                 val (data, error) = result
                 val cancelRequest = Gson().fromJson<SwitcheoCancellationTransaction>(data!!)
@@ -566,6 +575,7 @@ class SwitcheoAPI {
         val jsonPayload = jsonObject("signature" to signature)
         val request = url.httpPost().body(jsonPayload.toString())
         request.headers["Content-Type"] = "application/json"
+        request.headers["HTTP_X_REFERRAL_SOURCE"] = "o3-api"
         request.responseString { req, response, result ->
             val (data, error) = result
             if (error == null) {
