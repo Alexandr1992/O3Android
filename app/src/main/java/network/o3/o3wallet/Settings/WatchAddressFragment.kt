@@ -49,15 +49,17 @@ class WatchAddressFragment : RoundedBottomSheetDialogFragment() {
         return view
     }
 
-    fun sendReloadDataIntent() {
+    fun sendReloadDataIntent(isReset: Boolean = false) {
         val intent = Intent("need-update-watch-address-event")
+        intent.putExtra("reset", isReset)
         LocalBroadcastManager.getInstance(this.context!!).sendBroadcast(intent)
     }
 
     fun showRemoveAlert(watchAddress: WatchAddress) {
         PersistentStore.removeWatchAddress(watchAddress.address, watchAddress.nickname)
+        PersistentStore.clearSavedAdressBalances(watchAddress.address)
         adapter?.updateData()
-        sendReloadDataIntent()
+        sendReloadDataIntent(true)
     }
 
     fun sendToAddress(address: WatchAddress) {

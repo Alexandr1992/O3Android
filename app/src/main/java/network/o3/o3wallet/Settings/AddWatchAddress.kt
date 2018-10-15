@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Resources
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.ActionBar
 import android.widget.Button
 import android.widget.EditText
@@ -74,6 +75,8 @@ class AddWatchAddress : AppCompatActivity() {
                     }
                 } else {
                     PersistentStore.addWatchAddress(addressField.text.trim().toString(), nickNameField.text.trim().toString())
+                    val intent = Intent("need-update-watch-address-event")
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
                     Answers().logCustom(CustomEvent("Watch Address Added")
                             .putCustomAttribute("Total Watch Addresses", PersistentStore.getWatchAddresses().count()))
                     finish()

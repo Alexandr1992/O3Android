@@ -18,11 +18,14 @@ import java.util.concurrent.CountDownLatch
 
 class HomeViewModelV2: ViewModel() {
     enum class DisplayType(val position: Int) {
-        HOT(0), COMBINED(1), COLD(2)
+        O3ADDR(0), WATCHADDR(1), COMBINED(2)
     }
 
     var assetsReadOnlyIntermediate: ArrayList<TransferableAsset> = arrayListOf()
-    var assetsReadOnly: ArrayList<TransferableAsset>? = null
+
+
+    var assetsReadOnly: MutableMap<WatchAddress, ArrayList<TransferableAsset>> = mutableMapOf()
+
     var assetsWritable: ArrayList<TransferableAsset>? = null
     var displayedAssets: MutableLiveData<ArrayList<TransferableAsset>>? = null
 
@@ -32,7 +35,11 @@ class HomeViewModelV2: ViewModel() {
 
     private var currency: CurrencyType = CurrencyType.FIAT
     private var interval: String = O3Wallet.appContext!!.resources.getString(R.string.PORTFOLIO_one_day)
-    private var displayType: DisplayType = DisplayType.HOT
+    //private var displayType: DisplayType = DisplayType.O3ADDR
+
+    var hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+
+    private var position: Int = 0
 
     lateinit var delegate: HomeViewModelProtocol
 
@@ -54,20 +61,28 @@ class HomeViewModelV2: ViewModel() {
         return this.interval
     }
 
-    fun setDisplayType(displayType: DisplayType) {
+    fun setPosition(position: Int) {
+        this.position = position
+        getDisplayedAssets(false)
+    }
+    fun getPosition(): Int {
+        return position
+    }
+
+    /*fun setDisplayType(displayType: DisplayType) {
         this.displayType = displayType
         getDisplayedAssets(false)
     }
 
     fun getDisplayType(): DisplayType {
         return this.displayType
-    }
+    }*/
 
     fun getAssetsReadOnly(refresh: Boolean) {
-        if (assetsReadOnly == null || refresh) {
+        if (assetsReadOnly.isEmpty() || refresh) {
             loadAssetsReadOnly()
         } else {
-            displayedAssets?.postValue(assetsReadOnly)
+            displayedAssets?.postValue(assetsReadOnly!![PersistentStore.getWatchAddresses()[position - 1]])
         }
     }
 
@@ -79,7 +94,13 @@ class HomeViewModelV2: ViewModel() {
         }
     }
 
-    fun addReadOnlyAsset(asset: TransferableAsset) {
+    fun addReadOnlyAsset(address: WatchAddress, asset: TransferableAsset) {
+        if (!assetsReadOnly.keys.contains(address)) {
+            assetsReadOnly[address] = arrayListOf()
+        }
+        assetsReadOnly[address]?.add(asset)
+
+        /*
         val index = assetsReadOnlyIntermediate.indices.find {
             assetsReadOnlyIntermediate[it].name == asset.name
         } ?: -1
@@ -87,17 +108,18 @@ class HomeViewModelV2: ViewModel() {
             assetsReadOnlyIntermediate.add(asset)
         } else {
             assetsReadOnlyIntermediate[index].value += asset.value
+        }*/
+    }
+
+    fun addReadOnlyBalances(address: WatchAddress, assets: TransferableAssets) {
+        for (asset in assets.assets) {
+            addReadOnlyAsset(address, asset)
+        }
+        for (token in assets.tokens) {
+            addReadOnlyAsset(address, token)
         }
     }
 
-    fun addReadOnlyBalances(assets: TransferableAssets) {
-        for (asset in assets.assets) {
-            addReadOnlyAsset(asset)
-        }
-        for (token in assets.tokens) {
-            addReadOnlyAsset(token)
-        }
-    }
 
     fun combineReadOnlyAndWritable(){
         var assets = arrayListOf<TransferableAsset>()
@@ -106,13 +128,14 @@ class HomeViewModelV2: ViewModel() {
         }
 
         //var assets = assetsWritable
-        for (asset in assetsReadOnly ?: arrayListOf()) {
-            val index = assets.indices.find { assets[it].name == asset.name } ?: -1
-            if (index == -1) {
-                assets.add(asset)
-            } else {
-                assets[index] = assets[index]
-                assets[index].value += asset.value
+        for (key in assetsReadOnly.keys)
+            for (asset in assetsReadOnly[key]!!) {
+                val index = assets.indices.find { assets[it].name == asset.name } ?: -1
+                if (index == -1) {
+                    assets.add(asset)
+                } else {
+                    assets[index] = assets[index]
+                    assets[index].value += asset.value
             }
         }
         displayedAssets?.postValue(assets)
@@ -120,26 +143,40 @@ class HomeViewModelV2: ViewModel() {
 
     fun loadAssetsReadOnly() {
         bg {
-            val cachedAssets = PersistentStore.getLatestWatchAddressBalances()
-            if (cachedAssets != null) {
-                assetsReadOnly = cachedAssets
-                displayedAssets!!.postValue(cachedAssets)
-            }
             val addresses = PersistentStore.getWatchAddresses()
+            if (addresses.count() == 0 && position == 1) {
+                displayedAssets?.postValue(arrayListOf())
+            }
+
             val latch = CountDownLatch(addresses.count())
+            var index = 0
             for (address in addresses) {
+                if (position - 1 == index) {
+                    val cachedAddress = PersistentStore.getWatchAddresses()[position - 1]
+                    val cachedAssets = PersistentStore.getSavedAddressBalances(cachedAddress.address)
+                    if (cachedAssets != null) {
+                        displayedAssets!!.postValue(cachedAssets)
+                    }
+                }
+
                 O3PlatformClient().getTransferableAssets(address.address) {
                     if (it.second != null || it.first == null) {
                         latch.countDown()
                         return@getTransferableAssets
                     }
-                    addReadOnlyBalances(it.first!!)
+                    assetsReadOnly!![address]?.clear()
+                    addReadOnlyBalances(address, it.first!!)
+                    if (position - 1 == index) {
+                        displayedAssets?.postValue(assetsReadOnly!![PersistentStore.getWatchAddresses()[position - 1]])
+                        PersistentStore.setSavedAddressBalances(address.address, assetsReadOnly!![PersistentStore.getWatchAddresses()[position - 1]])
+                    }
+                    index ++
                     latch.countDown()
                 }
             }
             latch.await()
-            PersistentStore.setLatestWatchAddressBalances(assetsReadOnlyIntermediate)
-            assetsReadOnly?.clear()
+            //PersistentStore.setLatestWatchAddressBalances(assetsReadOnlyIntermediate)
+           /* assetsReadOnly?.clear()
             for (asset in assetsReadOnlyIntermediate) {
                 assetsReadOnly?.add(asset.deepCopy())
             }
@@ -149,7 +186,7 @@ class HomeViewModelV2: ViewModel() {
                 combineReadOnlyAndWritable()
             } else if (displayType == DisplayType.COLD) {
                 displayedAssets?.postValue(assetsReadOnly)
-            }
+            }*/
             delegate.hideAssetLoadingIndicator()
         }
     }
@@ -173,10 +210,10 @@ class HomeViewModelV2: ViewModel() {
     }
 
     fun reloadDisplayedAssets() {
-        when (displayType) {
-            DisplayType.HOT -> getAssetsWritable(true)
-            DisplayType.COLD -> getAssetsReadOnly(true)
-            DisplayType.COMBINED -> combineReadOnlyAndWritable()
+        when (position) {
+            0 -> getAssetsWritable(true)
+            PersistentStore.getWatchAddresses().count() + 1 -> if (hasWatchAddress) { combineReadOnlyAndWritable() } else getAssetsReadOnly(true)
+            else -> getAssetsReadOnly(true)
         }
     }
 
@@ -184,10 +221,10 @@ class HomeViewModelV2: ViewModel() {
         if (displayedAssets == null) {
             displayedAssets = MutableLiveData()
         }
-        when (displayType) {
-            DisplayType.HOT -> getAssetsWritable(refresh)
-            DisplayType.COLD -> getAssetsReadOnly(refresh)
-            DisplayType.COMBINED -> combineReadOnlyAndWritable()
+        when (position) {
+            0 -> getAssetsWritable(refresh)
+            PersistentStore.getWatchAddresses().count() + 1 -> if (hasWatchAddress) { combineReadOnlyAndWritable() } else getAssetsReadOnly(true)
+            else -> getAssetsReadOnly(true)
         }
         return displayedAssets!!
     }

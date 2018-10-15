@@ -3,6 +3,7 @@ package network.o3.o3wallet.Portfolio
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import network.o3.o3wallet.PersistentStore
 
 import network.o3.o3wallet.Portfolio.PortfolioHeader
 
@@ -15,6 +16,10 @@ class PortfolioHeaderPagerAdapter(fragmentManager: FragmentManager): FragmentPag
     }
 
     override fun getCount(): Int {
-        return 3
+        if (PersistentStore.getWatchAddresses().count() == 0) {
+            return 2
+        }
+
+        return PersistentStore.getWatchAddresses().count() + 2
     }
 }
