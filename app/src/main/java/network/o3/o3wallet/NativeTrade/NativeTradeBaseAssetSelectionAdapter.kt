@@ -13,10 +13,12 @@ import org.jetbrains.anko.find
 
 class NativeTradeBaseAssetSelectionAdapter(context: Context,
                                            fragment: NativeTradeBaseAssetBottomSheet,
-                                           assets: Array<Pair<String, Double?>>): BaseAdapter() {
+                                           assets: Array<Pair<String, Double?>>,
+                                           isBuyOrder: Boolean): BaseAdapter() {
     private val mContext: Context
     private val mFragment: NativeTradeBaseAssetBottomSheet
     private val mAssets: Array<Pair<String, Double?>>
+    private val mIsBuyOrder: Boolean
     private val inflator: LayoutInflater
 
     init {
@@ -24,6 +26,7 @@ class NativeTradeBaseAssetSelectionAdapter(context: Context,
         mFragment = fragment
         mAssets = assets
         inflator = LayoutInflater.from(context)
+        mIsBuyOrder = isBuyOrder
     }
 
     override fun getCount(): Int {
@@ -49,6 +52,11 @@ class NativeTradeBaseAssetSelectionAdapter(context: Context,
             mFragment.dismiss()
         }
         view.find<TextView>(R.id.baseAssetName).text = item.first
+        if (!mIsBuyOrder) {
+            view.find<TextView>(R.id.baseAssetBalance).visibility = View.INVISIBLE
+        } else {
+            view.find<TextView>(R.id.baseAssetBalance).visibility = View.VISIBLE
+        }
         view.find<TextView>(R.id.baseAssetBalance).text = (item.second!! / 100000000).toString()
         Glide.with(view.context).load(String.format("https://cdn.o3.network/img/neo/%s.png", item.first)).
                 into(view.find(R.id.baseAssetlogoImageView))

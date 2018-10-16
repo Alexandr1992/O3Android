@@ -52,9 +52,19 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     lateinit var recyclerView: RecyclerView
     lateinit var mView: View
 
+    var hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+
     val needReloadWatchAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-           homeModel.reloadDisplayedAssets()
+            homeModel.hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+            viewPager?.adapter?.notifyDataSetChanged()
+            val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
+            val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
+            header.configureArrows()
+            if (intent.getBooleanExtra("reset", false)) {
+                viewPager?.setCurrentItem(0, true)
+            }
+            homeModel.reloadDisplayedAssets()
         }
     }
 
@@ -175,17 +185,9 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         viewPager?.adapter = portfolioHeaderAdapter
         viewPager?.addOnPageChangeListener(object : SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                val displayType = when {
-                    position == 0 -> HomeViewModelV2.DisplayType.HOT
-                    position == 1 -> HomeViewModelV2.DisplayType.COLD
-                    position == 2 -> HomeViewModelV2.DisplayType.COMBINED
-                    else -> return
-                }
-
                 Handler().postDelayed({
-                    homeModel.setDisplayType(displayType)
+                    homeModel.setPosition(position)
                 }, 200)
-
             }
         })
     }
@@ -232,7 +234,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
             emptyPortfolioActionButton?.visibility = View.INVISIBLE
         }
 
-        if (homeModel.getDisplayType() == HomeViewModelV2.DisplayType.COLD) {
+        if (homeModel.getPosition() > 0) {
             emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_add_watch_address)
             emptyPortfolioTextView?.text = resources.getString(R.string.PORTFOLIO_no_watch_addresses)
             emptyPortfolioActionButton?.setOnClickListener {
@@ -259,7 +261,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
             updateHeader(homeModel.getCurrentPortfolioValue().formattedCurrencyString(homeModel.getCurrency()),
                     homeModel.getPercentChange())
             if (PersistentStore.getFirstTokenAppeared() && homeModel.getCurrentPortfolioValue() != 0.0
-                    && homeModel.getDisplayType() == HomeViewModelV2.DisplayType.HOT) {
+                    && homeModel.getPosition() == 0) {
                 val backupKeyCheck = DialogBackupKeyFragment.newInstance()
                 backupKeyCheck.show(this.fragmentManager, "backupkey")
                 PersistentStore.setFirstTokenAppeared(false)
@@ -267,12 +269,25 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         }
     }
 
+    fun getHeaderTitle(position: Int): String {
+        if (position > 0 && PersistentStore.getWatchAddresses().count() == 0) {
+            return resources.getString(R.string.PORTFOLIO_your_watch_addresses)
+        }
+
+        if (position == 0) {
+            return resources.getString(R.string.WALLET_my_o3_wallet)
+        } else if (position == PersistentStore.getWatchAddresses().count() + 1  ){
+            return resources.getString(R.string.PORTFOLIO_total)
+        } else {
+            return PersistentStore.getWatchAddresses()[position - 1].nickname
+        }
+    }
 
     fun updateHeader(amount: String, percentChange: Double) {
         viewPager?.currentItem = viewPager?.currentItem!!
         val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
         val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
-        header.setHeaderInfo(amount, percentChange, homeModel.getInterval(), homeModel.getInitialDate())
+        header.setHeaderInfo(amount, percentChange, homeModel.getInterval(), homeModel.getInitialDate(), getHeaderTitle(homeModel.getPosition()))
     }
 
     override fun showPortfolioLoadingIndicator() {

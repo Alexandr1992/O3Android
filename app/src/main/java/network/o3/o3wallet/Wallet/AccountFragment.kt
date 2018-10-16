@@ -106,7 +106,7 @@ class AccountFragment : Fragment() {
 
         neoSyncButton = mView.find(R.id.neoSyncButton)
         neoClaimButton = mView.find(R.id.neoClaimButton)
-        unclaimedGASTicker.text = "0.00000000"
+        unclaimedGASTicker.text = "0"
         unclaimedGASTicker.textColor = context!!.getColor(R.color.colorSubtitleGrey)
         neoSyncButton.setOnClickListener { neoSyncTapped() }
         neoClaimButton.setOnClickListener { neoClaimTapped() }

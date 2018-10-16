@@ -202,25 +202,31 @@ object PersistentStore {
         }
     }
 
-    fun setLatestWatchAddressBalances(assets: ArrayList<TransferableAsset>?) {
+    fun setSavedAddressBalances(address: String, assets: ArrayList<TransferableAsset>?) {
         if (assets == null) {
             return
         }
         val settingsPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
         val assetsJson = Gson().toJson(assets)
-        settingsPref.putString("WATCH_BALANCES", assetsJson)
+        settingsPref.putString("SAVED_ADDR_" + address, assetsJson)
         settingsPref.apply()
     }
 
-    fun getLatestWatchAddressBalances(): ArrayList<TransferableAsset>? {
+    fun getSavedAddressBalances(address: String): ArrayList<TransferableAsset>? {
         val assetsJson = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
-                .getString("WATCH_BALANCES", "")
+                .getString("SAVED_ADDR_" + address, "")
         if (assetsJson == "") {
             return null
         } else {
             return Gson().fromJson(assetsJson)
         }
     }
+
+    fun clearSavedAdressBalances(address: String) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putString("SAVED_ADDR_" + address, "").apply()
+    }
+
 
     fun shouldShowSwitcheoOnPortfolio(): Boolean {
         return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
