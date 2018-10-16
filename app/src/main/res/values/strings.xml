@@ -373,6 +373,8 @@
         <item>COMBINED</item>
     </string-array>
 
+    <string name="PORTFOLIO_total" comment="total sum of watch addresses">total</string>
+
     <string name="PORTFOLIO_six_hours" comment="six hour porfolio interval">6H</string>
     <string name="PORTFOLIO_one_day" comment="one day portfolio interval">24H</string>
     <string name="PORTFOLIO_one_week" comment="oneweek potfolio interval">1W</string>
@@ -433,7 +435,9 @@
     <string name="PORTFOLIO_pricing_not_available">Pricing Unavailable</string>
     <string name="PORTFOLIO_pricing_not_available_description">Our source for pricing data (CoinCap) has not yet registered this token, check back soon!</string>
     <string name="PORTFOLIO_no_watch_addresses" comment="No watch addresses added in portfolio">No watch addresses added</string>
+    <string name="PORTFOLIO_your_watch_addresses" comment="Add a watch address in portfolio screen">Your watch addresses</string>
     <string name="PORTFOLIO_add_watch_address" comment="Add a watch address in portfolio screen">Add watch address</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

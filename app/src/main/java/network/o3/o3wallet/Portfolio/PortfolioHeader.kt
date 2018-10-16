@@ -10,12 +10,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.portfolio_fragment_portfolio_header.*
 import network.o3.o3wallet.*
+import org.jetbrains.anko.view
+import org.w3c.dom.Text
 import java.util.*
 
-class PortfolioHeader:Fragment() {
+class PortfolioHeader: Fragment {
     private val titles = O3Wallet.appContext!!.resources.getStringArray(R.array.PORTFOLIO_headers)
     var position: Int = 0
     var unscrubbedDisplayedAmount = 0.0
+    lateinit var mView: View
+    lateinit var fundSourceTextView: TextView
+
+    constructor() : super()
+
     companion object {
         fun newInstance(position: Int): PortfolioHeader {
             val args = Bundle()
@@ -27,19 +34,19 @@ class PortfolioHeader:Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.portfolio_fragment_portfolio_header, container, false)
+        mView = inflater.inflate(R.layout.portfolio_fragment_portfolio_header, container, false)
         position = arguments!!.getInt("position")
-        val fundSourceTextView = view?.findViewById<TextView>(R.id.fundSourceTextView)
-        fundSourceTextView?.text = titles[position]
+        fundSourceTextView = mView.findViewById(R.id.fundSourceTextView)
 
         val fundChangeTextView = view?.findViewById<TextView>(R.id.fundChangeTextView)
         fundChangeTextView?.text = ""
 
-        configureArrows(view)
-        return view
+        configureArrows()
+        return mView
     }
 
-    fun setHeaderInfo(amount: String, percentChange: Double, interval: String, initialDate: Date) {
+    fun setHeaderInfo(amount: String, percentChange: Double, interval: String, initialDate: Date, title: String) {
+        fundSourceTextView.text = title
         fundChangeTextView.text = percentChange.formattedPercentString() +
                 " " +  initialDate.intervaledString(interval)
         fundAmountTextView.text = amount
@@ -51,12 +58,12 @@ class PortfolioHeader:Fragment() {
         }
     }
 
-    private fun configureArrows(view: View?) {
+    fun configureArrows() {
         val pager = activity?.findViewById<ViewPager>(R.id.portfolioHeaderFragment)
-        val leftArrow = view?.findViewById<ImageView>(R.id.leftArrowImageView)
-        val rightArrow = view?.findViewById<ImageView>(R.id.rightArrowImageView)
+        val leftArrow = mView?.findViewById<ImageView>(R.id.leftArrowImageView)
+        val rightArrow = mView?.findViewById<ImageView>(R.id.rightArrowImageView)
 
-        view?.findViewById<TextView>(R.id.fundAmountTextView)!!.setOnClickListener {
+        mView?.findViewById<TextView>(R.id.fundAmountTextView)!!.setOnClickListener {
             var pFragment = (parentFragment as HomeFragment)
             if (pFragment.homeModel.getCurrency() == CurrencyType.FIAT) {
                 pFragment.homeModel.setCurrency(CurrencyType.BTC)
@@ -66,17 +73,29 @@ class PortfolioHeader:Fragment() {
             pFragment.homeModel.loadPortfolioValue(pFragment.assetListAdapter?.assets ?: arrayListOf())
         }
 
-        if (position > 0) {
-            leftArrow?.setOnClickListener {
-                pager?.currentItem = position - 1
-            }
+        if (position == 0) {
+            leftArrow?.visibility = View.INVISIBLE
+        } else {
+            leftArrow?.visibility = View.VISIBLE
         }
 
+        leftArrow?.setOnClickListener {
+            pager?.currentItem = position - 1
+        }
 
-        if (position < 2) {
-            rightArrow?.setOnClickListener {
+        var lastPosition = 1
+        if (PersistentStore.getWatchAddresses().count() > 0) {
+            lastPosition = PersistentStore.getWatchAddresses().count() + 1
+        }
+
+        if (position == lastPosition) {
+            rightArrow?.visibility = View.INVISIBLE
+        } else {
+            rightArrow?.visibility = View.VISIBLE
+        }
+
+        rightArrow?.setOnClickListener {
                 pager?.currentItem = position + 1
-            }
         }
     }
 }

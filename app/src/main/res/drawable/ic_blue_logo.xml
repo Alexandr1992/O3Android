@@ -18,12 +18,12 @@ xmlns:aapt="http://schemas.android.com/aapt"
         android:endX="220.60000610351562"
         android:type="linear">
 <item android:offset="0.0" android:color="#FF007BFF" />
-<item android:offset="1.0" android:color="#FF0069D9" />
+<item android:offset="1.0" android:color="#FF218FFF" />
             </gradient></aapt:attr></path>
     <path
         android:pathData="M419.6,395.5L419.6,373L492.4,373L492.4,391.3L468.1,418.9C477.6,420.5 485,424.5 490.2,430.9C495.4,437.2 498,444.6 498,453C498,465.4 493.8,475.1 485.4,482.2C476.9,489.2 466.1,492.8 453,492.8C439.8,492.8 426.5,488.1 413,478.9L423.9,457.9C435.1,465.8 445.1,469.7 454,469.7C459.3,469.7 463.7,468.4 467.2,465.8C470.6,463.2 472.3,459.5 472.3,454.6C472.3,449.7 470.4,445.8 466.4,442.9C462.4,440 456.9,438.6 449.9,438.6C446.2,438.6 440.9,439.6 434.1,441.8L434.1,422.3L456.9,395.5L419.6,395.5Z"
         android:strokeColor="#00000000"
         android:fillType="evenOdd"
-        android:fillColor="#0069D9"
+        android:fillColor="#218FFF"
         android:strokeWidth="1"/>
 </vector>
