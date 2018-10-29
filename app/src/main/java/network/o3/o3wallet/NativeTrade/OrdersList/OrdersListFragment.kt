@@ -60,7 +60,7 @@ class OrdersListFragment : Fragment() {
     fun loadOrders() {
         O3PlatformClient().getPendingOrders {
             onUiThread {
-                ordersListView.adapter = OrdersAdapter(it.first!!, this)
+                ordersListView.adapter = OrdersAdapter(it.first ?: listOf(), this)
                 swipeContainer.isRefreshing = false
                 postOpenOrdersCount(it.first!!)
             }
