@@ -186,7 +186,10 @@ class AccountFragment : Fragment() {
                 } else {
                      (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
                 }
-                accountViewModel.loadWalletAccountPriceData(it!!.assets)
+                if (it != null) {
+                    accountViewModel.loadWalletAccountPriceData(it.assets)
+                }
+
                 accountViewModel.getInboxItem().observe(this, Observer<List<O3InboxItem>?>{
                     onUiThread {
                         (assetListView.adapter as AccountAssetsAdapter).setInboxList(it ?: listOf())
