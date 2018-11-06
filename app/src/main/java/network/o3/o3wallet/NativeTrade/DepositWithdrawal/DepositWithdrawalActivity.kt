@@ -195,7 +195,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                 mView.find<TextView>(R.id.sendPricingUnavailableTextView).visibility = View.INVISIBLE
             }
             assetBalanceTextView.textColor = getColor(R.color.colorSubtitleGrey)
-            val displayedString =  amountEditText.text.toString()
+            val displayedString =  amountEditText.text.decimalNoGrouping()
             val usFormattedString = displayedString.replace(',', '.')
             if (usFormattedString == "" || usFormattedString.isEmpty() || BigDecimal(usFormattedString) == BigDecimal.ZERO) {
                 otherAmountTextView.visibility = View.INVISIBLE
@@ -208,7 +208,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
     }
 
     fun calculateAndDisplaySendAmount() {
-        var displayedString = amountEditText.text.toString()
+        var displayedString = amountEditText.text.decimalNoGrouping()
         val usFormattedString = displayedString.replace(',', '.')
 
         if (usFormattedString == "" || usFormattedString.isEmpty() || BigDecimal(usFormattedString) == BigDecimal.ZERO) {
@@ -312,7 +312,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                         floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
                 )
             } else {
-                amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text)
+                amountEditText.text = SpannableStringBuilder(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble().removeTrailingZeros())
             }
 
             calculateAndDisplaySendAmount()
