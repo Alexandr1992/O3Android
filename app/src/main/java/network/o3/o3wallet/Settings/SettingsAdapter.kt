@@ -17,14 +17,9 @@ import network.o3.o3wallet.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
-import android.os.Build
 import android.os.Bundle
-import kotlinx.android.synthetic.main.settings_activity_add_contact.view.*
-import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Onboarding.LandingActivity
-import java.util.*
 import org.jetbrains.anko.image
-import org.w3c.dom.Text
 import zendesk.support.request.RequestActivity
 
 

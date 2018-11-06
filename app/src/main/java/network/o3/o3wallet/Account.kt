@@ -29,33 +29,6 @@ object Account {
         setProperty(alias, encryptedWIF.toHex(), iv, O3Wallet.appContext!!)
     }
 
-    fun storeColdStorageKeyFragmentOnDevice(keyFragment: String) {
-        val alias = "Cold Storage Key Fragment"
-        val encryptor = Encryptor()
-        val encryptedFragment = encryptor.encryptText(alias, keyFragment)!!
-        val iv = encryptor.getIv()!!
-        setProperty(alias, encryptedFragment.toHex(), iv, O3Wallet.appContext!!)
-    }
-
-    fun getColdStorageKeyFragmentOnDevice(): String {
-        val alias = "Cold Storage Key Fragment"
-        val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
-        if (storedVal.data == null) {
-            return ""
-        }
-        val storedEncryptedFragment = storedVal.data?.hexStringToByteArray()
-        if (storedEncryptedFragment == null || storedEncryptedFragment.size == 0) {
-            return ""
-        }
-        val storedIv = storedVal.iv!!
-        val decrypted = Decryptor().decrypt(alias, storedEncryptedFragment, storedIv)
-        return decrypted
-    }
-
-    fun removeColdStorageKeyFragment() {
-        storeColdStorageKeyFragmentOnDevice("")
-    }
-
     fun isEncryptedWalletPresent(): Boolean {
         val alias = "O3 Key"
         val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
