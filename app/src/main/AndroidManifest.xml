@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 package="network.o3.o3wallet">
 
@@ -49,11 +48,7 @@ package="network.o3.o3wallet">
     <activity
         android:name=".MainTabbedActivity"
         android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.Dark" />
-    <activity
-        android:name=".Settings.AddWatchAddress"
-        android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.Dark" />
+        android:theme="@style/AppTheme.NoTopBar.White" />
     <activity
         android:name=".Settings.AddContact"
         android:screenOrientation="portrait"
@@ -107,7 +102,8 @@ package="network.o3.o3wallet">
     <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
     <activity android:name=".Onboarding.PasscodeRequestActivity" />
     <activity android:name=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity" />
-    <activity android:name="network.o3.o3wallet.NativeTrade.NativeTradeRootActivity"
+    <activity
+        android:name="network.o3.o3wallet.NativeTrade.NativeTradeRootActivity"
         android:screenOrientation="portrait"
         android:windowSoftInputMode="stateAlwaysHidden"
         android:theme="@style/AppTheme.Dark">
@@ -118,8 +114,13 @@ package="network.o3.o3wallet">
         android:label="@string/title_activity_dapp_browser"
         android:screenOrientation="portrait"
         android:hardwareAccelerated="true"
-        android:theme="@style/AppTheme.NoTopBar.White"
-        />
+        android:theme="@style/AppTheme.NoTopBar.White" />
+    <activity
+        android:name="network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity"
+        android:theme="@style/AppTheme.Dark"
+        android:screenOrientation="portrait">
+        <nav-graph android:value="@navigation/activate_multiwallet" />
+    </activity>
 </application>
 </manifest>
 

@@ -2,86 +2,88 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="73dp"
+    android:layout_height="wrap_content"
     android:clipToPadding="false"
     tools:context="network.o3.o3wallet.Portfolio.PortfolioHeader">
 
     <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/fundSourceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:includeFontPadding="false"
+        android:textAlignment="center"
+        android:textAppearance="@style/PortfolioHeader.WalletType"
+        app:layout_constraintBottom_toBottomOf="@+id/fundChangeTextView"
+        app:layout_constraintStart_toEndOf="@+id/leftArrowImageView"
+        app:layout_constraintTop_toTopOf="@+id/fundChangeTextView"
+        tools:ignore="HardcodedText" />
 
-    <android.support.v7.widget.CardView
-        style="@style/CardViewStyle"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="4dp"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="3dp"
+    <TextView
+        android:id="@+id/fundAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:includeFontPadding="false"
+        android:textAlignment="center"
+        android:textAppearance="@style/PortfolioHeader.PortfolioValue"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/rightArrowImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fundChangeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="16dp"
+        android:includeFontPadding="false"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/PortfolioHeader.PercentChange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/fundAmountTextView"
+        app:layout_constraintTop_toBottomOf="@+id/fundAmountTextView" />
+
+    <ImageView
+        android:id="@+id/leftArrowImageView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_left_chevron"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/rightArrowImageView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_right_chevron"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/imageView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_comment"
+        app:layout_constraintBottom_toBottomOf="@+id/fundAmountTextView"
+        app:layout_constraintStart_toEndOf="@+id/leftArrowImageView"
+        app:layout_constraintTop_toTopOf="@+id/fundAmountTextView" />
 
-            <TextView
-                android:id="@+id/fundSourceTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:textAlignment="center"
-                android:textAppearance="@style/PortfolioHeader.WalletType"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/fundAmountTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:textAlignment="center"
-                android:textAppearance="@style/PortfolioHeader.PortfolioValue"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fundSourceTextView" />
-
-            <TextView
-                android:id="@+id/fundChangeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:includeFontPadding="false"
-                android:textAlignment="center"
-                android:textAppearance="@style/PortfolioHeader.PercentChange"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fundAmountTextView" />
-
-            <ImageView
-                android:id="@+id/leftArrowImageView"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/ic_left_chevron"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/rightArrowImageView"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_right_chevron"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
+    <ImageView
+        android:id="@+id/imageView14"
+        android:layout_width="12dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_lock_alt"
+        app:layout_constraintBottom_toBottomOf="@+id/fundSourceTextView"
+        app:layout_constraintStart_toEndOf="@+id/fundSourceTextView"
+        app:layout_constraintTop_toTopOf="@+id/fundSourceTextView" />
 </android.support.constraint.ConstraintLayout>

@@ -7,8 +7,6 @@
     android:id="@+id/activityRoot"
     tools:context="network.o3.o3wallet.MainTabbedActivity">
 
-
-
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="0dp"

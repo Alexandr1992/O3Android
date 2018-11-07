@@ -18,7 +18,7 @@ class MarketPlaceFragmentPagerAdapter(fm: FragmentManager, context: Context) : F
 
 
     override fun getCount(): Int {
-        return 3
+        return 2
     }
 
     override fun getItem(position: Int): Fragment {

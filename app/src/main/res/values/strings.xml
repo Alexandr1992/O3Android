@@ -161,7 +161,7 @@
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
         <item>My Private Key</item>
         <item>Manage Contacts</item>
-        <item>Watch Only Address</item>
+        <item>MultiWallet</item>
         <item>Currency</item>
         <item>Theme</item>
         <item>Support</item>
@@ -532,4 +532,13 @@
     <string name="NATIVE_TRADE_deposit_all">Deposit All</string>
     <string name="NATIVE_TRADE_Neo_withdraw_warning">When withdrawing to your wallet, you must withdraw a whole amount of NEO</string>
     <string name="WALLET_Account_Empty_State">Get started by depositing funds to your account</string>
+    <string name="MULTIWALLET_activation_complete_description">Awesome! All done!\n\n Here is your new encrypted key!
+        We recommend making a copy of the QR or text key and keeping
+        it somewhere safe in case you lose access to your wallet.\n\n Don\'t forget your password or it won\'t work</string>
+    <string name="MULTIWALLET_backup">Back up</string>
+    <string name="MULTIWALLET_done">Done</string>
+    <string name="MULTIWALLET_activate">In order to enable multi wallet, we need to create an encrypted version of your key.\n\n Please enter a strong password that will be required when switching wallets</string>
+    <string name="MULTIWALLET_enter_ecnryption_password">Enter a password</string>
+    <string name="MULTIWALLET_enter_confirm_password">Confirm password</string>
+    <string name="MULTIWALLET_next">Next</string>
 </resources>

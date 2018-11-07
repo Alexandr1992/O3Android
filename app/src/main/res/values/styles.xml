@@ -94,6 +94,16 @@
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
     </style>
 
+    <style name="AppTheme.Dark.NoTopBar" parent="AppTheme.Dark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.White.NoTopBar" parent="AppTheme.White">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name = "AppTheme.Dialog.Light" parent ="Theme.AppCompat.Light.Dialog">
         <item name="defaultTextColor">@color/colorBlack</item>
         <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>

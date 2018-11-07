@@ -149,10 +149,6 @@ class MainTabbedActivity : AppCompatActivity() {
         setupKeyboardDetector()
         setupChannel()
         setupZendesk()
-        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        supportActionBar?.setCustomView(R.layout.actionbar_layout)
-        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
-        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
 
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -172,41 +168,30 @@ class MainTabbedActivity : AppCompatActivity() {
                         activeTabID = item.itemId
                         activeTabPosition = 0
                         tabName = "Home"
-                        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_portfolio)
-                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
-
                     }
                     R.id.action_item2 -> {
                         switchFragment(1)
                         activeTabID = item.itemId
                         activeTabPosition = 1
                         tabName = "Wallet"
-                        find<TextView>(R.id.mytext).text = resources.getString(R.string.WALLET_my_o3_wallet)
-                        find<ImageButton>(R.id.rightNavButton).visibility = View.VISIBLE
                     }
                     R.id.action_item3 -> {
                         switchFragment(2)
                         activeTabID = item.itemId
                         activeTabPosition = 2
                         tabName = "Marketplace"
-                        find<TextView>(R.id.mytext).text = resources.getString(R.string.MARKETPLACE_marketplace)
-                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
                     }
                     R.id.action_item4 -> {
                         switchFragment(3)
                         activeTabID = item.itemId
                         activeTabPosition = 3
                         tabName = "News"
-                        find<TextView>(R.id.mytext).text = resources.getString(R.string.TABBAR_news_feed)
-                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
                     }
                     R.id.action_item5 -> {
                         switchFragment(4)
                         activeTabID = item.itemId
                         activeTabPosition = 4
                         tabName = ""
-                        find<TextView>(R.id.mytext).text = resources.getString(R.string.SETTINGS_more)
-                        find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
                     }
                 }
                 Answers().logCustom(CustomEvent("Tab Tapped")
@@ -252,9 +237,9 @@ class MainTabbedActivity : AppCompatActivity() {
     override fun getTheme(): Resources.Theme {
         val theme = super.getTheme()
         if (PersistentStore.getTheme() == "Dark") {
-            theme.applyStyle(R.style.AppTheme_Dark, true)
+            theme.applyStyle(R.style.AppTheme_Dark_NoTopBar, true)
         } else {
-            theme.applyStyle(R.style.AppTheme_White, true)
+            theme.applyStyle(R.style.AppTheme_White_NoTopBar, true)
         }
         return theme
     }

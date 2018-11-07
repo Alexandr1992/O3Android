@@ -2,9 +2,7 @@ package network.o3.o3wallet.Portfolio
 
 import android.content.Context
 import android.content.Intent
-import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,18 +10,12 @@ import android.view.ViewGroup
 import android.widget.*
 import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
-import com.robinhood.spark.SparkView
-import com.robinhood.spark.animation.MorphSparkAnimator
-import kotlinx.android.synthetic.main.settings_activity_add_contact.view.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.R.*
-import network.o3.o3wallet.Settings.WatchAddressFragment
-import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.*
-import org.jetbrains.anko.support.v4.alert
 import org.json.JSONObject
 import java.text.NumberFormat
 

@@ -1,4 +1,4 @@
-package network.o3.o3wallet
+package network.o3.o3wallet.MultiWallet.Activate
 
 
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import network.o3.o3wallet.R
 
 
 // TODO: Rename parameter arguments, choose names that match

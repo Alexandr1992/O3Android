@@ -84,8 +84,8 @@ class PortfolioHeader: Fragment {
         }
 
         var lastPosition = 1
-        if (PersistentStore.getWatchAddresses().count() > 0) {
-            lastPosition = PersistentStore.getWatchAddresses().count() + 1
+        if (NEP6.getFromFileSystem().getWalletAccounts().count() > 0) {
+            lastPosition = NEP6.getFromFileSystem().getWalletAccounts().count() + 1
         }
 
         if (position == lastPosition) {

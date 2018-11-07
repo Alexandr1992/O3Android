@@ -26,7 +26,6 @@ import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.Onboarding.CreateKey.Backup.DialogBackupKeyFragment
-import network.o3.o3wallet.Settings.WatchAddressFragment
 import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
@@ -52,11 +51,11 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     lateinit var recyclerView: RecyclerView
     lateinit var mView: View
 
-    var hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+    var hasWatchAddress = NEP6.hasMultipleAccounts()
 
     val needReloadWatchAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            homeModel.hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+            homeModel.hasWatchAddress = NEP6.hasMultipleAccounts()
             viewPager?.adapter?.notifyDataSetChanged()
             val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
             val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
@@ -238,8 +237,10 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
             emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_add_watch_address)
             emptyPortfolioTextView?.text = resources.getString(R.string.PORTFOLIO_no_watch_addresses)
             emptyPortfolioActionButton?.setOnClickListener {
-                val watchAddressModal = WatchAddressFragment.newInstance()
+                //TODO: handle empty wallet deposit
+                /*val watchAddressModal = WatchAddressFragment.newInstance()
                 watchAddressModal.show(activity!!.supportFragmentManager, watchAddressModal.tag)
+                */
             }
         } else {
             emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_deposit_tokens)
@@ -270,16 +271,16 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     }
 
     fun getHeaderTitle(position: Int): String {
-        if (position > 0 && PersistentStore.getWatchAddresses().count() == 0) {
+        if (position > 0 && !NEP6.hasMultipleAccounts()) {
             return resources.getString(R.string.PORTFOLIO_your_watch_addresses)
         }
 
         if (position == 0) {
             return resources.getString(R.string.WALLET_my_o3_wallet)
-        } else if (position == PersistentStore.getWatchAddresses().count() + 1  ){
+        } else if (position == NEP6.getFromFileSystem().getWalletAccounts().count() + 1  ){
             return resources.getString(R.string.PORTFOLIO_total)
         } else {
-            return PersistentStore.getWatchAddresses()[position - 1].nickname
+            return NEP6.getFromFileSystem().getWalletAccounts()[position - 1].label
         }
     }
 

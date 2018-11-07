@@ -9,23 +9,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/portfolioHeaderFragment"
-                android:layout_width="0dp"
-                android:layout_height="73dp"
-                app:layout_constraintBottom_toTopOf="@+id/portfolioSwipeRefresh"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="spread_inside" />
-
             <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/portfolioSwipeRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                app:layout_constraintTop_toBottomOf="@+id/portfolioHeaderFragment"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <android.support.v4.widget.NestedScrollView
@@ -38,7 +28,16 @@
                         android:descendantFocusability="blocksDescendants"
                         android:orientation="vertical">
 
-                    <include
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/portfolioHeaderFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="73dp"
+                            app:layout_constraintBottom_toTopOf="@+id/portfolioGraph"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_chainStyle="spread_inside" />
+                        <include
                         android:id="@+id/portfolioGraph"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

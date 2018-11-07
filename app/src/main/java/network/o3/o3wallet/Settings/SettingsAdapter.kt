@@ -18,7 +18,9 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import android.os.Bundle
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.Onboarding.LandingActivity
+import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.image
 import zendesk.support.request.RequestActivity
 
@@ -41,7 +43,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     enum class CellType {
-        HEADER, PRIVATEKEY, CONTACTS, WATCHADRESS,
+        HEADER, PRIVATEKEY, CONTACTS, MULTIWALLET,
         CURRENCY, THEME,
         SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
@@ -103,9 +105,9 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             val themeModal = ThemeModalFragment.newInstance()
             themeModal.show((mContext as AppCompatActivity).supportFragmentManager, themeModal.tag)
             return
-        } else if (position == CellType.WATCHADRESS.ordinal) {
-            val watchAddressModal = WatchAddressFragment.newInstance()
-            watchAddressModal.show((mContext as AppCompatActivity).supportFragmentManager, watchAddressModal.tag)
+        } else if (position == CellType.MULTIWALLET.ordinal) {
+            val intent = Intent(mContext, MultiwalletActivateActivity::class.java)
+            startActivity(mContext, intent, null)
             return
         } else if (position == CellType.SUPPORT.ordinal) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))

@@ -93,8 +93,6 @@ class AccountFragment : Fragment() {
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
         scanButton.setOnClickListener { scanAddressTapped() }
-        activity!!.find<ImageButton>(R.id.rightNavButton).setOnClickListener { scanAddressTapped() }
-
     }
 
     fun setupNeoGasClaimViews() {
