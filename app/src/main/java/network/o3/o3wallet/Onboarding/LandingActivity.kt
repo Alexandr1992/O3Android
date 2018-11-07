@@ -12,11 +12,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import com.crashlytics.android.Crashlytics
-import com.google.zxing.integration.android.IntentIntegrator
 import io.fabric.sdk.android.Fabric
 import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
+import network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity
 import network.o3.o3wallet.PersistentStore.clearPersistentStore
 import org.jetbrains.anko.*
 
@@ -157,7 +157,7 @@ class LandingActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG).show()
             return
         } else {
-            val intent = Intent(this, PasscodeRequestActivity::class.java)
+            val intent = Intent(this, LoginNEP6Activity::class.java)
             if (deepLink != null) {
                 intent.putExtra("deepLink", deepLink!!)
             }

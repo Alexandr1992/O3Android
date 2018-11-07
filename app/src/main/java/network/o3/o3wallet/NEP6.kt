@@ -78,7 +78,7 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         accounts[index].key = key
     }
 
-    fun makeNewDefault(address: String, key: String) {
+    fun makeNewDefault(address: String) {
         val defaultIndex = accounts.indexOfFirst { it.isDefault }
         val newDefaultIndex = accounts.indexOfFirst { it.address == address }
 
@@ -107,6 +107,24 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
                 return nep6
             }
         }
+
+        fun nep6HasActivated(): Boolean {
+            val nep6InFile = getFromFileSystem()
+            return nep6InFile.accounts.isNotEmpty()
+        }
+
+        fun getFromFileSystemAsFile(): File {
+            try {
+                val file = File(O3Wallet.appContext!!.filesDir, "O3.json")
+                return file
+            } catch(e: Exception)  {
+                val scryptParams = ScryptParams(16384, 8, 8)
+                val nep6 = NEP6("O3 Wallet", "1.0", scryptParams, mutableListOf())
+                nep6.writeToFileSystem()
+                return File(O3Wallet.appContext!!.filesDir, "O3.json")
+            }
+        }
+
 
         fun removeFromDevice() {
             val file = File(O3Wallet.appContext!!.filesDir, "O3.json")

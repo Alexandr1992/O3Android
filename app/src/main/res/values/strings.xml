@@ -145,6 +145,10 @@
     <string name="ONBOARDING_encrypted_backup_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on nep2">Double check that it arrived safely before continuing.</string>
     <string name="ONBOARDING_encrypted_backup_dialog_button" comment="button title for paper backup dialog">Go to my wallet!</string>
 
+    <string name="ONBOARDING_welcome_back" comment="Header for login title">Welcome back to O3</string>
+    <string name="ONBOARDING_welcome_subtitle" comment="subtitle for login title">Your gateway to the smart economy</string>
+    <string name="ONBOARDING_please_select_wallet" comment="select which wallet to use title">Please select a wallet to login with</string>
+
     <!-- Login Page -->
     <string name="ONBOARDING_scan" comment="Title for scan button, allowing users to login by scanning private key">Scan</string>
     <string name="ONBOARDING_login_footnote" comment="Footnote showing that the private key will be stored locally on the device">This Private Key will be stored on your device after logging in.</string>
@@ -541,4 +545,9 @@
     <string name="MULTIWALLET_enter_ecnryption_password">Enter a password</string>
     <string name="MULTIWALLET_enter_confirm_password">Confirm password</string>
     <string name="MULTIWALLET_next">Next</string>
+    <string name="MULTIWALLET_restore_subtitle">You will need this password to restore your key from backup</string>
+    <string name="MULTIWALLET_activate_multiwallet">Activate MultiWallet</string>
+    <string name="MULTIWALLET_passwords_do_not_match">Your passwords do not match. Please double check it.</string>
+    <string name="MULTIWALLET_password_to_short">Your password is too short. Please make sure it is at least 8 characters in length.</string>
+
 </resources>

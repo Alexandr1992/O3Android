@@ -58,7 +58,6 @@ package="network.o3.o3wallet">
         android:screenOrientation="portrait"
         android:windowSoftInputMode="adjustResize"
         android:theme="@style/AppTheme.Dark">
-        <nav-graph android:value="@navigation/send_nav_graph" />
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
 
@@ -107,7 +106,6 @@ package="network.o3.o3wallet">
         android:screenOrientation="portrait"
         android:windowSoftInputMode="stateAlwaysHidden"
         android:theme="@style/AppTheme.Dark">
-        <nav-graph android:value="@navigation/send_nav_graph" />
     </activity>
     <activity
         android:name=".Dapp.DAppBrowserActivity"
@@ -119,8 +117,10 @@ package="network.o3.o3wallet">
         android:name="network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity"
         android:theme="@style/AppTheme.Dark"
         android:screenOrientation="portrait">
-        <nav-graph android:value="@navigation/activate_multiwallet" />
     </activity>
+    <activity android:name="network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.NoTopBar.White"></activity>
 </application>
 </manifest>
 
