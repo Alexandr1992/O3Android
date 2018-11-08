@@ -549,5 +549,15 @@
     <string name="MULTIWALLET_activate_multiwallet">Activate MultiWallet</string>
     <string name="MULTIWALLET_passwords_do_not_match">Your passwords do not match. Please double check it.</string>
     <string name="MULTIWALLET_password_to_short">Your password is too short. Please make sure it is at least 8 characters in length.</string>
+    <string name="MULTIWALLET_enter_new_wallet_description">Enter a NEO/Ontology encrypted key, private key or address to add a wallet or watch address</string>
+    <string name="MULTIWALLET_enter_wallet_hint">Enter encrypted, private key, or address</string>
+    <string name="MULTIWALLET_add_wallet">Add Wallet</string>
+    <string name="MULTIWALLET_generate_wallet">Generate a new wallet</string>
+    <string name="MULTIWALLET_invalid_wallet_error">Invalid wallet format. Please double check it</string>
 
+    <string name="MULTIWALLET_name_your_wallet">Give this wallet a name</string>
+    <string name="MULTIWALLET_name_hint">My Awesome Wallet</string>
+    <string name="MULTIWALLET_continue">Continue</string>
+    <string name="MULTIWALLET_watch_address_added">A watch only wallet has been added. You can unlock this address at any time by going to settings, manage wallets and entering the private or encrypted key.</string>
+    <string name="MULTIWALLET_encrypt_this_key">Please give your wallet a name and a strong password that you won't forget</string>
 </resources>

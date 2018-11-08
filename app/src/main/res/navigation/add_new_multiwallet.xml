@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/multiWalletAddNew">
+
+    <fragment
+        android:id="@+id/multiWalletAddNew"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew"
+        android:label="multiwallet_add_new"
+        tools:layout="@layout/multiwallet_add_new" >
+        <action
+            android:id="@+id/action_multiWalletAddNew_to_enterMultiwalletWatchAddress"
+            app:destination="@id/enterMultiwalletWatchAddress" />
+        <action
+            android:id="@+id/action_multiWalletAddNew_to_addMultiwalletVerifyNEP2"
+            app:destination="@id/addMultiwalletVerifyNEP2" />
+        <action
+            android:id="@+id/action_multiWalletAddNew_to_enterMultiwalletEncryptPrivateKey"
+            app:destination="@id/enterMultiwalletEncryptPrivateKey" />
+    </fragment>
+    <fragment
+        android:id="@+id/addMultiwalletVerifyNEP2"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddMultiwalletVerifyNEP2"
+        android:label="multiwallet_verify_nep2"
+        tools:layout="@layout/multiwallet_verify_nep2" />
+    <fragment
+        android:id="@+id/enterMultiwalletEncryptPrivateKey"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EnterMultiwalletEncryptPrivateKey"
+        android:label="multiwallet_encrypt_new_private_key"
+        tools:layout="@layout/multiwallet_encrypt_new_private_key" />
+    <fragment
+        android:id="@+id/enterMultiwalletWatchAddress"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EnterMultiwalletWatchAddress"
+        android:label="multiwallet_enter_watch_address"
+        tools:layout="@layout/multiwallet_enter_watch_address" >
+        <action
+            android:id="@+id/action_enterMultiwalletWatchAddress_to_watchAddressAddedSuccess"
+            app:destination="@id/watchAddressAddedSuccess" />
+    </fragment>
+    <fragment
+        android:id="@+id/watchAddressAddedSuccess"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.WatchAddressAddedSuccess"
+        android:label="multiwallet_watch_address_added"
+        tools:layout="@layout/multiwallet_watch_address_added" />
+</navigation>

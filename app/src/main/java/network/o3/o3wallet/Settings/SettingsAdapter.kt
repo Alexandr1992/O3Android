@@ -19,6 +19,8 @@ import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import android.os.Bundle
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
+import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
+import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.Onboarding.LandingActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.image
@@ -106,9 +108,15 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             themeModal.show((mContext as AppCompatActivity).supportFragmentManager, themeModal.tag)
             return
         } else if (position == CellType.MULTIWALLET.ordinal) {
-            val intent = Intent(mContext, MultiwalletActivateActivity::class.java)
-            startActivity(mContext, intent, null)
-            return
+            if (NEP6.nep6HasActivated()) {
+                val intent = Intent(mContext, AddNewMultiwalletRootActivity::class.java)
+                startActivity(mContext, intent, null)
+                return
+            } else {
+                val intent = Intent(mContext, MultiwalletActivateActivity::class.java)
+                startActivity(mContext, intent, null)
+                return
+            }
         } else if (position == CellType.SUPPORT.ordinal) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))
             startActivity(mContext, browserIntent, null)
