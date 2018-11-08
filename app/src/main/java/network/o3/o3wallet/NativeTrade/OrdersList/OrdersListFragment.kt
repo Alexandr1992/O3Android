@@ -62,7 +62,7 @@ class OrdersListFragment : Fragment() {
             onUiThread {
                 ordersListView.adapter = OrdersAdapter(it.first ?: listOf(), this)
                 swipeContainer.isRefreshing = false
-                postOpenOrdersCount(it.first!!)
+                postOpenOrdersCount(it.first ?: listOf())
             }
         }
     }

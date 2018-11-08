@@ -1,6 +1,7 @@
 package network.o3.o3wallet
 
 import android.preference.PreferenceManager
+import neoutils.Neoutils
 import neoutils.Neoutils.generateFromWIF
 import neoutils.Neoutils.generateFromPrivateKey
 import neoutils.Wallet
@@ -42,13 +43,46 @@ object Account {
         return true
     }
 
-    fun restoreWalletFromDevice() {
-        val alias = "O3 Key"
+    fun storeDefaultNep6Pass(password: String) {
+        val encryptor = Encryptor()
+        val alias = "Default NEP6 Pass"
+        val encryptedPass = encryptor.encryptText(alias, password)!!
+
+        val iv = encryptor.getIv()!!
+        setProperty(alias, encryptedPass.toHex(), iv, O3Wallet.appContext!!)
+    }
+
+    fun isEncryptedNEP6PassPresent(): Boolean {
+        val alias = "Default NEP6 Pass"
         val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
-        val storedEncryptedWIF = storedVal.data?.hexStringToByteArray()!!
-        val storedIv = storedVal.iv!!
-        val decrypted = Decryptor().decrypt(alias, storedEncryptedWIF, storedIv)
-        wallet = generateFromWIF(decrypted)
+        if (storedVal.data == null) {
+            return false
+        }
+        val storedEncryptedPass = storedVal.data?.hexStringToByteArray()
+        if (storedEncryptedPass == null || storedEncryptedPass.size == 0 || !Decryptor().keyStoreEntryExists("O3 Key")) {
+            return false
+        }
+        return true
+    }
+
+    fun restoreWalletFromDevice() {
+        if (isEncryptedNEP6PassPresent()) {
+            val alias = "Default NEP6 Pass"
+            val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+            val storedEncryptedPass = storedVal.data?.hexStringToByteArray()!!
+            val storedIv = storedVal.iv!!
+            val decrypted = Decryptor().decrypt(alias, storedEncryptedPass , storedIv)
+            val defaultAccount = NEP6.getFromFileSystem().accounts.find { it.isDefault }!!
+            val wif = Neoutils.neP2Decrypt(defaultAccount.key!!, decrypted)
+            wallet = generateFromWIF(wif)
+        } else {
+            val alias = "O3 Key"
+            val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+            val storedEncryptedWIF = storedVal.data?.hexStringToByteArray()!!
+            val storedIv = storedVal.iv!!
+            val decrypted = Decryptor().decrypt(alias, storedEncryptedWIF, storedIv)
+            wallet = generateFromWIF(decrypted)
+        }
     }
 
     fun createNewWallet() {
@@ -62,6 +96,11 @@ object Account {
 
     fun deleteKeyFromDevice() {
         val alias = "O3 Key"
+        setProperty(alias, "", kotlin.ByteArray(0), O3Wallet.appContext!!)
+    }
+
+    fun deleteNEP6PassFromDevice() {
+        val alias = "Default NEP6 Pass"
         setProperty(alias, "", kotlin.ByteArray(0), O3Wallet.appContext!!)
     }
     
@@ -85,7 +124,6 @@ object Account {
             restoreWalletFromDevice()
             return wallet!!
         }
-
     }
 
     fun clearWallet() {

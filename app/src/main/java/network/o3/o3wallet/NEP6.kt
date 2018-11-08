@@ -82,6 +82,11 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         val defaultIndex = accounts.indexOfFirst { it.isDefault }
         val newDefaultIndex = accounts.indexOfFirst { it.address == address }
 
+        if (defaultIndex == -1) {
+            accounts[newDefaultIndex].isDefault = true
+            return
+        }
+
         accounts[defaultIndex].isDefault = false
         accounts[newDefaultIndex].isDefault = true
 
