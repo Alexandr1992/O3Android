@@ -100,7 +100,7 @@ class MultiWalletAddNew : Fragment() {
             val wallet = Neoutils.generateFromPrivateKey(hex)
             vm.address = wallet.address
             vm.wif = wallet.wif
-            mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_enterMultiwalletEncryptPrivateKey
+            mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_enterMultiwalletEncryptPrivateKey)
         }
     }
 
