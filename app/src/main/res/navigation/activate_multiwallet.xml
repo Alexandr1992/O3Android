@@ -17,6 +17,6 @@
         android:id="@+id/encryptionSuccessFragment"
         android:name="network.o3.o3wallet.MultiWallet.Activate.EncryptExistingKeySuccessFragment"
         android:label="encryptionSuccessFragmemt"
-        tools:layout="@layout/multiwallet_existing_encryption_success" >
+        tools:layout="@layout/multiwallet_encryption_success" >
     </fragment>
 </navigation>

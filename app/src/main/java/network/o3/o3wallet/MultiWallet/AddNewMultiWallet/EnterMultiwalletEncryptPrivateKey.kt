@@ -50,7 +50,7 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
 
         initiateContinueButton()
         initiatePasswordFields()
-        return view
+        return mView
     }
 
     fun validatePassword(): Boolean {
@@ -69,6 +69,7 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
     }
 
     fun initiateContinueButton() {
+        continueButton = mView.find(R.id.continueButton)
         continueButton.isEnabled = false
         continueButton.setOnClickListener {
             val vm = (activity as AddNewMultiwalletRootActivity).viewModel
@@ -78,7 +79,8 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                     val nep6 = NEP6.getFromFileSystem()
                     nep6.addEncryptedKey(vm.address, nameField.text.toString(), account.encryptedKey)
                     nep6.writeToFileSystem()
-                    mView.findNavController().navigate(R.)
+                    vm.encryptedKey = account.encryptedKey
+                    mView.findNavController().navigate(R.id.action_enterMultiwalletEncryptPrivateKey_to_keyEncryptionSuccess)
                 } catch (e: Exception) {
                     //idk
                 }

@@ -1,4 +1,4 @@
-package network.o3.o3wallet.MultiWallet.Activate
+package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
 
 import android.content.Context
@@ -15,13 +15,24 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import net.glxn.qrgen.android.QRCode
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.NEP6
+
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import java.io.File
 import java.io.FileOutputStream
 
-class EncryptExistingKeySuccessFragment : Fragment() {
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+/**
+ * A simple [Fragment] subclass.
+ *
+ */
+class KeyEncryptionSuccess : Fragment() {
 
     lateinit var mView: View
     lateinit var qrImageView: ImageView
@@ -75,7 +86,7 @@ class EncryptExistingKeySuccessFragment : Fragment() {
     }
 
     fun initiateEncryptedKeyValues() {
-        val key = (activity as MultiwalletActivateActivity).viewModel.encryptedKey
+        val key = (activity as AddNewMultiwalletRootActivity).viewModel.encryptedKey
         encryptedKeyTextView.text = key
         val bitmap = QRCode.from(key).withSize(2000, 2000).bitmap()
         qrImageView.setImageBitmap(bitmap)

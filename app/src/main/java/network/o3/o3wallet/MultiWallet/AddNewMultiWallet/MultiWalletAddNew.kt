@@ -36,7 +36,7 @@ class MultiWalletAddNew : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        var mView = inflater.inflate(R.layout.multiwallet_add_new, container, false)
+        mView = inflater.inflate(R.layout.multiwallet_add_new, container, false)
         walletEntryEditText = mView.find(R.id.walletEntryEditText)
         continueButton = mView.find(R.id.continueButton)
 
@@ -119,7 +119,7 @@ class MultiWalletAddNew : Fragment() {
                 mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_addMultiwalletVerifyNEP2)
             } else if (validateWif()) {
                 scanButton.visibility = View.GONE
-                vm.wif = editText.text.toString()
+                vm.wif = walletEntryEditText.text.toString()
                 mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_enterMultiwalletEncryptPrivateKey)
             } else {
                 alert(resources.getString(R.string.MULTIWALLET_invalid_wallet_error)) {
