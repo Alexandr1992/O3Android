@@ -43,7 +43,7 @@ class DialogUnlockEncryptedKey : DialogFragment() {
     lateinit var decryptionTitle: TextView
 
     var decryptionFailedCallback: (() -> Unit)? = null
-    var decryptionSucceededCallback: (() -> Unit)? = null
+    var decryptionSucceededCallback: ((String) -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -112,10 +112,11 @@ class DialogUnlockEncryptedKey : DialogFragment() {
     }
 
     fun decryptionSuccessful(decryptedKey: String) {
+        val password = this.nep2PasswordField.text.toString()
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm!!.hideSoftInputFromWindow(this.nep2PasswordField.getWindowToken(), 0)
         this.dismiss()
-        decryptionSucceededCallback?.invoke()
+        decryptionSucceededCallback?.invoke(password)
     }
 
     fun showDecryptionProgress() {

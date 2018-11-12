@@ -18,9 +18,7 @@ class ActivateMultiWalletViewModel: ViewModel() {
         val nep6 = NEP6.getFromFileSystem()
         nep6.addEncryptedKey(nep2.address, "My O3 Wallet", encryptedKey)
         nep6.writeToFileSystem()
-        nep6.makeNewDefault(nep2.address)
-        nep6.writeToFileSystem()
-        Account.storeDefaultNep6Pass(password)
+        nep6.makeNewDefault(nep2.address, password)
         Account.deleteKeyFromDevice()
     }
 }

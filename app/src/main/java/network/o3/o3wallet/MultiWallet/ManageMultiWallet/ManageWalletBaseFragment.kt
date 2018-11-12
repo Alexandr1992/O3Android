@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import kotlinx.coroutines.experimental.android.UI
 import net.glxn.qrgen.android.QRCode
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
 
 import network.o3.o3wallet.R
@@ -115,10 +116,10 @@ class ManageWalletBaseFragment : Fragment() {
             if (mVm.isDefault) {
                 mContext.toast (mContext.resources.getString(R.string.MULTIWALLET_cannot_delete_default))
                 return
-            } else if (mVm.key == null){
+            } else if (mVm.key != null){
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = {
-                    NEP6.getFromFileSystem().makeNewDefault(mVm.address)
+                neo2DialogFragment.decryptionSucceededCallback = { pass ->
+                    NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
                 }
 
                 neo2DialogFragment.encryptedKey = mVm.key!!
@@ -126,7 +127,7 @@ class ManageWalletBaseFragment : Fragment() {
 
             } else {
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = {
+                neo2DialogFragment.decryptionSucceededCallback = { _ ->
                     //add watch addr
                 }
 

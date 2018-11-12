@@ -1,5 +1,7 @@
 package network.o3.o3wallet
 
+import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import java.io.File
@@ -98,7 +100,7 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         accounts[index].key = key
     }
 
-    fun makeNewDefault(address: String) {
+    fun makeNewDefault(address: String, pass: String) {
         val defaultIndex = accounts.indexOfFirst { it.isDefault }
         val newDefaultIndex = accounts.indexOfFirst { it.address == address }
 
@@ -113,6 +115,12 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         var oldDefaultAccount = accounts[defaultIndex]
         accounts[defaultIndex] = accounts[newDefaultIndex]
         accounts[newDefaultIndex] = oldDefaultAccount
+        network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
+        network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
+        this.writeToFileSystem()
+        val intent = Intent("need-update-watch-address-event")
+        intent.putExtra("reset", true)
+        LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
     }
 
     fun writeToFileSystem() {
