@@ -55,6 +55,14 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         accounts.removeAt(index)
     }
 
+    fun removeAccount(address: String) {
+        val index = accounts.indexOfFirst { it.address == address }
+        if (index == -1) {
+            return
+        }
+        accounts.removeAt(index)
+    }
+
     fun getWalletAccounts(): List<Account> {
         val walletAccounts: MutableList<Account> = mutableListOf()
         val indexDefault = accounts.indexOfFirst { it.isDefault }

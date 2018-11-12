@@ -21,6 +21,7 @@ import android.os.Bundle
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.LandingActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.image
@@ -109,8 +110,8 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             return
         } else if (position == CellType.MULTIWALLET.ordinal) {
             if (NEP6.nep6HasActivated()) {
-                val intent = Intent(mContext, AddNewMultiwalletRootActivity::class.java)
-                startActivity(mContext, intent, null)
+                val manageWalletsModal = ManageWalletsBottomSheet.newInstance()
+                manageWalletsModal.show(mFragment.activity!!.supportFragmentManager, manageWalletsModal.tag)
                 return
             } else {
                 val intent = Intent(mContext, MultiwalletActivateActivity::class.java)

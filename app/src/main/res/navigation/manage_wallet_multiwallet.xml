@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/manage_wallet_multiwallet"
+    app:startDestination="@id/manageWalletBaseFragment">
+
+    <fragment
+        android:id="@+id/manageWalletBaseFragment"
+        android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletBaseFragment"
+        android:label="fragment_manage_wallet_base"
+        tools:layout="@layout/fragment_manage_wallet_base" />
+</navigation>

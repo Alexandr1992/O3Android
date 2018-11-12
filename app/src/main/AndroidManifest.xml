@@ -105,7 +105,7 @@
             android:name=".NativeTrade.NativeTradeRootActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Dapp.DAppBrowserActivity"
             android:hardwareAccelerated="true"
@@ -115,12 +115,13 @@
         <activity
             android:name=".MultiWallet.Activate.MultiwalletActivateActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Onboarding.LoginNEP6.LoginNEP6Activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTopBar.White" />
-        <activity android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity"></activity>
+        <activity android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity" />
+        <activity android:name=".MultiWallet.ManageMultiWallet.MultiwalletManageWallet"></activity>
     </application>
 
 </manifest>

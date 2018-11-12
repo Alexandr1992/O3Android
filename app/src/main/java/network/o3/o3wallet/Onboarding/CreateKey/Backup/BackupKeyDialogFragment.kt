@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
@@ -96,6 +97,9 @@ class DialogBackupKeyFragment : DialogFragment() {
         if (requestCode == 0) {
             if (resultCode == -1) {
                 val privateKeyModal = PrivateKeyFragment.newInstance()
+                val bundle = Bundle()
+                bundle.putString("key", Account.getWallet().wif)
+                privateKeyModal.arguments = bundle
                 privateKeyModal.show((context as AppCompatActivity).supportFragmentManager, privateKeyModal.tag)
             }
         }

@@ -562,4 +562,13 @@
     <string name="MULTIWALLET_encrypt_this_key">Please give your wallet a name and a strong password that you won\'t forget</string>
     <string name="MULTIWALLET_enter_password_to_verify">Decrypt this private key with your password that you have set</string>
     <string name="MULTIWALLET_cannot_decrypt">Could not deecrypt this private key, please double check your password.</string>
+
+    <string name="MULTIWALLET_backup_existing">Backup Wallet</string>
+    <string name="MULTIWALLET_show_raw_key">Show Raw Private Key</string>
+    <string name="MULTIWALLET_unlock">Unlock</string>
+    <string name="MULTIWALLET_remove_wallet">Remove Wallet</string>
+    <string name="MULTIWALLET_add_key_to_watch_address">Add a key to this wallet</string>
+
+    <string name="MULTIWALLET_cannot_delete_default">You cannot remove your default key.</string>
+    <string name="MULTIWALLET_are_you_sure">Are you you sure you want to remove this wallet from your account?</string>
 </resources>

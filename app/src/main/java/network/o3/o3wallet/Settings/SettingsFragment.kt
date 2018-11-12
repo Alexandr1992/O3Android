@@ -35,6 +35,9 @@ class SettingsFragment : Fragment() {
             // Credentials entered successfully!
             if (resultCode == -1) {
                 val privateKeyModal = PrivateKeyFragment.newInstance()
+                val bundle = Bundle()
+                bundle.putString("key", Account.getWallet().wif)
+                privateKeyModal.arguments = bundle
                 privateKeyModal.show((context as AppCompatActivity).supportFragmentManager, privateKeyModal.tag)
             } else {
 

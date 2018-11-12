@@ -77,9 +77,10 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                 try {
                     val account = Neoutils.neP2Encrypt(vm.wif, vm.password)
                     val nep6 = NEP6.getFromFileSystem()
+                    vm.encryptedKey = account.encryptedKey
+                    vm.address = account.address
                     nep6.addEncryptedKey(vm.address, nameField.text.toString(), account.encryptedKey)
                     nep6.writeToFileSystem()
-                    vm.encryptedKey = account.encryptedKey
                     mView.findNavController().navigate(R.id.action_enterMultiwalletEncryptPrivateKey_to_keyEncryptionSuccess)
                 } catch (e: Exception) {
                     //idk
