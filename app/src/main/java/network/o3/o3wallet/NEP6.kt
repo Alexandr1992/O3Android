@@ -63,6 +63,7 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         accounts.removeAt(index)
     }
 
+
     fun getWalletAccounts(): List<Account> {
         val walletAccounts: MutableList<Account> = mutableListOf()
         val indexDefault = accounts.indexOfFirst { it.isDefault }
@@ -79,6 +80,17 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         }
 
         return walletAccounts
+    }
+
+    fun getReadOnlyAccounts(): List<Account> {
+        val readOnlyAccounts: MutableList<Account> = mutableListOf()
+        for (account in accounts) {
+            if (account.isDefault == false) {
+                readOnlyAccounts.add(account)
+            }
+        }
+
+        return readOnlyAccounts
     }
 
     fun convertWatchAddressToWallet(address: String, key: String) {

@@ -221,7 +221,8 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         val emptyWalletView = view?.find<ConstraintLayout>(R.id.emptyWalletContainer)
         val emptyPortfolioActionButton = view?.find<Button>(R.id.emptyPortfolioActionButton)
         val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
-        if (portfolio.data.first().averageBTC == 0.0) {
+        if ((portfolio.data.first().averageBTC == 0.0 && homeModel.getPosition() == 0) ||
+                homeModel.getPosition() == 1 && NEP6.getFromFileSystem().accounts.count() <= 1) {
             sparkView?.visibility = View.INVISIBLE
             mView.find<LinearLayout>(R.id.intervalButtonLayout).visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
@@ -271,16 +272,16 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     }
 
     fun getHeaderTitle(position: Int): String {
-        if (position > 0 && !NEP6.hasMultipleAccounts()) {
-            return resources.getString(R.string.PORTFOLIO_your_watch_addresses)
+        if (position == 0 && NEP6.getFromFileSystem().accounts.isEmpty()) {
+            return resources.getString(R.string.WALLET_my_o3_wallet)
+        } else if (position == 1 && NEP6.getFromFileSystem().accounts.count() <= 1) {
+            return resources.getString(R.string.PORTFOLIO_total)
         }
 
-        if (position == 0) {
-            return resources.getString(R.string.WALLET_my_o3_wallet)
-        } else if (position == NEP6.getFromFileSystem().getWalletAccounts().count() + 1  ){
-            return resources.getString(R.string.PORTFOLIO_total)
+        if (position < NEP6.getFromFileSystem().accounts.count()) {
+            return NEP6.getFromFileSystem().accounts[position].label
         } else {
-            return NEP6.getFromFileSystem().getWalletAccounts()[position - 1].label
+            return resources.getString(R.string.PORTFOLIO_total)
         }
     }
 
@@ -288,7 +289,30 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         viewPager?.currentItem = viewPager?.currentItem!!
         val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
         val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
-        header.setHeaderInfo(amount, percentChange, homeModel.getInterval(), homeModel.getInitialDate(), getHeaderTitle(homeModel.getPosition()))
+        val isDefault = (homeModel.getPosition() == 0)
+        var account: NEP6.Account? = null
+
+        var walletType = PortfolioHeader.WalletType.Default
+        if (NEP6.getFromFileSystem().accounts.count() <= 1) {
+            walletType = PortfolioHeader.WalletType.Combined
+        }
+
+        if (NEP6.getFromFileSystem().accounts.count() > 1 &&
+                homeModel.getPosition() < NEP6.getFromFileSystem().accounts.count()) {
+            account = NEP6.getFromFileSystem().accounts[homeModel.getPosition()]
+            if (account.key == null) {
+                walletType = PortfolioHeader.WalletType.WatchOnly
+            } else {
+                walletType = PortfolioHeader.WalletType.Wallet
+            }
+
+            if (homeModel.getPosition() == NEP6.getFromFileSystem().accounts.count()) {
+                walletType = PortfolioHeader.WalletType.Combined
+            }
+        }
+
+        header.setHeaderInfo(amount, percentChange, homeModel.getInterval(),
+                homeModel.getInitialDate(), getHeaderTitle(homeModel.getPosition()), walletType, account)
     }
 
     override fun showPortfolioLoadingIndicator() {

@@ -17,10 +17,10 @@ class PortfolioHeaderPagerAdapter(fragmentManager: FragmentManager): FragmentPag
     }
 
     override fun getCount(): Int {
-        if (NEP6.getFromFileSystem().getWalletAccounts().count() == 0) {
+        if (NEP6.getFromFileSystem().accounts.count() == 0) {
             return 2
         }
 
-        return NEP6.getFromFileSystem().getWalletAccounts().count() + 2
+        return NEP6.getFromFileSystem().accounts.count() + 1
     }
 }

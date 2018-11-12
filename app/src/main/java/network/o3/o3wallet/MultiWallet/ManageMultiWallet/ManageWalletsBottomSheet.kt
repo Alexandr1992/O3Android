@@ -9,10 +9,8 @@ import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
+import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.NEP6
 
@@ -22,6 +20,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.startActivity
 
 class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
 
@@ -44,9 +43,9 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
         override fun getView(position: Int, view: View?, viewGroup: ViewGroup?): View {
             if (position == getCount() - 1) {
                 val addRow = mContext.layoutInflater.inflate(R.layout.multiwallet_manage_wallets_add_wallet_row, viewGroup, false)
-                addRow.onClick {
-                    val intent = Intent(mContext, MultiWalletAddNew::class.java)
-                    ContextCompat.startActivity(mContext, intent, null)
+                addRow.find<Button>(R.id.addWalletButton).setOnClickListener {
+                    val intent = Intent(mContext, AddNewMultiwalletRootActivity::class.java)
+                    mContext.startActivity(intent, null)
                 }
                 return addRow
             } else {
@@ -66,7 +65,7 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
                     intent.putExtra("key", account.key ?: "")
                     intent.putExtra("name", account.label)
                     intent.putExtra("isDefault", account.isDefault)
-                    ContextCompat.startActivity(mContext, intent, null)
+                    mContext.startActivity(intent, null)
                 }
                 return walletRow
             }

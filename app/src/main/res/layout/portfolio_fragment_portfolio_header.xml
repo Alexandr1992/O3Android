@@ -68,7 +68,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView12"
+        android:id="@+id/walletTypeIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -78,7 +78,7 @@
         app:layout_constraintTop_toTopOf="@+id/fundAmountTextView" />
 
     <ImageView
-        android:id="@+id/imageView14"
+        android:id="@+id/lockIconImageView"
         android:layout_width="12dp"
         android:layout_height="13dp"
         android:layout_marginStart="8dp"

@@ -124,7 +124,7 @@ class HomeViewModelV2: ViewModel() {
 
     fun loadAssetsReadOnly() {
         bg {
-            val addresses = NEP6.getFromFileSystem().getWalletAccounts()
+            val addresses = NEP6.getFromFileSystem().getReadOnlyAccounts()
             if (addresses.count() == 0 && position == 1) {
                 displayedAssets?.postValue(arrayListOf())
             }
@@ -133,13 +133,13 @@ class HomeViewModelV2: ViewModel() {
             var index = 0
             for (address in addresses) {
                 if (position - 1 == index) {
-                    val cachedAddress = NEP6.getFromFileSystem().getWalletAccounts()[position - 1]
+                    val cachedAddress = NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]
                     val cachedAssets = PersistentStore.getSavedAddressBalances(cachedAddress.address)
                     if (cachedAssets != null) {
                         displayedAssets!!.postValue(cachedAssets)
                     }
                 }
-
+                index ++
                 O3PlatformClient().getTransferableAssets(address.address) {
                     if (it.second != null || it.first == null) {
                         latch.countDown()
@@ -148,10 +148,9 @@ class HomeViewModelV2: ViewModel() {
                     assetsReadOnly!![address]?.clear()
                     addReadOnlyBalances(address, it.first!!)
                     if (position - 1 == index) {
-                        displayedAssets?.postValue(assetsReadOnly!![NEP6.getFromFileSystem().getWalletAccounts()[position - 1]])
-                        PersistentStore.setSavedAddressBalances(address.address, assetsReadOnly!![NEP6.getFromFileSystem().getWalletAccounts()[position - 1]])
+                        displayedAssets?.postValue(assetsReadOnly!![NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]])
+                        PersistentStore.setSavedAddressBalances(address.address, assetsReadOnly!![NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]])
                     }
-                    index ++
                     latch.countDown()
                 }
             }
@@ -181,7 +180,12 @@ class HomeViewModelV2: ViewModel() {
     fun reloadDisplayedAssets() {
         when (position) {
             0 -> getAssetsWritable(true)
-            NEP6.getFromFileSystem().getWalletAccounts().count() + 1 -> if (hasWatchAddress) { combineReadOnlyAndWritable() } else getAssetsReadOnly(true)
+            NEP6.getFromFileSystem().accounts.count() ->
+                if (hasWatchAddress) {
+                    combineReadOnlyAndWritable()
+                } else {
+                    getAssetsReadOnly(true)
+                }
             else -> getAssetsReadOnly(true)
         }
     }
@@ -192,7 +196,12 @@ class HomeViewModelV2: ViewModel() {
         }
         when (position) {
             0 -> getAssetsWritable(refresh)
-            NEP6.getFromFileSystem().getWalletAccounts().count() + 1 -> if (hasWatchAddress) { combineReadOnlyAndWritable() } else getAssetsReadOnly(true)
+            NEP6.getFromFileSystem().accounts.count() ->
+                if (hasWatchAddress) {
+                    combineReadOnlyAndWritable()
+                } else {
+                    getAssetsReadOnly(true)
+                }
             else -> getAssetsReadOnly(true)
         }
         return displayedAssets!!
