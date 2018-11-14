@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.getSystemService
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.API.O3Platform.Dapp
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.DialogUnlockEncryptedKey
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.R
@@ -40,7 +42,7 @@ class LoginNEP6Activity : AppCompatActivity() {
         mView = layoutInflater.inflate(R.layout.onboarding_login_nep6, null)
         recyclerView = mView.find(R.id.nep6_wallets_recycler)
 
-        var accounts = NEP6.getFromFileSystem().accounts
+        var accounts = NEP6.getFromFileSystem().getWalletAccounts()
         if (accounts.isEmpty()) {
             var account = NEP6.Account("", "My O3 Wallet", true, null)
             recyclerView.adapter = LoginNEP6Adapter(listOf(account), this)
@@ -67,7 +69,7 @@ class LoginNEP6Activity : AppCompatActivity() {
         }
     }
 
-    class LoginNEP6Adapter(accounts: List<NEP6.Account>, activity: Activity): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class LoginNEP6Adapter(accounts: List<NEP6.Account>, activity: AppCompatActivity): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         var mAccounts = accounts
         var mActivity = activity
 
@@ -106,9 +108,9 @@ class LoginNEP6Activity : AppCompatActivity() {
             }
         }
 
-        class WalletHolder(v: View, a: Activity) : RecyclerView.ViewHolder(v) {
+        class WalletHolder(v: View, a: AppCompatActivity) : RecyclerView.ViewHolder(v) {
             private var view: View = v
-            private var activity: Activity = a
+            private var activity: AppCompatActivity = a
 
             fun requestPasscode(v: View) {
                 val mKeyguardManager =  v.context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
@@ -138,6 +140,17 @@ class LoginNEP6Activity : AppCompatActivity() {
                 view.onClick {
                     if (wallet.isDefault) {
                         requestPasscode(view)
+                    } else {
+                        val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
+                        neo2DialogFragment.decryptionSucceededCallback = { pass ->
+                            NEP6.getFromFileSystem().makeNewDefault(wallet.address, pass)
+                            Account.restoreWalletFromDevice()
+                            val intent = Intent(activity, SelectingBestNode::class.java)
+                            activity.startActivity(intent)
+                        }
+
+                        neo2DialogFragment.encryptedKey = wallet.key!!
+                        neo2DialogFragment.showNow(activity.supportFragmentManager, "backupkey")
                     }
                 }
             }
