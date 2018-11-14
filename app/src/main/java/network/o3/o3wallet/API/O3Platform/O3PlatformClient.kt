@@ -440,4 +440,43 @@ class O3PlatformClient {
             }
         }
     }
+
+    //default value will be two in case of error
+    data class SwitcheoPair(val name: String, val precision: Int)
+    fun getPrecisionForPair(baseAsset: String, otherAsset: String, completion: (Int) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/trading/switcheo/pairs"
+        val pair = otherAsset.toUpperCase() + "_" + baseAsset.toUpperCase()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val pairs = Gson().fromJson<List<SwitcheoPair>>(platformResponse.result.asJsonObject["data"])
+                val correctPair = pairs.find{ it.name == pair}
+                completion(correctPair?.precision ?: 2)
+            } else {
+                completion(2)
+            }
+        }
+    }
+
+    data class SwitcheoToken(val id: String, val name: String, val symbol: String, val decimals: Int, val precision: Int)
+    fun getPrecisionForToken(tokenSymbol: String, completion: (Int) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/trading/switcheo/pairs"
+        val token = tokenSymbol.toUpperCase()
+        var request = url.httpGet()
+        request.headers["User-Agent"] = "O3Android"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val pairs = Gson().fromJson<List<SwitcheoToken>>(platformResponse.result.asJsonObject["data"])
+                val correctPair = pairs.find{ it.symbol == token}
+                completion(correctPair?.precision ?: 2)
+            } else {
+                completion(2)
+            }
+        }
+    }
 }

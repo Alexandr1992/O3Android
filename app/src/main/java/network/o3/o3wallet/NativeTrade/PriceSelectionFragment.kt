@@ -36,10 +36,11 @@ class PriceSelectionFragment : Fragment() {
     lateinit var mView: View
     lateinit var priceEditText: EditText
     lateinit var fiatPriceTextView: TextView
+    var precision = 2
 
     fun digitTapped(digit: String) {
         (activity as NativeTradeRootActivity).viewModel.priceSelectionType = "manual"
-        if (priceEditText.text.toString().hasMaxDecimals(8)) {
+        if (priceEditText.text.toString().hasMaxDecimals(precision)) {
             return
         }
 
@@ -137,7 +138,7 @@ class PriceSelectionFragment : Fragment() {
             currentDifference += 0.01
             val newPrice = vm.marketPrice!!.second * currentDifference
             vm.setManualPrice(newPrice)
-            priceEditText.text = SpannableStringBuilder("%.8f".format(newPrice))
+            priceEditText.text = SpannableStringBuilder(("%." + precision +"f").format(newPrice))
 
         }
 
@@ -148,7 +149,7 @@ class PriceSelectionFragment : Fragment() {
             currentDifference -= 0.01
             val newPrice = vm.marketPrice!!.second * currentDifference
             vm.setManualPrice(newPrice)
-            priceEditText.text = SpannableStringBuilder("%.8f".format(newPrice))
+            priceEditText.text = SpannableStringBuilder(("%." + precision +"f").format(newPrice))
         }
     }
 
@@ -201,7 +202,7 @@ class PriceSelectionFragment : Fragment() {
         val topOrderLabel = mView.find<TextView>(R.id.topOrderBookPrice)
         vm.getOrderBookTopPrice().observe(this, Observer { rate ->
             onUiThread {
-                topOrderLabel.text = rate!!.removeTrailingZeros()
+                topOrderLabel.text = ("%." + precision +"f").format(rate)
             }
         })
 
@@ -253,7 +254,7 @@ class PriceSelectionFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.native_trade_price_selection_fragment, container, false)
-
+        precision = (activity as NativeTradeRootActivity).viewModel.pricePrecision
         initiateEstimatedFill()
         initiatePinPadButtons()
         initiatePriceEditText()

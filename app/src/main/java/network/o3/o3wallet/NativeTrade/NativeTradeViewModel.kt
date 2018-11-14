@@ -11,6 +11,9 @@ import network.o3.o3wallet.API.Switcheo.Offer
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
 import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.format
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.concurrent.CountDownLatch
 
 class NativeTradeViewModel: ViewModel() {
@@ -36,7 +39,11 @@ class NativeTradeViewModel: ViewModel() {
     var error: MutableLiveData<Error> = MutableLiveData()
     var priceSelectionType = "default"
 
+    var pricePrecision = 2
+    var orderPrecision = 2
+
     init {
+        loadOrderPrecision()
         estimatedFillAmount.value = 0.0
         selectedBaseAsset.value = "NEO"
         baseAssetImageUrl.value = "https://cdn.o3.network/img/neo/NEO.png"
@@ -44,6 +51,12 @@ class NativeTradeViewModel: ViewModel() {
     }
 
     var orderBook = listOf<Offer>()
+
+    fun loadOrderPrecision() {
+        O3PlatformClient().getPrecisionForToken(orderAsset) {
+            orderPrecision  = it
+        }
+    }
 
     fun getSelectedBaseAssetValue(): String? {
         return selectedBaseAsset.value
@@ -100,7 +113,7 @@ class NativeTradeViewModel: ViewModel() {
 
     fun setSelectedBaseAssetAmount(amount: Double) {
         selectedBaseAssetAmount.value = amount
-        orderAssetAmount.value =  amount / selectedPrice?.value?.second!!
+        orderAssetAmount.value = BigDecimal((amount / selectedPrice?.value?.second!!)).setScale(orderPrecision, RoundingMode.HALF_UP).toDouble()
     }
 
     fun getOrderAssetAmount(): LiveData<Double> {
@@ -123,11 +136,12 @@ class NativeTradeViewModel: ViewModel() {
     fun setManualPrice(newPrice: Double) {
         var previousCryptoPrice = selectedPrice?.value?.second!!
 
+        val roundedPrice = BigDecimal(newPrice).setScale(pricePrecision, RoundingMode.HALF_UP).toDouble()
         var percentMultiple = (newPrice / marketPrice!!.second)
         var newFiatPrice = marketPrice!!.first * percentMultiple
 
-        selectedPrice?.postValue(Pair(newFiatPrice, newPrice))
-        selectedPrice?.value = Pair(newFiatPrice, newPrice)
+        selectedPrice?.postValue(Pair(newFiatPrice, roundedPrice))
+        selectedPrice?.value = Pair(newFiatPrice, roundedPrice)
         updateMarketRateDifference(newPrice)
         if (orderAssetAmount.value != null) {
             selectedBaseAssetAmount.postValue(selectedPrice?.value?.second!! * orderAssetAmount.value!!)
@@ -154,18 +168,21 @@ class NativeTradeViewModel: ViewModel() {
         }
 
         var cryptoPrice: Double = 0.0
-        O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset.value!!) {
-            if (it.second != null) {
-                error.postValue(it.second)
-                return@getRealTimePrice
-            }
-            if (it.first?.price == null) {
-                error.postValue(Error("Unknown error occured"))
-                return@getRealTimePrice
-            }
 
-            cryptoPrice = it.first!!.price
-            latch.countDown()
+        O3PlatformClient().getPrecisionForPair(selectedBaseAsset.value!!, orderAsset) { precision ->
+            pricePrecision = precision
+            O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset.value!!) {
+                if (it.second != null) {
+                    error.postValue(it.second)
+                    return@getRealTimePrice
+                }
+                if (it.first?.price == null) {
+                    error.postValue(Error("Unknown error occured"))
+                    return@getRealTimePrice
+                }
+                cryptoPrice = BigDecimal(it.first!!.price).setScale(precision, RoundingMode.HALF_UP).toDouble()
+                latch.countDown()
+            }
         }
         latch.await()
         marketPrice = Pair(fiatPrice, cryptoPrice)

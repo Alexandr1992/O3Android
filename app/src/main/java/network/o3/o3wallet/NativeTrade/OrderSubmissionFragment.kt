@@ -35,6 +35,7 @@ import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.nio.file.Files.find
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -134,7 +135,12 @@ class OrderSubmissionFragment : Fragment() {
     }
 
     fun digitTapped(digit: String) {
-        if (editingAmountView?.text.toString().hasMaxDecimals(8)) {
+        if (editingAmountView?.text.toString().hasMaxDecimals(8) && editingAmountView == baseAssetAmountEditText) {
+            return
+        }
+
+        if (editingAmountView?.text.toString().hasMaxDecimals((activity as NativeTradeRootActivity).viewModel.orderPrecision)
+                && editingAmountView == orderAssetAmountEditText) {
             return
         }
 
@@ -296,7 +302,8 @@ class OrderSubmissionFragment : Fragment() {
                     orderAssetAmountEditText.text = SpannableStringBuilder("")
                     placeOrderButton.isEnabled = false
                 } else {
-                    orderAssetAmountEditText.text = SpannableStringBuilder(newValue.removeTrailingZeros())
+                    val newVal = BigDecimal(newValue).setScale((activity as NativeTradeRootActivity).viewModel.orderPrecision, RoundingMode.HALF_UP).toDouble()
+                    orderAssetAmountEditText.text = SpannableStringBuilder(newVal.removeTrailingZeros())
                     placeOrderButton.isEnabled = true
                 }
             }
