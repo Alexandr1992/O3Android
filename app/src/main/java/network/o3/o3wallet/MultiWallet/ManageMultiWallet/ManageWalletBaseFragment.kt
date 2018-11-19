@@ -8,15 +8,18 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
+import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import kotlinx.coroutines.experimental.android.UI
 import net.glxn.qrgen.android.QRCode
-import network.o3.o3wallet.Account
+import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
 import network.o3.o3wallet.NEP6
+import network.o3.o3wallet.O3Wallet
 
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
@@ -39,10 +42,11 @@ class ManageWalletBaseFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        mView = inflater.inflate(R.layout.fragment_manage_wallet_base, container, false)
+        mView = inflater.inflate(R.layout.multiwallet_manage_wallet_base, container, false)
         vm = (activity as MultiwalletManageWallet).viewModel
         initiateQrViews()
         initiateListView()
+        initiateActionBar()
 
         return mView
     }
@@ -50,6 +54,41 @@ class ManageWalletBaseFragment : Fragment() {
     fun initiateListView() {
         val listView = mView.find<ListView>(R.id.optionsListView)
         listView.adapter = ManageWalletAdapter(context!!, this, vm)
+    }
+
+    fun initiateActionBar() {
+        (activity as AppCompatActivity).supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        (activity as AppCompatActivity).supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        activity?.find<TextView>(R.id.mytext)?.text = vm.name
+        activity?.find<ImageButton>(R.id.rightNavButton)?.visibility = View.VISIBLE
+        activity?.find<ImageButton>(R.id.rightNavButton)?.image = ContextCompat.getDrawable(context!!, R.drawable.ic_edit)
+
+        val titleIcon = activity?.find<ImageView>(R.id.titleIcon)!!
+        titleIcon.visibility = View.VISIBLE
+        if (vm.isDefault) {
+            titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unlocked)
+        } else if (vm.key == null) {
+            titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_locked)
+        } else {
+            titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_eye)
+        }
+
+        activity?.find<ImageButton>(R.id.rightNavButton)?.setOnClickListener {
+            val newNameEntry = DialogInputEntryFragment.newInstance()
+            newNameEntry.submittedInput = { newName ->
+                var nep6 = NEP6.getFromFileSystem()
+                val index = nep6.accounts.indexOfFirst { it.address == vm.address }!!
+                nep6.accounts[index].label = newName
+                nep6.writeToFileSystem()
+                vm.name = newName
+                activity?.find<TextView>(R.id.mytext)?.text = vm.name
+                val intent = Intent("need-update-watch-address-event")
+                intent.putExtra("reset", true)
+                LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
+            }
+
+            newNameEntry.showNow(activity!!.supportFragmentManager, "change name")
+        }
     }
 
     fun initiateQrViews() {
@@ -192,12 +231,13 @@ class ManageWalletBaseFragment : Fragment() {
             nameTextView.text = titles[position]
             if (position == 3) {
                 nameTextView.textColor = ContextCompat.getColor(mContext, R.color.colorLoss)
+                view.find<ImageView>(R.id.settingsIcon).visibility = View.VISIBLE
+                view.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mContext, R.drawable.ic_trash)
             } else {
                 nameTextView.textColor = ContextCompat.getColor(mContext, R.color.colorPrimary)
             }
 
             setAction(view, position)
-
             return view
         }
 

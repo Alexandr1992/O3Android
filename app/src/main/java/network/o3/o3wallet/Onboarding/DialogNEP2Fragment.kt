@@ -95,7 +95,7 @@ class DialogNEP2Fragment : DialogFragment() {
     fun attemptDecryption() {
         onUiThread {
             showDecryptionProgress()
-            Handler().postDelayed(Runnable {
+            Handler().postDelayed( {
                 try {
                     decryptedKey = Neoutils.neP2Decrypt(encryptedKey, nep2PasswordField.text.trim().toString())
                     if (Account.fromWIF(decryptedKey)) {

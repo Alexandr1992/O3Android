@@ -130,8 +130,9 @@ class HomeViewModelV2: ViewModel() {
             }
 
             val latch = CountDownLatch(addresses.count())
-            var index = 0
+            var index = -1
             for (address in addresses) {
+                index ++
                 if (position - 1 == index) {
                     val cachedAddress = NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]
                     val cachedAssets = PersistentStore.getSavedAddressBalances(cachedAddress.address)
@@ -139,7 +140,6 @@ class HomeViewModelV2: ViewModel() {
                         displayedAssets!!.postValue(cachedAssets)
                     }
                 }
-                index ++
                 O3PlatformClient().getTransferableAssets(address.address) {
                     if (it.second != null || it.first == null) {
                         latch.countDown()

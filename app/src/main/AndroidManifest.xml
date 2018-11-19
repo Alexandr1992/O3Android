@@ -119,7 +119,8 @@
         <activity
             android:name=".Onboarding.LoginNEP6.LoginNEP6Activity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTopBar.White" />
+            android:windowSoftInputMode="adjustNothing"
+            android:theme="@style/AppTheme.NoTopBar" />
         <activity android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity" />
         <activity android:name=".MultiWallet.ManageMultiWallet.MultiwalletManageWallet"></activity>
     </application>

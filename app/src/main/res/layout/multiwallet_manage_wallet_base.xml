@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/primaryBackgroundColor"
     tools:context=".MultiWallet.ManageMultiWallet.ManageWalletBaseFragment">
 
     <android.support.v7.widget.CardView
@@ -23,7 +24,7 @@
             <ImageView
                 android:id="@+id/addressQrImageView"
                 android:layout_width="185dp"
-                android:layout_height="186dp"
+                android:layout_height="185dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 android:src="@drawable/ic_qrcode_button"
@@ -54,7 +55,7 @@
                         android:src="@drawable/ic_blue_logo"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.75"
+                        app:layout_constraintHorizontal_bias="0.51"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,8 +82,7 @@
             <ImageView
                 android:id="@+id/encryptedKeyQRCodeImageView"
                 android:layout_width="185dp"
-                android:layout_height="190dp"
-                android:layout_marginBottom="8dp"
+                android:layout_height="185dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 android:src="@drawable/ic_qrcode_button"
@@ -111,10 +111,9 @@
                         android:layout_height="24dp"
                         android:adjustViewBounds="false"
                         android:background="@color/colorWhite"
-                        android:src="@drawable/ic_blue_logo"
+                        android:src="@drawable/ic_encrypted_key"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.75"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -129,6 +128,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:minLines="4"
         android:text="TextView"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="@+id/addressCardView"
@@ -140,6 +140,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:lines="4"
         android:text="TextView"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="@+id/cardView4"
@@ -150,9 +151,11 @@
         android:id="@+id/optionsListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/secondaryBackgroundColor"
+        android:divider="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/keyTextView" />
 </android.support.constraint.ConstraintLayout>

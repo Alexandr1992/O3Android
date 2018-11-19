@@ -68,6 +68,7 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
 
     fun getWalletAccounts(): List<Account> {
         val walletAccounts: MutableList<Account> = mutableListOf()
+        walletAccounts.clear()
         val indexDefault = accounts.indexOfFirst { it.isDefault }
         if (indexDefault == -1) {
             return listOf()
@@ -76,7 +77,7 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         walletAccounts.add(accounts[indexDefault])
 
         for (account in accounts) {
-            if (account.key != null) {
+            if (account.key != null  &&  account.key != "" && account.isDefault == false) {
                 walletAccounts.add(account)
             }
         }
@@ -86,6 +87,7 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
 
     fun getReadOnlyAccounts(): List<Account> {
         val readOnlyAccounts: MutableList<Account> = mutableListOf()
+        readOnlyAccounts.clear()
         for (account in accounts) {
             if (account.isDefault == false) {
                 readOnlyAccounts.add(account)
@@ -106,6 +108,12 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
 
         if (defaultIndex == -1) {
             accounts[newDefaultIndex].isDefault = true
+            network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
+            network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
+            this.writeToFileSystem()
+            val intent = Intent("need-update-watch-address-event")
+            intent.putExtra("reset", true)
+            LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
             return
         }
 

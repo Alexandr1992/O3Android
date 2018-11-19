@@ -571,4 +571,7 @@
 
     <string name="MULTIWALLET_cannot_delete_default">You cannot remove your default key.</string>
     <string name="MULTIWALLET_are_you_sure">Are you you sure you want to remove this wallet from your account?</string>
+    <string name="ONBOARDING_remove_wallet">This will remove your old wallet from this device? Are you sure you want to continue? This action cannot be reversed.</string>
+    <string name="MULTIWALLET_cannot_create_duplicate">You are already using this name for another wallet, please select a different one</string>
+    <string name="MULTIWALLET_choose_new_name">Choose a new name</string>
 </resources>

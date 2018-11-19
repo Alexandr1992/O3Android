@@ -58,7 +58,7 @@ object Account {
             return false
         }
         val storedEncryptedPass = storedVal.data?.hexStringToByteArray()
-        if (storedEncryptedPass == null || storedEncryptedPass.size == 0 || !Decryptor().keyStoreEntryExists("O3 Key")) {
+        if (storedEncryptedPass == null || storedEncryptedPass.size == 0 || !Decryptor().keyStoreEntryExists("Default NEP6 Pass")) {
             return false
         }
         return true

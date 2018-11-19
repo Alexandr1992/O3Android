@@ -9,5 +9,5 @@
         android:id="@+id/manageWalletBaseFragment"
         android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletBaseFragment"
         android:label="fragment_manage_wallet_base"
-        tools:layout="@layout/fragment_manage_wallet_base" />
+        tools:layout="@layout/multiwallet_manage_wallet_base" />
 </navigation>

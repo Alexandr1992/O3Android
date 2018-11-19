@@ -54,7 +54,7 @@ class LandingActivity : AppCompatActivity() {
             createWalletTapped()
         }
 
-        if (Account.isEncryptedWalletPresent()) {
+        if (Account.isEncryptedWalletPresent() || Account.isEncryptedNEP6PassPresent()) {
             authenticateEncryptedWallet()
         } else {
             autoPlayAnimation()
@@ -165,17 +165,29 @@ class LandingActivity : AppCompatActivity() {
         }
     }
 
+    fun generateNewWallet() {
+        NEP6.removeFromDevice()
+        val generatedWIF = Neoutils.newWallet().wif
+        clearPersistentStore()
+        val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
+        intent.putExtra("wif", generatedWIF)
+        startActivity(intent)
+    }
+
     fun createWalletTapped() {
         val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!mKeyguardManager.isKeyguardSecure) {
             Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
             return
         } else {
-            val generatedWIF = Neoutils.newWallet().wif
-            clearPersistentStore()
-            val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
-            intent.putExtra("wif", generatedWIF)
-            startActivity(intent)
+            if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
+                alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
+                    yesButton { generateNewWallet() }
+                    noButton {}
+                }.show()
+            } else {
+                generateNewWallet()
+            }
         }
     }
 
@@ -186,8 +198,18 @@ class LandingActivity : AppCompatActivity() {
             Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
             return
         }
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+        if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
+            alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
+                yesButton {
+                    val intent = Intent(this@LandingActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                }
+                noButton {}
+            }.show()
+        } else {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
@@ -17,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.API.O3Platform.Dapp
@@ -40,6 +42,7 @@ class LoginNEP6Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mView = layoutInflater.inflate(R.layout.onboarding_login_nep6, null)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.colorLanding)
         recyclerView = mView.find(R.id.nep6_wallets_recycler)
 
         var accounts = NEP6.getFromFileSystem().getWalletAccounts()
@@ -47,9 +50,8 @@ class LoginNEP6Activity : AppCompatActivity() {
             var account = NEP6.Account("", "My O3 Wallet", true, null)
             recyclerView.adapter = LoginNEP6Adapter(listOf(account), this)
         } else {
-            recyclerView.adapter = LoginNEP6Adapter(NEP6.getFromFileSystem().accounts, this)
+            recyclerView.adapter = LoginNEP6Adapter(accounts, this)
         }
-
         setContentView(mView)
     }
 
@@ -101,7 +103,7 @@ class LoginNEP6Activity : AppCompatActivity() {
 
             if (viewType == HEADER_VIEW_TYPE) {
                 val view = layoutInflater.inflate(R.layout.onboarding_login_nep6_header, parent, false)
-                return HeaderHolder(view)
+                return HeaderHolder(view, mActivity)
             } else {
                 val view = layoutInflater.inflate(R.layout.onboarding_login_nep_6_wallet_row, parent, false)
                 return WalletHolder(view, mActivity)
@@ -154,14 +156,18 @@ class LoginNEP6Activity : AppCompatActivity() {
                     }
                 }
             }
-            companion object {
-                private val wallet_key = "wallet"
-            }
         }
 
-        class HeaderHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+        class HeaderHolder(v: View, a: AppCompatActivity) : RecyclerView.ViewHolder(v) {
             private var view: View = v
-            fun bindHeader() {}
+            private var activity: AppCompatActivity = a
+
+            fun bindHeader() {
+                view.find<ImageView>(R.id.dismissButton).setOnClickListener {
+                    activity.finish()
+                }
+            }
         }
     }
 }
