@@ -1,5 +1,7 @@
 package network.o3.o3wallet.Wallet
 import android.arch.lifecycle.Observer
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -8,7 +10,9 @@ import android.support.v4.app.Fragment
 import android.widget.*
 import android.support.v4.widget.SwipeRefreshLayout
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
@@ -29,6 +33,7 @@ import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
+import network.o3.o3wallet.Portfolio.PortfolioHeader
 import org.jetbrains.anko.support.v4.find
 
 class AccountFragment : Fragment() {
@@ -64,9 +69,24 @@ class AccountFragment : Fragment() {
 
     private lateinit var mView: View
 
+    val needReloadWatchAddressReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            accountViewModel = AccountViewModel()
+            setupAssetList()
+            setupAssetListener()
+            setupNeoClaimsListener()
+            setupNeoGasClaimViews()
+            setupOntologyGasClaimViews()
+            setupActionButtons()
+            setupOntologyClaimListener()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         mView = inflater.inflate(R.layout.wallet_fragment_account, container, false)
+        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadWatchAddressReciever,
+                IntentFilter("need-update-watch-address-event"))
         accountViewModel = AccountViewModel()
         setupAssetList()
         return mView

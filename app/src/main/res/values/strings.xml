@@ -566,6 +566,7 @@
     <string name="MULTIWALLET_backup_existing">Backup Wallet</string>
     <string name="MULTIWALLET_show_raw_key">Show Raw Private Key</string>
     <string name="MULTIWALLET_unlock">Unlock</string>
+    <string name="MULTIWALLET_unlock_question">Unlock?</string>
     <string name="MULTIWALLET_remove_wallet">Remove Wallet</string>
     <string name="MULTIWALLET_add_key_to_watch_address">Add a key to this wallet</string>
 

@@ -82,7 +82,7 @@
             <ImageView
                 android:id="@+id/encryptedKeyQRCodeImageView"
                 android:layout_width="185dp"
-                android:layout_height="185dp"
+                android:layout_height="182dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 android:src="@drawable/ic_qrcode_button"
@@ -158,4 +158,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/keyTextView" />
+
+    <Button
+        android:id="@+id/unlockWatchAddrButton"
+        style="@style/AccentButton.Rounded"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/MULTIWALLET_unlock_question"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/keyTextView"
+        app:layout_constraintStart_toStartOf="@+id/keyTextView"
+        app:layout_constraintTop_toBottomOf="@+id/cardView4" />
 </android.support.constraint.ConstraintLayout>

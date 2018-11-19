@@ -1,10 +1,13 @@
 package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -26,11 +29,20 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
 
     lateinit var mView: View
     lateinit var listView: ListView
+
+
+    val needReloadAddressReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            (listView.adapter as ManageWalletsAdapter).notifyDataSetChanged()
+        }
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.multiwallet_manage_wallets_bottom_sheet, container, false)
         listView = mView.find(R.id.manage_wallets_list)
         listView.adapter = ManageWalletsAdapter(context!!)
+        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadAddressReciever,
+                IntentFilter("need-update-watch-address-event"))
         return mView
     }
 

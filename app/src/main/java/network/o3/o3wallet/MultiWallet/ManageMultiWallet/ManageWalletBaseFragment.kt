@@ -3,12 +3,14 @@ package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -16,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
 import network.o3.o3wallet.NEP6
@@ -24,6 +27,7 @@ import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
 import network.o3.o3wallet.Wallet.toast
+import network.o3.o3wallet.toBitmap
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import java.io.File
@@ -68,9 +72,9 @@ class ManageWalletBaseFragment : Fragment() {
         if (vm.isDefault) {
             titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unlocked)
         } else if (vm.key == null) {
-            titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_locked)
-        } else {
             titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_eye)
+        } else {
+            titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_locked)
         }
 
         activity?.find<ImageButton>(R.id.rightNavButton)?.setOnClickListener {
@@ -91,6 +95,17 @@ class ManageWalletBaseFragment : Fragment() {
         }
     }
 
+    fun initiateUnlockWatchAddr() {
+        val unlockButton = mView.find<Button>(R.id.unlockWatchAddrButton)
+        unlockButton.visibility = View.VISIBLE
+
+        val bitmap = QRCode.from(vm.address).withSize(1000, 1000).bitmap()
+        Blurry.with(context).radius(15).sampling(3).from(bitmap).into(encryptedKeyQrView)
+        unlockButton.setOnClickListener {
+
+        }
+    }
+
     fun initiateQrViews() {
         addressQrView = mView.find(R.id.addressQrImageView)
         encryptedKeyQrView = mView.find(R.id.encryptedKeyQRCodeImageView)
@@ -104,8 +119,12 @@ class ManageWalletBaseFragment : Fragment() {
         val bitmapAddress = QRCode.from(vm.address).withSize(1000, 1000).bitmap()
         addressQrView.setImageBitmap(bitmapAddress)
 
-        val bitmapKey = QRCode.from(vm.key).withSize(1000, 1000).bitmap()
-        encryptedKeyQrView.setImageBitmap(bitmapKey)
+        if (vm.key != null && vm.key != "") {
+            val bitmapKey = QRCode.from(vm.key).withSize(1000, 1000).bitmap()
+            encryptedKeyQrView.setImageBitmap(bitmapKey)
+        } else {
+            initiateUnlockWatchAddr()
+        }
     }
 
     class ManageWalletAdapter(context: Context, fragment: Fragment, vm: ManageWalletViewModel): BaseAdapter() {
@@ -226,6 +245,7 @@ class ManageWalletBaseFragment : Fragment() {
 
 
             val view = mContext.layoutInflater.inflate(R.layout.settings_row_layout, null, false)
+
             val nameTextView = view.find<TextView>(R.id.titleTextView)
             view.find<ImageView>(R.id.settingsIcon).visibility = View.GONE
             nameTextView.text = titles[position]
