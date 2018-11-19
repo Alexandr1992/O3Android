@@ -127,34 +127,25 @@ class HomeViewModelV2: ViewModel() {
             val addresses = NEP6.getFromFileSystem().getReadOnlyAccounts()
             if (addresses.count() == 0 && position == 1) {
                 displayedAssets?.postValue(arrayListOf())
+                return@bg
             }
 
-            val latch = CountDownLatch(addresses.count())
-            var index = -1
-            for (address in addresses) {
-                index ++
-                if (position - 1 == index) {
-                    val cachedAddress = NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]
-                    val cachedAssets = PersistentStore.getSavedAddressBalances(cachedAddress.address)
-                    if (cachedAssets != null) {
-                        displayedAssets!!.postValue(cachedAssets)
-                    }
-                }
-                O3PlatformClient().getTransferableAssets(address.address) {
-                    if (it.second != null || it.first == null) {
-                        latch.countDown()
-                        return@getTransferableAssets
-                    }
-                    assetsReadOnly!![address]?.clear()
-                    addReadOnlyBalances(address, it.first!!)
-                    if (position - 1 == index) {
-                        displayedAssets?.postValue(assetsReadOnly!![NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]])
-                        PersistentStore.setSavedAddressBalances(address.address, assetsReadOnly!![NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]])
-                    }
-                    latch.countDown()
-                }
+            val cachedAddress = NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]
+            val cachedAssets = PersistentStore.getSavedAddressBalances(cachedAddress.address)
+            var address = addresses[position - 1]
+            if (cachedAssets != null) {
+                displayedAssets!!.postValue(cachedAssets)
             }
-            latch.await()
+
+            O3PlatformClient().getTransferableAssets(address.address) {
+                if (it.second != null || it.first == null) {
+                    return@getTransferableAssets
+                }
+                assetsReadOnly!![address]?.clear()
+                addReadOnlyBalances(address, it.first!!)
+                displayedAssets?.postValue(assetsReadOnly!![NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]])
+                PersistentStore.setSavedAddressBalances(address.address, assetsReadOnly!![NEP6.getFromFileSystem().getReadOnlyAccounts()[position - 1]])
+            }
             delegate.hideAssetLoadingIndicator()
         }
     }

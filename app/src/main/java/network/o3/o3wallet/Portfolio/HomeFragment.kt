@@ -57,13 +57,12 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         override fun onReceive(context: Context, intent: Intent) {
             homeModel.hasWatchAddress = NEP6.hasMultipleAccounts()
             viewPager?.adapter?.notifyDataSetChanged()
-            if (intent.getBooleanExtra("reset", false)) {
-                viewPager?.setCurrentItem(0, true)
-            }
-
             val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
             val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
             header.configureArrows()
+            if (intent.getBooleanExtra("reset", false)) {
+                viewPager?.setCurrentItem(0, true)
+            }
             homeModel.reloadDisplayedAssets()
         }
     }

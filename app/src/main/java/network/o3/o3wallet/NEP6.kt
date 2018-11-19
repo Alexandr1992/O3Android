@@ -111,9 +111,6 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
             network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
             network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
             this.writeToFileSystem()
-            val intent = Intent("need-update-watch-address-event")
-            intent.putExtra("reset", true)
-            LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
             return
         }
 
@@ -126,14 +123,14 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
         network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
         this.writeToFileSystem()
-        val intent = Intent("need-update-watch-address-event")
-        intent.putExtra("reset", true)
-        LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
     }
 
     fun writeToFileSystem() {
         val file = File(O3Wallet.appContext!!.filesDir, "O3.json")
         file.writeText(Gson().toJson(this))
+        val intent = Intent("need-update-watch-address-event")
+        intent.putExtra("reset", true)
+        LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
     }
 
     companion object  {
