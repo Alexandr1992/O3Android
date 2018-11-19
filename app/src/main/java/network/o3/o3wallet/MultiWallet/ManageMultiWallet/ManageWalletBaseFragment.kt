@@ -60,13 +60,7 @@ class ManageWalletBaseFragment : Fragment() {
         listView.adapter = ManageWalletAdapter(context!!, this, vm)
     }
 
-    fun initiateActionBar() {
-        (activity as AppCompatActivity).supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        (activity as AppCompatActivity).supportActionBar?.setCustomView(R.layout.actionbar_layout)
-        activity?.find<TextView>(R.id.mytext)?.text = vm.name
-        activity?.find<ImageButton>(R.id.rightNavButton)?.visibility = View.VISIBLE
-        activity?.find<ImageButton>(R.id.rightNavButton)?.image = ContextCompat.getDrawable(context!!, R.drawable.ic_edit)
-
+    fun setTitleIcon() {
         val titleIcon = activity?.find<ImageView>(R.id.titleIcon)!!
         titleIcon.visibility = View.VISIBLE
         if (vm.isDefault) {
@@ -76,6 +70,16 @@ class ManageWalletBaseFragment : Fragment() {
         } else {
             titleIcon.image = ContextCompat.getDrawable(context!!, R.drawable.ic_locked)
         }
+    }
+
+    fun initiateActionBar() {
+        (activity as AppCompatActivity).supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        (activity as AppCompatActivity).supportActionBar?.setCustomView(R.layout.actionbar_layout)
+        activity?.find<TextView>(R.id.mytext)?.text = vm.name
+        activity?.find<ImageButton>(R.id.rightNavButton)?.visibility = View.VISIBLE
+        activity?.find<ImageButton>(R.id.rightNavButton)?.image = ContextCompat.getDrawable(context!!, R.drawable.ic_edit)
+
+        setTitleIcon()
 
         activity?.find<ImageButton>(R.id.rightNavButton)?.setOnClickListener {
             val newNameEntry = DialogInputEntryFragment.newInstance()
@@ -178,6 +182,7 @@ class ManageWalletBaseFragment : Fragment() {
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
                 neo2DialogFragment.decryptionSucceededCallback = { pass ->
                     NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
+                    (mFragment as ManageWalletBaseFragment).setTitleIcon()
                 }
 
                 neo2DialogFragment.encryptedKey = mVm.key!!
