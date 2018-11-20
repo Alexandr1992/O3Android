@@ -151,6 +151,13 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
             return nep6InFile.accounts.isNotEmpty()
         }
 
+        fun unlockWatchAddressInFileSystem(address: String, key: String) {
+            val nep6 = getFromFileSystem()
+            val index = nep6.accounts.indexOfFirst { it.address  == address}
+            nep6.accounts[index].key = key
+            nep6.writeToFileSystem()
+        }
+
         fun getFromFileSystemAsFile(): File {
             try {
                 val file = File(O3Wallet.appContext!!.filesDir, "O3.json")

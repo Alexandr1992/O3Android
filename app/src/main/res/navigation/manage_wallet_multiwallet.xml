@@ -9,5 +9,14 @@
         android:id="@+id/manageWalletBaseFragment"
         android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletBaseFragment"
         android:label="fragment_manage_wallet_base"
-        tools:layout="@layout/multiwallet_manage_wallet_base" />
+        tools:layout="@layout/multiwallet_manage_wallet_base" >
+        <action
+            android:id="@+id/action_manageWalletBaseFragment_to_unlockWatchAddressFragment"
+            app:destination="@id/unlockWatchAddressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/unlockWatchAddressFragment"
+        android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.UnlockWatchAddressFragment"
+        android:label="multiwallet_unlock_watch_address"
+        tools:layout="@layout/multiwallet_unlock_watch_address" />
 </navigation>

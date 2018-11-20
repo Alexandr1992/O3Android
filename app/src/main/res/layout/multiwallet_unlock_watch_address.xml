@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MultiWallet.AddNewMultiWallet.EnterMultiwalletEncryptPrivateKey">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MultiWallet.ManageMultiWallet.UnlockWatchAddressFragment">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView2"
@@ -16,32 +16,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView40"
+
+    <EditText
+        android:id="@+id/wipTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/MULTIWALLET_encrypt_this_key"
-        android:textAlignment="center"
-        android:textAppearance="@style/RegularText"
+        android:ems="10"
+        android:hint="@string/ONBOARDING_your_private_key"
+        android:inputType="textMultiLine"
+        android:maxLength="58"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView2" />
-
-    <EditText
-        android:id="@+id/walletNameField"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/MULTIWALLET_name_hint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView40" />
 
     <EditText
         android:id="@+id/confirmPasswordField"
@@ -50,8 +39,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:inputType="textPassword"
         android:hint="@string/MULTIWALLET_enter_confirm_password"
-        android:inputType="textNoSuggestions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/enterPasswordField" />
@@ -61,13 +50,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/MULTIWALLET_enter_ecnryption_password"
-        android:inputType="textNoSuggestions"
+        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/walletNameField" />
+        app:layout_constraintTop_toBottomOf="@+id/wipTextView" />
 
     <ImageView
         android:id="@+id/passwordHideImageView"
@@ -101,5 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPasswordField" />
+
+
 
 </android.support.constraint.ConstraintLayout>

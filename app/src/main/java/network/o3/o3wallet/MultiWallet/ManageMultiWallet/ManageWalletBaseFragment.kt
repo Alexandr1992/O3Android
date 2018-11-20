@@ -18,6 +18,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
@@ -106,7 +108,7 @@ class ManageWalletBaseFragment : Fragment() {
         val bitmap = QRCode.from(vm.address).withSize(1000, 1000).bitmap()
         Blurry.with(context).radius(15).sampling(3).from(bitmap).into(encryptedKeyQrView)
         unlockButton.setOnClickListener {
-
+            mView.findNavController()?.navigate(R.id.action_manageWalletBaseFragment_to_unlockWatchAddressFragment)
         }
     }
 
@@ -189,13 +191,7 @@ class ManageWalletBaseFragment : Fragment() {
                 neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
 
             } else {
-                val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = { _ ->
-                    //add watch addr
-                }
-
-                neo2DialogFragment.encryptedKey = mVm.key!!
-                neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
+                mFragment.view?.findNavController()?.navigate(R.id.action_manageWalletBaseFragment_to_unlockWatchAddressFragment)
             }
         }
 

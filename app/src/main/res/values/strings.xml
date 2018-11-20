@@ -575,4 +575,7 @@
     <string name="ONBOARDING_remove_wallet">This will remove your old wallet from this device? Are you sure you want to continue? This action cannot be reversed.</string>
     <string name="MULTIWALLET_cannot_create_duplicate">You are already using this name for another wallet, please select a different one</string>
     <string name="MULTIWALLET_choose_new_name">Choose a new name</string>
+    <string name="MUTLIWALLET_invalid_key">Invalid private key format, please double check it</string>
+    <string name="MULTIWALLET_invalid_password_length">Your password must be at least 8 characters</string>
+
 </resources>
