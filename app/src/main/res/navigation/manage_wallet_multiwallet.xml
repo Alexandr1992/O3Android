@@ -18,5 +18,13 @@
         android:id="@+id/unlockWatchAddressFragment"
         android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.UnlockWatchAddressFragment"
         android:label="multiwallet_unlock_watch_address"
-        tools:layout="@layout/multiwallet_unlock_watch_address" />
+        tools:layout="@layout/multiwallet_unlock_watch_address" >
+        <action
+            android:id="@+id/action_unlockWatchAddressFragment_to_unlockKeySuccessFragment"
+            app:destination="@id/unlockKeySuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/unlockKeySuccessFragment"
+        android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.UnlockKeySuccessFragment"
+        android:label="UnlockKeySuccessFragment" />
 </navigation>

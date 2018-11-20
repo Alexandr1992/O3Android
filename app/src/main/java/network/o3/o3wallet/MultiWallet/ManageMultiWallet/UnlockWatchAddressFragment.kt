@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.multiwallet_verify_nep2.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
@@ -95,7 +96,7 @@ class UnlockWatchAddressFragment : Fragment() {
                 try {
                     val decrypted = Neoutils.neP2Decrypt(keyText, enterPasswordField.text.toString())
                     NEP6.unlockWatchAddressInFileSystem(address, keyText)
-                    //perform segue
+                    mView.findNavController().navigate(R.id.action_unlockWatchAddressFragment_to_unlockKeySuccessFragment)
                 } catch (e: Exception) {
                     alert(resources.getString(R.string.MULTIWALLET_cannot_decrypt)) {
                         yesButton { }
@@ -105,7 +106,7 @@ class UnlockWatchAddressFragment : Fragment() {
             } else try {
                 val encryptedKey = Neoutils.neP2Encrypt(keyText, enterPasswordField.text.toString())
                 NEP6.unlockWatchAddressInFileSystem(address, encryptedKey.encryptedKey)
-                //perform segue
+                mView.findNavController().navigate(R.id.action_unlockWatchAddressFragment_to_unlockKeySuccessFragment)
             } catch (e: Exception) {
                 alert("Unknown error") {
                     yesButton { }
