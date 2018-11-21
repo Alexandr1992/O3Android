@@ -7,17 +7,4 @@ class ManageWalletViewModel: ViewModel() {
     var isDefault: Boolean = false
     lateinit var address: String
     lateinit var name: String
-
-
-    fun updateName() {
-
-    }
-
-    fun updateDefaultStatus() {
-
-    }
-
-    fun addKey() {
-
-    }
 }

@@ -116,6 +116,12 @@ class SettingsFragment : Fragment() {
         return view
     }
 
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadAddressReciever)
+        super.onDestroy()
+    }
+
     companion object {
         fun newInstance(): SettingsFragment {
             return SettingsFragment()

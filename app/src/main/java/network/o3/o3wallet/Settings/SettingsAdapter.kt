@@ -14,17 +14,15 @@ import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.net.Uri
 import network.o3.o3wallet.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.LandingActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
-import org.jetbrains.anko.image
+import org.jetbrains.anko.*
 import zendesk.support.request.RequestActivity
 
 
@@ -39,7 +37,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_address_book, R.drawable.ic_settingswatchonlyaddressicon,
             R.drawable.ic_currency, R.drawable.ic_moon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
-            R.drawable.ic_settings_logout, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
+            R.drawable.ic_trash, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
     init {
         mContext = context
         mFragment = fragment
@@ -82,9 +80,19 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
         if (position == CellType.VERSION.ordinal) {
             val version = mContext.packageManager.getPackageInfo(mContext.packageName, 0).versionName
             titleTextView.text = mContext.resources.getString(R.string.SETTINGS_version, version)
+            titleTextView.textColor = ContextCompat.getColor(mContext, R.color.colorSubtitleGrey)
+        }
+
+        if (position == CellType.LOGOUT.ordinal) {
+            titleTextView.textColor = ContextCompat.getColor(mContext, R.color.colorLoss)
         }
 
         view.findViewById<ImageView>(R.id.settingsIcon).image = mContext.getDrawable(images[position - 1])
+        if (position == CellType.VERSION.ordinal) {
+            view.findViewById<ImageView>(R.id.settingsIcon).image = null
+        }
+
+
 
         view.setOnClickListener {
             getClickListenerForPosition(position)
@@ -128,12 +136,13 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
                     .show(mContext)
             return
         } else if (position == CellType.LOGOUT.ordinal) {
+
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {
                 yesButton {
+                    mFragment.activity?.finish()
                     Account.deleteKeyFromDevice()
                     Account.deleteNEP6PassFromDevice()
                     NEP6.removeFromDevice()
-                    mFragment.activity?.finish()
                     val intent = Intent(mContext, LandingActivity::class.java)
                     startActivity(mContext, intent, null)
                 }

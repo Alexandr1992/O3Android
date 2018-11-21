@@ -33,6 +33,7 @@ import java.text.NumberFormat
 import java.util.*
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.SwapWalletBottomSheet
 import network.o3.o3wallet.Portfolio.PortfolioHeader
 import org.jetbrains.anko.support.v4.find
 
@@ -40,7 +41,7 @@ class AccountFragment : Fragment() {
     // toolbar items
     private lateinit var myQrButton: Button
     private lateinit var sendButton: Button
-    private lateinit var scanButton: Button
+    private lateinit var scanButton: ImageView
 
     //assets list
     private lateinit var swipeContainer: SwipeRefreshLayout
@@ -79,7 +80,14 @@ class AccountFragment : Fragment() {
             setupOntologyGasClaimViews()
             setupActionButtons()
             setupOntologyClaimListener()
+            setupTopBar()
         }
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadWatchAddressReciever)
+        super.onDestroy()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -100,7 +108,20 @@ class AccountFragment : Fragment() {
         setupOntologyGasClaimViews()
         setupActionButtons()
         setupOntologyClaimListener()
-        activity?.title = "Account"
+        setupTopBar()
+    }
+
+    fun setupTopBar() {
+        var walletName = "My O3 Wallet"
+        if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
+            walletName = NEP6.getFromFileSystem().accounts[0].label
+        }
+        activity?.find<TextView>(R.id.accountTitleTextView)?.text = walletName
+
+        activity?.find<ImageView>(R.id.walletSwapButton)?.setOnClickListener {
+            val bottomSheet = SwapWalletBottomSheet()
+            bottomSheet.show(activity!!.supportFragmentManager, "swapWallet")
+        }
     }
 
 
@@ -108,7 +129,7 @@ class AccountFragment : Fragment() {
     fun setupActionButtons() {
         myQrButton = mView.findViewById(R.id.requestButton)
         sendButton = mView.findViewById(R.id.sendButton)
-        scanButton = mView.findViewById(R.id.scanButton)
+        scanButton = activity?.findViewById(R.id.scanButton)!!
 
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
@@ -200,7 +221,7 @@ class AccountFragment : Fragment() {
             onUiThread {
                 swipeContainer.isRefreshing = false
                 if (it == null) {
-                    context?.toast(accountViewModel.getLastError().localizedMessage)
+                    context?.toast("Error")
                 } else {
                      (assetListView.adapter as AccountAssetsAdapter).setAssetsArray(it.assets)
                 }
@@ -449,9 +470,9 @@ class AccountFragment : Fragment() {
     fun showOntologyLoadingInProgress() {
         onUiThread {
             ontologyClaimingStateTitle.text = resources.getString(R.string.WALLET_syncing_title)
+            ontologyClaimButton.visibility = View.GONE
             ontologyGasProgress.visibility = View.VISIBLE
             ontologySyncButton.visibility = View.GONE
-            ontologyClaimButton.visibility = View.GONE
         }
     }
 
@@ -508,7 +529,6 @@ class AccountFragment : Fragment() {
         integrator.setOrientationLocked(false)
         integrator.initiateScan()
     }
-
 
     fun sendButtonTapped(payload: String, assetId: String? = null) {
         val intent = Intent(activity, SendV2Activity::class.java)

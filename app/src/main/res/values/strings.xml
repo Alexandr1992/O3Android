@@ -170,7 +170,7 @@
         <item>Theme</item>
         <item>Support</item>
         <item>Contact</item>
-        <item>Logout</item>
+        <item>Clear App Data</item>
         <item>Version</item>
         <item>Advanced</item>
     </string-array>
@@ -218,7 +218,8 @@
     <string name="SETTINGS_block_count" comment="The bllock height of the node">Block Count: %1$d</string>
 
     <!-- Settings: Logout -->
-    <string name="SETTINGS_logout_warning" comment="A warning showing that logging out will delete the private key from the device">Are you sure you want to remove your Private Key from this device?</string>
+    <string name="SETTINGS_logout_warning" comment="A warning showing that logging out will delete the private key from the device">Are you sure you want to clear all O3 app data?
+        This includes all private and encrypted kets stored on this device. Please make sure your keys are backed up. You cannot undo this action.</string>
 
 
     <!-- Wallet: Address Book -->
@@ -577,5 +578,6 @@
     <string name="MULTIWALLET_choose_new_name">Choose a new name</string>
     <string name="MUTLIWALLET_invalid_key">Invalid private key format, please double check it</string>
     <string name="MULTIWALLET_invalid_password_length">Your password must be at least 8 characters</string>
-
+    <string name="MULTIWALLET_no_additional_wallets">No additional wallets added</string>
+    <string name="MULTIWALLET_add_additional_wallets">Add Wallet</string>
 </resources>

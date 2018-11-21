@@ -11,12 +11,9 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/walletNameTextView"
         app:layout_constraintStart_toEndOf="@+id/walletNameTextView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.507"
+        app:layout_constraintTop_toTopOf="@+id/walletNameTextView"
         app:srcCompat="@drawable/ic_locked" />
 
     <TextView
@@ -31,4 +28,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/walletAddressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="fdsafdasfdas"
+        android:textAppearance="@style/SubtitleText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/walletNameTextView"
+        app:layout_constraintTop_toBottomOf="@id/walletNameTextView" />
 </android.support.constraint.ConstraintLayout>

@@ -131,6 +131,8 @@
         android:minLines="4"
         android:text="TextView"
         android:textAlignment="center"
+        android:textAppearance="@style/RegularText"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="@+id/addressCardView"
         app:layout_constraintStart_toStartOf="@+id/addressCardView"
         app:layout_constraintTop_toBottomOf="@+id/addressCardView" />
@@ -143,6 +145,8 @@
         android:lines="4"
         android:text="TextView"
         android:textAlignment="center"
+        android:textAppearance="@style/RegularText"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="@+id/cardView4"
         app:layout_constraintStart_toStartOf="@+id/cardView4"
         app:layout_constraintTop_toBottomOf="@+id/cardView4" />

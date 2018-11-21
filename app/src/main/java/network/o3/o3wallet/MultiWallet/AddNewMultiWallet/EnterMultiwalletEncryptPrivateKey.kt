@@ -65,6 +65,7 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
             }.show()
             return false
         }
+        (activity as AddNewMultiwalletRootActivity).viewModel.password = passwordField.text.toString()
         return true
     }
 

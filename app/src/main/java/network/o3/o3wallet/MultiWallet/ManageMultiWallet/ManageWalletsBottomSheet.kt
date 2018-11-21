@@ -30,12 +30,18 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
     lateinit var mView: View
     lateinit var listView: ListView
 
-
     val needReloadAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             (listView.adapter as ManageWalletsAdapter).notifyDataSetChanged()
         }
     }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadAddressReciever)
+        super.onDestroy()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.multiwallet_manage_wallets_bottom_sheet, container, false)
@@ -64,6 +70,7 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
                 val walletRow = mContext.layoutInflater.inflate(R.layout.multiwallet_manage_wallets_wallet_row, viewGroup, false)
                 val account = getItem(position)
                 walletRow.find<TextView>(R.id.walletNameTextView).text = account.label
+                walletRow.find<TextView>(R.id.walletAddressTextView).text = account.address
                 if (account.isDefault) {
                     walletRow.find<ImageView>(R.id.walletLockIcon).image = ResourcesCompat.getDrawable(mContext.resources, R.drawable.ic_unlocked, null)
                 } else if(account.key == null){

@@ -45,6 +45,12 @@ class TabbedAccount : Fragment() {
                 IntentFilter("need-update-watch-address-event"))
     }
 
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadAddressReciever)
+        super.onDestroy()
+    }
+
     companion object {
         fun newInstance(): TabbedAccount {
             return TabbedAccount()

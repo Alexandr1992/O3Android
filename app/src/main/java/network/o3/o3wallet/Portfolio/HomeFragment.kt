@@ -31,7 +31,8 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.onUiThread
 import android.support.v7.widget.DividerItemDecoration
-
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
+import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 
 
 interface HomeViewModelProtocol {
@@ -235,13 +236,22 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         }
 
         if (homeModel.getPosition() > 0) {
-            emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_add_watch_address)
-            emptyPortfolioTextView?.text = resources.getString(R.string.PORTFOLIO_no_watch_addresses)
+            emptyPortfolioTextView?.text = resources.getString(R.string.MULTIWALLET_no_additional_wallets)
+            if (!NEP6.nep6HasActivated()) {
+                emptyPortfolioActionButton?.text = resources.getString(R.string.MULTIWALLET_activate_multiwallet)
+            } else {
+                emptyPortfolioActionButton?.text = resources.getString(R.string.MULTIWALLET_add_additional_wallets)
+            }
+
+
             emptyPortfolioActionButton?.setOnClickListener {
-                //TODO: handle empty wallet deposit
-                /*val watchAddressModal = WatchAddressFragment.newInstance()
-                watchAddressModal.show(activity!!.supportFragmentManager, watchAddressModal.tag)
-                */
+                if (!NEP6.nep6HasActivated()) {
+                    val intent = Intent(context, MultiwalletActivateActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(context, AddNewMultiwalletRootActivity::class.java)
+                    startActivity(intent)
+                }
             }
         } else {
             emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_deposit_tokens)

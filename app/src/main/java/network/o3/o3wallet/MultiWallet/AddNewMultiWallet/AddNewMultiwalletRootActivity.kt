@@ -27,7 +27,7 @@ class AddNewMultiwalletRootActivity : AppCompatActivity() {
         setContentView(R.layout.multiwallet_add_new_activity)
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
-        find<TextView>(R.id.mytext).text = resources.getString(R.string.MULTIWALLET_activate_multiwallet)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.MULTIWALLET_add_wallet)
         find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
     }
 
