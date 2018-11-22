@@ -117,10 +117,13 @@ class AccountFragment : Fragment() {
             walletName = NEP6.getFromFileSystem().accounts[0].label
         }
         activity?.find<TextView>(R.id.accountTitleTextView)?.text = walletName
-
-        activity?.find<ImageView>(R.id.walletSwapButton)?.setOnClickListener {
-            val bottomSheet = SwapWalletBottomSheet()
-            bottomSheet.show(activity!!.supportFragmentManager, "swapWallet")
+        if (NEP6.getFromFileSystem().getNonDefaultAccounts().isNotEmpty() ) {
+            activity?.find<ImageView>(R.id.walletSwapButton)?.setOnClickListener {
+                val bottomSheet = SwapWalletBottomSheet()
+                bottomSheet.show(activity!!.supportFragmentManager, "swapWallet")
+            }
+        } else {
+            activity?.find<ImageView>(R.id.walletSwapButton)?.visibility = View.GONE
         }
     }
 
@@ -203,7 +206,7 @@ class AccountFragment : Fragment() {
     fun setupOntologyClaimListener() {
         accountViewModel.getOntologyClaims().observe(this, Observer<OntologyClaimableGas?> {
             val doubleValue = it!!.ong.toLong() / OntologyClient().DecimalDivisor
-            accountViewModel.ontologyCanNotSync = doubleValue <= 0.02
+            accountViewModel.ontologyCanNotSync = doubleValue < 0.02
             val typedValue = TypedValue()
             activity!!.theme.resolveAttribute(R.attr.defaultTextColor, typedValue, true)
             ontologyTicker.textColor = context!!.getColor(typedValue.resourceId)
@@ -500,6 +503,13 @@ class AccountFragment : Fragment() {
     }
 
     fun ontologyClaimTapped() {
+        if (accountViewModel.ontologyCanNotClaim) {
+            alert (resources.getString(R.string.WALLET_claim_ontology_error)) {
+                yesButton {  }
+            }.show()
+            return
+        }
+
         alert (resources.getString(R.string.WALLET_claim_ontology_gas)) {
             noButton {}
             yesButton {

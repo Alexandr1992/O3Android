@@ -47,6 +47,12 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
         mView = inflater.inflate(R.layout.multiwallet_manage_wallets_bottom_sheet, container, false)
         listView = mView.find(R.id.manage_wallets_list)
         listView.adapter = ManageWalletsAdapter(context!!)
+
+        val headerView = layoutInflater.inflate(R.layout.settings_header_row, null)
+        headerView.findViewById<TextView>(R.id.headerTextView).text = resources.getString(R.string.MULTIWALLET_manage_wallets)
+        listView.addHeaderView(headerView)
+
+
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadAddressReciever,
                 IntentFilter("need-update-watch-address-event"))
         return mView

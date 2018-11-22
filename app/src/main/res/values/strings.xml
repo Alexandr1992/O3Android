@@ -163,7 +163,6 @@
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
-        <item>My Private Key</item>
         <item>Manage Contacts</item>
         <item>MultiWallet</item>
         <item>Currency</item>
@@ -427,9 +426,10 @@
     <string name="WALLET_sync_failed">Oh no! Something went wrong with the syncing process. Check back later and try again</string>
     <string name="WALLET_sync_needs_more_time">It\'s taking a bit longer than expected to sync. Pull down to refresh</string>
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
-    <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It may incur a fee of 0.01 ONG</string>
+    <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It will incur a fee of 0.01 ONG</string>
     <string name="WALLET_sync_ontology_gas">Are you sure you want to sync your ONG? It will cost (0.01) ONG to do so</string>
     <string name="WALLET_sync_ontology_error">You must have generated at least 0.02 ONG in order to sync. Check back soon!</string>
+    <string name="WALLET_claim_ontology_error">You must have generated at least 0.01 ONG in order to claim. Check back soon!</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
     <string name="DIALOG_confirm_backup">My Private Key is backed up in a safe place</string>
@@ -580,4 +580,6 @@
     <string name="MULTIWALLET_invalid_password_length">Your password must be at least 8 characters</string>
     <string name="MULTIWALLET_no_additional_wallets">No additional wallets added</string>
     <string name="MULTIWALLET_add_additional_wallets">Add Wallet</string>
+    <string name="MULTIWALLET_manage_wallets">Manage Wallets</string>
+    <string name="MULTIWALLET_swap_wallets">Swap Wallet</string>
 </resources>

@@ -31,6 +31,11 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
         mView = inflater.inflate(R.layout.multiwallet_manage_wallets_bottom_sheet, container, false)
         listView = mView.find(R.id.manage_wallets_list)
         listView.adapter = SwapWalletsAdapter(context!!, this)
+
+        val headerView = layoutInflater.inflate(R.layout.settings_header_row, null)
+        headerView.findViewById<TextView>(R.id.headerTextView).text = resources.getString(R.string.MULTIWALLET_swap_wallets)
+
+        listView.addHeaderView(headerView)
         return mView
     }
 
@@ -56,6 +61,8 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
             walletRow.onClick {
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
                 neo2DialogFragment.decryptionSucceededCallback = { pass ->
+                    (mFragment as RoundedBottomSheetDialogFragment).dismiss()
+                    neo2DialogFragment.dismiss()
                     NEP6.getFromFileSystem().makeNewDefault(getItem(position).address, pass)
                 }
 
@@ -66,11 +73,11 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
         }
 
         override fun getItem(position: Int): NEP6.Account {
-            return NEP6.getFromFileSystem().getWalletAccounts()[position]
+            return NEP6.getFromFileSystem().getNonDefaultAccounts()[position]
         }
 
         override fun getCount(): Int {
-            return NEP6.getFromFileSystem().getWalletAccounts().count()
+            return NEP6.getFromFileSystem().getNonDefaultAccounts().count()
         }
 
         override fun getItemId(position: Int): Long {

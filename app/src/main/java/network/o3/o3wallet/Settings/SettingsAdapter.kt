@@ -34,7 +34,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_lock_alt, R.drawable.ic_address_book, R.drawable.ic_settingswatchonlyaddressicon,
+    var images =  listOf(R.drawable.ic_address_book, R.drawable.ic_settingswatchonlyaddressicon,
             R.drawable.ic_currency, R.drawable.ic_moon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
             R.drawable.ic_trash, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
@@ -44,7 +44,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     enum class CellType {
-        HEADER, PRIVATEKEY, CONTACTS, MULTIWALLET,
+        HEADER, CONTACTS, MULTIWALLET,
         CURRENCY, THEME,
         SUPPORT, CONTACT, LOGOUT,
         VERSION, ADVANCED
@@ -150,21 +150,6 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
 
                 }
             }.show()
-
-        } else if (position == CellType.PRIVATEKEY.ordinal) {
-            val mKeyguardManager =  mContext.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-            if (!mKeyguardManager.isKeyguardSecure) {
-                // Show a message that the user hasn't set up a lock screen.
-                Toast.makeText(mContext,
-                        O3Wallet.appContext!!.resources.getString(R.string.ALERT_no_passcode_setup),
-                        Toast.LENGTH_LONG).show()
-                return
-            } else {
-                val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
-                if (intent != null) {
-                    mFragment.startActivityForResult( intent, 0, null)
-                }
-            }
         } else if (position == CellType.ADVANCED.ordinal) {
             val intent = Intent(mContext, AdvancedSettingsActivity::class.java)
             mFragment.startActivity(intent)

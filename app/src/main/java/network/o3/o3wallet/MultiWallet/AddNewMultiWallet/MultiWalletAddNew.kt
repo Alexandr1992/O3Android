@@ -12,7 +12,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import neoutils.Neoutils
@@ -44,6 +46,13 @@ class MultiWalletAddNew : Fragment() {
         initiateWalletEntryEditText()
         initateContinueButton()
         initiateGenerateNewButton()
+
+        findNavController().addOnNavigatedListener { controller, destination ->
+            if (destination.id != R.id.multiWalletAddNew) {
+                activity?.find<ImageButton>(R.id.rightNavButton)?.visibility = View.GONE
+            }
+        }
+
         return mView
     }
 
@@ -80,7 +89,6 @@ class MultiWalletAddNew : Fragment() {
 
     fun initiateQrScanner() {
         val scanButton = activity?.find<ImageButton>(R.id.rightNavButton)
-
         scanButton?.setOnClickListener {
             val integrator = IntentIntegrator(activity)
             integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
