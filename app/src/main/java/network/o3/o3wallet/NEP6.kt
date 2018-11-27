@@ -133,7 +133,8 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         accounts[defaultIndex] = accounts[newDefaultIndex]
         accounts[newDefaultIndex] = oldDefaultAccount
         network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
-        network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
+        var defAccount = accounts.find { it.isDefault }!!
+        network.o3.o3wallet.Account.fromEncryptedKey(defAccount.key!!, pass)
         this.writeToFileSystem()
     }
 

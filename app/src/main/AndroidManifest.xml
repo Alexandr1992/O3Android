@@ -121,8 +121,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             android:theme="@style/AppTheme.NoTopBar" />
-        <activity android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity" />
-        <activity android:name=".MultiWallet.ManageMultiWallet.MultiwalletManageWallet"></activity>
+        <activity android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".MultiWallet.ManageMultiWallet.MultiwalletManageWallet"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>

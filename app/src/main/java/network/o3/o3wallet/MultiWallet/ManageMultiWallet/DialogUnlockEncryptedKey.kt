@@ -93,11 +93,7 @@ class DialogUnlockEncryptedKey : DialogFragment() {
             try {
                 Log.w("EKEY: ", encryptedKey)
                 decryptedKey = Neoutils.neP2Decrypt(encryptedKey, nep2PasswordField.text.trim().toString())
-                if (Account.fromWIF(decryptedKey)) {
-                    decryptionSuccessful(decryptedKey)
-                } else {
-                    decryptionFailed()
-                }
+                decryptionSuccessful(decryptedKey)
             } catch (e: Exception) {
                 decryptionFailed()
                 }
