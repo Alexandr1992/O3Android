@@ -34,10 +34,10 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_address_book, R.drawable.ic_settingswatchonlyaddressicon,
+    var images =  listOf(R.drawable.ic_address_book, R.drawable.ic_wallet_swap,
             R.drawable.ic_currency, R.drawable.ic_moon,
             R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
-            R.drawable.ic_trash, R.drawable.ic_mobile_android_alt, R.drawable.ic_bug)
+            R.drawable.ic_mobile_android_alt, R.drawable.ic_trash, R.drawable.ic_bug)
     init {
         mContext = context
         mFragment = fragment
@@ -46,8 +46,8 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     enum class CellType {
         HEADER, CONTACTS, MULTIWALLET,
         CURRENCY, THEME,
-        SUPPORT, CONTACT, LOGOUT,
-        VERSION, ADVANCED
+        SUPPORT, CONTACT,
+        VERSION, LOGOUT, ADVANCED
 
     }
 
@@ -63,7 +63,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
        if (BuildConfig.DEBUG) {
             return settingsTitles.count() + 1
        }
-       return settingsTitles.count()
+       return settingsTitles.count() - 1
     }
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
@@ -76,7 +76,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
 
         val view = layoutInflater.inflate(R.layout.settings_row_layout, viewGroup, false)
         val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
-        titleTextView.text = getItem(position).first
+        titleTextView.text = settingsTitles[position - 1]
         if (position == CellType.VERSION.ordinal) {
             val version = mContext.packageManager.getPackageInfo(mContext.packageName, 0).versionName
             titleTextView.text = mContext.resources.getString(R.string.SETTINGS_version, version)

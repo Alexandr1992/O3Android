@@ -122,6 +122,8 @@ class LoginActivity : AppCompatActivity() {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents == null) {
             Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
+        } else if (result == null) {
+            return
         } else {
             wifTextfield.text = result.contents
             if (result.contents.substring(0, 2) == "6P" &&  result.contents.length == 58) {

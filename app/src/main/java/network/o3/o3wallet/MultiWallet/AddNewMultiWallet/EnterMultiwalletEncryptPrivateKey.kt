@@ -78,6 +78,13 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                 try {
                     val account = Neoutils.neP2Encrypt(vm.wif, vm.password)
                     val nep6 = NEP6.getFromFileSystem()
+                    if (nep6.accounts.find { it.label == nameField.text.toString()} != null) {
+                        alert(resources.getString(R.string.MUTLWALLET_duplicate_name_error)) {
+                            yesButton {}
+                        }.show()
+                        return@setOnClickListener
+                    }
+
                     vm.encryptedKey = account.encryptedKey
                     vm.address = account.address
                     nep6.addEncryptedKey(vm.address, nameField.text.toString(), account.encryptedKey)

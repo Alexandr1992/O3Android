@@ -19,6 +19,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.NEP6
 
 import network.o3.o3wallet.R
 import network.o3.o3wallet.toHex
@@ -118,14 +119,35 @@ class MultiWalletAddNew : Fragment() {
         val scanButton = activity!!.find<ImageButton>(R.id.rightNavButton)
         continueButton.setOnClickListener {
             if (validateAddress()) {
+                if (NEP6.getFromFileSystem().accounts.find { it.address == walletEntryEditText.text.toString() } != null) {
+                    alert(resources.getString(R.string.MUTLIWALLET_duplicate_address_error)) {
+                        yesButton {}
+                    }.show()
+                    return@setOnClickListener
+                }
+
                 vm.address = walletEntryEditText.text.toString()
                 scanButton.visibility = View.GONE
                 mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_enterMultiwalletWatchAddress)
             } else if (validateEncryptedKey()) {
+                if (NEP6.getFromFileSystem().accounts.find { it.key == walletEntryEditText.text.toString() } != null) {
+                    alert(resources.getString(R.string.MUTLIWALLET_duplicate_key_error)) {
+                        yesButton {}
+                    }.show()
+                    return@setOnClickListener
+                }
+
                 scanButton.visibility = View.GONE
                 vm.encryptedKey = walletEntryEditText.text.toString()
                 mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_addMultiwalletVerifyNEP2)
             } else if (validateWif()) {
+                if (NEP6.getFromFileSystem().accounts.find { it.address == Neoutils.generateFromWIF(walletEntryEditText.text.toString()).address } != null) {
+                    alert(resources.getString(R.string.MUTLIWALLET_duplicate_key_error)) {
+                        yesButton {}
+                    }.show()
+                    return@setOnClickListener
+                }
+
                 scanButton.visibility = View.GONE
                 vm.wif = walletEntryEditText.text.toString()
                 mView.findNavController().navigate(R.id.action_multiWalletAddNew_to_enterMultiwalletEncryptPrivateKey)

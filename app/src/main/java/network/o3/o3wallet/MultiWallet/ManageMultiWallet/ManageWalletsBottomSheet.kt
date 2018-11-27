@@ -32,7 +32,7 @@ class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
 
     val needReloadAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            (listView.adapter as ManageWalletsAdapter).notifyDataSetChanged()
+            ((listView.adapter as HeaderViewListAdapter).wrappedAdapter as ManageWalletsAdapter).notifyDataSetChanged()
         }
     }
 

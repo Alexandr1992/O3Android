@@ -15,6 +15,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
+import org.jetbrains.anko.findOptional
 import org.jetbrains.anko.image
 
 class AddNewMultiwalletRootActivity : AppCompatActivity() {
@@ -51,7 +52,7 @@ class AddNewMultiwalletRootActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        if (find<EditText>(R.id.walletEntryEditText) != null) {
+        if (findOptional<EditText>(R.id.walletEntryEditText) != null) {
             find<ImageButton>(R.id.rightNavButton).visibility = View.VISIBLE
         }
     }

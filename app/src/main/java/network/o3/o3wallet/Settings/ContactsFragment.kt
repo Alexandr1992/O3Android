@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.settings_fragment_contacts.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.find
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.yesButton
@@ -57,12 +58,12 @@ class ContactsFragment : RoundedBottomSheetDialogFragment() {
     }
 
     fun sendToAddress(contact: Contact) {
-        val intent: Intent = Intent(
+        val intent = Intent(
                 context,
                 SendV2Activity::class.java
         )
         intent.putExtra("uri", contact.address)
-        ActivityCompat.startActivity(context!!, intent, null)
+        context?.startActivity(intent, null)
     }
 
     val RELOAD_DATA = 5

@@ -163,11 +163,7 @@ class LoginNEP6Activity : AppCompatActivity() {
             private var view: View = v
             private var activity: AppCompatActivity = a
 
-            fun bindHeader() {
-                view.find<ImageView>(R.id.dismissButton).setOnClickListener {
-                    activity.finish()
-                }
-            }
+            fun bindHeader() {}
         }
     }
 }

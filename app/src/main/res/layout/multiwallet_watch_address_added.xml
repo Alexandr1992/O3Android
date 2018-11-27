@@ -21,7 +21,7 @@
         />
 
     <TextView
-        android:id="@+id/textView38"
+        android:id="@+id/successMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -44,6 +44,6 @@
         android:id="@+id/doneButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView38" />
+        app:layout_constraintTop_toBottomOf="@+id/successMessage" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,9 +1,7 @@
 package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 
 
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -32,6 +30,7 @@ import network.o3.o3wallet.Wallet.toast
 import network.o3.o3wallet.toBitmap
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.support.v4.toast
 import java.io.File
 import java.io.FileOutputStream
 
@@ -46,6 +45,18 @@ class ManageWalletBaseFragment : Fragment() {
 
     lateinit var vm: ManageWalletViewModel
 
+    val needReloadWalletPage = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            setTitleIcon()
+        }
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadWalletPage)
+        super.onDestroy()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.multiwallet_manage_wallet_base, container, false)
@@ -53,7 +64,8 @@ class ManageWalletBaseFragment : Fragment() {
         initiateQrViews()
         initiateListView()
         initiateActionBar()
-
+        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadWalletPage,
+                IntentFilter("need-update-watch-address-event"))
         return mView
     }
 
@@ -79,10 +91,9 @@ class ManageWalletBaseFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setCustomView(R.layout.actionbar_layout)
         activity?.find<TextView>(R.id.mytext)?.text = vm.name
         activity?.find<ImageButton>(R.id.rightNavButton)?.visibility = View.VISIBLE
-        activity?.find<ImageButton>(R.id.rightNavButton)?.image = ContextCompat.getDrawable(context!!, R.drawable.ic_edit)
 
         setTitleIcon()
-
+        activity?.find<ImageButton>(R.id.rightNavButton)?.image = ContextCompat.getDrawable(context!!, R.drawable.ic_edit)
         activity?.find<ImageButton>(R.id.rightNavButton)?.setOnClickListener {
             val newNameEntry = DialogInputEntryFragment.newInstance()
             newNameEntry.submittedInput = { newName ->
@@ -115,9 +126,29 @@ class ManageWalletBaseFragment : Fragment() {
     fun initiateQrViews() {
         addressQrView = mView.find(R.id.addressQrImageView)
         encryptedKeyQrView = mView.find(R.id.encryptedKeyQRCodeImageView)
+
+        val copyAddress = {
+            val clipboard = activity!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address), vm.address)
+            clipboard.primaryClip = clip
+            toast(resources.getString(R.string.WALLET_copied_address))
+        }
+
+        val copyKey = {
+            val clipboard = activity!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(resources.getString(R.string.WALLET_copied_address), vm.key)
+            clipboard.primaryClip = clip
+            toast(resources.getString(R.string.WALLET_copied_key))
+        }
+
+        addressQrView.onClick { copyAddress() }
+        encryptedKeyQrView.onClick { copyKey() }
+
         addressTextView = mView.find(R.id.addressTextView)
         encryptedKeyTextView = mView.find(R.id.keyTextView)
 
+        addressTextView.onClick { copyAddress() }
+        encryptedKeyQrView.onClick { copyKey() }
 
         addressTextView.text = vm.address
         encryptedKeyTextView.text = vm.key
@@ -178,12 +209,13 @@ class ManageWalletBaseFragment : Fragment() {
 
         fun unlockAction() {
             if (mVm.isDefault) {
-                mContext.toast (mContext.resources.getString(R.string.MULTIWALLET_cannot_delete_default))
+                mContext.toast (mContext.resources.getString(R.string.MULTIWALLET_cannot_unlock_default))
                 return
             } else if (mVm.key != null){
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
                 neo2DialogFragment.decryptionSucceededCallback = { pass ->
                     NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
+                    mVm.isDefault = true
                     (mFragment as ManageWalletBaseFragment).setTitleIcon()
                 }
 
@@ -224,6 +256,12 @@ class ManageWalletBaseFragment : Fragment() {
         }
 
         fun setAction(v: View, position: Int) {
+            if (mVm.key == null) {
+                v.onClick { removeWalletAction() }
+                return
+            }
+
+
             when (position) {
                 0 -> {
                     v.onClick { backupAction() }
@@ -246,8 +284,19 @@ class ManageWalletBaseFragment : Fragment() {
 
 
             val view = mContext.layoutInflater.inflate(R.layout.settings_row_layout, null, false)
-
             val nameTextView = view.find<TextView>(R.id.titleTextView)
+
+            if (mVm.key == null) {
+                nameTextView.text = titles[3]
+                setAction(view, position)
+                nameTextView.textColor = ContextCompat.getColor(mContext, R.color.colorLoss)
+                view.find<ImageView>(R.id.settingsIcon).visibility = View.VISIBLE
+                view.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mContext, R.drawable.ic_trash)
+                return view
+            }
+
+
+
             view.find<ImageView>(R.id.settingsIcon).visibility = View.GONE
             nameTextView.text = titles[position]
             if (position == 3) {
@@ -267,6 +316,9 @@ class ManageWalletBaseFragment : Fragment() {
         }
 
         override fun getCount(): Int {
+            if (mVm.key == null) {
+                return 1
+            }
             return 4
         }
 

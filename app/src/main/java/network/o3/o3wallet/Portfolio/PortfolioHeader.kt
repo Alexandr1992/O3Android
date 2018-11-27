@@ -11,8 +11,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.portfolio_fragment_portfolio_header.*
 import network.o3.o3wallet.*
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.SwapWalletBottomSheet
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
+import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.view
 import org.w3c.dom.Text
@@ -108,6 +110,18 @@ class PortfolioHeader: Fragment {
             pFragment.homeModel.loadPortfolioValue(pFragment.assetListAdapter?.assets ?: arrayListOf())
         }
 
+        val walletSwap = {
+            if (NEP6.getFromFileSystem().getNonDefaultAccounts().isNotEmpty() ) {
+                val bottomSheet = SwapWalletBottomSheet()
+                bottomSheet.show(activity!!.supportFragmentManager, "swapWallet")
+            }
+        }
+
+        if (position == 0) {
+            fundSourceTextView.onClick { walletSwap() }
+            walletTypeIcon.onClick { walletSwap() }
+        }
+
         if (position == 0) {
             leftArrow?.visibility = View.INVISIBLE
         } else {
@@ -119,18 +133,20 @@ class PortfolioHeader: Fragment {
         }
 
         var lastPosition = 1
-        if (NEP6.getFromFileSystem().getWalletAccounts().count() > 0) {
-            lastPosition = NEP6.getFromFileSystem().getWalletAccounts().count() + 1
+        if (NEP6.getFromFileSystem().getNonDefaultAccounts().count() > 0) {
+            lastPosition = NEP6.getFromFileSystem().getNonDefaultAccounts().count() + 1
         }
 
         if (position == lastPosition) {
             rightArrow?.visibility = View.INVISIBLE
+            walletStatusIcon.visibility = View.INVISIBLE
         } else {
             rightArrow?.visibility = View.VISIBLE
+            walletStatusIcon.visibility = View.VISIBLE
         }
 
         rightArrow?.setOnClickListener {
-                pager?.currentItem = position + 1
+            pager?.currentItem = position + 1
         }
     }
 }

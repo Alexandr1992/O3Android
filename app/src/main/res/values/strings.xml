@@ -164,13 +164,13 @@
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
         <item>Manage Contacts</item>
-        <item>MultiWallet</item>
+        <item>Manage Wallets</item>
         <item>Currency</item>
         <item>Theme</item>
         <item>Support</item>
         <item>Contact</item>
-        <item>Clear App Data</item>
         <item>Version</item>
+        <item>Clear App Data</item>
         <item>Advanced</item>
     </string-array>
     <!-- This string exists in order to allow for proper formatting-->
@@ -228,6 +228,7 @@
     <string name="WALLET_name_address_book" comment="A nickname for your contact in the address book">Name</string>
     <string name="WALLET_add_contact" comment="Add new contact action for new contact to address book">Add Contact</string>
     <string name="WALLET_copied_address" comment="displayed when successfully copied an address to the clipboard">Copied Address</string>
+    <string name="WALLET_copied_key" comment="displayed when successfully copied a key to the clipboard">Copied Key</string>
     <string name="WALLET_remove_contact" comment="Action to remove a contact from the address book">Remove Contact</string>
     <string name="WALLET_remove_contact_warning" comment="Warning displayed when user attempts to remove contract from the address book">Are you sure you want to remove this contact?</string>
     "
@@ -377,7 +378,7 @@
         <item>COMBINED</item>
     </string-array>
 
-    <string name="PORTFOLIO_total" comment="total sum of watch addresses">total</string>
+    <string name="PORTFOLIO_total" comment="total sum of watch addresses">Combined</string>
 
     <string name="PORTFOLIO_six_hours" comment="six hour porfolio interval">6H</string>
     <string name="PORTFOLIO_one_day" comment="one day portfolio interval">24H</string>
@@ -572,6 +573,7 @@
     <string name="MULTIWALLET_add_key_to_watch_address">Add a key to this wallet</string>
 
     <string name="MULTIWALLET_cannot_delete_default">You cannot remove your default key.</string>
+    <string name="MULTIWALLET_cannot_unlock_default">Your default wallet is already unlocked</string>
     <string name="MULTIWALLET_are_you_sure">Are you you sure you want to remove this wallet from your account?</string>
     <string name="ONBOARDING_remove_wallet">This will remove your old wallet from this device? Are you sure you want to continue? This action cannot be reversed.</string>
     <string name="MULTIWALLET_cannot_create_duplicate">You are already using this name for another wallet, please select a different one</string>
@@ -582,4 +584,9 @@
     <string name="MULTIWALLET_add_additional_wallets">Add Wallet</string>
     <string name="MULTIWALLET_manage_wallets">Manage Wallets</string>
     <string name="MULTIWALLET_swap_wallets">Swap Wallet</string>
+    <string name="MULTIWALLET_encrypted_key">Encrypted Key</string>
+    <string name="MULTIWALLET_wallet_added">Encrypted Wallet added successfully. You can unlock this wallet at any time in the settings menu.</string>
+    <string name="MUTLIWALLET_duplicate_address_error">You have already added this address, and cannot add it twice</string>
+    <string name="MUTLIWALLET_duplicate_key_error">You have already added this encrypted key, and cannot add it twice</string>
+    <string name="MUTLWALLET_duplicate_name_error">You already have a wallet with this name, please choose another one</string>
 </resources>

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:id="@+id/activityRoot"
     tools:context="network.o3.o3wallet.MainTabbedActivity">
-
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="0dp"
@@ -16,7 +15,9 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -31,5 +32,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_items" />
+        app:menu="@menu/bottom_navigation_items" >
+    </android.support.design.widget.BottomNavigationView>
 </android.support.constraint.ConstraintLayout>

@@ -8,9 +8,12 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="81dp"
+        android:layout_height="81dp"
         android:layout_marginTop="8dp"
+        app:lottie_rawRes="@raw/wallet_generated"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

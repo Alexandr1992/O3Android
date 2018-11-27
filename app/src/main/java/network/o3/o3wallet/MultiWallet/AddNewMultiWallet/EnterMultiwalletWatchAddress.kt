@@ -17,6 +17,8 @@ import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.yesButton
 
 class EnterMultiwalletWatchAddress : Fragment() {
 
@@ -47,8 +49,15 @@ class EnterMultiwalletWatchAddress : Fragment() {
     fun initiateContinueButton() {
         val vm = (activity as AddNewMultiwalletRootActivity).viewModel
         continueButton.onClick {
-            vm.nickname = nameEditText.text.toString()
             val newNep6 = NEP6.getFromFileSystem()
+            if (newNep6.accounts.find { it.label == nameEditText.text.toString()} != null) {
+                alert(resources.getString(R.string.MUTLWALLET_duplicate_name_error)) {
+                    yesButton {}
+                }.show()
+                return@onClick
+            }
+
+            vm.nickname = nameEditText.text.toString()
             newNep6.addWatchAddress(vm.address, vm.nickname)
             newNep6.writeToFileSystem()
             mView.findNavController().navigate(R.id.action_enterMultiwalletWatchAddress_to_watchAddressAddedSuccess)

@@ -47,7 +47,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_wallet_combined" />
+            app:srcCompat="@drawable/ic_wallet_swap" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.TabLayout

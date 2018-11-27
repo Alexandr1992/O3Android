@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk15.coroutines.onClick
@@ -19,6 +20,9 @@ class EncryptedKeyAddedSuccessFragment : Fragment() {
         view.find<Button>(R.id.doneButton).onClick {
             activity?.finish()
         }
+
+        view.find<TextView>(R.id.successMessage).text = resources.getString(R.string.MULTIWALLET_wallet_added)
+
         return view
     }
 }
