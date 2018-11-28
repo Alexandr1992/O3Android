@@ -14,31 +14,12 @@ import network.o3.o3wallet.API.O3Platform.TransferableAssets
  * Created by drei on 11/29/17.
  */
 
-data class WatchAddress(val address: String, val nickname: String)
 data class Contact(val address: String, val nickname: String)
 
 object PersistentStore {
 
     fun clearPersistentStore() {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().clear().apply()
-    }
-
-    fun addWatchAddress(address: String, nickname: String): ArrayList<WatchAddress> {
-        val currentAddresses = getWatchAddresses().toCollection(ArrayList<WatchAddress>())
-        val toInsert = WatchAddress(address, nickname)
-        if (currentAddresses.contains(toInsert)) {
-            return currentAddresses
-        }
-
-        currentAddresses.add(WatchAddress(address, nickname))
-        val gson = Gson()
-        val jsonString = gson.toJson(currentAddresses)
-
-        val settingPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
-        settingPref.putString("WATCH_ADDRESSES", jsonString)
-        settingPref.apply()
-
-        return currentAddresses
     }
 
     fun addContact(address: String, nickname: String): ArrayList<Contact> {
@@ -70,33 +51,6 @@ object PersistentStore {
         settingPref.apply()
 
         return currentContacts
-    }
-
-    fun removeWatchAddress(address: String, nickname: String): ArrayList<WatchAddress> {
-        val currentWatchAddresses = getWatchAddresses().toCollection(ArrayList<WatchAddress>())
-        currentWatchAddresses.remove(WatchAddress(address, nickname))
-        val gson = Gson()
-        val jsonString = gson.toJson(currentWatchAddresses)
-
-        val settingPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
-        settingPref.putString("WATCH_ADDRESSES", jsonString)
-        settingPref.apply()
-        return currentWatchAddresses
-    }
-
-
-
-    fun getWatchAddresses(): Array<WatchAddress> {
-        var jsonString = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
-                .getString("WATCH_ADDRESSES", null)
-
-        if (jsonString == null) {
-            return arrayOf<WatchAddress>()
-        }
-
-        val gson = Gson()
-        val contacts = gson.fromJson<Array<WatchAddress>>(jsonString)
-        return contacts
     }
 
     fun getContacts(): Array<Contact> {

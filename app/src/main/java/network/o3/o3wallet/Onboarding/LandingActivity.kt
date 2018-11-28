@@ -12,11 +12,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import com.crashlytics.android.Crashlytics
-import com.google.zxing.integration.android.IntentIntegrator
 import io.fabric.sdk.android.Fabric
 import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
+import network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity
 import network.o3.o3wallet.PersistentStore.clearPersistentStore
 import org.jetbrains.anko.*
 
@@ -54,7 +54,7 @@ class LandingActivity : AppCompatActivity() {
             createWalletTapped()
         }
 
-        if (Account.isEncryptedWalletPresent()) {
+        if (Account.isEncryptedWalletPresent() || Account.isEncryptedNEP6PassPresent()) {
             authenticateEncryptedWallet()
         } else {
             autoPlayAnimation()
@@ -157,12 +157,21 @@ class LandingActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG).show()
             return
         } else {
-            val intent = Intent(this, PasscodeRequestActivity::class.java)
+            val intent = Intent(this, LoginNEP6Activity::class.java)
             if (deepLink != null) {
                 intent.putExtra("deepLink", deepLink!!)
             }
             startActivity(intent)
         }
+    }
+
+    fun generateNewWallet() {
+        NEP6.removeFromDevice()
+        val generatedWIF = Neoutils.newWallet().wif
+        clearPersistentStore()
+        val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
+        intent.putExtra("wif", generatedWIF)
+        startActivity(intent)
     }
 
     fun createWalletTapped() {
@@ -171,11 +180,14 @@ class LandingActivity : AppCompatActivity() {
             Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
             return
         } else {
-            val generatedWIF = Neoutils.newWallet().wif
-            clearPersistentStore()
-            val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
-            intent.putExtra("wif", generatedWIF)
-            startActivity(intent)
+            if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
+                alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
+                    yesButton { generateNewWallet() }
+                    noButton {}
+                }.show()
+            } else {
+                generateNewWallet()
+            }
         }
     }
 
@@ -186,8 +198,18 @@ class LandingActivity : AppCompatActivity() {
             Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
             return
         }
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+        if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
+            alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
+                yesButton {
+                    val intent = Intent(this@LandingActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                }
+                noButton {}
+            }.show()
+        } else {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 

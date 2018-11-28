@@ -26,13 +26,13 @@ import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.Onboarding.CreateKey.Backup.DialogBackupKeyFragment
-import network.o3.o3wallet.Settings.WatchAddressFragment
 import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.onUiThread
 import android.support.v7.widget.DividerItemDecoration
-
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
+import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 
 
 interface HomeViewModelProtocol {
@@ -52,11 +52,11 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     lateinit var recyclerView: RecyclerView
     lateinit var mView: View
 
-    var hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+    var hasWatchAddress = NEP6.hasMultipleAccounts()
 
     val needReloadWatchAddressReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            homeModel.hasWatchAddress = PersistentStore.getWatchAddresses().count() > 0
+            homeModel.hasWatchAddress = NEP6.hasMultipleAccounts()
             viewPager?.adapter?.notifyDataSetChanged()
             val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
             val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
@@ -222,7 +222,8 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         val emptyWalletView = view?.find<ConstraintLayout>(R.id.emptyWalletContainer)
         val emptyPortfolioActionButton = view?.find<Button>(R.id.emptyPortfolioActionButton)
         val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
-        if (portfolio.data.first().averageBTC == 0.0) {
+        if ((portfolio.data.first().averageBTC == 0.0 && homeModel.getPosition() == 0) ||
+                homeModel.getPosition() == 1 && NEP6.getFromFileSystem().accounts.count() <= 1) {
             sparkView?.visibility = View.INVISIBLE
             mView.find<LinearLayout>(R.id.intervalButtonLayout).visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
@@ -235,11 +236,22 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         }
 
         if (homeModel.getPosition() > 0) {
-            emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_add_watch_address)
-            emptyPortfolioTextView?.text = resources.getString(R.string.PORTFOLIO_no_watch_addresses)
+            emptyPortfolioTextView?.text = resources.getString(R.string.MULTIWALLET_no_additional_wallets)
+            if (!NEP6.nep6HasActivated()) {
+                emptyPortfolioActionButton?.text = resources.getString(R.string.MULTIWALLET_activate_multiwallet)
+            } else {
+                emptyPortfolioActionButton?.text = resources.getString(R.string.MULTIWALLET_add_additional_wallets)
+            }
+
+
             emptyPortfolioActionButton?.setOnClickListener {
-                val watchAddressModal = WatchAddressFragment.newInstance()
-                watchAddressModal.show(activity!!.supportFragmentManager, watchAddressModal.tag)
+                if (!NEP6.nep6HasActivated()) {
+                    val intent = Intent(context, MultiwalletActivateActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(context, AddNewMultiwalletRootActivity::class.java)
+                    startActivity(intent)
+                }
             }
         } else {
             emptyPortfolioActionButton?.text = resources.getString(R.string.PORTFOLIO_deposit_tokens)
@@ -270,16 +282,16 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     }
 
     fun getHeaderTitle(position: Int): String {
-        if (position > 0 && PersistentStore.getWatchAddresses().count() == 0) {
-            return resources.getString(R.string.PORTFOLIO_your_watch_addresses)
+        if (position == 0 && NEP6.getFromFileSystem().accounts.isEmpty()) {
+            return resources.getString(R.string.WALLET_my_o3_wallet)
+        } else if (position == 1 && NEP6.getFromFileSystem().accounts.count() <= 1) {
+            return resources.getString(R.string.PORTFOLIO_total)
         }
 
-        if (position == 0) {
-            return resources.getString(R.string.WALLET_my_o3_wallet)
-        } else if (position == PersistentStore.getWatchAddresses().count() + 1  ){
-            return resources.getString(R.string.PORTFOLIO_total)
+        if (position < NEP6.getFromFileSystem().accounts.count()) {
+            return NEP6.getFromFileSystem().accounts[position].label
         } else {
-            return PersistentStore.getWatchAddresses()[position - 1].nickname
+            return resources.getString(R.string.PORTFOLIO_total)
         }
     }
 
@@ -287,7 +299,30 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         viewPager?.currentItem = viewPager?.currentItem!!
         val name = "android:switcher:" + viewPager?.id + ":" + viewPager?.currentItem
         val header = childFragmentManager.findFragmentByTag(name) as PortfolioHeader
-        header.setHeaderInfo(amount, percentChange, homeModel.getInterval(), homeModel.getInitialDate(), getHeaderTitle(homeModel.getPosition()))
+        val isDefault = (homeModel.getPosition() == 0)
+        var account: NEP6.Account? = null
+
+        var walletType = PortfolioHeader.WalletType.Default
+        if (NEP6.getFromFileSystem().accounts.count() <= 1) {
+            walletType = PortfolioHeader.WalletType.Combined
+        }
+
+        if (NEP6.getFromFileSystem().accounts.count() > 1 &&
+                homeModel.getPosition() < NEP6.getFromFileSystem().accounts.count()) {
+            account = NEP6.getFromFileSystem().accounts[homeModel.getPosition()]
+            if (account.key == null) {
+                walletType = PortfolioHeader.WalletType.WatchOnly
+            } else {
+                walletType = PortfolioHeader.WalletType.Wallet
+            }
+
+            if (homeModel.getPosition() == NEP6.getFromFileSystem().accounts.count()) {
+                walletType = PortfolioHeader.WalletType.Combined
+            }
+        }
+
+        header.setHeaderInfo(amount, percentChange, homeModel.getInterval(),
+                homeModel.getInitialDate(), getHeaderTitle(homeModel.getPosition()), walletType, account)
     }
 
     override fun showPortfolioLoadingIndicator() {

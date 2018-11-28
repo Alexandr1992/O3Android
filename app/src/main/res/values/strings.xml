@@ -145,6 +145,10 @@
     <string name="ONBOARDING_encrypted_backup_dialog_subtitle" comment="Dialog title for when succesffully backed up private key on nep2">Double check that it arrived safely before continuing.</string>
     <string name="ONBOARDING_encrypted_backup_dialog_button" comment="button title for paper backup dialog">Go to my wallet!</string>
 
+    <string name="ONBOARDING_welcome_back" comment="Header for login title">Welcome back to O3</string>
+    <string name="ONBOARDING_welcome_subtitle" comment="subtitle for login title">Your gateway to the smart economy</string>
+    <string name="ONBOARDING_please_select_wallet" comment="select which wallet to use title">Please select a wallet to login with</string>
+
     <!-- Login Page -->
     <string name="ONBOARDING_scan" comment="Title for scan button, allowing users to login by scanning private key">Scan</string>
     <string name="ONBOARDING_login_footnote" comment="Footnote showing that the private key will be stored locally on the device">This Private Key will be stored on your device after logging in.</string>
@@ -159,15 +163,14 @@
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
-        <item>My Private Key</item>
         <item>Manage Contacts</item>
-        <item>Watch Only Address</item>
+        <item>Manage Wallets</item>
         <item>Currency</item>
         <item>Theme</item>
         <item>Support</item>
         <item>Contact</item>
-        <item>Logout</item>
         <item>Version</item>
+        <item>Clear App Data</item>
         <item>Advanced</item>
     </string-array>
     <!-- This string exists in order to allow for proper formatting-->
@@ -214,7 +217,8 @@
     <string name="SETTINGS_block_count" comment="The bllock height of the node">Block Count: %1$d</string>
 
     <!-- Settings: Logout -->
-    <string name="SETTINGS_logout_warning" comment="A warning showing that logging out will delete the private key from the device">Are you sure you want to remove your Private Key from this device?</string>
+    <string name="SETTINGS_logout_warning" comment="A warning showing that logging out will delete the private key from the device">Are you sure you want to clear all O3 app data?
+        This includes all private and encrypted kets stored on this device. Please make sure your keys are backed up. You cannot undo this action.</string>
 
 
     <!-- Wallet: Address Book -->
@@ -224,6 +228,7 @@
     <string name="WALLET_name_address_book" comment="A nickname for your contact in the address book">Name</string>
     <string name="WALLET_add_contact" comment="Add new contact action for new contact to address book">Add Contact</string>
     <string name="WALLET_copied_address" comment="displayed when successfully copied an address to the clipboard">Copied Address</string>
+    <string name="WALLET_copied_key" comment="displayed when successfully copied a key to the clipboard">Copied Key</string>
     <string name="WALLET_remove_contact" comment="Action to remove a contact from the address book">Remove Contact</string>
     <string name="WALLET_remove_contact_warning" comment="Warning displayed when user attempts to remove contract from the address book">Are you sure you want to remove this contact?</string>
     "
@@ -373,7 +378,7 @@
         <item>COMBINED</item>
     </string-array>
 
-    <string name="PORTFOLIO_total" comment="total sum of watch addresses">total</string>
+    <string name="PORTFOLIO_total" comment="total sum of watch addresses">Combined</string>
 
     <string name="PORTFOLIO_six_hours" comment="six hour porfolio interval">6H</string>
     <string name="PORTFOLIO_one_day" comment="one day portfolio interval">24H</string>
@@ -422,9 +427,10 @@
     <string name="WALLET_sync_failed">Oh no! Something went wrong with the syncing process. Check back later and try again</string>
     <string name="WALLET_sync_needs_more_time">It\'s taking a bit longer than expected to sync. Pull down to refresh</string>
     <string name="WALLET_claim_error">An error occured while claiming, check the network in your settings and try again</string>
-    <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It may incur a fee of 0.01 ONG</string>
+    <string name="WALLET_claim_ontology_gas">Are you sure you want to claim your Ontology GAS? It will incur a fee of 0.01 ONG</string>
     <string name="WALLET_sync_ontology_gas">Are you sure you want to sync your ONG? It will cost (0.01) ONG to do so</string>
     <string name="WALLET_sync_ontology_error">You must have generated at least 0.02 ONG in order to sync. Check back soon!</string>
+    <string name="WALLET_claim_ontology_error">You must have generated at least 0.01 ONG in order to claim. Check back soon!</string>
     <string name="DIALOG_tokens_in_your_wallet">You\'ve got tokens in your wallet</string>
     <string name="DIALOG_making_sure_backup">We just want to make sure you have backed up your Private Key to keep them safe</string>
     <string name="DIALOG_confirm_backup">My Private Key is backed up in a safe place</string>
@@ -532,4 +538,55 @@
     <string name="NATIVE_TRADE_deposit_all">Deposit All</string>
     <string name="NATIVE_TRADE_Neo_withdraw_warning">When withdrawing to your wallet, you must withdraw a whole amount of NEO</string>
     <string name="WALLET_Account_Empty_State">Get started by depositing funds to your account</string>
+    <string name="MULTIWALLET_activation_complete_description">Awesome! All done!\n\n Here is your new encrypted key!
+        We recommend making a copy of the QR or text key and keeping
+        it somewhere safe in case you lose access to your wallet.\n\n Don\'t forget your password or it won\'t work</string>
+    <string name="MULTIWALLET_backup">Back up</string>
+    <string name="MULTIWALLET_done">Done</string>
+    <string name="MULTIWALLET_activate">In order to enable multi wallet, we need to create an encrypted version of your key.\n\n Please enter a strong password that will be required when switching wallets</string>
+    <string name="MULTIWALLET_enter_ecnryption_password">Enter a password</string>
+    <string name="MULTIWALLET_enter_confirm_password">Confirm password</string>
+    <string name="MULTIWALLET_next">Next</string>
+    <string name="MULTIWALLET_restore_subtitle">You will need this password to restore your key from backup</string>
+    <string name="MULTIWALLET_activate_multiwallet">Activate MultiWallet</string>
+    <string name="MULTIWALLET_passwords_do_not_match">Your passwords do not match. Please double check it.</string>
+    <string name="MULTIWALLET_password_to_short">Your password is too short. Please make sure it is at least 8 characters in length.</string>
+    <string name="MULTIWALLET_enter_new_wallet_description">Enter a NEO/Ontology encrypted key, private key or address to add a wallet or watch address</string>
+    <string name="MULTIWALLET_enter_wallet_hint">Enter encrypted, private key, or address</string>
+    <string name="MULTIWALLET_add_wallet">Add Wallet</string>
+    <string name="MULTIWALLET_generate_wallet">Generate a new wallet</string>
+    <string name="MULTIWALLET_invalid_wallet_error">Invalid wallet format. Please double check it</string>
+
+    <string name="MULTIWALLET_name_your_wallet">Give this wallet a name</string>
+    <string name="MULTIWALLET_name_hint">My Awesome Wallet</string>
+    <string name="MULTIWALLET_continue">Continue</string>
+    <string name="MULTIWALLET_watch_address_added">A watch only wallet has been added. You can unlock this address at any time by going to settings, manage wallets and entering the private or encrypted key.</string>
+    <string name="MULTIWALLET_encrypt_this_key">Please give your wallet a name and a strong password that you won\'t forget</string>
+    <string name="MULTIWALLET_enter_password_to_verify">Decrypt this private key with your password that you have set</string>
+    <string name="MULTIWALLET_cannot_decrypt">Could not deecrypt this private key, please double check your password.</string>
+
+    <string name="MULTIWALLET_backup_existing">Backup Wallet</string>
+    <string name="MULTIWALLET_show_raw_key">Show Raw Private Key</string>
+    <string name="MULTIWALLET_unlock">Unlock</string>
+    <string name="MULTIWALLET_unlock_question">Unlock?</string>
+    <string name="MULTIWALLET_remove_wallet">Remove Wallet</string>
+    <string name="MULTIWALLET_add_key_to_watch_address">Add a key to this wallet</string>
+
+    <string name="MULTIWALLET_cannot_delete_default">You cannot remove your default key.</string>
+    <string name="MULTIWALLET_cannot_unlock_default">Your default wallet is already unlocked</string>
+    <string name="MULTIWALLET_are_you_sure">Are you you sure you want to remove this wallet from your account?</string>
+    <string name="ONBOARDING_remove_wallet">This will remove your old wallet from this device? Are you sure you want to continue? This action cannot be reversed.</string>
+    <string name="MULTIWALLET_cannot_create_duplicate">You are already using this name for another wallet, please select a different one</string>
+    <string name="MULTIWALLET_choose_new_name">Choose a new name</string>
+    <string name="MUTLIWALLET_invalid_key">Invalid private key format, please double check it</string>
+    <string name="MULTIWALLET_invalid_password_length">Your password must be at least 8 characters</string>
+    <string name="MULTIWALLET_no_additional_wallets">No additional wallets added</string>
+    <string name="MULTIWALLET_add_additional_wallets">Add Wallet</string>
+    <string name="MULTIWALLET_manage_wallets">Manage Wallets</string>
+    <string name="MULTIWALLET_swap_wallets">Swap Wallet</string>
+    <string name="MULTIWALLET_encrypted_key">Encrypted Key</string>
+    <string name="MULTIWALLET_wallet_added">Encrypted Wallet added successfully. You can unlock this wallet at any time in the settings menu.</string>
+    <string name="MUTLIWALLET_duplicate_address_error">You have already added this address, and cannot add it twice</string>
+    <string name="MUTLIWALLET_duplicate_key_error">You have already added this encrypted key, and cannot add it twice</string>
+    <string name="MUTLWALLET_duplicate_name_error">You already have a wallet with this name, please choose another one</string>
 </resources>

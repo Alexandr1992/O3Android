@@ -52,6 +52,7 @@ class AccountViewModel: ViewModel() {
     private var neoBalance: Int? = null
     private var storedClaims: ClaimData? = null
     var ontologyCanNotSync = false
+    var ontologyCanNotClaim = false
 
     var wallet: Wallet = Account.getWallet()
 
@@ -75,6 +76,13 @@ class AccountViewModel: ViewModel() {
                 for (asset in it) {
                     if (asset.asset.name.toUpperCase() == "NEO") {
                         neoBalance = asset.asset.value.toInt()
+                    }
+                    if (asset.asset.symbol.toUpperCase() == "ONG") {
+                        if (asset.value.toDouble() < 0.01) {
+                            ontologyCanNotClaim = true
+                        } else {
+                            ontologyCanNotClaim = false
+                        }
                     }
                 }
             }

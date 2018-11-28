@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/mytext"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/WALLET_send_action_label"
         android:textAlignment="center"
@@ -22,14 +22,27 @@
 
     <ImageButton
         android:id="@+id/rightNavButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginEnd="16dp"
         android:background="@color/transparent"
+        android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_scan" />
+        app:srcCompat="@drawable/ic_edit" />
+
+    <ImageView
+        android:id="@+id/titleIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/mytext"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_locked" />
 
 </android.support.constraint.ConstraintLayout>

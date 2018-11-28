@@ -1,8 +1,11 @@
 package network.o3.o3wallet
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.support.annotation.AttrRes
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
@@ -47,4 +50,21 @@ fun Context.getColorFromAttr(
     theme.resolveAttribute(attrColor, typedValue, resolveRefs)
     return typedValue.data
 }
+
+fun Drawable.toBitmap(): Bitmap {
+    if (this is BitmapDrawable) {
+        return bitmap
+    }
+
+    val width = if (bounds.isEmpty) intrinsicWidth else bounds.width()
+    val height = if (bounds.isEmpty) intrinsicHeight else bounds.height()
+
+    return Bitmap.createBitmap(width.nonZero(), height.nonZero(), Bitmap.Config.ARGB_8888).also {
+        val canvas = Canvas(it)
+        setBounds(0, 0, canvas.width, canvas.height)
+        draw(canvas)
+    }
+}
+
+private fun Int.nonZero() = if (this <= 0) 1 else this
 

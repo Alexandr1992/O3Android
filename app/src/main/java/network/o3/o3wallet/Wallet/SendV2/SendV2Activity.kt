@@ -55,12 +55,10 @@ class SendV2Activity : AppCompatActivity() {
             if (uri != "") {
                 parseQRPayload(uri)
                 //give sometime to load eveything up
-                Thread.sleep(2000)
             }
 
             if(assetID != "") {
                 parseQRPayload("", assetID)
-                Thread.sleep(2000)
             }
         }
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
@@ -88,11 +86,11 @@ class SendV2Activity : AppCompatActivity() {
     fun parseQRPayload(payload: String, assetId: String? = null) {
         if (assetId != null) {
             setWithAssetId(assetId)
-            return
         }
 
         if (Neoutils.validateNEOAddress(payload)) {
             sendViewModel.setSelectedAddress(payload)
+            return
         } else try {
             val uri = parseNEP9URI(payload)
             val toAddress = uri.to
@@ -121,8 +119,9 @@ class SendV2Activity : AppCompatActivity() {
                     })
                 }
             }
+            Thread.sleep(2000)
         } catch (e: Exception) {
-            Toast.makeText(this, e.localizedMessage, Toast.LENGTH_LONG).show()
+            Thread.sleep(2000)
         }
     }
 

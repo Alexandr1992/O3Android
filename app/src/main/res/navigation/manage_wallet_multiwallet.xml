@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/manage_wallet_multiwallet"
+    app:startDestination="@id/manageWalletBaseFragment">
+
+    <fragment
+        android:id="@+id/manageWalletBaseFragment"
+        android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletBaseFragment"
+        android:label="fragment_manage_wallet_base"
+        tools:layout="@layout/multiwallet_manage_wallet_base" >
+        <action
+            android:id="@+id/action_manageWalletBaseFragment_to_unlockWatchAddressFragment"
+            app:destination="@id/unlockWatchAddressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/unlockWatchAddressFragment"
+        android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.UnlockWatchAddressFragment"
+        android:label="multiwallet_unlock_watch_address"
+        tools:layout="@layout/multiwallet_unlock_watch_address" >
+        <action
+            android:id="@+id/action_unlockWatchAddressFragment_to_unlockKeySuccessFragment"
+            app:destination="@id/unlockKeySuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/unlockKeySuccessFragment"
+        android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.UnlockKeySuccessFragment"
+        android:label="UnlockKeySuccessFragment" />
+</navigation>

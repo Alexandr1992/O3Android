@@ -35,7 +35,7 @@ class TokenSaleRootActivity : AppCompatActivity() {
     }
 
     val currentFragment: Fragment?
-        get() = my_nav_host_fragment.childFragmentManager.findFragmentById(R.id.my_nav_host_fragment)
+        get() = add_multiwallet_nav_host.childFragmentManager.findFragmentById(R.id.add_multiwallet_nav_host)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

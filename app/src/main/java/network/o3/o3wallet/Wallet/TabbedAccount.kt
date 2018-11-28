@@ -23,6 +23,12 @@ class TabbedAccount : Fragment() {
         return inflater.inflate(R.layout.wallet_fragment_tabbed_account, container, false)
     }
 
+    val needReloadAddressReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            viewPager.adapter = AccountFragmentPagerAdapter(childFragmentManager, context!!)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -35,6 +41,14 @@ class TabbedAccount : Fragment() {
         //use this offScreenPageLimit to tell it to keep 2 fragments instead
         viewPager.offscreenPageLimit = 2
         tabLayout.setupWithViewPager(viewPager)
+        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadAddressReciever,
+                IntentFilter("need-update-watch-address-event"))
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this.context!!)
+                .unregisterReceiver(needReloadAddressReciever)
+        super.onDestroy()
     }
 
     companion object {

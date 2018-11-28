@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/multiWalletAddNew">
+
+    <fragment
+        android:id="@+id/multiWalletAddNew"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew"
+        android:label="multiwallet_add_new"
+        tools:layout="@layout/multiwallet_add_new" >
+        <action
+            android:id="@+id/action_multiWalletAddNew_to_enterMultiwalletWatchAddress"
+            app:destination="@id/enterMultiwalletWatchAddress" />
+        <action
+            android:id="@+id/action_multiWalletAddNew_to_addMultiwalletVerifyNEP2"
+            app:destination="@id/addMultiwalletVerifyNEP2" />
+        <action
+            android:id="@+id/action_multiWalletAddNew_to_enterMultiwalletEncryptPrivateKey"
+            app:destination="@id/enterMultiwalletEncryptPrivateKey" />
+    </fragment>
+    <fragment
+        android:id="@+id/addMultiwalletVerifyNEP2"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddMultiwalletVerifyNEP2"
+        android:label="multiwallet_verify_nep2"
+        tools:layout="@layout/multiwallet_verify_nep2" >
+        <action
+            android:id="@+id/action_addMultiwalletVerifyNEP2_to_enterEncryptedKeyNameFragment"
+            app:destination="@id/enterEncryptedKeyNameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/keyEncryptionSuccess"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.KeyEncryptionSuccess"
+        android:label="key_encryption_success"
+        tools:layout="@layout/multiwallet_key_encryption_success" />
+    <fragment
+        android:id="@+id/enterMultiwalletEncryptPrivateKey"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EnterMultiwalletEncryptPrivateKey"
+        android:label="multiwallet_encrypt_new_private_key"
+        tools:layout="@layout/multiwallet_encrypt_new_private_key" >
+        <action
+            android:id="@+id/action_enterMultiwalletEncryptPrivateKey_to_keyEncryptionSuccess"
+            app:destination="@+id/keyEncryptionSuccess" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterMultiwalletWatchAddress"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EnterMultiwalletWatchAddress"
+        android:label="multiwallet_enter_watch_address"
+        tools:layout="@layout/multiwallet_enter_watch_address" >
+        <action
+            android:id="@+id/action_enterMultiwalletWatchAddress_to_watchAddressAddedSuccess"
+            app:destination="@id/watchAddressAddedSuccess" />
+    </fragment>
+    <fragment
+        android:id="@+id/watchAddressAddedSuccess"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.WatchAddressAddedSuccess"
+        android:label="multiwallet_watch_address_added"
+        tools:layout="@layout/multiwallet_watch_address_added" />
+    <fragment
+        android:id="@+id/encryptedKeyAddedSuccessFragment"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EncryptedKeyAddedSuccessFragment"
+        android:label="EncryptedKeyAddedSuccessFragment" />
+    <fragment
+        android:id="@+id/enterEncryptedKeyNameFragment"
+        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EnterEncryptedKeyNameFragment"
+        android:label="EnterEncryptedKeyNameFragment" >
+        <action
+            android:id="@+id/action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment"
+            app:destination="@id/encryptedKeyAddedSuccessFragment" />
+    </fragment>
+</navigation>

@@ -248,7 +248,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         depositWithDrawalButton = mView.find(R.id.placeOrderButton)
         depositWithDrawalButton.isEnabled = false
         depositWithDrawalButton.setOnClickListener {
-            val symbol = viewModel.selectedAsset!!.value!!.symbol.toUpperCase()
+            val symbol = viewModel.selectedAsset?.value?.symbol?.toUpperCase() ?: "NEO"
             val amount = (viewModel.toSendAmount * BigDecimal(100000000)).toLong().toString()
             val bundle = Bundle()
             if (viewModel.isDeposit) {
@@ -307,7 +307,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
         }
 
         withdrawAllButton.setOnClickListener {
-            if (viewModel.selectedAsset!!.value!!.symbol == "NEO") {
+            if (viewModel.selectedAsset?.value?.symbol == "NEO") {
                 amountEditText.text = SpannableStringBuilder(
                         floor(find<TextView>(R.id.assetBalanceTextView).text.decimalNoGrouping().toDouble()).removeTrailingZeros()
                 )

@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
@@ -36,7 +37,6 @@ class PasscodeRequestActivity : AppCompatActivity() {
                 deepLink = intent.getStringExtra("deepLink")
             }
         }
-
         signinTapped()
     }
 
