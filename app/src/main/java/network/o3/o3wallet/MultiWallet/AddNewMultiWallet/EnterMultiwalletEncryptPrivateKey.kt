@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.navigation.findNavController
+import com.amplitude.api.Amplitude
 import neoutils.Neoutils
 import network.o3.o3wallet.NEP6
 
@@ -20,6 +21,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
 import java.lang.Exception
 
 class EnterMultiwalletEncryptPrivateKey : Fragment() {
@@ -89,6 +91,9 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                     vm.address = account.address
                     nep6.addEncryptedKey(vm.address, nameField.text.toString(), account.encryptedKey)
                     nep6.writeToFileSystem()
+                    val walledAddAttrs = mapOf(
+                            "total_num_wallets" to nep6.getWalletAccounts().count())
+                    Amplitude.getInstance().logEvent("wallet_added", JSONObject(walledAddAttrs))
                     mView.findNavController().navigate(R.id.action_enterMultiwalletEncryptPrivateKey_to_keyEncryptionSuccess)
                 } catch (e: Exception) {
                     //idk

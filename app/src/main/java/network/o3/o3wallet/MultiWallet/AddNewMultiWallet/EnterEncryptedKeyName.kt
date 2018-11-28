@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.navigation.findNavController
+import com.amplitude.api.Amplitude
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
+import org.json.JSONObject
 
 class EnterEncryptedKeyNameFragment : Fragment() {
 
@@ -58,6 +60,10 @@ class EnterEncryptedKeyNameFragment : Fragment() {
             vm.nickname = nameEditText.text.toString()
             newNep6.addEncryptedKey(vm.address, vm.nickname, vm.encryptedKey)
             newNep6.writeToFileSystem()
+            val walledAddAttrs = mapOf(
+                    "total_num_wallets" to newNep6.getWalletAccounts().count())
+            Amplitude.getInstance().logEvent("wallet_added", JSONObject(walledAddAttrs))
+
             mView.findNavController().navigate(R.id.action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment)
         }
     }
