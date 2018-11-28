@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.amplitude.api.Amplitude
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
@@ -64,6 +65,7 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
                     (mFragment as RoundedBottomSheetDialogFragment).dismiss()
                     neo2DialogFragment.dismiss()
                     NEP6.getFromFileSystem().makeNewDefault(getItem(position).address, pass)
+                    Amplitude.getInstance().logEvent("wallet_unlocked")
                 }
 
                 neo2DialogFragment.encryptedKey = getItem(position).key!!

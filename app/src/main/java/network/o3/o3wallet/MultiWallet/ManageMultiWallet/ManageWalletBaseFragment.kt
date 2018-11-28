@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
+import com.amplitude.api.Amplitude
 import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
@@ -31,6 +32,7 @@ import network.o3.o3wallet.toBitmap
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 
@@ -215,6 +217,7 @@ class ManageWalletBaseFragment : Fragment() {
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
                 neo2DialogFragment.decryptionSucceededCallback = { pass ->
                     NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
+                    Amplitude.getInstance().logEvent("wallet_unlocked")
                     mVm.isDefault = true
                     (mFragment as ManageWalletBaseFragment).setTitleIcon()
                 }
