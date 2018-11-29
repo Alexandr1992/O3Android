@@ -1,0 +1,99 @@
+package network.o3.o3wallet.Dapp
+import com.google.gson.JsonObject
+
+data class DappMessage(val platform: String, val blockchain: String, val messageId: String,
+                       val version: String, val command: String, val network: String?,
+                       val data: Any)
+
+data class DappMetadata(val title: String?, val iconURL: String?, val description: String?)
+
+typealias GetNetworkResponse = List<String>
+typealias GetBalanceRequest = List<NeoDappProtocol.GetBalanceRequestElement>
+typealias GetBalanceResponse = MutableMap<String, NeoDappProtocol.GetBalanceResponseElement>
+typealias InvokeReadResponse = JsonObject
+
+
+class NeoDappProtocol {
+    data class GetAccountResponse(val address: String,
+                                  val publicKey: String)
+
+    data class GetProviderResponse(val compatibility: List<String>,
+                                   val name: String,
+                                   val version: String,
+                                   val website: String)
+
+    //Get Balances
+    data class GetBalanceRequestElement(val address: String,
+                                        val asset: String)
+    data class GetBalanceResponseElement(val amount: String,
+                                         val scriptHash: String,
+                                         val symbol: String,
+                                         val unspent: List<Unspent>) {
+        data class Unspent(val n: Int,
+                           val txid: String,
+                           val value: String)
+    }
+
+    data class GetStorageRequest(val scriptHash: String,
+                                 val key: String,
+                                 val network: String?)
+
+
+
+    // Invoke
+    data class InvokeReadRequest(val operation: String,
+                                 val scriptHash: String,
+                                 val args: List<String>,
+                                 val network: String)
+
+    data class InvokeRequest(val operation: String,
+                             val scriptHash: String,
+                             val assetIntentOverrides: AssetIntentOverrides?,
+                             val attachedAssets: AttachedAssets?,
+                             val triggerContractVerification: Boolean,
+                             val fee: String,
+                             val args: List<Arg>?,
+                             val network: String) {
+
+        data class AssetIntentOverrides(val inputs: List<Input>,
+                                        val outputs: List<Output>) {
+            data class Input(val txid: String,
+                             val index: Int)
+
+            data class Output(val asset: String,
+                              val address: String,
+                              val value: String)
+        }
+
+        data class AttachedAssets(val gas: Int?,
+                                  val neo: Int?)
+    }
+
+    data class InvokeResponse(val txid: String,
+                              val nodeUrl: String)
+
+    data class SendRequest(val amount: String,
+                           val toAddress: String,
+                           val fromAddress: String?,
+                           val network: String,
+                           val asset: String?,
+                           val remark: String,
+                           val fee: String)
+
+    data class SendResponse(val txid: String,
+                            val nodeUrl: String)
+
+    data class errorResponse(val error: String)
+
+
+    data class Arg(val type: String,
+                   val value: String)
+
+    companion object {
+        val availableCommmands = listOf("getProvider", "getNetworks", "getAccount",
+                "getBalance", "getStorage", "invokeRead", "invoke", "send")
+        val needAuthCommands = listOf("getAccount", "getAddress", "invoke", "send")
+    }
+
+
+}
