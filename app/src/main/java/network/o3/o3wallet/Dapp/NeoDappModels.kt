@@ -1,4 +1,5 @@
 package network.o3.o3wallet.Dapp
+
 import com.google.gson.JsonObject
 
 data class DappMessage(val platform: String, val blockchain: String, val messageId: String,
@@ -23,6 +24,7 @@ class NeoDappProtocol {
                                    val website: String)
 
     //Get Balances
+    data class GetBalanceRequest(val params: List<GetBalanceRequestElement>, val network: String?)
     data class GetBalanceRequestElement(val address: String,
                                         val asset: String)
     data class GetBalanceResponseElement(val amount: String,
@@ -72,13 +74,14 @@ class NeoDappProtocol {
     data class InvokeResponse(val txid: String,
                               val nodeUrl: String)
 
-    data class SendRequest(val amount: String,
-                           val toAddress: String,
-                           val fromAddress: String?,
-                           val network: String,
-                           val asset: String?,
+    data class SendRequest(val fromAddress: String?,
+                           var toAddress: String,
+                           val asset: String,
+                           val amount: String,
                            val remark: String,
-                           val fee: String)
+                           val fee: String?,
+                           val network: String
+                           )
 
     data class SendResponse(val txid: String,
                             val nodeUrl: String)
@@ -94,6 +97,4 @@ class NeoDappProtocol {
                 "getBalance", "getStorage", "invokeRead", "invoke", "send")
         val needAuthCommands = listOf("getAccount", "getAddress", "invoke", "send")
     }
-
-
 }

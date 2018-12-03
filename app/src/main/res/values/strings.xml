@@ -589,4 +589,8 @@
     <string name="MUTLIWALLET_duplicate_address_error">You have already added this address, and cannot add it twice</string>
     <string name="MUTLIWALLET_duplicate_key_error">You have already added this encrypted key, and cannot add it twice</string>
     <string name="MUTLWALLET_duplicate_name_error">You already have a wallet with this name, please choose another one</string>
+    <string name="DAPP_connection_warning">This will be able to see your public information related to this address</string>
+    <string name="DAPP_requesting_to_connect">is requesting to connect to your wallet</string>
+    <string name="DAPP_connect">Connect</string>
+    <string name="DAPP_cancel">Cancel</string>
 </resources>

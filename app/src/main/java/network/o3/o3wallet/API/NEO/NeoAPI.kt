@@ -543,15 +543,17 @@ class NeoNodeRPC {
     // fromAddress -> Address of Sender
     // toAddress -> Address of Recipient
     // transfer amount *
-    fun sendNEP5Token(wallet: Wallet, utxos: UTXOS?, tokenContractHash: String, fromAddress: String, toAddress: String, amount: BigDecimal, decimals: Int, fee: BigDecimal,
+    fun sendNEP5Token(wallet: Wallet, utxos: UTXOS?, tokenContractHash: String, fromAddress: String, toAddress: String,
+                      amount: BigDecimal, decimals: Int, fee: BigDecimal, attributes: Array<TransactionAttribute> = arrayOf(),
                       completion: (Pair<String?, Error?>) -> Unit) {
-        val attributes = arrayOf<TransactionAttribute>(
+        var finalAttributes = arrayOf<TransactionAttribute>(
             TransactionAttribute().scriptAttribute(fromAddress.hashFromAddress()),
             TransactionAttribute().remarkAttribute(String.format("O3X%s", Date().time.toString())),
-            TransactionAttribute().hexDescriptionAttribute(tokenContractHash))
+            TransactionAttribute().hexDescriptionAttribute(tokenContractHash))  + attributes
+
 
         val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount, decimals)
-        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), tokenContractHash, attributes, fee)
+        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), tokenContractHash, finalAttributes, fee)
         sendRawTransaction(finalPayload.first, finalPayload.second) {
             var txid = it.first
             var error = it.second

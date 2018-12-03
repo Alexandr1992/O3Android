@@ -144,7 +144,7 @@ class LoginNEP6Activity : AppCompatActivity() {
                         requestPasscode(view)
                     } else {
                         val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                        neo2DialogFragment.decryptionSucceededCallback = { pass ->
+                        neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
                             NEP6.getFromFileSystem().makeNewDefault(wallet.address, pass)
                             Account.restoreWalletFromDevice()
                             val intent = Intent(activity, SelectingBestNode::class.java)

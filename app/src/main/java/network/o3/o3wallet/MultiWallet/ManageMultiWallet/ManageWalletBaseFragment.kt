@@ -197,7 +197,7 @@ class ManageWalletBaseFragment : Fragment() {
         fun showRawKeyAction() {
             val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
 
-            neo2DialogFragment.decryptionSucceededCallback = {
+            neo2DialogFragment.decryptionSucceededCallback = { _, _ ->
                 val privateKeyModal = PrivateKeyFragment.newInstance()
                 val bundle = Bundle()
                 bundle.putString("key", neo2DialogFragment.decryptedKey)
@@ -215,7 +215,7 @@ class ManageWalletBaseFragment : Fragment() {
                 return
             } else if (mVm.key != null){
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = { pass ->
+                neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
                     NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
                     Amplitude.getInstance().logEvent("wallet_unlocked")
                     mVm.isDefault = true

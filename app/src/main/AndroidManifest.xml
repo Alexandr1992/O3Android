@@ -113,6 +113,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTopBar.White" />
         <activity
+            android:name=".Dapp.DAppBrowserActivityV2"
+            android:hardwareAccelerated="true"
+            android:label="@string/title_activity_dapp_browser"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTopBar.White" />
+        <activity
             android:name=".MultiWallet.Activate.MultiwalletActivateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />

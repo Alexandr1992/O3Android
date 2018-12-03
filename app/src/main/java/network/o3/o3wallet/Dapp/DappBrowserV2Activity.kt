@@ -19,14 +19,13 @@ import com.amplitude.api.Amplitude
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.find
-import org.jetbrains.anko.noButton
+import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk15.coroutines.onClick
-import org.jetbrains.anko.yesButton
 import org.json.JSONObject
 import java.io.InputStream
 import java.net.URL
@@ -35,7 +34,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
     lateinit var dappBrowserView: View
     lateinit var webView: WebView
-    lateinit var jsInterface: DappBrowserJSInterface
+    lateinit var jsInterface: DappBrowserJSInterfaceV2
 
     var previousWasRedirect = false
 
@@ -43,6 +42,8 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             "neonewstoday.com", "public.o3.network", "explorer.ont.io")
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
     var lastClickTime: Long = 0
+
+    var userHasAuthorizedWallet = false
 
     data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String)
 
@@ -55,6 +56,20 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             ResourceObject("https://cdn.o3.network/assets/fa/js/fontawesome-all.min.js", "text/javascript", R.raw.font_awesome, "UTF-8"),
             ResourceObject("https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js", "text/javascript", R.raw.bodymovin, "UTF-8")
     )
+
+
+    fun authorizeWalletInfo(message: DappMessage) {
+        runOnUiThread {
+
+
+        val bottomSheet = DappConnectionRequestBottomSheet()
+        bottomSheet.dappMessage = message
+        val bundle = Bundle()
+        bundle.putString("url", webView.url)
+        bottomSheet.arguments = bundle
+        bottomSheet.show(this.supportFragmentManager, bottomSheet.tag)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +90,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 setVerifiedHeaderUrl(webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url)
                 webView.goBack()
             } else {
-                onBackPressed()
+                //onBackPressed()
             }
         }
 
@@ -162,8 +177,9 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
-        jsInterface = DappBrowserJSInterface(this, webView)
-        webView.addJavascriptInterface(jsInterface, "O3AndroidInterface")
+        jsInterface = DappBrowserJSInterfaceV2(this, webView, Account.getWallet(),
+                NEP6.getFromFileSystem().accounts.find { it.isDefault }?.label ?: "My O3 Wallet")
+        webView.addJavascriptInterface(jsInterface, "_o3dapi")
         WebView.setWebContentsDebuggingEnabled(true)
     }
 
@@ -197,7 +213,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             return
         } else {
             if (resultCode == -1) {
-                jsInterface.finishConnectionToO3()
+                //jsInterface.finishConnectionToO3()
             } else {
                 return
             }
@@ -205,12 +221,12 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (jsInterface.userAuthenticatedApp) {
-            alert(resources.getString(R.string.DAPP_logout_warning)) {
-                yesButton { super.onBackPressed() }
-                noButton { }
-            }.show()
-        } else {
+        //if (jsInterface.userAuthenticatedApp) {
+         //   alert(resources.getString(R.string.DAPP_logout_warning)) {
+           //     yesButton { super.onBackPressed() }
+             //   noButton { }
+         //   }.show()
+       // } else {
             if (webView.canGoBack()) {
                 var currIndex = webView.copyBackForwardList().currentIndex
                 if (webView.copyBackForwardList().getItemAtIndex(currIndex).url == webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url) {
@@ -225,7 +241,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             } else {
                 super.onBackPressed()
             }
-        }
+    //    }
     }
 
     override fun onStart() {
