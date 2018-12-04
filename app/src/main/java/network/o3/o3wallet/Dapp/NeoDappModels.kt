@@ -4,7 +4,7 @@ import com.google.gson.JsonObject
 
 data class DappMessage(val platform: String, val blockchain: String, val messageId: String,
                        val version: String, val command: String, val network: String?,
-                       val data: Any)
+                       var data: Any)
 
 data class DappMetadata(val title: String?, val iconURL: String?, val description: String?)
 
@@ -79,7 +79,7 @@ class NeoDappProtocol {
                            val asset: String,
                            val amount: String,
                            val remark: String,
-                           val fee: String?,
+                           var fee: String?,
                            val network: String
                            )
 

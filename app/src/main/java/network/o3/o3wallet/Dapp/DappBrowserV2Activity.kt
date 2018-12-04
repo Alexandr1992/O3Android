@@ -8,25 +8,18 @@ import android.content.IntentFilter
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
-import android.os.SystemClock
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.webkit.*
 import android.widget.*
 import com.airbnb.lottie.LottieAnimationView
-import com.amplitude.api.Amplitude
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
-import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
+import network.o3.o3wallet.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk15.coroutines.onClick
-import org.json.JSONObject
 import java.io.InputStream
 import java.net.URL
 
@@ -60,14 +53,24 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
     fun authorizeWalletInfo(message: DappMessage) {
         runOnUiThread {
+            val bottomSheet = DappConnectionRequestBottomSheet()
+            bottomSheet.dappMessage = message
+            val bundle = Bundle()
+            bundle.putString("url", webView.url)
+            bottomSheet.arguments = bundle
+            bottomSheet.show(this.supportFragmentManager, bottomSheet.tag)
+        }
+    }
 
-
-        val bottomSheet = DappConnectionRequestBottomSheet()
-        bottomSheet.dappMessage = message
-        val bundle = Bundle()
-        bundle.putString("url", webView.url)
-        bottomSheet.arguments = bundle
-        bottomSheet.show(this.supportFragmentManager, bottomSheet.tag)
+    fun authorizeSend(message: DappMessage) {
+        runOnUiThread {
+            val bottomSheet = DappRequestSendBottomSheet()
+            bottomSheet.dappMessage = message
+            val bundle = Bundle()
+            bundle.putString("send_request", Gson().toJson(Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))))
+            bundle.putString("url", webView.url)
+            bottomSheet.arguments = bundle
+            bottomSheet.show(this.supportFragmentManager, bottomSheet.tag)
         }
     }
 

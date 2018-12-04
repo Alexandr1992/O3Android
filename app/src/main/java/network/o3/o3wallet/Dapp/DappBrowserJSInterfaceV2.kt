@@ -43,7 +43,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             "getstorage" -> handleGetStorage(message)
             "invokeread" -> handleInvokeRead(message)
             "invoke" -> handleInvoke(message)
-            "send"-> handleSend(message)
+            "send"-> authorizeSend(message)
             else -> return
         }
     }
@@ -88,6 +88,10 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
     fun handleGetAccount(message: DappMessage) {
         (webView.context as DAppBrowserActivityV2).authorizeWalletInfo(message)
+    }
+
+    fun authorizeSend(message: DappMessage) {
+        (webView.context as DAppBrowserActivityV2).authorizeSend(message)
     }
 
     fun handleGetBalance(message: DappMessage) {
@@ -153,7 +157,8 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         callback(message, jsonResponse)
     }
 
-    fun sendNativeNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest) {
+    fun sendNativeNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
+        var success = false
         var toSendAsset: NeoNodeRPC.Asset? = null
         toSendAsset = if (sendRequest.asset.toLowerCase() == "neo") {
             NeoNodeRPC.Asset.NEO
@@ -171,18 +176,26 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         var fee = BigDecimal.ZERO
         try {
             fee = BigDecimal(sendRequest.fee)
-        } catch (e : Exception) { }
+        } catch (e : Exception) {
+            success = false
+        }
 
         NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet, toSendAsset, BigDecimal(amount),
                 recipientAddress, attributes, fee) {
+            if (it.first != null) {
+                success = true
+            }
+
             callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = node))
                 latch.countDown()
         }
         latch.await()
+        return success
     }
 
-    fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest) {
+    fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
         sendRequest.toAddress = dappExposedWallet.address
+        var success = false
 
         var fee = BigDecimal.ZERO
         try {
@@ -198,6 +211,10 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet, null, token!!.id,
                         dappExposedWallet.address, sendRequest.toAddress,
                         BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
+                    if (it.first != null) {
+                        success = true
+                    }
+
                     callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
                     latch.countDown()
                 }
@@ -211,6 +228,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                         NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet, assets, sendRequest.asset, dappExposedWallet.address,
                                 sendRequest.toAddress, BigDecimal(sendRequest.amount),
                                 token?.decimals ?: 8, fee, attributes) {
+                            if (it.first != null) {
+                                success = true
+                            }
                             callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
                             latch.countDown()
                         }
@@ -219,14 +239,15 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             }
         }
         latch.await()
+        return success
     }
 
-    fun handleSend(message: DappMessage) {
+    fun handleSend(message: DappMessage): Boolean {
         val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
         if (sendRequest.asset == "NEO" || sendRequest.asset == "GAS") {
-            sendNativeNeoAsset(message, sendRequest)
+            return sendNativeNeoAsset(message, sendRequest)
         } else {
-            sendTokenNeoAsset(message, sendRequest)
+            return sendTokenNeoAsset(message, sendRequest)
         }
     }
 
