@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
+import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.opengraph.OpenGraph
@@ -70,6 +72,7 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         addressTextView = mView.find(R.id.walletAddressTextView)
         addressNameTextView = mView.find(R.id.walletNameTextView)
         swapWalletContainer = mView.find(R.id.swapWalletContainer)
+        isCancelable = false
 
         swapWalletContainer.onClick {
             val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
@@ -115,13 +118,19 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
                 val image = dapp.getContent("image")
 
                 onUiThread {
-                    titleView.text = title
-                    Glide.with(mView).load(image).into(logoView)
+                    if (title == null) {
+                        titleView.text = url!!
+                        logoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
+                    } else {
+                        titleView.text = title
+                        Glide.with(mView).load(image).into(logoView)
+                    }
                 }
             }
 
         } catch (e: Exception) {
-
+            titleView.text = url!!
+            logoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
         }
     }
 

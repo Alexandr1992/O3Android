@@ -8,13 +8,14 @@ data class DappMessage(val platform: String, val blockchain: String, val message
 
 data class DappMetadata(val title: String?, val iconURL: String?, val description: String?)
 
-typealias GetNetworkResponse = List<String>
 typealias GetBalanceRequest = List<NeoDappProtocol.GetBalanceRequestElement>
 typealias GetBalanceResponse = MutableMap<String, NeoDappProtocol.GetBalanceResponseElement>
 typealias InvokeReadResponse = JsonObject
 
 
 class NeoDappProtocol {
+    data class GetNetworkResponse(val networks: List<String>)
+
     data class GetAccountResponse(val address: String,
                                   val publicKey: String)
 
@@ -26,7 +27,7 @@ class NeoDappProtocol {
     //Get Balances
     data class GetBalanceRequest(val params: List<GetBalanceRequestElement>, val network: String?)
     data class GetBalanceRequestElement(val address: String,
-                                        val asset: String)
+                                        val assets: List<String>)
     data class GetBalanceResponseElement(val amount: String,
                                          val scriptHash: String,
                                          val symbol: String,

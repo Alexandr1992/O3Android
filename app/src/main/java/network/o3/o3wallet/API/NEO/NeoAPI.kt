@@ -52,6 +52,7 @@ class NeoNodeRPC {
         VALIDATEADDRESS,
         GETACCOUNTSTATE,
         GETRAWMEMPOOL,
+        GETSTORAGE,
         SENDRAWTRANSACTION,
         INVOKEFUNCTION;
 
@@ -162,6 +163,41 @@ class NeoNodeRPC {
     fun validateAddress(address: String, completion: (Pair<Boolean?, Error?>) -> Unit) {
         val valid = validateNEOAddress(address)
         completion(kotlin.Pair<kotlin.Boolean?, Error?>(valid, null))
+    }
+
+    fun getStorage(scriptHash: String, key: String, completion: (Pair<String?, Error?>) -> Unit) {
+        val dataJson = jsonObject(
+                "jsonrpc" to "2.0",
+                "method" to RPC.GETSTORAGE.methodName(),
+                "params" to jsonArray(scriptHash, key),
+                "id" to 3
+        )
+        var request = nodeURL.httpPost().body(dataJson.toString()).timeout(600000)
+        request.headers["Content-Type"] = "application/json"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                val nodeResponse = Gson().fromJson<NodeResponse>(data!!)
+                completion(Pair<String?, Error?>(nodeResponse.result.asString, null))
+            } else {
+                completion(Pair<String?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun readOnlyInvoke(scriptHash: String, operation: String, arguments: Map<String, String>,
+                       completion: (Pair<JsonObject?, Error?>) -> Unit) {
+        val dataJson = jsonArray(scriptHash, operation, arguments)
+        var request = nodeURL.httpPost().body(dataJson.toString()).timeout(600000)
+        request.headers["Content-Type"] = "application/json"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+
+            }
+
+        }
+
     }
 
     private fun sendRawTransaction(finalPayload: ByteArray, unsignedPayload: ByteArray, completion: (Pair<String?, Error?>) -> Unit) {

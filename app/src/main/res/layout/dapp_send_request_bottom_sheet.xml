@@ -30,7 +30,7 @@
                     android:id="@+id/openGraphLogoView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="?attr/colorPrimary" />
+                    android:src="@color/transparent" />
             </android.support.v7.widget.CardView>
 
             <TextView
@@ -129,18 +129,18 @@
 
             <TextView
                 android:id="@+id/toWalletAddressTextView"
-                android:layout_width="0dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="My O3 Wallet"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="AafQxV6wQhtGYGYFboEyBjw3eMYNtBFW8J"
                 android:textAlignment="textEnd"
                 android:textAppearance="@style/RegularText"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView4494"
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
         <View
@@ -266,7 +266,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="TextView"
                 android:textAppearance="@style/RegularText"
@@ -275,11 +275,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView14"
+                android:id="@+id/assetLogoImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:src="@color/colorAccent"
+                android:src="@color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/totalTextView"
                 app:layout_constraintTop_toTopOf="parent" />

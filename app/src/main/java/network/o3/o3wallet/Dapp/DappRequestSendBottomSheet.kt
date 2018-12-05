@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Dapp
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,13 @@ import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import com.kaopiz.kprogresshud.KProgressHUD
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
+import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
@@ -37,6 +40,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
     lateinit var toWalletAddressTextView: TextView
     lateinit var memoTextView: TextView
     lateinit var totalTextView: TextView
+    lateinit var assetLogoImageView: ImageView
 
     lateinit var sendButton: Button
     lateinit var cancelButton: Button
@@ -61,6 +65,10 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         toWalletAddressTextView = mView.find(R.id.toWalletAddressTextView)
         memoTextView = mView.find(R.id.memoTextView)
         totalTextView = mView.find(R.id.totalTextView)
+        assetLogoImageView = mView.find(R.id.assetLogoImageView)
+        val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", sendRequest.asset)
+        Glide.with(context).load(imageURL).into(assetLogoImageView)
+
         sendButton = mView.find(R.id.acceptSendButton)
         cancelButton = mView.find(R.id.rejectSendButton)
 
@@ -70,7 +78,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         fromWalletNameTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName()
         toWalletAddressTextView.text = sendRequest.toAddress
         memoTextView.text = sendRequest.remark
-        totalTextView.text = sendRequest.amount + sendRequest.asset
+        totalTextView.text = sendRequest.amount + " " + sendRequest.asset
 
         cancelButton.onClick {
             dismiss()
@@ -88,8 +96,8 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
 
     fun showSendingState() {
         onUiThread {
-            sendButton.visibility = View.GONE
-            cancelButton.visibility = View.GONE
+            sendButton.visibility = View.INVISIBLE
+            cancelButton.visibility = View.INVISIBLE
             loadingAnimationView.visibility = View.VISIBLE
             loadingTextView.visibility = View.VISIBLE
             loadingTextView.text = resources.getString(R.string.DAPP_processing_transaction)
@@ -105,9 +113,14 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
                 loadingTextView.text = resources.getString(R.string.DAPP_transaction_succeeded)
             } else {
                 loadingAnimationView.setAnimation(R.raw.task_failed)
+                loadingAnimationView.playAnimation()
                 loadingTextView.textColor = ContextCompat.getColor(context!!, R.color.colorLoss)
                 loadingTextView.text = resources.getString(R.string.DAPP_transaction_failed)
+
             }
+            Handler().postDelayed ({
+                dismiss()
+            }, 2000)
         }
     }
 
@@ -120,13 +133,21 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
                 val image = dapp.getContent("image")
 
                 onUiThread {
-                    openGraphTitleTextView.text = title
-                    Glide.with(mView).load(image).into(openGraphLogoView)
+                    if(title == null) {
+                        openGraphTitleTextView.text = url!!
+                        openGraphLogoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
+                    } else {
+                        openGraphTitleTextView.text = title
+                        Glide.with(mView).load(image).into(openGraphLogoView)
+                    }
                 }
             }
 
         } catch (e: Exception) {
-
+            onUiThread {
+                openGraphLogoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
+                openGraphTitleTextView.text = url!!
+            }
         }
     }
 

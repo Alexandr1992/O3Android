@@ -70,7 +70,15 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun handleGetNetworks(message: DappMessage) {
-        val response: GetNetworkResponse = listOf("MainNet", "TestNet", "PrivateNet")
+        val response: NeoDappProtocol.GetNetworkResponse
+        if (PersistentStore.getNetworkType() == "Test") {
+            response = NeoDappProtocol.GetNetworkResponse(listOf("TestNet"))
+        } else if (PersistentStore.getNetworkType() == "Main"){
+            response = NeoDappProtocol.GetNetworkResponse(listOf("MainNet"))
+        } else {
+            response = NeoDappProtocol.GetNetworkResponse(listOf("PrivateNet"))
+        }
+
         callback(message, response)
     }
 
@@ -115,15 +123,19 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 var balances = mutableListOf<NeoDappProtocol.GetBalanceResponseElement>()
                 if (it.second == null) {
                     for (asset in it.first?.assets ?: arrayListOf()) {
-                        balances.add(NeoDappProtocol.GetBalanceResponseElement(
-                                amount = asset.value.toPlainString(), scriptHash = asset.id,
-                                symbol = asset.symbol, unspent = listOf()))
+                        if (input.assets.find {it.toLowerCase() ==  asset.symbol.toLowerCase() } != null) {
+                            balances.add(NeoDappProtocol.GetBalanceResponseElement(
+                                    amount = asset.value.toPlainString(), scriptHash = asset.id,
+                                    symbol = asset.symbol, unspent = listOf()))
+                        }
                     }
 
                     for(asset in it.first?.tokens ?: arrayListOf()) {
-                        balances.add(NeoDappProtocol.GetBalanceResponseElement(
-                                amount = asset.value.toPlainString(), scriptHash = asset.id,
-                                symbol = asset.symbol, unspent = listOf()))
+                        if (input.assets.find {it.toLowerCase() ==  asset.symbol.toLowerCase() } != null) {
+                            balances.add(NeoDappProtocol.GetBalanceResponseElement(
+                                    amount = asset.value.toPlainString(), scriptHash = asset.id,
+                                    symbol = asset.symbol, unspent = listOf()))
+                        }
                     }
 
                     jsonResponse.add(input.address, Gson().toJsonTree(balances))
@@ -251,7 +263,16 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
     }
 
-    fun handleGetStorage(message: DappMessage) {}
+    fun handleGetStorage(message: DappMessage) {
+        val latch = CountDownLatch(1)
+        var storageRequest = Gson().fromJson<NeoDappProtocol.GetStorageRequest>(Gson().toJson(message.data))
+        NeoNodeRPC(PersistentStore.getNodeURL()).getStorage(storageRequest.scriptHash, storageRequest.key) {
+            callback(message, jsonObject("result" to it.first))
+            latch.countDown()
+        }
+        latch.await()
+
+    }
     fun handleInvokeRead(message: DappMessage) {}
     fun handleInvoke(message: DappMessage) {}
 

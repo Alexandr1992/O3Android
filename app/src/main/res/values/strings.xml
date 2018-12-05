@@ -603,4 +603,5 @@
     <string name="DAPP_processing_transaction">Processing Transaction</string>
     <string name="DAPP_transaction_succeeded">Transaction Succeeded</string>
     <string name="DAPP_transaction_failed">Transaction Failed</string>
+    <string name="DAPP_unknown_app">Unknown App</string>
 </resources>
