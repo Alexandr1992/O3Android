@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch
 class DappBrowserJSInterfaceV2(private val context: Context, private val webView: WebView,
                                private var dappExposedWallet: Wallet?, private var dappExposedWalletName: String) {
     @JavascriptInterface
-    fun neoMessageHandler(jsonString: String) {
+    fun messageHandler(jsonString: String) {
         val gson = Gson()
         val message = gson.fromJson<DappMessage>(jsonString)
         listOf("getProvider", "getNetworks", "getAccount",
@@ -344,17 +344,5 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             }
         }
         mainHandler.post(myRunnable)
-    }
-
-    private fun verifyPassCodeAndSign() {
-        val mKeyguardManager = webView.context!!.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        if (!mKeyguardManager.isKeyguardSecure) {
-            return
-        } else {
-            val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
-            if (intent != null) {
-                (webView.context as Activity).startActivityForResult(intent, 1)
-            }
-        }
     }
 }

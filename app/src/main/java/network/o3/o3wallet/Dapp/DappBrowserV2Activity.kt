@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Dapp
 
 import android.app.Activity
+import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -55,6 +56,8 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     val whitelistedAuthorities = arrayOf("neoscan.io", "beta.switcheo.exchange", "switcheo.exchange",
             "neonewstoday.com", "public.o3.network", "explorer.ont.io")
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
+
+    var pendingDappMessage: DappMessage? = null
 
     data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String)
 
@@ -289,19 +292,6 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents == null) {
-            return
-        } else {
-            if (resultCode == -1) {
-                legacyInterface?.finishConnectionToO3()
-            } else {
-                return
-            }
-        }
-    }
-
     override fun onBackPressed() {
         if (webView.canGoBack()) {
             var currIndex = webView.copyBackForwardList().currentIndex
@@ -361,5 +351,43 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             theme.applyStyle(R.style.AppTheme_NoTopBar_White, true)
         }
         return theme
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null && result.contents == null) {
+            return
+        } else {
+            if (resultCode == -1) {
+                if (legacyInterface == null) {
+                    if (NEP6.getFromFileSystem().accounts.isEmpty()) {
+                        jsInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
+                    } else {
+                        jsInterface.setDappExposedWallet(Account.getWallet(), NEP6.getFromFileSystem().getDefaultAccount().label)
+                    }
+                    jsInterface.authorizedAccountCredentials(pendingDappMessage!!)
+                    pendingDappMessage = null
+                } else {
+                    legacyInterface?.finishConnectionToO3()
+                }
+            } else {
+                return
+            }
+        }
+    }
+
+    fun verifyPassCodeAndSign(message: DappMessage? = null) {
+        val mKeyguardManager = webView.context!!.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        if (!mKeyguardManager.isKeyguardSecure) {
+            return
+        } else {
+            val intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null)
+            if (message != null) {
+                pendingDappMessage = message
+            }
+            if (intent != null) {
+                (webView.context as Activity).startActivityForResult(intent, 1)
+            }
+        }
     }
 }
