@@ -19,6 +19,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.NEP6
@@ -96,6 +97,7 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         acceptConnectionButton = mView.find(R.id.acceptConnectionButton)
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
+            (activity as DAppBrowserActivityV2).jsInterface.setDappExposedWallet(Account.getWallet(), NEP6.getFromFileSystem().getDefaultAccount().label)
             (activity as DAppBrowserActivityV2).jsInterface.authorizedAccountCredentials(dappMessage!!)
             dismiss()
         }
@@ -111,8 +113,14 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     }
 
     fun setAccountDetails() {
-        addressTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet().address
-        addressNameTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName()
+        val wallet = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet() ?: Account.getWallet()
+        var label = ""
+        if ((activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName() == "") {
+            label = NEP6.getFromFileSystem().accounts.find { it.isDefault }?.label ?: "My O3 Wallet"
+        }
+
+        addressTextView.text = wallet.address
+        addressNameTextView.text = label
     }
 
     fun loadOpenGraphDetails() {

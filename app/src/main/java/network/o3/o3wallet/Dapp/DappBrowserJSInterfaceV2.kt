@@ -15,6 +15,7 @@ import android.webkit.WebView
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import neoutils.Neoutils
 import neoutils.Wallet
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
@@ -27,7 +28,7 @@ import java.math.BigDecimal
 import java.util.concurrent.CountDownLatch
 
 class DappBrowserJSInterfaceV2(private val context: Context, private val webView: WebView,
-                               private var dappExposedWallet: Wallet, private var dappExposedWalletName: String) {
+                               private var dappExposedWallet: Wallet?, private var dappExposedWalletName: String) {
     @JavascriptInterface
     fun messageHandler(jsonString: String) {
         val gson = Gson()
@@ -47,7 +48,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
     }
 
-    fun getDappExposedWallet(): Wallet {
+    fun getDappExposedWallet(): Wallet? {
         return dappExposedWallet
     }
 
@@ -83,8 +84,8 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun authorizedAccountCredentials(message: DappMessage) {
-        val response = NeoDappProtocol.GetAccountResponse(address = dappExposedWallet.address,
-                publicKey = dappExposedWallet.publicKey.toHex())
+        val response = NeoDappProtocol.GetAccountResponse(address = dappExposedWallet!!.address,
+                publicKey = dappExposedWallet!!.publicKey.toHex())
         callback(message, response)
         (webView.context as DAppBrowserActivityV2).setUnlockState()
     }
@@ -96,7 +97,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
 
     fun handleGetAccount(message: DappMessage) {
-        (webView.context as DAppBrowserActivityV2).authorizeWalletInfo(message)
+        if (dappExposedWallet != null) {
+            authorizedAccountCredentials(message)
+        } else {
+            (webView.context as DAppBrowserActivityV2).authorizeWalletInfo(message)
+        }
     }
 
     fun authorizeSend(message: DappMessage) {
@@ -104,7 +109,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         var network = sendRequest.network ?: "MainNet"
         if (!network.contains(PersistentStore.getNetworkType())) {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
-        } else if (sendRequest.fromAddress != dappExposedWallet.address) {
+        } else if (sendRequest.fromAddress != dappExposedWallet?.address ?: "") {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
         } else {
             (webView.context as DAppBrowserActivityV2).authorizeSend(message)
@@ -211,7 +216,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             success = false
         }
 
-        NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet, toSendAsset, BigDecimal(amount),
+        NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet!!, toSendAsset, BigDecimal(amount),
                 recipientAddress, attributes, fee) {
             if (it.first != null) {
                 success = true
@@ -227,7 +232,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
-        sendRequest.toAddress = dappExposedWallet.address
+        sendRequest.toAddress = dappExposedWallet!!.address
         var success = false
 
         var fee = BigDecimal.ZERO
@@ -238,11 +243,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         val attributes = arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
 
         val latch = CountDownLatch(1)
-        O3PlatformClient().getTransferableAssets(dappExposedWallet.address) {
+        O3PlatformClient().getTransferableAssets(dappExposedWallet!!.address) {
             var token = it.first?.assets?.find { it.symbol.toLowerCase() == sendRequest.asset.toLowerCase() }
             if (fee == BigDecimal.ZERO) {
-                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet, null, token!!.id,
-                        dappExposedWallet.address, sendRequest.toAddress,
+                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, null, token!!.id,
+                        dappExposedWallet!!.address, sendRequest.toAddress,
                         BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
                     if (it.first != null) {
                         success = true
@@ -254,13 +259,13 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                     latch.countDown()
                 }
             } else {
-                O3PlatformClient().getUTXOS(dappExposedWallet.address) {
+                O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
                     var assets = it.first
                     var error = it.second
                     if (error != null) {
                         latch.countDown()
                     } else {
-                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet, assets, sendRequest.asset, dappExposedWallet.address,
+                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, assets, sendRequest.asset, dappExposedWallet!!.address,
                                 sendRequest.toAddress, BigDecimal(sendRequest.amount),
                                 token?.decimals ?: 8, fee, attributes) {
                             if (it.first != null) {
@@ -309,7 +314,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireAccountChanged = jsonObject("command" to "event",
                 "eventName" to "ACCOUNT_CHANGED",
-                "data" to jsonObject("address" to dappExposedWallet.address, "publicKey" to dappExposedWalletName),
+                "data" to jsonObject("address" to dappExposedWallet!!.address, "publicKey" to dappExposedWalletName),
                 "blockchain" to "NEO",
                 "platform" to "o3-dapi",
                 "version" to "1"

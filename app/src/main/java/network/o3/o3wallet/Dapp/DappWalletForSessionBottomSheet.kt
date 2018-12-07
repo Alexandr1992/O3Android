@@ -67,7 +67,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
                     (mFragment as RoundedBottomSheetDialogFragment).dismiss()
                     neo2DialogFragment.dismiss()
                     (mFragment.activity as DAppBrowserActivityV2).jsInterface
-                            .setDappExposedWallet(Neoutils.generateFromWIF(wif), account.label)
+                            .setDappExposedWallet(Neoutils.generateFromWIF(wif), NEP6.getFromFileSystem().getDefaultAccount().label)
                 }
 
                 neo2DialogFragment.encryptedKey = getItem(position).key!!
@@ -78,7 +78,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
 
         override fun getItem(position: Int): NEP6.Account {
             var accounts = NEP6.getFromFileSystem().getWalletAccounts().toMutableList()
-            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet().address}
+            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()!!.address}
             if (index == -1) {
                 index = accounts.indexOfFirst { it.isDefault }
             }

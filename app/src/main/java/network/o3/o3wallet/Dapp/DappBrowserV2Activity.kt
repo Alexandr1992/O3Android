@@ -69,7 +69,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
 
     fun authorizeWalletInfo(message: DappMessage) {
-        runOnUiThread {
+        runOnUiThread{
             val bottomSheet = DappConnectionRequestBottomSheet()
             bottomSheet.dappMessage = message
             val bundle = Bundle()
@@ -164,7 +164,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 customPowerMenu.setOnMenuItemClickListener(onIconMenuItemClickListener)*/
 
                 var headerView = layoutInflater.inflate(R.layout.dapp_popup_header, null, false)
-                headerView.find<TextView>(R.id.walletAddressTitle).text = myActivity.jsInterface.getDappExposedWallet().address
+                headerView.find<TextView>(R.id.walletAddressTitle).text = myActivity.jsInterface.getDappExposedWallet()!!.address
                 headerView.find<TextView>(R.id.walletNameTitle).text = myActivity.jsInterface.getDappExposedWalletName()
                 headerView.find<Button>(R.id.swapButton).onClick {
                     val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
@@ -280,8 +280,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
-        jsInterface = DappBrowserJSInterfaceV2(this, webView, Account.getWallet(),
-                NEP6.getFromFileSystem().accounts.find { it.isDefault }?.label ?: "My O3 Wallet")
+        jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
         webView.addJavascriptInterface(jsInterface, "_o3dapi")
         WebView.setWebContentsDebuggingEnabled(true)
     }
