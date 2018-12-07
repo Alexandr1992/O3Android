@@ -97,7 +97,11 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         acceptConnectionButton = mView.find(R.id.acceptConnectionButton)
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
-            (activity as DAppBrowserActivityV2).jsInterface.setDappExposedWallet(Account.getWallet(), NEP6.getFromFileSystem().getDefaultAccount().label)
+            if (NEP6.getFromFileSystem().accounts.isEmpty()) {
+                (activity as DAppBrowserActivityV2).jsInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
+            } else {
+                (activity as DAppBrowserActivityV2).jsInterface.setDappExposedWallet(Account.getWallet(), NEP6.getFromFileSystem().getDefaultAccount().label)
+            }
             (activity as DAppBrowserActivityV2).jsInterface.authorizedAccountCredentials(dappMessage!!)
             dismiss()
         }

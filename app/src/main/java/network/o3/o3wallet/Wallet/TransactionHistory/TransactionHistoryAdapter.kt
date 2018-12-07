@@ -22,6 +22,7 @@ import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.Settings.AddContact
 import network.o3.o3wallet.Wallet.toast
 import java.sql.Date
@@ -249,7 +250,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
                         if (tx.asset.tokenHash.contains("000000000")) {
                             url = "https://explorer.ont.io/transaction/" + tx.txid
                         }
-                        val i = Intent(view.context, DAppBrowserActivity::class.java)
+                        val i = Intent(view.context, DAppBrowserActivityV2::class.java)
                         i.putExtra("url", url)
                         view.context.startActivity(i)
                     } else {

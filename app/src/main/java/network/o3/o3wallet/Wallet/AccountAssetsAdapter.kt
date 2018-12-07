@@ -22,6 +22,7 @@ import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.O3InboxItem
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
@@ -421,7 +422,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     }
                     val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "wallet_account_menu_item")
                     Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
-                    val intent = Intent(mView.context, DAppBrowserActivity::class.java)
+                    val intent = Intent(mView.context, DAppBrowserActivityV2::class.java)
                     intent.putExtra("url", detailURL)
                     mView.context.startActivity(intent)
                 }

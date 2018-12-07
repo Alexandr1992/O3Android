@@ -76,7 +76,7 @@ class NewsFeedAdapter(context: Context, fragment: NewsFeedFragment): BaseAdapter
                     .putContentName("NewsFeed Item View"))
 
             val url = feedItem.link
-            val i = Intent(view.context, DAppBrowserActivity::class.java)
+            val i = Intent(view.context, DAppBrowserActivityV2::class.java)
             i.putExtra("url", url)
             view.context.startActivity(i)
         }

@@ -15,6 +15,7 @@ import android.widget.Button
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 
 
 /**
@@ -51,7 +52,7 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
                         .putContentType(feature?.category )
                         .putContentId(feature?.title)
                         .putContentName("Featured Item View"))
-                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                val browserIntent = Intent(view.context, DAppBrowserActivityV2::class.java)
                 browserIntent.putExtra("url", feature?.actionURL)
                 view.context.startActivity(browserIntent)
             }
