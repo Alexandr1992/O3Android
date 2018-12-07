@@ -604,4 +604,10 @@
     <string name="DAPP_transaction_succeeded">Transaction Succeeded</string>
     <string name="DAPP_transaction_failed">Transaction Failed</string>
     <string name="DAPP_unknown_app">Unknown App</string>
+    <string name="DAPP_wallet_connect">Wallet Connect</string>
+    <string name="DAPP_contact">Contact:</string>
+    <string name="DAPP_wallet_with">With:</string>
+    <string name="DAPP_view_tx_details">View transaction details</string>
+    <string name="DAPP_disconnect">Disconnect &amp; return to O3</string>
+    <string name="DAPP_refresh">Refresh</string>
 </resources>

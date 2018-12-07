@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.Image
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
@@ -72,12 +73,17 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         addressTextView = mView.find(R.id.walletAddressTextView)
         addressNameTextView = mView.find(R.id.walletNameTextView)
         swapWalletContainer = mView.find(R.id.swapWalletContainer)
-        isCancelable = false
 
-        swapWalletContainer.onClick {
-            val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
-            swapWalletSheet.show(activity!!.supportFragmentManager, swapWalletSheet.tag)
+        if (NEP6.getFromFileSystem().getWalletAccounts().count() > 1) {
+            swapWalletContainer.onClick {
+                val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
+                swapWalletSheet.show(activity!!.supportFragmentManager, swapWalletSheet.tag)
+            }
+        } else {
+            mView.find<ImageView>(R.id.moreWalletsArrow).visibility = View.INVISIBLE
         }
+
+
 
         registerReceivers()
         loadOpenGraphDetails()

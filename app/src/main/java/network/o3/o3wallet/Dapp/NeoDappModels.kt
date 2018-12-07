@@ -75,13 +75,13 @@ class NeoDappProtocol {
     data class InvokeResponse(val txid: String,
                               val nodeUrl: String)
 
-    data class SendRequest(val fromAddress: String?,
+    data class SendRequest(val fromAddress: String,
                            var toAddress: String,
                            val asset: String,
                            val amount: String,
                            val remark: String,
                            var fee: String?,
-                           val network: String
+                           val network: String?
                            )
 
     data class SendResponse(val txid: String,

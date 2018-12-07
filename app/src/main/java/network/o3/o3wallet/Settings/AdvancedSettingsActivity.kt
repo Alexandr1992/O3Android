@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
@@ -66,8 +67,8 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         }
 
         browserButton.setOnClickListener {
-            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.cdn/____dapp/example/index.html"
-            val intent = Intent(this, DAppBrowserActivity::class.java)
+            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.apps/testsend/index.html"
+            val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
             intent.putExtra("allowSearch", true)
             startActivity(intent)

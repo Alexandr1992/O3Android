@@ -28,7 +28,6 @@ import java.util.concurrent.CountDownLatch
 
 class DappBrowserJSInterfaceV2(private val context: Context, private val webView: WebView,
                                private var dappExposedWallet: Wallet, private var dappExposedWalletName: String) {
-
     @JavascriptInterface
     fun messageHandler(jsonString: String) {
         val gson = Gson()
@@ -42,7 +41,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             "getbalance" -> handleGetBalance(message)
             "getstorage" -> handleGetStorage(message)
             "invokeread" -> handleInvokeRead(message)
-            "invoke" -> handleInvoke(message)
+            "invoke" -> authorizeInvoke(message)
             "send"-> authorizeSend(message)
             else -> return
         }
@@ -59,6 +58,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     fun setDappExposedWallet(wallet: Wallet, name: String) {
         dappExposedWallet = wallet
         dappExposedWalletName = name
+        fireAccountChangedEvent()
         val intent = Intent("update-exposed-dapp-wallet")
         LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
     }
@@ -86,6 +86,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         val response = NeoDappProtocol.GetAccountResponse(address = dappExposedWallet.address,
                 publicKey = dappExposedWallet.publicKey.toHex())
         callback(message, response)
+        (webView.context as DAppBrowserActivityV2).setUnlockState()
     }
 
     fun rejectedAccountCredentials(message: DappMessage) {
@@ -99,7 +100,25 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun authorizeSend(message: DappMessage) {
-        (webView.context as DAppBrowserActivityV2).authorizeSend(message)
+        val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
+        var network = sendRequest.network ?: "MainNet"
+        if (!network.contains(PersistentStore.getNetworkType())) {
+            callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
+        } else if (sendRequest.fromAddress != dappExposedWallet.address) {
+            callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
+        } else {
+            (webView.context as DAppBrowserActivityV2).authorizeSend(message)
+        }
+    }
+
+    fun authorizeInvoke(message: DappMessage) {
+        val sendRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
+        var network = sendRequest.network ?: "MainNet"
+        if (!network.contains(PersistentStore.getNetworkType())) {
+            callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
+        } else {
+            (webView.context as DAppBrowserActivityV2).authorizeInvoke(message)
+        }
     }
 
     fun handleGetBalance(message: DappMessage) {
@@ -196,10 +215,12 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 recipientAddress, attributes, fee) {
             if (it.first != null) {
                 success = true
+                callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = node))
+            } else {
+                callback(message, jsonObject("error" to "RPC_ERROR"))
             }
+            latch.countDown()
 
-            callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = node))
-                latch.countDown()
         }
         latch.await()
         return success
@@ -225,9 +246,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                         BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
                     if (it.first != null) {
                         success = true
+                        callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
+                    } else {
+                        callback(message, jsonObject("error" to "RPC_ERROR"))
                     }
 
-                    callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
                     latch.countDown()
                 }
             } else {
@@ -242,8 +265,10 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                                 token?.decimals ?: 8, fee, attributes) {
                             if (it.first != null) {
                                 success = true
+                                callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
+                            } else {
+                                callback(message, jsonObject("error" to "RPC_ERROR"))
                             }
-                            callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
                             latch.countDown()
                         }
                     }
@@ -256,7 +281,8 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
     fun handleSend(message: DappMessage): Boolean {
         val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
-        if (sendRequest.asset == "NEO" || sendRequest.asset == "GAS") {
+        if (sendRequest.asset.toUpperCase()
+                == "NEO" || sendRequest.asset.toUpperCase() == "GAS") {
             return sendNativeNeoAsset(message, sendRequest)
         } else {
             return sendTokenNeoAsset(message, sendRequest)
@@ -267,20 +293,46 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         val latch = CountDownLatch(1)
         var storageRequest = Gson().fromJson<NeoDappProtocol.GetStorageRequest>(Gson().toJson(message.data))
         NeoNodeRPC(PersistentStore.getNodeURL()).getStorage(storageRequest.scriptHash, storageRequest.key) {
-            callback(message, jsonObject("result" to it.first))
+            if (it.second != null) {
+                callback(message, jsonObject("result" to it.first))
+            } else {
+                callback(message, jsonObject("result" to "RPC_ERROR"))
+            }
+
             latch.countDown()
         }
         latch.await()
 
     }
+
+    fun fireAccountChangedEvent() {
+        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
+        val fireAccountChanged = jsonObject("command" to "event",
+                "eventName" to "ACCOUNT_CHANGED",
+                "data" to jsonObject("address" to dappExposedWallet.address, "publicKey" to dappExposedWalletName),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
+
+        val myRunnable = Runnable {
+            val script = "_o3dapi.receiveMessage(" + fireAccountChanged.toString() + ")"
+            webView.evaluateJavascript(script) { value ->
+                Log.d("javascript", value)
+            }
+        }
+        mainHandler.post(myRunnable)
+    }
+
     fun handleInvokeRead(message: DappMessage) {}
     fun handleInvoke(message: DappMessage) {}
 
     fun callback(message: DappMessage, data: Any) {
-        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
+
         val json = Gson().typedToJsonTree(message).asJsonObject
         json["data"] = Gson().typedToJsonTree(data)
 
+        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val myRunnable = Runnable {
             val script = "_o3dapi.receiveMessage(" + json.toString() + ")"
             webView.evaluateJavascript(script) { value ->

@@ -96,6 +96,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
 
     fun showSendingState() {
         onUiThread {
+            isCancelable = false
             sendButton.visibility = View.INVISIBLE
             cancelButton.visibility = View.INVISIBLE
             loadingAnimationView.visibility = View.VISIBLE
@@ -106,6 +107,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
 
     fun finishSending(success: Boolean) {
         onUiThread {
+            isCancelable = true
             if (success) {
                 loadingAnimationView.setAnimation(R.raw.claim_success)
                 loadingAnimationView.playAnimation()
@@ -120,7 +122,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
             }
             Handler().postDelayed ({
                 dismiss()
-            }, 2000)
+            }, 2800)
         }
     }
 

@@ -76,6 +76,7 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
     implementation 'com.kaopiz:kprogresshud:1.2.0'
     implementation 'com.github.clans:fab:1.6.4'
+    implementation "com.github.skydoves:powermenu:2.0.5"
     implementation 'com.android.support:gridlayout-v7:27.1.1'
     implementation 'com.shawnlin:number-picker:2.4.6'
     implementation 'com.google.guava:guava:23.3-android'

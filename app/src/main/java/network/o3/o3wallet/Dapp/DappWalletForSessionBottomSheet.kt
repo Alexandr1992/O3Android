@@ -77,11 +77,18 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
         }
 
         override fun getItem(position: Int): NEP6.Account {
-            return NEP6.getFromFileSystem().getNonDefaultAccounts()[position]
+            var accounts = NEP6.getFromFileSystem().getWalletAccounts().toMutableList()
+            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet().address}
+            if (index == -1) {
+                index = accounts.indexOfFirst { it.isDefault }
+            }
+            accounts.removeAt(index)
+            return accounts[position]
         }
 
         override fun getCount(): Int {
-            return NEP6.getFromFileSystem().getNonDefaultAccounts().count()
+            return NEP6.getFromFileSystem().getWalletAccounts().count() - 1
+
         }
 
         override fun getItemId(position: Int): Long {

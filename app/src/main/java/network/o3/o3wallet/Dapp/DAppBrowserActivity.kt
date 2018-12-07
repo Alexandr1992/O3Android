@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.v4.content.LocalBroadcastManager
+import android.text.SpannableStringBuilder
 import android.view.View
 import android.webkit.*
 import android.widget.*
@@ -19,6 +20,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.amplitude.api.Amplitude
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
+import kotlinx.android.synthetic.main.dialog_single_input.view.*
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
@@ -37,6 +39,7 @@ class DAppBrowserActivity : AppCompatActivity() {
     lateinit var dappBrowserView: View
     lateinit var webView: WebView
     lateinit var jsInterface: DappBrowserJSInterface
+    lateinit var searchView: SearchView
 
     var previousWasRedirect = false
 
@@ -154,13 +157,13 @@ class DAppBrowserActivity : AppCompatActivity() {
         webView = dappBrowserView.findViewById(R.id.dapp_browser_webview)
         val searchBar = dappBrowserView.find<SearchView>(R.id.dappSearch)
 
-        val webLoader = find<LottieAnimationView>(R.id.webLoader)
+        //val webLoader = find<LottieAnimationView>(R.id.webLoader)
         val url = intent.getStringExtra("url")
         val currentUrlRoute = URL(url)
         setVerifiedHeaderUrl(url)
         initiateTradeFooter(Uri.parse(url))
 
-        dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
+        /*dappBrowserView.find<ImageButton>(R.id.webBrowserBackButton).setOnClickListener {
             if (webView.canGoBack()) {
                 val currIndex = webView.copyBackForwardList().currentIndex
                 setVerifiedHeaderUrl(webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url)
@@ -168,15 +171,15 @@ class DAppBrowserActivity : AppCompatActivity() {
             } else {
                 onBackPressed()
             }
-        }
+        }*/
 
         val showSearchBar = intent.getBooleanExtra("allowSearch", false)
         if (showSearchBar) {
             searchBar.visibility = View.VISIBLE
-            dappBrowserView.find<ImageButton>(R.id.refreshButton).visibility = View.VISIBLE
-            dappBrowserView.find<ImageButton>(R.id.refreshButton).setOnClickListener {
-                webView.reload()
-            }
+            //dappBrowserView.find<ImageButton>(R.id.refreshButton).visibility = View.VISIBLE
+           // dappBrowserView.find<ImageButton>(R.id.refreshButton).setOnClickListener {
+           //     webView.reload()
+            //}
 
 
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -185,7 +188,7 @@ class DAppBrowserActivity : AppCompatActivity() {
                 }
 
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    webLoader.visibility = View.VISIBLE
+                  //  webLoader.visibility = View.VISIBLE
                     webView.loadUrl(query)
                     return true
                 }
@@ -195,7 +198,7 @@ class DAppBrowserActivity : AppCompatActivity() {
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                webLoader.visibility = View.VISIBLE
+                //webLoader.visibility = View.VISIBLE
 
                 val urlToLoad = request.url.toString()
                 //we are in our own app, open a new browser
@@ -205,7 +208,7 @@ class DAppBrowserActivity : AppCompatActivity() {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToLoad))
                     val activityToUse = intent.resolveActivity(packageManager)
                     if (activityToUse == null) {
-                        webLoader.visibility = View.INVISIBLE
+                     //   webLoader.visibility = View.INVISIBLE
                         return false
                     } else {
                         startActivity(intent)
@@ -239,7 +242,7 @@ class DAppBrowserActivity : AppCompatActivity() {
 
             override fun onPageCommitVisible(view: WebView?, url: String?) {
                 super.onPageCommitVisible(view, url)
-                webLoader.visibility = View.GONE
+              //  webLoader.visibility = View.GONE
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -266,21 +269,16 @@ class DAppBrowserActivity : AppCompatActivity() {
         }
 
         val toLoadUrl = URL(url)
-        val browserTitleTextView = dappBrowserView.find<TextView>(R.id.browserTitleTextView)
-        val verifiedImageView = dappBrowserView.find<ImageView>(R.id.verifiedURLImageView)
         if (doNotShowAuthorities.contains(toLoadUrl.authority)) {
-            verifiedImageView.visibility = View.INVISIBLE
-            browserTitleTextView.visibility = View.INVISIBLE
             return
         }
 
         if (whitelistedAuthorities.contains(toLoadUrl.authority)) {
-            verifiedImageView.visibility = View.VISIBLE
+
         } else {
-            verifiedImageView.visibility = View.INVISIBLE
         }
-        browserTitleTextView.visibility = View.VISIBLE
-        browserTitleTextView.text = toLoadUrl.authority.toString()
+
+        searchView.inputField.text = SpannableStringBuilder(url)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
