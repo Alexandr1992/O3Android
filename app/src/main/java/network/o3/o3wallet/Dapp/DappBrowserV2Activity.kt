@@ -282,7 +282,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
 
-        if (URL(url).authority == "switcheo.exchange") {
+        if (URL(url).authority == "switcheo.exchange" || URL(url).authority == "legacy.switcheo.exchange") {
             legacyInterface = DappBrowserJSInterface(this, webView)
             webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
         } else {
