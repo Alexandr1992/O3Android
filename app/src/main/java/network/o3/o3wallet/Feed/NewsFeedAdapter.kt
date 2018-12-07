@@ -21,6 +21,7 @@ import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
 import com.crashlytics.android.answers.CustomEvent
 import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import java.text.SimpleDateFormat
 
 

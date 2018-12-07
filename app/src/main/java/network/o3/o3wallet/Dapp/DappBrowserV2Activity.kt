@@ -49,6 +49,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     lateinit var searchBar: EditText
     lateinit var progressBar: ProgressBar
 
+    var legacyInterface: DappBrowserJSInterface? = null
     var previousWasRedirect = false
 
     val whitelistedAuthorities = arrayOf("neoscan.io", "beta.switcheo.exchange", "switcheo.exchange",
@@ -280,8 +281,18 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
-        jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
-        webView.addJavascriptInterface(jsInterface, "_o3dapi")
+
+        if (URL(url).authority == "switcheo.exchange") {
+            legacyInterface = DappBrowserJSInterface(this, webView)
+            webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
+        } else {
+            jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
+            webView.addJavascriptInterface(jsInterface, "_o3dapi")
+        }
+
+
+
+
         WebView.setWebContentsDebuggingEnabled(true)
     }
 
@@ -308,7 +319,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             return
         } else {
             if (resultCode == -1) {
-                //jsInterface.finishConnectionToO3()
+                legacyInterface?.finishConnectionToO3()
             } else {
                 return
             }
