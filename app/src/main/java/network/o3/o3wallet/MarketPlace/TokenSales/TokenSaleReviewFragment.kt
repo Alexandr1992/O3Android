@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,16 +18,13 @@ import com.google.gson.Gson
 import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
-import network.o3.o3wallet.API.O3.O3API
 import network.o3.o3wallet.API.O3.TokenSaleLog
 import network.o3.o3wallet.API.O3.TokenSaleLogSigned
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.toHex
-import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton

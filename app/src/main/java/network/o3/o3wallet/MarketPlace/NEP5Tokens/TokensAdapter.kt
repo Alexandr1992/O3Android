@@ -13,12 +13,9 @@ import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
-import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
-import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
 import org.json.JSONObject
 

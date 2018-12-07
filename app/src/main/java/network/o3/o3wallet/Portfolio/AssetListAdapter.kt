@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.R.*
 import org.jetbrains.anko.*
@@ -197,7 +196,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
             view.find<Button>(id.tradeNowPortfolioButton).setOnClickListener {
                 val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivity::class.java)
+                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
                 intent.putExtra("url", url)
                 intent.putExtra("allowSearch", false)
                 view.context.startActivity(intent)

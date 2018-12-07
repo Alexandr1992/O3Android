@@ -1,7 +1,5 @@
 package network.o3.o3wallet.Wallet.TransactionHistory
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -13,7 +11,6 @@ import network.o3.o3wallet.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor
 import android.content.Intent
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
 import com.bumptech.glide.Glide
@@ -21,12 +18,8 @@ import neoutils.Neoutils
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.Settings.AddContact
-import network.o3.o3wallet.Wallet.toast
-import java.sql.Date
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 

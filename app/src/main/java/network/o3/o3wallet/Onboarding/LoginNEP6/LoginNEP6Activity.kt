@@ -1,29 +1,20 @@
 package network.o3.o3wallet.Onboarding.LoginNEP6
 
-import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.getSystemService
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.airbnb.lottie.LottieAnimationView
-import com.bumptech.glide.Glide
 import com.google.zxing.integration.android.IntentIntegrator
-import network.o3.o3wallet.API.O3Platform.Dapp
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.DialogUnlockEncryptedKey
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.SelectingBestNode
@@ -31,7 +22,6 @@ import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onClick
-import java.util.logging.LoggingPermission
 
 class LoginNEP6Activity : AppCompatActivity() {
 

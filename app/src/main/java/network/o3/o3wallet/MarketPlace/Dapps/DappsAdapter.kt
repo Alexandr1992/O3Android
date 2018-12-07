@@ -2,7 +2,6 @@ package network.o3.o3wallet.MarketPlace.Dapps
 
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.Dapp
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.R
-import network.o3.o3wallet.R.id.view
 import org.jetbrains.anko.find
 
 class DappsAdapter(private val dapps: List<Dapp>): RecyclerView.Adapter<DappsAdapter.DappHolder>() {

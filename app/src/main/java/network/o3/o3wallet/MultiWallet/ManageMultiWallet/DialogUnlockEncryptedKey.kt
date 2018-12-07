@@ -17,6 +17,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
+import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
@@ -64,6 +65,12 @@ class DialogUnlockEncryptedKey : DialogFragment() {
         nep2PasswordField = view.find<EditText>(R.id.nep2PasswordField)
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+
+        onUiThread {
+            nep2PasswordField.requestFocus()
+        }
+
 
         submitButton.setOnClickListener {
             attemptDecryption()

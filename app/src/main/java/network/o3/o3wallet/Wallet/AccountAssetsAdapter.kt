@@ -1,11 +1,7 @@
 package network.o3.o3wallet.Wallet
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.CardView
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
@@ -15,20 +11,15 @@ import android.view.ViewGroup
 import android.widget.*
 import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
-import io.reactivex.internal.operators.maybe.MaybeIsEmpty
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
-import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.O3InboxItem
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
-import org.jetbrains.anko.yesButton
 import org.json.JSONObject
 import java.text.NumberFormat
 import kotlin.math.min

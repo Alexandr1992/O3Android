@@ -8,13 +8,9 @@ import android.text.SpannableStringBuilder
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
-import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.toast
 
 class AdvancedSettingsActivity : AppCompatActivity() {
