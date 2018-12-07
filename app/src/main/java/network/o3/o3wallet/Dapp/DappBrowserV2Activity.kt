@@ -68,6 +68,192 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             ResourceObject("https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js", "text/javascript", R.raw.bodymovin, "UTF-8")
     )
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.dapp_browser_activity)
+
+        dappBrowserView = findViewById<View>(R.id.dapp_browser_root_layout)
+        webView = dappBrowserView.findViewById(R.id.dapp_browser_webview)
+        searchBar = dappBrowserView.find<EditText>(R.id.dappSearch)
+        progressBar = dappBrowserView.find(R.id.dappViewProgressBar)
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
+        val url = intent.getStringExtra("url")
+        setStylingForURLText(url)
+        setupTopBar(intent.getBooleanExtra("allowSearch", false))
+        setupWebClients()
+
+        webView.visibility = View.INVISIBLE
+        webView.loadUrl(url)
+        val webSettings = webView.settings
+        webSettings.javaScriptEnabled = true
+        webSettings.domStorageEnabled = true
+        WebView.setWebContentsDebuggingEnabled(true)
+
+        if (URL(url).authority == "switcheo.exchange" || URL(url).authority == "legacy.switcheo.exchange") {
+            legacyInterface = DappBrowserJSInterface(this, webView)
+            webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
+        } else {
+            jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
+            webView.addJavascriptInterface(jsInterface, "_o3dapi")
+        }
+    }
+
+
+
+
+    fun setMoreActions() {
+        val moreButton = dappBrowserView.find<ImageView>(R.id.moreButton)
+        moreButton.onClick {
+            val customPowerMenu = CustomPowerMenu.Builder(this@DAppBrowserActivityV2, DappPopupMenuAdapter())
+                    .setWidth(700)
+                    .addItem(DappPopupMenuItem(
+                            resources.getString(R.string.DAPP_refresh),
+                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_refresh))
+                    )
+
+                    .addItem(DappPopupMenuItem(
+                            resources.getString(R.string.DAPP_disconnect),
+                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_home))
+                    )
+
+                    .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                    .setMenuRadius(10f)
+                    .setMenuShadow(10f)
+                    .build()
+
+            val onIconMenuItemClickListener = OnMenuItemClickListener<DappPopupMenuItem> { position, item ->
+                if (position == 0) {
+                    webView.reload()
+                } else if (position == 1) {
+                    this@DAppBrowserActivityV2.finish()
+                }
+                customPowerMenu.dismiss()
+            }
+            customPowerMenu.setOnMenuItemClickListener(onIconMenuItemClickListener)
+            customPowerMenu.showAsDropDown(moreButton)
+        }
+    }
+
+    fun setUnlockState() {
+        runOnUiThread {
+            var walletStatusView = dappBrowserView.find<ImageView>(R.id.walletStatusImageView)
+            walletStatusView.image = resources.getDrawable(R.drawable.ic_dapp_wallet_active)
+
+            walletStatusView.onClick {
+                val customPowerMenu = CustomPowerMenu.Builder(this@DAppBrowserActivityV2, DappPopupMenuAdapter())
+                        .setWidth(700)
+                        .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                        .setMenuRadius(10f)
+                        .setMenuShadow(10f)
+                        .build()
+
+                var headerView = layoutInflater.inflate(R.layout.dapp_popup_header, null, false)
+                headerView.find<TextView>(R.id.walletAddressTitle).text = this@DAppBrowserActivityV2.jsInterface.getDappExposedWallet()!!.address
+                headerView.find<TextView>(R.id.walletNameTitle).text = this@DAppBrowserActivityV2.jsInterface.getDappExposedWalletName()
+                headerView.find<Button>(R.id.swapButton).onClick {
+                    val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
+                    swapWalletSheet.show(this@DAppBrowserActivityV2!!.supportFragmentManager, swapWalletSheet.tag)
+                    customPowerMenu.dismiss()
+                }
+                customPowerMenu.setHeaderView(headerView)
+                customPowerMenu.showAsDropDown(walletStatusView)
+            }
+        }
+    }
+
+    fun setupTopBar(allowSearch: Boolean) {
+        val allowSearch = intent.getBooleanExtra("allowSearch", false)
+        searchBar.isFocusable = false
+        if (allowSearch) {
+            searchBar.setOnEditorActionListener { textView, i, keyEvent ->
+                if (i == EditorInfo.IME_ACTION_GO) {
+                    webView.loadUrl(textView.text.toString())
+                }
+                true
+            }
+        } else {
+            searchBar.isEnabled = true
+        }
+        setMoreActions()
+    }
+
+    fun setupWebClients() {
+        webView.webChromeClient = object: WebChromeClient() {
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                super.onProgressChanged(view, newProgress)
+                progressBar.progress = newProgress
+            }
+        }
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                val urlToLoad = request.url.toString()
+                //we are in our own app, open a new browser
+
+                if (!urlToLoad.startsWith("http") && !urlToLoad.startsWith("https")) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToLoad))
+                    val activityToUse = intent.resolveActivity(packageManager)
+                    if (activityToUse == null) {
+                        //webLoader.visibility = View.INVISIBLE
+                        return false
+                    } else {
+                        startActivity(intent)
+                        return true
+                    }
+                }
+
+                setStylingForURLText(urlToLoad)
+                if (previousWasRedirect) {
+                    return false
+                }
+                previousWasRedirect = (doNotShowAuthorities.contains(request.url.authority))
+
+                view.loadUrl(urlToLoad)
+                return false // then it is not handled by default action
+            }
+
+
+            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                val localResource = localResources.find { it.url == request!!.url.toString() }
+                if (localResource != null) {
+                    val inputStream: InputStream = resources.openRawResource(localResource.resourceID)
+                    val statusCode = 200
+                    val reasonPhase = "OK"
+                    val responseHeaders = mutableMapOf<String, String>()
+                    responseHeaders.put("Access-Control-Allow-Origin", "*")
+                    return WebResourceResponse(localResource.mimeType, localResource.encoding, statusCode, reasonPhase, responseHeaders, inputStream)
+                }
+                return super.shouldInterceptRequest(view, request)
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                webView.visibility = View.VISIBLE
+                progressBar.visibility = View.INVISIBLE
+                progressBar.progress = 0
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                progressBar.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    fun setStylingForURLText(url: String) {
+        if (!url.startsWith("http") && !url.startsWith("https")) {
+            return
+        }
+
+        searchBar.text = SpannableStringBuilder(url)
+        if (searchBar.text.toString().startsWith("https://")) {
+            searchBar.text.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorGain)),
+                    0, "https://".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE )
+            searchBar.setPadding(85, 0, 16, 0)
+        } else {
+            searchBar.setPadding(16, 0, 16, 0)
+        }
+    }
 
     fun authorizeWalletInfo(message: DappMessage) {
         runOnUiThread{
@@ -103,216 +289,6 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         }
     }
 
-
-
-    fun setMoreActions() {
-        val moreButton = dappBrowserView.find<ImageView>(R.id.moreButton)
-        moreButton.onClick {
-            val customPowerMenu = CustomPowerMenu.Builder(this@DAppBrowserActivityV2, DappPopupMenuAdapter())
-                    .setWidth(700)
-                    .addItem(DappPopupMenuItem(
-                            resources.getString(R.string.DAPP_refresh),
-                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_refresh))
-                    )
-
-                    .addItem(DappPopupMenuItem(
-                            resources.getString(R.string.DAPP_disconnect),
-                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_home))
-                    )
-
-                    .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
-                    .setMenuRadius(10f)
-                    .setMenuShadow(10f)
-                    .build()
-
-            val onIconMenuItemClickListener = OnMenuItemClickListener<DappPopupMenuItem> { position, item ->
-                if (position == 0) {
-                    webView.reload()
-                } else if (position == 1) {
-                    this@DAppBrowserActivityV2.finish()
-                }
-                customPowerMenu.dismiss()
-            }
-            customPowerMenu.setOnMenuItemClickListener(onIconMenuItemClickListener)
-
-            customPowerMenu.showAsDropDown(moreButton)
-        }
-
-
-    }
-
-    fun setUnlockState() {
-        val myActivity = this
-        runOnUiThread {
-            var walletStatusView = dappBrowserView.find<ImageView>(R.id.walletStatusImageView)
-            walletStatusView.image = resources.getDrawable(R.drawable.ic_dapp_wallet_active)
-            val myActivity = this
-
-            walletStatusView.onClick {
-
-
-                val customPowerMenu = CustomPowerMenu.Builder(myActivity, DappPopupMenuAdapter())
-                        .setWidth(700)
-                        .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
-                        .setMenuRadius(10f)
-                        .setMenuShadow(10f)
-                        .build()
-
-                /*
-                val onIconMenuItemClickListener = OnMenuItemClickListener<DappPopupMenuItem> { menu, item ->
-                    customPowerMenu.dismiss()
-                }
-                customPowerMenu.setOnMenuItemClickListener(onIconMenuItemClickListener)*/
-
-                var headerView = layoutInflater.inflate(R.layout.dapp_popup_header, null, false)
-                headerView.find<TextView>(R.id.walletAddressTitle).text = myActivity.jsInterface.getDappExposedWallet()!!.address
-                headerView.find<TextView>(R.id.walletNameTitle).text = myActivity.jsInterface.getDappExposedWalletName()
-                headerView.find<Button>(R.id.swapButton).onClick {
-                    val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
-                    swapWalletSheet.show(myActivity!!.supportFragmentManager, swapWalletSheet.tag)
-                    customPowerMenu.dismiss()
-                }
-                customPowerMenu.setHeaderView(headerView)
-                customPowerMenu.showAsDropDown(walletStatusView)
-            }
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.dapp_browser_activity)
-
-        dappBrowserView = findViewById<View>(R.id.dapp_browser_root_layout)
-        webView = dappBrowserView.findViewById(R.id.dapp_browser_webview)
-        searchBar = dappBrowserView.find<EditText>(R.id.dappSearch)
-        progressBar = dappBrowserView.find(R.id.dappViewProgressBar)
-
-       // val webLoader = find<LottieAnimationView>(R.id.webLoader)
-        val url = intent.getStringExtra("url")
-        val currentUrlRoute = URL(url)
-        setVerifiedHeaderUrl(url)
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-        val allowSearch = intent.getBooleanExtra("allowSearch", false)
-        searchBar.isFocusable = false
-        if (allowSearch) {
-            searchBar.setOnEditorActionListener { textView, i, keyEvent ->
-                if (i == EditorInfo.IME_ACTION_GO) {
-                    webView.loadUrl(textView.text.toString())
-                }
-                true
-            }
-        } else {
-            searchBar.isEnabled = true
-        }
-        setMoreActions()
-
-
-        webView.webChromeClient = object: WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                super.onProgressChanged(view, newProgress)
-                progressBar.progress = newProgress
-            }
-        }
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                //webLoader.visibility = View.VISIBLE
-
-                val urlToLoad = request.url.toString()
-                //we are in our own app, open a new browser
-
-                if (!urlToLoad.startsWith("http") && !urlToLoad.startsWith("https")) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToLoad))
-                    val activityToUse = intent.resolveActivity(packageManager)
-                    if (activityToUse == null) {
-                        //webLoader.visibility = View.INVISIBLE
-                        return false
-                    } else {
-                        startActivity(intent)
-                        return true
-                    }
-                }
-
-                setVerifiedHeaderUrl(urlToLoad)
-                if (previousWasRedirect) {
-                    return false
-                }
-                previousWasRedirect = (doNotShowAuthorities.contains(request.url.authority))
-
-                view.loadUrl(urlToLoad)
-                return false // then it is not handled by default action
-            }
-
-
-            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-                val localResource = localResources.find { it.url == request!!.url.toString() }
-                if (localResource != null) {
-                    val inputStream: InputStream = resources.openRawResource(localResource.resourceID)
-                    val statusCode = 200
-                    val reasonPhase = "OK"
-                    val responseHeaders = mutableMapOf<String, String>()
-                    responseHeaders.put("Access-Control-Allow-Origin", "*")
-                    return WebResourceResponse(localResource.mimeType, localResource.encoding, statusCode, reasonPhase, responseHeaders, inputStream)
-                }
-                return super.shouldInterceptRequest(view, request)
-            }
-
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                //webLoader.visibility = View.INVISIBLE
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                webView.visibility = View.VISIBLE
-                progressBar.visibility = View.INVISIBLE
-                progressBar.progress = 0
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                progressBar.visibility = View.VISIBLE
-            }
-        }
-
-
-        webView.visibility = View.INVISIBLE
-        webView.loadUrl(url)
-        val webSettings = webView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.domStorageEnabled = true
-
-        if (URL(url).authority == "switcheo.exchange" || URL(url).authority == "legacy.switcheo.exchange") {
-            legacyInterface = DappBrowserJSInterface(this, webView)
-            webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
-        } else {
-            jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
-            webView.addJavascriptInterface(jsInterface, "_o3dapi")
-        }
-
-
-
-
-        WebView.setWebContentsDebuggingEnabled(true)
-    }
-
-
-    fun setVerifiedHeaderUrl(url: String) {
-        if (!url.startsWith("http") && !url.startsWith("https")) {
-            return
-        }
-
-        val toLoadUrl = URL(url)
-        searchBar.text = SpannableStringBuilder(url)
-        if (searchBar.text.toString().startsWith("https://")) {
-            searchBar.text.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorGain)),
-                    0, "https://".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE )
-            searchBar.setPadding(85, 0, 16, 0)
-        } else {
-            searchBar.setPadding(16, 0, 16, 0)
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents == null) {
@@ -327,27 +303,20 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //if (jsInterface.userAuthenticatedApp) {
-         //   alert(resources.getString(R.string.DAPP_logout_warning)) {
-           //     yesButton { super.onBackPressed() }
-             //   noButton { }
-         //   }.show()
-       // } else {
-            if (webView.canGoBack()) {
-                var currIndex = webView.copyBackForwardList().currentIndex
-                if (webView.copyBackForwardList().getItemAtIndex(currIndex).url == webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url) {
-                    currIndex -= 1
-                    webView.goBack()
-                }
-                val url = webView.copyBackForwardList().getItemAtIndex(currIndex).url
-                if (url != null) {
-                    setVerifiedHeaderUrl(url)
-                }
+        if (webView.canGoBack()) {
+            var currIndex = webView.copyBackForwardList().currentIndex
+            if (webView.copyBackForwardList().getItemAtIndex(currIndex).url == webView.copyBackForwardList().getItemAtIndex(currIndex - 1).url) {
+                currIndex -= 1
                 webView.goBack()
-            } else {
-                super.onBackPressed()
             }
-    //    }
+            val url = webView.copyBackForwardList().getItemAtIndex(currIndex).url
+            if (url != null) {
+            setStylingForURLText(url)
+            }
+            webView.goBack()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onStart() {
@@ -358,7 +327,6 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
-
     }
 
     fun getActivity(): Activity {

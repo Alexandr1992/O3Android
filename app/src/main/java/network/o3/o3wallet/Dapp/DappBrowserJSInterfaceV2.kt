@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch
 class DappBrowserJSInterfaceV2(private val context: Context, private val webView: WebView,
                                private var dappExposedWallet: Wallet?, private var dappExposedWalletName: String) {
     @JavascriptInterface
-    fun messageHandler(jsonString: String) {
+    fun neoMessageHandler(jsonString: String) {
         val gson = Gson()
         val message = gson.fromJson<DappMessage>(jsonString)
         listOf("getProvider", "getNetworks", "getAccount",
@@ -79,7 +79,6 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         } else {
             response = NeoDappProtocol.GetNetworkResponse(listOf("PrivateNet"))
         }
-
         callback(message, response)
     }
 
