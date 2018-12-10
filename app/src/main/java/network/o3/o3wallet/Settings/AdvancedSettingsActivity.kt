@@ -63,7 +63,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         }
 
         browserButton.setOnClickListener {
-            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.apps/testsend/index.html"
+            val url =  "https://s3-ap-northeast-1.amazonaws.com/network.o3.apps/dapi/neo/testDapp.html" //"https://s3-ap-northeast-1.amazonaws.com/network.o3.apps/testsend/index.html"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
             intent.putExtra("allowSearch", true)

@@ -56,7 +56,7 @@ class NeoDappProtocol {
                              val triggerContractVerification: Boolean,
                              val fee: String,
                              val args: List<Arg>?,
-                             val network: String) {
+                             val network: String?) {
 
         data class AssetIntentOverrides(val inputs: List<Input>,
                                         val outputs: List<Output>) {

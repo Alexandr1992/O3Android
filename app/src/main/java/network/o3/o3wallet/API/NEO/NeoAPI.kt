@@ -15,6 +15,8 @@ import neoutils.RawTransaction
 import network.o3.o3wallet.API.O3Platform.*
 import neoutils.Wallet
 import network.o3.o3wallet.*
+import network.o3.o3wallet.Dapp.NeoDappProtocol
+import okio.GzipSource
 import org.jetbrains.anko.db.DoubleParser
 import org.jetbrains.anko.defaultSharedPreferences
 import unsigned.toUByte
@@ -185,19 +187,26 @@ class NeoNodeRPC {
         }
     }
 
-    fun readOnlyInvoke(scriptHash: String, operation: String, arguments: Map<String, String>,
+    fun readOnlyInvoke(scriptHash: String, operation: String, arguments: List<NeoDappProtocol.Arg>,
                        completion: (Pair<JsonObject?, Error?>) -> Unit) {
-        val dataJson = jsonArray(scriptHash, operation, arguments)
+        val dataJson = jsonObject(
+                "jsonrpc" to "2.0",
+                "method" to RPC.INVOKEFUNCTION.methodName(),
+                "params" to jsonArray(scriptHash, operation, Gson().fromJson<JsonArray>(Gson().toJson(arguments))),
+                "id" to 3
+        )
+
         var request = nodeURL.httpPost().body(dataJson.toString()).timeout(600000)
         request.headers["Content-Type"] = "application/json"
         request.responseString { request, response, result ->
             val (data, error) = result
             if (error == null) {
-
+                val invokeResponse = Gson().fromJson<JsonObject>(data!!)
+                completion(Pair<JsonObject?, Error?>(invokeResponse, null))
+            } else {
+                completion(Pair<JsonObject?, Error?>(null, Error(error.localizedMessage)))
             }
-
         }
-
     }
 
     private fun sendRawTransaction(finalPayload: ByteArray, unsignedPayload: ByteArray, completion: (Pair<String?, Error?>) -> Unit) {

@@ -106,6 +106,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     fun authorizeSend(message: DappMessage) {
         val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
         var network = sendRequest.network ?: "MainNet"
+        if (network == "") {
+            network = "MainNet"
+        }
         if (!network.contains(PersistentStore.getNetworkType())) {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
         } else if (sendRequest.fromAddress != dappExposedWallet?.address ?: "") {
@@ -306,6 +309,31 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             latch.countDown()
         }
         latch.await()
+    }
+
+    fun handleInvokeRead(message: DappMessage) {
+        var invokeReadRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
+        var network = invokeReadRequest.network ?: "MainNet"
+        if (network == "") {
+            network = "MainNet"
+        }
+        if (!network.contains(PersistentStore.getNetworkType())) {
+            callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
+            return
+        }
+        val latch = CountDownLatch(1)
+        NeoNodeRPC(PersistentStore.getNodeURL()).readOnlyInvoke(invokeReadRequest.scriptHash,
+                invokeReadRequest.operation, (invokeReadRequest.args ?: listOf())) {
+            if (it.second == null) {
+                callback(message, jsonObject("result" to it.first))
+            } else {
+                callback(message, jsonObject("result" to "RPC_ERROR"))
+            }
+            latch.countDown()
+        }
+        latch.await()
+    }
+    fun handleInvoke(message: DappMessage) {
 
     }
 
@@ -327,9 +355,6 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
         mainHandler.post(myRunnable)
     }
-
-    fun handleInvokeRead(message: DappMessage) {}
-    fun handleInvoke(message: DappMessage) {}
 
     fun callback(message: DappMessage, data: Any) {
 
