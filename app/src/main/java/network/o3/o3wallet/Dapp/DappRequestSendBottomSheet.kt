@@ -75,6 +75,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         loadingAnimationView = mView.find(R.id.loadingAnimationView)
         loadingTextView = mView.find(R.id.loadingStateTextView)
 
+
         fromWalletNameTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName()
         toWalletAddressTextView.text = sendRequest.toAddress
         memoTextView.text = sendRequest.remark

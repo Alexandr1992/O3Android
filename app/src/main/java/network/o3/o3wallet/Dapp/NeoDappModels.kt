@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Dapp
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 data class DappMessage(val platform: String, val blockchain: String, val messageId: String,
@@ -46,15 +47,15 @@ class NeoDappProtocol {
     // Invoke
     data class InvokeReadRequest(val operation: String,
                                  val scriptHash: String,
-                                 val args: List<String>,
+                                 val args: List<Arg>,
                                  val network: String)
 
     data class InvokeRequest(val operation: String,
                              val scriptHash: String,
-                             val assetIntentOverrides: AssetIntentOverrides?,
-                             val attachedAssets: AttachedAssets?,
+                             val assetIntentOverrides: JsonElement?,
+                             val attachedAssets: JsonElement?,
                              val triggerContractVerification: Boolean,
-                             val fee: String,
+                             var fee: String,
                              val args: List<Arg>?,
                              val network: String?) {
 

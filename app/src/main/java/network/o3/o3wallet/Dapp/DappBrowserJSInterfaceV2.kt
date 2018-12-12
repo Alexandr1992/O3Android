@@ -20,6 +20,7 @@ import neoutils.Wallet
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.toHex
@@ -49,7 +50,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun getDappExposedWallet(): Wallet? {
-        return dappExposedWallet
+            return dappExposedWallet
     }
 
     fun getDappExposedWalletName(): String {
@@ -121,6 +122,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     fun authorizeInvoke(message: DappMessage) {
         val sendRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
         var network = sendRequest.network ?: "MainNet"
+        if (network == "") {
+            network = "MainNet"
+        }
         if (!network.contains(PersistentStore.getNetworkType())) {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
         } else {
@@ -312,7 +316,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun handleInvokeRead(message: DappMessage) {
-        var invokeReadRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
+        var invokeReadRequest = Gson().fromJson<NeoDappProtocol.InvokeReadRequest>(Gson().toJson(message.data))
         var network = invokeReadRequest.network ?: "MainNet"
         if (network == "") {
             network = "MainNet"
@@ -323,7 +327,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
         val latch = CountDownLatch(1)
         NeoNodeRPC(PersistentStore.getNodeURL()).readOnlyInvoke(invokeReadRequest.scriptHash,
-                invokeReadRequest.operation, (invokeReadRequest.args ?: listOf())) {
+                invokeReadRequest.operation, invokeReadRequest.args) {
             if (it.second == null) {
                 callback(message, jsonObject("result" to it.first))
             } else {
@@ -333,8 +337,31 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
         latch.await()
     }
-    fun handleInvoke(message: DappMessage) {
 
+    fun handleInvoke(message: DappMessage): Boolean {
+        var invokeRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
+        var success = false
+        var fee = BigDecimal.ZERO
+        try {
+            fee = BigDecimal(invokeRequest.fee)
+        } catch (e : Exception) {
+            callback(message, e.localizedMessage)
+            return success
+        }
+
+        val latch = CountDownLatch(1)
+        NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(Account.getWallet(),
+                null, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(), fee, arrayOf()) {
+            if (it.second == null) {
+                success = true
+                callback(message, jsonObject("result" to it.first))
+            } else {
+                callback(message, jsonObject("result" to "RPC_ERROR"))
+            }
+            latch.countDown()
+        }
+        latch.await()
+        return success
     }
 
     fun fireAccountChangedEvent() {

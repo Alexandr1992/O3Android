@@ -1,9 +1,11 @@
 package network.o3.o3wallet.API.NEO
 
-import network.o3.o3wallet.hexStringToByteArray
-import network.o3.o3wallet.to8BytesArray
-import network.o3.o3wallet.toHex
-import network.o3.o3wallet.toMinimumByteArray
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import neoutils.Neoutils
+import neoutils.Wallet
+import network.o3.o3wallet.*
+import network.o3.o3wallet.Dapp.NeoDappProtocol
 import java.nio.ByteOrder
 
 /**
@@ -107,6 +109,57 @@ class ScriptBuilder {
             pushArray(unwrappedData as Array<Any?>)
         } else {
             return
+        }
+    }
+
+    fun pushTypedArray(array: List<NeoDappProtocol.Arg?>) {
+        for (elem in array) {
+            pushTypedData(elem)
+        }
+        pushInt(array.size.toLong())
+        pushOpCode(OPCODE.PACK)
+    }
+
+    fun pushTypedData(data: NeoDappProtocol.Arg?) {
+        if (data == null) {
+            pushBool(false)
+            return
+        }
+
+        if (data.type.toLowerCase() == "string" || data.type.toLowerCase() == "hash160") {
+            pushHexString(data.value.toByteArray(Charsets.UTF_8).toHex())
+        } else if (data.type.toLowerCase() == "address") {
+            pushHexString(data.value.hashFromAddress())
+        } else if (data.type.toLowerCase() == "boolean") {
+            pushBool(data.value.toBoolean())
+        } else if (data.type.toLowerCase() == "integer") {
+            pushInt(data.value.toSafeDecimal().toLong())
+        } else if (data.type.toLowerCase() == "bytearray") {
+            pushHexString(data.value)
+        } else if (data.type.toLowerCase() == "array") {
+            pushTypedArray(Gson().fromJson<List<NeoDappProtocol.Arg>>(data.value))
+        } else {
+            return
+        }
+    }
+
+    fun pushTypedContractInvoke(scriptHash: String, operation: String? = null, args: List<NeoDappProtocol.Arg>, useTailCall: Boolean = false) {
+        pushTypedArray(args)
+        if (operation != null) {
+            val hex = operation.toByteArray().toHex()
+            pushData(hex)
+        }
+        if (scriptHash.length != 40) {
+            //You're fucked
+            throw(Exception("Invalid Script Hash"))
+        }
+        if (useTailCall) {
+            pushOpCode(OPCODE.TAILCALL)
+        } else {
+            pushOpCode(OPCODE.APPCALL)
+            val toAppendBytes = scriptHash.hexStringToByteArray()
+            toAppendBytes.reverse()
+            appendByteArray(toAppendBytes)
         }
     }
 

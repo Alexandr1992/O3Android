@@ -56,6 +56,7 @@ class NeoNodeRPC {
         GETRAWMEMPOOL,
         GETSTORAGE,
         SENDRAWTRANSACTION,
+        GETCONTRACTSTATE,
         INVOKEFUNCTION;
 
         fun methodName(): String {
@@ -158,6 +159,28 @@ class NeoNodeRPC {
                 completion(Pair<Int?, Error?>(mempool.count(), null))
             } else {
                 completion(Pair<Int?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun getContractState(contractHash: String, completion: (Pair<ContractState?, Error?>) -> Unit) {
+        val dataJson = jsonObject(
+                "jsonrpc" to "2.0",
+                "method" to RPC.GETCONTRACTSTATE.methodName(),
+                "params" to jsonArray(contractHash),
+                "id" to 1
+        )
+        var request = nodeURL.httpPost().body(dataJson.toString())
+        request.headers["Content-Type"] = "application/json"
+        request.responseString { _, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                val gson = Gson()
+                val nodeResponse = gson.fromJson<NodeResponse>(data!!)
+                val contractState = gson.fromJson<ContractState>(nodeResponse.result)
+                completion(Pair<ContractState?, Error?>(contractState, null))
+            } else {
+                completion(Pair<ContractState?, Error?>(null, Error(error.localizedMessage)))
             }
         }
     }
@@ -599,6 +622,32 @@ class NeoNodeRPC {
 
         val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount, decimals)
         val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), tokenContractHash, finalAttributes, fee)
+        sendRawTransaction(finalPayload.first, finalPayload.second) {
+            var txid = it.first
+            var error = it.second
+            if (txid == null) {
+                completion(Pair<String?, Error?>(null, Error("Transaction Failed")))
+            }  else {
+                completion(Pair<String?, Error?>(txid, error))
+            }
+        }
+    }
+
+    fun genericWriteInvoke(wallet: Wallet, utxos: UTXOS?, contractHash: String,
+                           operation: String, args: List<NeoDappProtocol.Arg>, fee: BigDecimal,
+                           attributes: Array<TransactionAttribute> = arrayOf(),
+                           completion: (Pair<String?, Error?>) -> Unit)  {
+        var finalAttributes = arrayOf<TransactionAttribute>(
+                TransactionAttribute().scriptAttribute(Account.getWallet().address.hashFromAddress()),
+                TransactionAttribute().remarkAttribute(String.format("O3X%s", Date().time.toString())),
+                TransactionAttribute().hexDescriptionAttribute(contractHash))  + attributes
+
+        var scriptBuilder = ScriptBuilder()
+        scriptBuilder.pushTypedContractInvoke(contractHash, operation = operation, args = args)
+        val script = scriptBuilder.getScriptHexString()
+        val scriptBytes = byteArrayOf((script.length / 2).toUByte()) + script.hexStringToByteArray()
+
+        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), contractHash, finalAttributes, fee)
         sendRawTransaction(finalPayload.first, finalPayload.second) {
             var txid = it.first
             var error = it.second
