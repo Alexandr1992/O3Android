@@ -53,7 +53,7 @@ class NeoDappProtocol {
     data class InvokeRequest(val operation: String,
                              val scriptHash: String,
                              val assetIntentOverrides: JsonElement?,
-                             val attachedAssets: JsonElement?,
+                             val attachedAssets: AttachedAssets?,
                              val triggerContractVerification: Boolean,
                              var fee: String,
                              val args: List<Arg>?,

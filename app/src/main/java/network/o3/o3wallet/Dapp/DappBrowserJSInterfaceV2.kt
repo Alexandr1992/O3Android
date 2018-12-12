@@ -226,7 +226,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 recipientAddress, attributes, fee) {
             if (it.first != null) {
                 success = true
-                callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = node))
+                callback(message, NeoDappProtocol.SendResponse(txid = it.first!!.toLowerCase(), nodeUrl = node))
             } else {
                 callback(message, jsonObject("error" to "RPC_ERROR"))
             }
@@ -257,7 +257,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                         BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
                     if (it.first != null) {
                         success = true
-                        callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
+                        callback(message, NeoDappProtocol.SendResponse(txid = it.first!!.toLowerCase(), nodeUrl = PersistentStore.getNodeURL()))
                     } else {
                         callback(message, jsonObject("error" to "RPC_ERROR"))
                     }
@@ -276,7 +276,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                                 token?.decimals ?: 8, fee, attributes) {
                             if (it.first != null) {
                                 success = true
-                                callback(message, NeoDappProtocol.SendResponse(txid = it.first?: "", nodeUrl = PersistentStore.getNodeURL()))
+                                callback(message, NeoDappProtocol.SendResponse(txid = it.first!!.toLowerCase(), nodeUrl = PersistentStore.getNodeURL()))
                             } else {
                                 callback(message, jsonObject("error" to "RPC_ERROR"))
                             }
@@ -345,16 +345,15 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         try {
             fee = BigDecimal(invokeRequest.fee)
         } catch (e : Exception) {
-            callback(message, e.localizedMessage)
-            return success
         }
 
         val latch = CountDownLatch(1)
         NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(Account.getWallet(),
-                null, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(), fee, arrayOf()) {
+                null, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
+                fee, arrayOf(), invokeRequest.attachedAssets!!) {
             if (it.second == null) {
                 success = true
-                callback(message, jsonObject("result" to it.first))
+                callback(message, jsonObject("result" to it.first!!.toLowerCase()))
             } else {
                 callback(message, jsonObject("result" to "RPC_ERROR"))
             }
