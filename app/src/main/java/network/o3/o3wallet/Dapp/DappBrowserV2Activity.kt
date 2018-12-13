@@ -202,7 +202,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         val moreButton = dappBrowserView.find<ImageView>(R.id.moreButton)
         moreButton.onClick {
             val customPowerMenu = CustomPowerMenu.Builder(this@DAppBrowserActivityV2, DappPopupMenuAdapter())
-                    .setWidth(700)
+                    .setWidth(800)
                     .addItem(DappPopupMenuItem(
                             resources.getString(R.string.DAPP_refresh),
                             ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_refresh))
@@ -243,7 +243,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
             walletStatusView.onClick {
                 val customPowerMenu = CustomPowerMenu.Builder(this@DAppBrowserActivityV2, DappPopupMenuAdapter())
-                        .setWidth(700)
+                        .setWidth(800)
                         .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
                         .setMenuRadius(10f)
                         .setMenuShadow(10f)

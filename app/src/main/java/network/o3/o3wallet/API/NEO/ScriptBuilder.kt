@@ -146,6 +146,8 @@ class ScriptBuilder {
     fun pushTypedContractInvoke(scriptHash: String, operation: String? = null, args: List<NeoDappProtocol.Arg>, useTailCall: Boolean = false) {
         if (args.isNotEmpty()) {
             pushTypedArray(args)
+        } else {
+            pushBool(false)
         }
 
         if (operation != null) {

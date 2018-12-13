@@ -540,13 +540,13 @@ class NeoNodeRPC {
         if (neoInput != null) {
             neoOutput = getOutputDataPayload(wallet,
                     Asset.NEO, neoInput.totalAmount!!,
-                    attachedNEOAmount, contractHash, neoInput.fee)
+                    attachedNEOAmount, contractHash.hexStringToByteArray().reversedArray().toHex(), neoInput.fee)
         }
 
         if (gasInput != null) {
             gasOutput = getOutputDataPayload(wallet,
                     Asset.GAS, gasInput.totalAmount!!,
-                    attachedGasAmount, contractHash, gasInput.fee)
+                    attachedGasAmount, contractHash.hexStringToByteArray().reversedArray().toHex(), gasInput.fee)
         }
 
         val totalInputCount = (neoInput?.inputCount ?: 0) + (gasInput?.inputCount ?: 0)
