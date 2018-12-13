@@ -11,6 +11,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
@@ -24,6 +25,7 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.*
 import com.airbnb.lottie.LottieAnimationView
+import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
@@ -39,6 +41,9 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.OnMenuItemClickListener
 import kotlinx.android.synthetic.main.dialog_single_input.view.*
+import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
+import org.json.JSONObject
 import org.w3c.dom.Text
 
 
@@ -58,6 +63,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     val doNotShowAuthorities = arrayOf("analytics.o3.network")
 
     var pendingDappMessage: DappMessage? = null
+    var lastClickTime: Long  = 0
 
     data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String)
 
@@ -83,6 +89,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
         val url = intent.getStringExtra("url")
         setStylingForURLText(url)
+        initiateTradeFooter(Uri.parse(url))
         setupTopBar(intent.getBooleanExtra("allowSearch", false))
         setupWebClients()
 
@@ -102,8 +109,94 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         }
     }
 
+    fun initiateTradeFooter(uri: Uri) {
+        if (uri.authority == "public.o3.network") {
+            SwitcheoAPI().getTokens {
+                runOnUiThread {
+                    val asset = uri.lastPathSegment!!
+                    //TODO: Since there is no existing NEO to GAS market
+                    if (asset.toUpperCase() == "NEO") {
+                        dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+                        dappBrowserView.find<Button>(R.id.buyButton).onClick {
+                            if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                                return@onClick
+                            }
+                            alert(resources.getString(R.string.NATIVE_TRADE_neo_buy_limitation)) {
+                                yesButton {
+                                    val buyAttrs = mapOf(
+                                            "asset" to asset,
+                                            "source" to "token_details")
+                                    Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
+                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                    intent.putExtra("asset", "GAS")
+                                    intent.putExtra("is_buy", false)
+                                    startActivity(intent)
+                                }
+                            }.show()
+                            lastClickTime = SystemClock.elapsedRealtime()
+                        }
 
+                        dappBrowserView.find<Button>(R.id.sellButton).onClick {
+                            if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                                return@onClick
+                            }
+                            alert(resources.getString(R.string.NATIVE_TRADE_neo_sell_limitation)) {
+                                yesButton {
+                                    val sellAttrs = mapOf(
+                                            "asset" to asset,
+                                            "source" to "token_details")
+                                    Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
+                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                    intent.putExtra("asset", "GAS")
+                                    intent.putExtra("is_buy", true)
+                                    startActivity(intent)
+                                }
+                            }.show()
+                            lastClickTime = SystemClock.elapsedRealtime()
+                        }
+                    } else {
+                        if (it.first?.get(asset.toUpperCase()) != null) {
+                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
+                            dappBrowserView.find<Button>(R.id.buyButton).onClick {
+                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                                    return@onClick
+                                }
+                                val buyAttrs = mapOf(
+                                        "asset" to asset,
+                                        "source" to "token_details")
+                                Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
+                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", asset)
+                                intent.putExtra("is_buy", true)
+                                startActivity(intent)
+                                lastClickTime = SystemClock.elapsedRealtime()
 
+                            }
+                            dappBrowserView.find<Button>(R.id.sellButton).onClick {
+                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                                    return@onClick
+                                }
+                                val sellAttrs = mapOf(
+                                        "asset" to asset,
+                                        "source" to "token_details")
+                                Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
+                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                                intent.putExtra("asset", asset)
+                                intent.putExtra("is_buy", false)
+                                startActivity(intent)
+                                lastClickTime = SystemClock.elapsedRealtime()
+                            }
+                        } else {
+                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+                        }
+                    }
+                }
+            }
+
+        } else {
+            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
+        }
+    }
 
     fun setMoreActions() {
         val moreButton = dappBrowserView.find<ImageView>(R.id.moreButton)
@@ -118,6 +211,11 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                     .addItem(DappPopupMenuItem(
                             resources.getString(R.string.DAPP_disconnect),
                             ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_home))
+                    )
+
+                    .addItem(DappPopupMenuItem(
+                            "Connected to " + PersistentStore.getNetworkType() + "Net",
+                            null)
                     )
 
                     .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)

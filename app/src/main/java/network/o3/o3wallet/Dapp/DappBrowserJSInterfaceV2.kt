@@ -219,7 +219,6 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         try {
             fee = BigDecimal(sendRequest.fee)
         } catch (e : Exception) {
-            success = false
         }
 
         NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet!!, toSendAsset, BigDecimal(amount),
@@ -348,17 +347,26 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
 
         val latch = CountDownLatch(1)
-        NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(Account.getWallet(),
-                null, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
-                fee, arrayOf(), invokeRequest.attachedAssets!!) {
-            if (it.second == null) {
-                success = true
-                callback(message, jsonObject("result" to it.first!!.toLowerCase()))
+        O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+            var assets = it.first
+            var error = it.second
+            if (error != null) {
+                latch.countDown()
             } else {
-                callback(message, jsonObject("result" to "RPC_ERROR"))
+                NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(dappExposedWallet!!,
+                        assets, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
+                        fee, arrayOf(), invokeRequest.attachedAssets!!) {
+                    if (it.second == null) {
+                        success = true
+                        callback(message, jsonObject("result" to it.first!!.toLowerCase()))
+                    } else {
+                        callback(message, jsonObject("result" to "RPC_ERROR"))
+                    }
+                    latch.countDown()
+                }
             }
-            latch.countDown()
         }
+
         latch.await()
         return success
     }
@@ -385,7 +393,12 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     fun callback(message: DappMessage, data: Any) {
 
         val json = Gson().typedToJsonTree(message).asJsonObject
-        json["data"] = Gson().typedToJsonTree(data)
+        if (Gson().typedToJsonTree(data).isJsonObject && Gson().typedToJsonTree(data).asJsonObject.has("error")) {
+            json["error"] = Gson().typedToJsonTree(data)["error"]
+        } else {
+            json["data"] = Gson().typedToJsonTree(data)
+        }
+
 
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val myRunnable = Runnable {

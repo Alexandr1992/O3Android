@@ -144,7 +144,10 @@ class ScriptBuilder {
     }
 
     fun pushTypedContractInvoke(scriptHash: String, operation: String? = null, args: List<NeoDappProtocol.Arg>, useTailCall: Boolean = false) {
-        pushTypedArray(args)
+        if (args.isNotEmpty()) {
+            pushTypedArray(args)
+        }
+
         if (operation != null) {
             val hex = operation.toByteArray().toHex()
             pushData(hex)

@@ -11,6 +11,7 @@ import com.skydoves.powermenu.MenuBaseAdapter
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
+import org.jetbrains.anko.textColor
 
 
 class DappPopupMenuItem(val title: String, val image: Drawable?)
@@ -24,6 +25,10 @@ class DappPopupMenuAdapter : MenuBaseAdapter<DappPopupMenuItem>() {
         val item = getItem(index) as DappPopupMenuItem
         optionView.find<TextView>(R.id.optionTitle).text = item.title
         optionView.find<ImageView>(R.id.optionLogo).image  = item.image
+
+        if (index == 2) {
+            optionView.find<TextView>(R.id.optionTitle).textColor = context.resources.getColor(R.color.colorSubtitleGrey)
+        }
 
         return optionView
     }

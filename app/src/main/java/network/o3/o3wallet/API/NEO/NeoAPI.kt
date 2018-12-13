@@ -431,7 +431,7 @@ class NeoNodeRPC {
     private fun getOutputDataPayload(wallet: Wallet, asset: Asset,
                                         runningAmount: BigDecimal, toSendAmount: BigDecimal, toAddressHash: String,
                                         fee: BigDecimal): Pair<ByteArray, Int> {
-        val needsTwoOutputTransactions = runningAmount.toSafeMemory(8) != (toSendAmount + fee).toSafeMemory(8)
+        val needsTwoOutputTransactions = runningAmount.toSafeMemory(8) != (toSendAmount + fee).toSafeMemory(8) && toSendAmount > BigDecimal.ZERO
 
         var outputCount: Int = 0
         var payload = byteArrayOf()
@@ -441,6 +441,7 @@ class NeoNodeRPC {
             return Pair(payload, 0)
         }
 
+        //this assumes only one type of input neo or gas per transaction
         if (needsTwoOutputTransactions) {
             //Transaction To Reciever
             outputCount = 2
@@ -455,12 +456,19 @@ class NeoNodeRPC {
             payload += to8BytesArray(amountToGetBackInMemory)
             payload += wallet.hashedSignature
 
-        } else {
+        } else if (toSendAmount > BigDecimal.ZERO){
             outputCount = 1
             payload = payload + asset.assetID().hexStringToByteArray().reversedArray()
             val amountToSendInMemory = toSendAmount.toSafeMemory(8)
             payload += to8BytesArray(amountToSendInMemory)
             payload += toAddressHash.hexStringToByteArray()
+        // just paying a fee, need to return all change back to myself
+        } else {
+            outputCount = 1
+            payload = payload + asset.assetID().hexStringToByteArray().reversedArray()
+            val amountToSendInMemory = runningAmount.toSafeMemory(8) - toSendAmount.toSafeMemory(8) - fee.toSafeMemory(8)
+            payload += to8BytesArray(amountToSendInMemory)
+            payload += wallet.hashedSignature
         }
 
         return Pair(payload, outputCount)
@@ -532,13 +540,13 @@ class NeoNodeRPC {
         if (neoInput != null) {
             neoOutput = getOutputDataPayload(wallet,
                     Asset.NEO, neoInput.totalAmount!!,
-                    attachedNEOAmount, contractHash.hashFromAddress(), neoInput.fee)
+                    attachedNEOAmount, contractHash, neoInput.fee)
         }
 
         if (gasInput != null) {
             gasOutput = getOutputDataPayload(wallet,
                     Asset.GAS, gasInput.totalAmount!!,
-                    attachedNEOAmount, contractHash.hashFromAddress(), gasInput.fee)
+                    attachedGasAmount, contractHash, gasInput.fee)
         }
 
         val totalInputCount = (neoInput?.inputCount ?: 0) + (gasInput?.inputCount ?: 0)
@@ -666,7 +674,8 @@ class NeoNodeRPC {
         val script = scriptBuilder.getScriptHexString()
         val scriptBytes = byteArrayOf((script.length / 2).toUByte()) + script.hexStringToByteArray()
 
-        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), contractHash, BigDecimal.ZERO, BigDecimal.ZERO,
+        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), contractHash,
+                BigDecimal(attachedAssets.NEO ?: "0"), BigDecimal(attachedAssets.GAS ?: "0"),
                 finalAttributes, fee)
         sendRawTransaction(finalPayload.first, finalPayload.second) {
             var txid = it.first

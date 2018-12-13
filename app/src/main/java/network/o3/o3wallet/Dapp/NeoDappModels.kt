@@ -69,8 +69,8 @@ class NeoDappProtocol {
                               val value: String)
         }
 
-        data class AttachedAssets(val gas: Int?,
-                                  val neo: Int?)
+        data class AttachedAssets(val GAS: String?,
+                                  val NEO: String?)
     }
 
     data class InvokeResponse(val txid: String,
