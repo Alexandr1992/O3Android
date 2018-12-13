@@ -87,9 +87,20 @@ object PersistentStore {
         settingPref.apply()
     }
 
+    fun setOverrideNodeURL(url: String) {
+        val settingPref = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+        settingPref.putString("OVERRIDE_NODE_URL", url)
+        settingPref.apply()
+    }
+
+    fun getOverrideNodeURL(): String {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                .getString("OVERRIDE_NODE_URL", "")!!
+    }
+
     fun getOntologyNodeURL(): String {
         return  PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
-                .getString("ONTOLOGY_NODE_URL", "http://dappnode2.ont.io:20336")
+                .getString("ONTOLOGY_NODE_URL", "http://dappnode2.ont.io:20336")!!
     }
 
     fun setOntologyNodeURL(url: String) {
@@ -99,8 +110,12 @@ object PersistentStore {
     }
 
     fun getNodeURL(): String {
-        return  PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
-                .getString("NODE_URL", "http://seed2.neo.org:10332")
+        if (getOverrideNodeURL() == "") {
+            return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext)
+                    .getString("NODE_URL", "http://seed2.neo.org:10332")!!
+        } else {
+            return getOverrideNodeURL()
+        }
     }
 
     fun setNetworkType(network: String) {

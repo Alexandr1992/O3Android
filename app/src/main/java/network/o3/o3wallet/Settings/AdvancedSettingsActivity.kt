@@ -4,64 +4,114 @@ package network.o3.o3wallet.Settings
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.text.SpannableStringBuilder
+import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import java.lang.Exception
+import java.net.URL
 
 class AdvancedSettingsActivity : AppCompatActivity() {
+    lateinit var mainnetCheckBox: CheckBox
+    lateinit var testnetCheckbox: CheckBox
+    lateinit var overrideCheckbox: CheckBox
+    lateinit var browserButton: Button
+    lateinit var setCustomButton: Button
+    lateinit var customNodeEditText: EditText
+
+
+    fun bindViews() {
+        mainnetCheckBox = find(R.id.checkBoxMainNet)
+        testnetCheckbox = find(R.id.checkBoxTestNet)
+        overrideCheckbox = find(R.id.rpcOverrideCheckbox)
+        setCustomButton = find(R.id.connectButton)
+        browserButton = find(R.id.browserButton)
+        customNodeEditText = find(R.id.customEndpointEditText)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_advanced_activity)
-        val editText = findViewById<EditText>(R.id.customEndpointEditText)
-        val setCustomButton = findViewById<Button>(R.id.connectButton)
 
-        val browserButton = findViewById<Button>(R.id.browserButton)
+        bindViews()
+        initiateNetworkSelectors()
+        initiateNetworkUpdateButton()
+        initiateDevBrowser()
+    }
 
-        val mainnet = findViewById<CheckBox>(R.id.checkBoxMainNet)
-        val testnet = findViewById<CheckBox>(R.id.checkBoxTestNet)
-        val privatenet = findViewById<CheckBox>(R.id.checkBoxPrivateNet)
 
-        privatenet.isChecked = true
-
-        privatenet.setOnClickListener {
-            testnet.isChecked = false
-            mainnet.isChecked = false
-            privatenet.isChecked = true
-            editText.text = SpannableStringBuilder("https://privatenet.o3.network:30333")
+    fun initiateNetworkSelectors() {
+        mainnetCheckBox.isChecked = PersistentStore.getNetworkType() == "Main"
+        testnetCheckbox.isChecked = PersistentStore.getNetworkType() == "Test"
+        overrideCheckbox.isChecked = PersistentStore.getOverrideNodeURL() != ""
+        if(overrideCheckbox.isChecked) {
+            customNodeEditText.visibility = View.VISIBLE
+            customNodeEditText.text = SpannableStringBuilder(PersistentStore.getOverrideNodeURL())
+        } else {
+            customNodeEditText.visibility = View.GONE
+            customNodeEditText.text = SpannableStringBuilder("")
         }
 
-        testnet.setOnClickListener {
-            testnet.isChecked = true
-            mainnet.isChecked = false
-            privatenet.isChecked = false
-            editText.text = SpannableStringBuilder("http://seed2.neo.org:20332")
+        if (mainnetCheckBox.isChecked) {
+            PersistentStore.setNetworkType("Main")
+        } else if (testnetCheckbox.isChecked) {
+            PersistentStore.setNetworkType("Text")
         }
 
-        mainnet.setOnClickListener {
-            testnet.isChecked = false
-            mainnet.isChecked = true
-            privatenet.isChecked = false
-            editText.text = SpannableStringBuilder("http://seed2.o3node.org:10332")
+        testnetCheckbox.setOnClickListener {
+            testnetCheckbox.isChecked = true
+            testnetCheckbox.isChecked = false
         }
 
+        mainnetCheckBox.setOnClickListener {
+            testnetCheckbox.isChecked = false
+            mainnetCheckBox.isChecked = true
+        }
+
+        overrideCheckbox.setOnClickListener {
+            customNodeEditText.visibility = if(overrideCheckbox.isChecked) View.VISIBLE else View.GONE
+        }
+    }
+
+    fun initiateNetworkUpdateButton() {
+
+        var url: URL? = null
         setCustomButton.setOnClickListener {
-            PersistentStore.setNodeURL(editText.text.toString())
-            if (testnet.isChecked) {
-                PersistentStore.setNetworkType("Test")
-            } else if (mainnet.isChecked) {
-                PersistentStore.setNetworkType("Main")
-            } else {
-                PersistentStore.setNetworkType("Private")
+            try {
+                url = URL(customNodeEditText.text.toString())
+            } catch(e: Exception) {
+                toast("Invalid url for the custom node")
+                return@setOnClickListener
             }
-            toast("Network Changed. Close the App Fully, and Restart to Reconnect")
-        }
 
+            if (testnetCheckbox.isChecked) {
+                PersistentStore.setNetworkType("Test")
+            } else if (mainnetCheckBox.isChecked) {
+                PersistentStore.setNetworkType("Main")
+            }
+
+            if (url != null && overrideCheckbox.isChecked) {
+                PersistentStore.setOverrideNodeURL(customNodeEditText.text.toString())
+            } else {
+                PersistentStore.setOverrideNodeURL("")
+            }
+
+            val intent = Intent("need-update-watch-address-event")
+            intent.putExtra("reset", true)
+            LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
+            toast("You are now connected to the " + PersistentStore.getNetworkType() + " Network")
+        }
+    }
+
+    fun initiateDevBrowser() {
         browserButton.setOnClickListener {
             val url =  "https://o3.network/_store/" //"https://s3-ap-northeast-1.amazonaws.com/network.o3.apps/testsend/index.html"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)

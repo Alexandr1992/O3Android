@@ -7,39 +7,51 @@
     tools:context="network.o3.o3wallet.Settings.AdvancedSettingsActivity">
 
     <CheckBox
-        android:id="@+id/checkBoxPrivateNet"
+        android:id="@+id/rpcOverrideCheckbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Enable Override (All RPC commands will route through a custom node)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView46" />
+
+    <TextView
+        android:id="@+id/textView46"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="8dp"
-        android:text="Private"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customEndpointEditText" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="RPC Node Override"
+        android:textAppearance="@style/RegularText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxMainNet" />
 
     <CheckBox
         android:id="@+id/checkBoxTestNet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Test"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customEndpointEditText" />
+        app:layout_constraintStart_toEndOf="@+id/checkBoxMainNet"
+        app:layout_constraintTop_toBottomOf="@+id/textView45" />
 
     <EditText
         android:id="@+id/customEndpointEditText"
-        android:layout_width="344dp"
+        android:layout_width="0dp"
         android:layout_height="42dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
-        android:hint="localhost:3000"
+        android:hint="http://mynode.org:10332"
         android:inputType="textUri"
-        android:text="https://privatenet.o3.network:30333"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rpcOverrideCheckbox"
         tools:ignore="HardCodedText" />
 
     <Button
@@ -47,10 +59,10 @@
         style="@style/PrimaryButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="76dp"
-        android:text="Connect to Custom Network"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Update Network Settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,11 +73,11 @@
         android:id="@+id/checkBoxMainNet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Main"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customEndpointEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/textView45" />
 
     <Button
         android:id="@+id/browserButton"
@@ -79,5 +91,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connectButton" />
+
+    <TextView
+        android:id="@+id/textView45"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Network Type"
+        android:textAppearance="@style/RegularText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

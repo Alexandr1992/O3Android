@@ -264,9 +264,9 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
     }
 
     fun setupTopBar(allowSearch: Boolean) {
-        val allowSearch = intent.getBooleanExtra("allowSearch", false)
-        searchBar.isFocusable = false
         if (allowSearch) {
+            searchBar.isFocusable = true
+            searchBar.isEnabled = true
             searchBar.setOnEditorActionListener { textView, i, keyEvent ->
                 if (i == EditorInfo.IME_ACTION_GO) {
                     webView.loadUrl(textView.text.toString())
@@ -274,7 +274,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 true
             }
         } else {
-            searchBar.isEnabled = true
+            searchBar.isEnabled = false
         }
         setMoreActions()
     }
