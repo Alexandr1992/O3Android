@@ -1,8 +1,6 @@
 package network.o3.o3wallet.MarketPlace.TokenSales
 
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
 import android.text.InputType
@@ -26,7 +24,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread

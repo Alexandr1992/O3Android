@@ -1,7 +1,6 @@
 package network.o3.o3wallet.Feed
 
 import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,14 +12,11 @@ import network.o3.o3wallet.API.O3.FeedData
 import network.o3.o3wallet.API.O3.FeedItem
 import network.o3.o3wallet.API.O3.NewsImage
 import network.o3.o3wallet.R
-import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
-import android.widget.ListAdapter
 import com.bumptech.glide.request.RequestOptions
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
-import com.crashlytics.android.answers.CustomEvent
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import java.text.SimpleDateFormat
 
 
@@ -76,7 +72,7 @@ class NewsFeedAdapter(context: Context, fragment: NewsFeedFragment): BaseAdapter
                     .putContentName("NewsFeed Item View"))
 
             val url = feedItem.link
-            val i = Intent(view.context, DAppBrowserActivity::class.java)
+            val i = Intent(view.context, DAppBrowserActivityV2::class.java)
             i.putExtra("url", url)
             view.context.startActivity(i)
         }

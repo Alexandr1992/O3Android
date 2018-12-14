@@ -79,4 +79,11 @@ class TransactionAttribute {
         data = attribute
         return this
     }
+
+    fun dapiRemarkAttribute(remark: String): TransactionAttribute{
+        val remarkBytes = remark.toByteArray(Charsets.UTF_8)
+        val lengthBytes = byteArrayOf(remarkBytes.count().toUByte())
+        data = byteArrayOf(USAGE.Remark1.value) + lengthBytes + remarkBytes
+        return this
+    }
 }

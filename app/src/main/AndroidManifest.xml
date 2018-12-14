@@ -113,20 +113,30 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTopBar.White" />
         <activity
+            android:name=".Dapp.DAppBrowserActivityV2"
+            android:hardwareAccelerated="true"
+            android:label="@string/title_activity_dapp_browser"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTopBar.White" />
+        <activity
             android:name=".MultiWallet.Activate.MultiwalletActivateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Onboarding.LoginNEP6.LoginNEP6Activity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/AppTheme.NoTopBar" />
-        <activity android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity"
+            android:theme="@style/AppTheme.NoTopBar"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".MultiWallet.ManageMultiWallet.MultiwalletManageWallet"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".MultiWallet.ManageMultiWallet.MultiwalletManageWallet"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"></activity>
-    </application>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Dapp.ContractInfoActivity"
+            android:theme="@style/AppTheme.Dark" />
+            </application>
 
 </manifest>

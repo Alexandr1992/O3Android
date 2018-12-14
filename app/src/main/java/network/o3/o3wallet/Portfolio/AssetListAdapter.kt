@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.R.*
 import org.jetbrains.anko.*
 import org.json.JSONObject
@@ -42,17 +42,17 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
-            return NOTIFICATIONROW
-        } else {
+      ////  if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
+     //       return NOTIFICATIONROW
+       // } else {
             return ASSETROW
-        }
+       // }
     }
 
     override fun getItemCount(): Int {
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
-            return assets.count() + 1
-        }
+        //if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
+        //    return assets.count() + 1
+       // }
         return assets.count()
     }
 
@@ -69,16 +69,16 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
         var assetPosition = position
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
-            (vh as NotificationViewHolder).bindNotification(this)
-            return
-        }
+     //   if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
+     //       (vh as NotificationViewHolder).bindNotification(this)
+     //       return
+     //   }
 
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio()){
-            assetPosition = position - 1
-        } else {
+      //  if (PersistentStore.shouldShowSwitcheoOnPortfolio()){
+       //     assetPosition = position - 1
+       // } else {
             assetPosition = position
-        }
+      //  }
         (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[assetPosition], portfolio, referenceCurrency)
     }
 
@@ -158,7 +158,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
                 val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "portfolio_row")
                 Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
-                val intent = Intent(view.context, DAppBrowserActivity::class.java)
+                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
                 intent.putExtra("url", detailURL)
                 view.context.startActivity(intent)
             }
@@ -181,7 +181,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
     class NotificationViewHolder(v: View): RecyclerView.ViewHolder(v) {
         val view = v
 
-        fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
+     /*   fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
             view.find<ImageButton>(id.dismissNotificationButton).setOnClickListener {
                 view.context.alert(view.context.resources.getString(string.PORTFOLIO_are_you_sure_switcheo)) {
                     yesButton {
@@ -196,11 +196,11 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
             view.find<Button>(id.tradeNowPortfolioButton).setOnClickListener {
                 val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivity::class.java)
+                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
                 intent.putExtra("url", url)
                 intent.putExtra("allowSearch", false)
                 view.context.startActivity(intent)
             }
-        }
+        }*/
     }
 }

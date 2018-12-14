@@ -1,9 +1,7 @@
-package network.o3.o3wallet.MultiWallet.ManageMultiWallet
+package network.o3.o3wallet.Dapp
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
@@ -11,18 +9,22 @@ import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
 import com.amplitude.api.Amplitude
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
+import neoutils.Neoutils
+import neoutils.Wallet
+import network.o3.o3wallet.*
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.DialogUnlockEncryptedKey
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk15.coroutines.onClick
 
-class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
+class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
     lateinit var mView: View
     lateinit var listView: ListView
 
@@ -61,11 +63,11 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
 
             walletRow.onClick {
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
+                neo2DialogFragment.decryptionSucceededCallback = { pass, wif ->
                     (mFragment as RoundedBottomSheetDialogFragment).dismiss()
                     neo2DialogFragment.dismiss()
-                    NEP6.getFromFileSystem().makeNewDefault(getItem(position).address, pass)
-                    Amplitude.getInstance().logEvent("wallet_unlocked")
+                    (mFragment.activity as DAppBrowserActivityV2).jsInterface
+                            .setDappExposedWallet(Neoutils.generateFromWIF(wif), NEP6.getFromFileSystem().getDefaultAccount().label)
                 }
 
                 neo2DialogFragment.encryptedKey = getItem(position).key!!
@@ -75,11 +77,18 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
         }
 
         override fun getItem(position: Int): NEP6.Account {
-            return NEP6.getFromFileSystem().getNonDefaultAccounts()[position]
+            var accounts = NEP6.getFromFileSystem().getWalletAccounts().toMutableList()
+            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()!!.address}
+            if (index == -1) {
+                index = accounts.indexOfFirst { it.isDefault }
+            }
+            accounts.removeAt(index)
+            return accounts[position]
         }
 
         override fun getCount(): Int {
-            return NEP6.getFromFileSystem().getNonDefaultAccounts().count()
+            return NEP6.getFromFileSystem().getWalletAccounts().count() - 1
+
         }
 
         override fun getItemId(position: Int): Long {
@@ -88,8 +97,8 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(): SwapWalletBottomSheet {
-            return SwapWalletBottomSheet()
+        fun newInstance(): DappWalletForSessionBottomSheet {
+            return DappWalletForSessionBottomSheet()
         }
     }
 }

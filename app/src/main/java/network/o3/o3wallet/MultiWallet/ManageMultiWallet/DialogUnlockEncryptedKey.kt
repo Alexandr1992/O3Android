@@ -17,6 +17,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
+import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
@@ -43,7 +44,7 @@ class DialogUnlockEncryptedKey : DialogFragment() {
     lateinit var decryptionTitle: TextView
 
     var decryptionFailedCallback: (() -> Unit)? = null
-    var decryptionSucceededCallback: ((String) -> Unit)? = null
+    var decryptionSucceededCallback: ((String, String) -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -64,6 +65,12 @@ class DialogUnlockEncryptedKey : DialogFragment() {
         nep2PasswordField = view.find<EditText>(R.id.nep2PasswordField)
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+
+        onUiThread {
+            nep2PasswordField.requestFocus()
+        }
+
 
         submitButton.setOnClickListener {
             attemptDecryption()
@@ -112,7 +119,7 @@ class DialogUnlockEncryptedKey : DialogFragment() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm!!.hideSoftInputFromWindow(this.nep2PasswordField.getWindowToken(), 0)
         this.dismiss()
-        decryptionSucceededCallback?.invoke(password)
+        decryptionSucceededCallback?.invoke(password, decryptedKey)
     }
 
     fun showDecryptionProgress() {

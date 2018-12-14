@@ -105,7 +105,8 @@ class ReviewOrderFragment : Fragment() {
                 onUiThread {
                     vm.setIsOrdering(false)
                     if (it.first == null) {
-                        resultFragment.showFailure()
+                        resultFragment.showFailure(it.second?.localizedMessage ?:
+                            resources.getString(R.string.NATIVE_TRADE_order_fail_title))
                     } else {
                         resultFragment.showSuccess(it.first!!)
                         val loggedJson = jsonObject(
