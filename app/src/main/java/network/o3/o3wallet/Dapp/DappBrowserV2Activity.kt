@@ -100,10 +100,11 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         webSettings.domStorageEnabled = true
         WebView.setWebContentsDebuggingEnabled(true)
 
-        if (URL(url).authority == "switcheo.exchange" || URL(url).authority == "legacy.switcheo.exchange") {
+        if (URL(url).authority == "switcheo.exchange" || URL(url).authority == "legacy.switcheo.exchange" ||
+                URL(url).authority == "mnns.nel.group") {
             legacyInterface = DappBrowserJSInterface(this, webView)
             webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
-        } else {
+        } else {2
             jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
             webView.addJavascriptInterface(jsInterface, "_o3dapi")
         }

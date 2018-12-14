@@ -68,7 +68,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
         testnetCheckbox.setOnClickListener {
             testnetCheckbox.isChecked = true
-            testnetCheckbox.isChecked = false
+            mainnetCheckBox.isChecked = false
         }
 
         mainnetCheckBox.setOnClickListener {
@@ -85,11 +85,13 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
         var url: URL? = null
         setCustomButton.setOnClickListener {
-            try {
-                url = URL(customNodeEditText.text.toString())
-            } catch(e: Exception) {
-                toast("Invalid url for the custom node")
-                return@setOnClickListener
+            if (overrideCheckbox.isChecked) {
+                try {
+                    url = URL(customNodeEditText.text.toString())
+                } catch (e: Exception) {
+                    toast("Invalid url for the custom node")
+                    return@setOnClickListener
+                }
             }
 
             if (testnetCheckbox.isChecked) {
@@ -113,7 +115,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
-            val url =  "https://o3.network/_store/" //"https://s3-ap-northeast-1.amazonaws.com/network.o3.apps/testsend/index.html"
+            val url =  "https://mnns.nel.group/#/?wallet=o3&lang=en&net=mainnet&fee=0"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
             intent.putExtra("allowSearch", true)

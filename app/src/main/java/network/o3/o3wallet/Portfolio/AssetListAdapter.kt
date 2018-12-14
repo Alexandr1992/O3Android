@@ -42,17 +42,17 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
-            return NOTIFICATIONROW
-        } else {
+      ////  if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
+     //       return NOTIFICATIONROW
+       // } else {
             return ASSETROW
-        }
+       // }
     }
 
     override fun getItemCount(): Int {
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
-            return assets.count() + 1
-        }
+        //if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
+        //    return assets.count() + 1
+       // }
         return assets.count()
     }
 
@@ -69,16 +69,16 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
         var assetPosition = position
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
-            (vh as NotificationViewHolder).bindNotification(this)
-            return
-        }
+     //   if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
+     //       (vh as NotificationViewHolder).bindNotification(this)
+     //       return
+     //   }
 
-        if (PersistentStore.shouldShowSwitcheoOnPortfolio()){
-            assetPosition = position - 1
-        } else {
+      //  if (PersistentStore.shouldShowSwitcheoOnPortfolio()){
+       //     assetPosition = position - 1
+       // } else {
             assetPosition = position
-        }
+      //  }
         (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[assetPosition], portfolio, referenceCurrency)
     }
 
@@ -181,7 +181,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
     class NotificationViewHolder(v: View): RecyclerView.ViewHolder(v) {
         val view = v
 
-        fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
+     /*   fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
             view.find<ImageButton>(id.dismissNotificationButton).setOnClickListener {
                 view.context.alert(view.context.resources.getString(string.PORTFOLIO_are_you_sure_switcheo)) {
                     yesButton {
@@ -201,6 +201,6 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                 intent.putExtra("allowSearch", false)
                 view.context.startActivity(intent)
             }
-        }
+        }*/
     }
 }
