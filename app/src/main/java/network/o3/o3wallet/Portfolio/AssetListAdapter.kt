@@ -2,21 +2,29 @@ package network.o3.o3wallet.Portfolio
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.send_success_fragment.view.*
+import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.R.*
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
 
 /**
@@ -42,25 +50,26 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
     }
 
     override fun getItemViewType(position: Int): Int {
-      ////  if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
-     //       return NOTIFICATIONROW
-       // } else {
+        if (position == 0 && !PersistentStore.getHasDismissedBackup()) {
+            return NOTIFICATIONROW
+        } else {
             return ASSETROW
-       // }
+        }
     }
 
     override fun getItemCount(): Int {
-        //if (PersistentStore.shouldShowSwitcheoOnPortfolio()) {
-        //    return assets.count() + 1
-       // }
-        return assets.count()
+        if (PersistentStore.getHasDismissedBackup()) {
+            return assets.count()
+        } else {
+            return assets.count() + 1
+        }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(viewGroup.context)
         if (viewType == NOTIFICATIONROW) {
             val view = layoutInflater.inflate(layout.portfolio_notification_row, viewGroup, false)
-            return NotificationViewHolder(view)
+            return NotificationViewHolder(view, mfragment, this)
         } else {
             val view = layoutInflater.inflate(layout.portfolio_asset_card, viewGroup, false)
             return PortfolioAssetViewHolder(view)
@@ -68,18 +77,18 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
     }
 
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
-        var assetPosition = position
-     //   if (PersistentStore.shouldShowSwitcheoOnPortfolio() && position == 0) {
-     //       (vh as NotificationViewHolder).bindNotification(this)
-     //       return
-     //   }
+        if (position == 0 && !PersistentStore.getHasDismissedBackup()) {
+            (vh as NotificationViewHolder).bindNotification(this)
+            return
+        } else if (PersistentStore.getHasDismissedBackup()) {
+            (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[position], portfolio, referenceCurrency)
+            return
+        } else {
+            (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[position - 1], portfolio, referenceCurrency)
+            return
+        }
 
-      //  if (PersistentStore.shouldShowSwitcheoOnPortfolio()){
-       //     assetPosition = position - 1
-       // } else {
-            assetPosition = position
-      //  }
-        (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[assetPosition], portfolio, referenceCurrency)
+
     }
 
     class PortfolioAssetViewHolder(v: View): RecyclerView.ViewHolder(v) {
@@ -178,29 +187,64 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
         }
     }
 
-    class NotificationViewHolder(v: View): RecyclerView.ViewHolder(v) {
+    class NotificationViewHolder(v: View, fragment: HomeFragment, adapter: AssetListAdapter): RecyclerView.ViewHolder(v) {
         val view = v
+        val mFragment = fragment
+        val mAdapter = adapter
 
-     /*   fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
-            view.find<ImageButton>(id.dismissNotificationButton).setOnClickListener {
-                view.context.alert(view.context.resources.getString(string.PORTFOLIO_are_you_sure_switcheo)) {
-                    yesButton {
-                        PersistentStore.setShouldShowSwitcheoOnPortfolio(false)
-                           adapter.notifyDataSetChanged()
-                    }
-                    noButton {
+        fun backupAction() {
+            val key = NEP6.getFromFileSystem().getDefaultAccount().key
+            val tmpDir = File(view.context?.filesDir?.absolutePath + "/tmp")
+            tmpDir.mkdirs()
+            val fileImage = File(tmpDir, "o3wallet.png")
+            val fileJson = NEP6.getFromFileSystemAsFile()
+            val fout = FileOutputStream(fileImage)
+            val bitmap = QRCode.from(key).withSize(2000, 2000).bitmap()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 85, fout)
 
-                    }
-                }.show()
+            val imageUri = FileProvider.getUriForFile(view.context!!, "network.o3.o3wallet", fileImage)
+            val contentUri = FileProvider.getUriForFile(view.context!!, "network.o3.o3wallet", fileJson)
+
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.type = "message/rfc822"
+            intent.putExtra(Intent.EXTRA_SUBJECT, "O3 Wallet Encrypted Backup")
+            intent.putExtra(Intent.EXTRA_TEXT, String.format(view.context.resources.getString(R.string.ONBOARDING_backup_email_body), key))
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(imageUri, contentUri))
+
+            val imm = view.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            mFragment.startActivityForResult(Intent.createChooser(intent, "Send Email using:"), 101)
+
+            fout.flush()
+            fout.close()
+            tmpDir.delete()
+        }
+
+        fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
+            val notificationTitleView = view.find<TextView>(R.id.notificationTitleView)
+            val notificationDescriptionView = view.find<TextView>(R.id.notificationDescriptionView)
+
+            view.find<Button>(R.id.notificationActionButton).onClick {
+                PersistentStore.setHasInitiatedBackup(true)
+                backupAction()
+                mAdapter.notifyDataSetChanged()
             }
 
-            view.find<Button>(id.tradeNowPortfolioButton).setOnClickListener {
-                val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
-                intent.putExtra("url", url)
-                intent.putExtra("allowSearch", false)
-                view.context.startActivity(intent)
+            val secondaryActionButton = view.find<Button>(R.id.notificationSecondaryActionButton)
+            secondaryActionButton.text = view.context.resources.getString(R.string.BACKUP_dismiss)
+            if (!PersistentStore.getHasInitiatedBackup()) {
+                secondaryActionButton.visibility = View.GONE
+                notificationTitleView.text = view.context.resources.getString(R.string.BACKUP_initial_warning_title)
+                notificationDescriptionView.text = view.context.resources.getString(R.string.BACKUP_initial_warning_description)
+            } else {
+                secondaryActionButton.visibility = View.VISIBLE
+                notificationTitleView.text = view.context.resources.getString(R.string.BACKUP_secondary_warning_title)
+                notificationDescriptionView.text = view.context.resources.getString(R.string.BACKUP_secondary_warning_description)
             }
-        }*/
+
+            secondaryActionButton.onClick {
+                PersistentStore.setHasDismissedBackup(true)
+                mAdapter.notifyDataSetChanged()
+            }
+        }
     }
 }

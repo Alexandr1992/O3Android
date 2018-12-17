@@ -256,4 +256,24 @@ object PersistentStore {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
                 .putString("MAIN_ACCOUNT_VALUE", value.toString()).apply()
     }
+
+    fun getHasInitiatedBackup(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getBoolean("HAS_INITIATED_BACKUP", false)
+    }
+
+    fun getHasDismissedBackup(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getBoolean("HAS_DISMISSED_BACKUP", false)
+    }
+
+    fun setHasInitiatedBackup(value: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putBoolean("HAS_INITIATED_BACKUP", value).apply()
+    }
+
+    fun setHasDismissedBackup(value: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putBoolean("HAS_INITIATED_BACKUP", value).apply()
+    }
 }

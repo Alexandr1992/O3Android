@@ -33,8 +33,8 @@ class O3FirebaseMessagingService: FirebaseMessagingService() {
         val channelId = "Default"
         val builder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_blue_logo)
-                .setContentTitle(p0!!.notification!!.title)
-                .setContentText(p0.notification!!.body).setAutoCancel(true).setContentIntent(pendingIntent)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(p0!!.notification!!.title))
+                .setAutoCancel(true).setContentIntent(pendingIntent)
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_DEFAULT)

@@ -610,4 +610,16 @@
     <string name="DAPP_view_tx_details">View transaction details</string>
     <string name="DAPP_disconnect">Disconnect &amp; return to O3</string>
     <string name="DAPP_refresh">Refresh</string>
+    <string name="ONBOARDING_wallet_not_backed_up">Wallet not backed up</string>
+    <string name="ONBOARDING_back_up_description">Not having a back up of your key is very dangerous.
+    If you lose access to your device, your funds could be lost</string>
+    <string name="ONBOARDING_backup_key">Backup key</string>
+
+    <string name="BACKUP_initial_warning_title">Wallet not backed up</string>
+    <string name="BACKUP_initial_warning_description">Not having a backup of your key is very dangerous.
+        If you lose access to your devices, your funds will be lost.</string>
+    <string name="BACKUP_secondary_warning_title">Are you sure it\'s backed up?</string>
+    <string name="BACKUP_secondary_warning_description">Neither your password or private key can be recovered if you lose access to them</string>
+    <string name="BACKUP_dismiss">Dismiss</string>
+
 </resources>
