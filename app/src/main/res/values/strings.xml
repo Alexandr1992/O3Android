@@ -589,4 +589,25 @@
     <string name="MUTLIWALLET_duplicate_address_error">You have already added this address, and cannot add it twice</string>
     <string name="MUTLIWALLET_duplicate_key_error">You have already added this encrypted key, and cannot add it twice</string>
     <string name="MUTLWALLET_duplicate_name_error">You already have a wallet with this name, please choose another one</string>
+    <string name="DAPP_connection_warning">This will be able to see your public information related to this address</string>
+    <string name="DAPP_requesting_to_connect">is requesting to connect to your wallet</string>
+    <string name="DAPP_connect">Connect</string>
+    <string name="DAPP_cancel">Cancel</string>
+    <string name="DAPP_from">From:</string>
+    <string name="DAPP_to">To:</string>
+    <string name="DAPP_memo">Memo:</string>
+    <string name="DAPP_optional_priority_label">Use priority (0.0011 GAS)</string>
+    <string name="DAPP_total">Total:</string>
+    <string name="DAPP_send">Send</string>
+    <string name="DAPP_requesting_to_send">is requesting to send</string>
+    <string name="DAPP_processing_transaction">Processing Transaction</string>
+    <string name="DAPP_transaction_succeeded">Transaction Succeeded</string>
+    <string name="DAPP_transaction_failed">Transaction Failed</string>
+    <string name="DAPP_unknown_app">Unknown App</string>
+    <string name="DAPP_wallet_connect">Wallet Connect</string>
+    <string name="DAPP_contact">Contact:</string>
+    <string name="DAPP_wallet_with">With:</string>
+    <string name="DAPP_view_tx_details">View transaction details</string>
+    <string name="DAPP_disconnect">Disconnect &amp; return to O3</string>
+    <string name="DAPP_refresh">Refresh</string>
 </resources>

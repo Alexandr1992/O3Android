@@ -15,6 +15,8 @@ import neoutils.RawTransaction
 import network.o3.o3wallet.API.O3Platform.*
 import neoutils.Wallet
 import network.o3.o3wallet.*
+import network.o3.o3wallet.Dapp.NeoDappProtocol
+import okio.GzipSource
 import org.jetbrains.anko.db.DoubleParser
 import org.jetbrains.anko.defaultSharedPreferences
 import unsigned.toUByte
@@ -52,7 +54,9 @@ class NeoNodeRPC {
         VALIDATEADDRESS,
         GETACCOUNTSTATE,
         GETRAWMEMPOOL,
+        GETSTORAGE,
         SENDRAWTRANSACTION,
+        GETCONTRACTSTATE,
         INVOKEFUNCTION;
 
         fun methodName(): String {
@@ -159,9 +163,73 @@ class NeoNodeRPC {
         }
     }
 
+    fun getContractState(contractHash: String, completion: (Pair<ContractState?, Error?>) -> Unit) {
+        val dataJson = jsonObject(
+                "jsonrpc" to "2.0",
+                "method" to RPC.GETCONTRACTSTATE.methodName(),
+                "params" to jsonArray(contractHash),
+                "id" to 1
+        )
+        var request = nodeURL.httpPost().body(dataJson.toString())
+        request.headers["Content-Type"] = "application/json"
+        request.responseString { _, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                val gson = Gson()
+                val nodeResponse = gson.fromJson<NodeResponse>(data!!)
+                val contractState = gson.fromJson<ContractState>(nodeResponse.result)
+                completion(Pair<ContractState?, Error?>(contractState, null))
+            } else {
+                completion(Pair<ContractState?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
     fun validateAddress(address: String, completion: (Pair<Boolean?, Error?>) -> Unit) {
         val valid = validateNEOAddress(address)
         completion(kotlin.Pair<kotlin.Boolean?, Error?>(valid, null))
+    }
+
+    fun getStorage(scriptHash: String, key: String, completion: (Pair<String?, Error?>) -> Unit) {
+        val dataJson = jsonObject(
+                "jsonrpc" to "2.0",
+                "method" to RPC.GETSTORAGE.methodName(),
+                "params" to jsonArray(scriptHash, key),
+                "id" to 3
+        )
+        var request = nodeURL.httpPost().body(dataJson.toString()).timeout(600000)
+        request.headers["Content-Type"] = "application/json"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                val nodeResponse = Gson().fromJson<NodeResponse>(data!!)
+                completion(Pair<String?, Error?>(nodeResponse.result.asString, null))
+            } else {
+                completion(Pair<String?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
+    }
+
+    fun readOnlyInvoke(scriptHash: String, operation: String, arguments: List<NeoDappProtocol.Arg>,
+                       completion: (Pair<JsonObject?, Error?>) -> Unit) {
+        val dataJson = jsonObject(
+                "jsonrpc" to "2.0",
+                "method" to RPC.INVOKEFUNCTION.methodName(),
+                "params" to jsonArray(scriptHash, operation, Gson().fromJson<JsonArray>(Gson().toJson(arguments))),
+                "id" to 3
+        )
+
+        var request = nodeURL.httpPost().body(dataJson.toString()).timeout(600000)
+        request.headers["Content-Type"] = "application/json"
+        request.responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                val invokeResponse = Gson().fromJson<JsonObject>(data!!)
+                completion(Pair<JsonObject?, Error?>(invokeResponse, null))
+            } else {
+                completion(Pair<JsonObject?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
     }
 
     private fun sendRawTransaction(finalPayload: ByteArray, unsignedPayload: ByteArray, completion: (Pair<String?, Error?>) -> Unit) {
@@ -363,7 +431,7 @@ class NeoNodeRPC {
     private fun getOutputDataPayload(wallet: Wallet, asset: Asset,
                                         runningAmount: BigDecimal, toSendAmount: BigDecimal, toAddressHash: String,
                                         fee: BigDecimal): Pair<ByteArray, Int> {
-        val needsTwoOutputTransactions = runningAmount.toSafeMemory(8) != (toSendAmount + fee).toSafeMemory(8)
+        val needsTwoOutputTransactions = runningAmount.toSafeMemory(8) != (toSendAmount + fee).toSafeMemory(8) && toSendAmount > BigDecimal.ZERO
 
         var outputCount: Int = 0
         var payload = byteArrayOf()
@@ -373,6 +441,7 @@ class NeoNodeRPC {
             return Pair(payload, 0)
         }
 
+        //this assumes only one type of input neo or gas per transaction
         if (needsTwoOutputTransactions) {
             //Transaction To Reciever
             outputCount = 2
@@ -387,12 +456,19 @@ class NeoNodeRPC {
             payload += to8BytesArray(amountToGetBackInMemory)
             payload += wallet.hashedSignature
 
-        } else {
+        } else if (toSendAmount > BigDecimal.ZERO){
             outputCount = 1
             payload = payload + asset.assetID().hexStringToByteArray().reversedArray()
             val amountToSendInMemory = toSendAmount.toSafeMemory(8)
             payload += to8BytesArray(amountToSendInMemory)
             payload += toAddressHash.hexStringToByteArray()
+        // just paying a fee, need to return all change back to myself
+        } else {
+            outputCount = 1
+            payload = payload + asset.assetID().hexStringToByteArray().reversedArray()
+            val amountToSendInMemory = runningAmount.toSafeMemory(8) - toSendAmount.toSafeMemory(8) - fee.toSafeMemory(8)
+            payload += to8BytesArray(amountToSendInMemory)
+            payload += wallet.hashedSignature
         }
 
         return Pair(payload, outputCount)
@@ -444,28 +520,45 @@ class NeoNodeRPC {
         }
 
     private fun generateInvokeTransactionPayload(wallet: Wallet, utxos: UTXOS?, script: String,
-                                                 contractHash: String,
+                                                 contractHash: String, attachedNEOAmount: BigDecimal, attachedGasAmount: BigDecimal,
                                                  attributes: Array<TransactionAttribute>? = null, fee: BigDecimal = BigDecimal.ZERO): Pair<ByteArray, ByteArray> {
         val payloadPrefix = byteArrayOf(0xd1.toUByte(), 0x00.toUByte()) + script.hexStringToByteArray()
+        var neoInput: SendAssetReturn? = null
+        var gasInput: SendAssetReturn? = null
+        var neoOutput: Pair<ByteArray, Int>? = null
+        var gasOutput: Pair<ByteArray, Int>? = null
 
-        val gasSendAmount = if(fee > BigDecimal.ZERO){
-            BigDecimal(0.00000001)
-        } else {
-            BigDecimal.ZERO
+        if (attachedNEOAmount > BigDecimal.ZERO) {
+            neoInput = getInputsNecessaryToSendNEO(attachedNEOAmount, utxos)
         }
 
-        val mainInput = getInputsNecessaryToSendGAS(gasSendAmount, utxos, fee)
-        //since nep5 transfers are fee, the destination address is just sending to yourself
-        var mainOutputData = getOutputDataPayload(wallet,
-                        Asset.GAS, mainInput.totalAmount!!,
-                gasSendAmount, Account.getWallet().address.hashFromAddress(), mainInput.fee)
+        if (attachedGasAmount > BigDecimal.ZERO || fee > BigDecimal.ZERO ) {
+            val toSendGasAmount = if (attachedGasAmount == BigDecimal.ZERO) BigDecimal(0.00000001) else attachedGasAmount
+            gasInput = getInputsNecessaryToSendGAS(toSendGasAmount, utxos, fee)
+        }
 
+        if (neoInput != null) {
+            neoOutput = getOutputDataPayload(wallet,
+                    Asset.NEO, neoInput.totalAmount!!,
+                    attachedNEOAmount, contractHash.hexStringToByteArray().reversedArray().toHex(), neoInput.fee)
+        }
 
+        if (gasInput != null) {
+            gasOutput = getOutputDataPayload(wallet,
+                    Asset.GAS, gasInput.totalAmount!!,
+                    attachedGasAmount, contractHash.hexStringToByteArray().reversedArray().toHex(), gasInput.fee)
+        }
+
+        val totalInputCount = (neoInput?.inputCount ?: 0) + (gasInput?.inputCount ?: 0)
+        val finalInputPayload = (neoInput?.inputPayload ?: byteArrayOf()) + (gasInput?.inputPayload ?: byteArrayOf())
+
+        val totalOutputCount = (neoOutput?.second ?: 0) + (gasOutput?.second ?: 0)
+        val finalOutputPayload = (neoOutput?.first ?: byteArrayOf()) + (gasOutput?.first ?: byteArrayOf())
 
         val rawTransaction = payloadPrefix +
                 getAttributesPayload(attributes) +
-                mainInput.inputCount.toByte() + mainInput.inputPayload!! +
-                mainOutputData.second.toByte() + mainOutputData.first
+                totalInputCount.toByte() + finalInputPayload!! +
+                totalOutputCount.toByte() + finalOutputPayload
         Log.d("payload: ", rawTransaction.toHex())
 
         val privateKeyHex = wallet.privateKey.toHex()
@@ -543,15 +636,47 @@ class NeoNodeRPC {
     // fromAddress -> Address of Sender
     // toAddress -> Address of Recipient
     // transfer amount *
-    fun sendNEP5Token(wallet: Wallet, utxos: UTXOS?, tokenContractHash: String, fromAddress: String, toAddress: String, amount: BigDecimal, decimals: Int, fee: BigDecimal,
+    fun sendNEP5Token(wallet: Wallet, utxos: UTXOS?, tokenContractHash: String, fromAddress: String, toAddress: String,
+                      amount: BigDecimal, decimals: Int, fee: BigDecimal, attributes: Array<TransactionAttribute> = arrayOf(),
                       completion: (Pair<String?, Error?>) -> Unit) {
-        val attributes = arrayOf<TransactionAttribute>(
+        var finalAttributes = arrayOf<TransactionAttribute>(
             TransactionAttribute().scriptAttribute(fromAddress.hashFromAddress()),
             TransactionAttribute().remarkAttribute(String.format("O3X%s", Date().time.toString())),
-            TransactionAttribute().hexDescriptionAttribute(tokenContractHash))
+            TransactionAttribute().hexDescriptionAttribute(tokenContractHash))  + attributes
+
 
         val scriptBytes = buildNEP5TransferScript(tokenContractHash, fromAddress, toAddress, amount, decimals)
-        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), tokenContractHash, attributes, fee)
+        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), tokenContractHash, BigDecimal.ZERO, BigDecimal.ZERO, finalAttributes, fee)
+        sendRawTransaction(finalPayload.first, finalPayload.second) {
+            var txid = it.first
+            var error = it.second
+            if (txid == null) {
+                completion(Pair<String?, Error?>(null, Error("Transaction Failed")))
+            }  else {
+                completion(Pair<String?, Error?>(txid, error))
+            }
+        }
+    }
+
+    fun genericWriteInvoke(wallet: Wallet, utxos: UTXOS?, contractHash: String,
+                           operation: String, args: List<NeoDappProtocol.Arg>, fee: BigDecimal,
+                           attributes: Array<TransactionAttribute> = arrayOf(),
+                           attachedAssets: NeoDappProtocol.InvokeRequest.AttachedAssets,
+                           completion: (Pair<String?, Error?>) -> Unit)  {
+
+        var finalAttributes = arrayOf<TransactionAttribute>(
+                TransactionAttribute().scriptAttribute(Account.getWallet().address.hashFromAddress()),
+                TransactionAttribute().remarkAttribute(String.format("O3X%s", Date().time.toString())),
+                TransactionAttribute().hexDescriptionAttribute(contractHash))  + attributes
+
+        var scriptBuilder = ScriptBuilder()
+        scriptBuilder.pushTypedContractInvoke(contractHash, operation = operation, args = args)
+        val script = scriptBuilder.getScriptHexString()
+        val scriptBytes = byteArrayOf((script.length / 2).toUByte()) + script.hexStringToByteArray()
+
+        val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), contractHash,
+                BigDecimal(attachedAssets.NEO ?: "0"), BigDecimal(attachedAssets.GAS ?: "0"),
+                finalAttributes, fee)
         sendRawTransaction(finalPayload.first, finalPayload.second) {
             var txid = it.first
             var error = it.second

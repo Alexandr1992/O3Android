@@ -97,6 +97,10 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         return walletAccounts
     }
 
+    fun getDefaultAccount(): Account {
+        return accounts.find{ it.isDefault }!!
+    }
+
     fun getReadOnlyAccounts(): List<Account> {
         val readOnlyAccounts: MutableList<Account> = mutableListOf()
         readOnlyAccounts.clear()

@@ -11,13 +11,10 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import network.o3.o3wallet.API.O3.TokenSale
-import network.o3.o3wallet.Dapp.DAppBrowserActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import android.graphics.Paint.UNDERLINE_TEXT_FLAG
-import android.R.attr.button
 import android.graphics.Paint
-import android.support.v4.content.ContextCompat.startActivity
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 
 
 /**
@@ -95,7 +92,7 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
 
             weblinkButton.paintFlags = (weblinkButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG)
             weblinkButton.setOnClickListener {
-                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                val browserIntent = Intent(view.context, DAppBrowserActivityV2::class.java)
                 browserIntent.putExtra("url", tokenSale.webURL)
                 view.context.startActivity(browserIntent)
             }
@@ -116,7 +113,7 @@ class TokenSalesAdapter(private var tokensales: ArrayList<TokenSale>, private va
         fun bindFooter(subscribeURL: String) {
             val subscribe = view.findViewById<Button>(R.id.subscribeNewsletterButton)
             subscribe.setOnClickListener {
-                val browserIntent = Intent(view.context, DAppBrowserActivity::class.java)
+                val browserIntent = Intent(view.context, DAppBrowserActivityV2::class.java)
                 browserIntent.putExtra("url", subscribeURL)
                 view.context.startActivity(browserIntent)
             }

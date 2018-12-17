@@ -92,3 +92,9 @@ data class Stack(
 		@SerializedName("type")	val type: String, //ByteArray
 		@SerializedName("value") val value: String //00ab510d //little endian
 )
+
+data class ContractState(val version: Int, val hash: String, val script: String, val parameters: List<String>,
+						 val returntype: String, val name: String, val code_version: String,
+						 val author: String, val email: String, val description: String, val properties: ContractProperties)
+
+data class ContractProperties(val storage: Boolean, val dynamic_invoke: Boolean)

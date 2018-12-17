@@ -7,111 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".Dapp.DAppBrowserActivity">
 
-    <WebView
-        android:id="@+id/dapp_browser_webview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/dappFooter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dappSearch"
-        app:layout_constraintVertical_bias="0.0">
-    </WebView>
+    <include
+        android:id="@+id/dappToolbar"
+        layout="@layout/dapp_browser_toolbar">
+    </include>
 
-    <SearchView
-        android:id="@+id/dappSearch"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="60dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dappHeader">
+        <WebView
+            android:id="@+id/dapp_browser_webview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/dappFooter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dappToolbar" />
 
-    </SearchView>
-
-    <ImageButton
-        android:id="@+id/refreshButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="8dp"
-        android:background="@color/transparent"
-        android:src="@drawable/ic_sync_now"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/dappSearch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/dappSearch"
-        app:layout_constraintTop_toTopOf="@id/dappSearch" />
-
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/dappHeader"
-        style="@style/CardViewStyle"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        app:cardCornerRadius="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/webLoader"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/loader_portfolio" />
-
-            <TextView
-                android:id="@+id/browserTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/RegularText"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/verifiedURLImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/browserTitleTextView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_verified" />
-
-            <ImageButton
-                android:id="@+id/webBrowserBackButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="?attr/secondaryBackgroundColor"
-                android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_backspace" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/dappFooter"
         style="@style/CardViewStyle"
-        android:visibility="gone"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="58dp"
+        android:visibility="gone"
         app:cardCornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -124,34 +42,28 @@
             <Button
                 android:id="@+id/sellButton"
                 style="@style/AccentButton.Rounded"
-                android:background="@drawable/sell_button_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:background="@drawable/sell_button_background"
                 android:text="@string/Native_TRADE_Sell"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/buyButton"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/buyButton"
                 style="@style/AccentButton.Rounded"
-                android:background="@drawable/buy_button_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:background="@drawable/buy_button_background"
                 android:text="@string/Native_TRADE_Buy"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-
-
-
 </android.support.constraint.ConstraintLayout>

@@ -63,8 +63,8 @@ class OrderResultDialog : DialogFragment() {
         finishButton.isEnabled = true
     }
 
-    fun showFailure() {
-        titleView.text = resources.getString(R.string.NATIVE_TRADE_order_fail_title)
+    fun showFailure(message: String) {
+        titleView.text = message
         subtitleView.text = resources.getString(R.string.NATIVE_TRADE_order_failure_subtitle)
         subtitleView.visibility = View.VISIBLE
         animationView.setAnimation(R.raw.task_failed)
