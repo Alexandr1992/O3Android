@@ -16,7 +16,7 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
+
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6

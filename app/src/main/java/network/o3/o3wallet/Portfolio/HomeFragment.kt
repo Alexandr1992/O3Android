@@ -25,7 +25,6 @@ import com.airbnb.lottie.LottieAnimationView
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
-import network.o3.o3wallet.Onboarding.CreateKey.Backup.DialogBackupKeyFragment
 import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
@@ -272,12 +271,6 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
             setEmptyOrGraph(portfolio)
             updateHeader(homeModel.getCurrentPortfolioValue().formattedCurrencyString(homeModel.getCurrency()),
                     homeModel.getPercentChange())
-            if (PersistentStore.getFirstTokenAppeared() && homeModel.getCurrentPortfolioValue() != 0.0
-                    && homeModel.getPosition() == 0) {
-                val backupKeyCheck = DialogBackupKeyFragment.newInstance()
-                backupKeyCheck.show(this.fragmentManager, "backupkey")
-                PersistentStore.setFirstTokenAppeared(false)
-            }
         }
     }
 
