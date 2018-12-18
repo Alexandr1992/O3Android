@@ -140,5 +140,4 @@
             android:name=".Dapp.ContractInfoActivity"
             android:theme="@style/AppTheme.Dark" />
     </application>
-
 </manifest>

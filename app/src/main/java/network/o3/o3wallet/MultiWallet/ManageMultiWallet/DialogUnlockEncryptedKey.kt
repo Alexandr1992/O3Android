@@ -17,6 +17,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
+import kotlinx.android.synthetic.main.onboarding_verify_paper_key_activity.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
