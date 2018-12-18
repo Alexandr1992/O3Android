@@ -1,18 +1,13 @@
 package network.o3.o3wallet.Settings
 
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import network.o3.o3wallet.*
-import network.o3.o3wallet.Onboarding.LandingActivity
 import org.jetbrains.anko.*
 
 class ThemeAdapter(context: Context): BaseAdapter() {

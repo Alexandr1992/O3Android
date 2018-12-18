@@ -37,8 +37,14 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
             return
         }
 
-        val newAccount = Account(address, name, false, key)
-        accounts.add(newAccount)
+        if (accounts.find { it.isDefault } == null) {
+            val newAccount = Account(address, name, true, key)
+            accounts.add(newAccount)
+        } else {
+            val newAccount = Account(address, name, false, key)
+            accounts.add(newAccount)
+        }
+
     }
 
     fun removeWatchAddress(address: String) {

@@ -1,29 +1,29 @@
-package network.o3.o3wallet.Onboarding
+package network.o3.o3wallet.Onboarding.OnboardingV2
 
 import android.app.KeyguardManager
 import android.content.Context
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import com.airbnb.lottie.LottieAnimationView
+import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
-import neoutils.Neoutils
+import androidx.navigation.fragment.findNavController
+import com.airbnb.lottie.LottieAnimationView
 import network.o3.o3wallet.*
-import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
-import network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity
-import network.o3.o3wallet.PersistentStore.clearPersistentStore
+import network.o3.o3wallet.Onboarding.LandingPagerAdapter
 import org.jetbrains.anko.*
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.toast
 
-class LandingActivity : AppCompatActivity() {
+class LandingFragment: Fragment() {
     private lateinit var pager: ViewPager
     private lateinit var nextButton: Button
     private lateinit var animationView: LottieAnimationView
+    private lateinit var mView: View
     private var deepLink: String? = null
 
 
@@ -32,26 +32,21 @@ class LandingActivity : AppCompatActivity() {
     var currentPage = 0
     var userDidInteract = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, Crashlytics())
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        supportActionBar?.hide()
-        setContentView(R.layout.onboarding_landing_activity)
-        animationView = find(R.id.landing_animation_view)
+        mView = inflater.inflate(R.layout.onboarding_landing_fragment, container, false)
+        animationView = mView.find(R.id.landing_animation_view)
         animationView.useHardwareAcceleration(true)
-        pager = find(R.id.landingViewPager)
+        pager = mView.find(R.id.landingViewPager)
         initiateViewPager()
 
 
-        findViewById<Button>(R.id.loginButton).setOnClickListener {
+        mView.find<Button>(R.id.loginButton).setOnClickListener {
             loginTapped()
         }
 
-        findViewById<Button>(R.id.createNewWalletButton).setOnClickListener  {
-            createWalletTapped()
+        mView.find<Button>(R.id.createNewWalletButton).setOnClickListener  {
+            findNavController().navigate(R.id.action_landingFragment_to_onboardingNewWalletFragment)
         }
 
         if (Account.isEncryptedWalletPresent() || Account.isEncryptedNEP6PassPresent()) {
@@ -59,10 +54,11 @@ class LandingActivity : AppCompatActivity() {
         } else {
             autoPlayAnimation()
         }
+        return mView
     }
 
     fun initiateViewPager() {
-        pager.adapter = LandingPagerAdapter(supportFragmentManager)
+        pager.adapter = LandingPagerAdapter(activity!!.supportFragmentManager)
         pager.setOnClickListener {
             pager.setCurrentItem(currentPage + 1, true)
         }
@@ -134,84 +130,49 @@ class LandingActivity : AppCompatActivity() {
 
 
     fun setDotColor(currentPosition: Int) {
-        val dotOne = find<ImageView>(R.id.landingDotOne)
-        val dotTwo = find<ImageView>(R.id.landingDotTwo)
-        val dotThree = find<ImageView>(R.id.landingDotThree)
-        val dotFour = find<ImageView>(R.id.landingDotFour)
-        val dotFive = find<ImageView>(R.id.landingDotFive)
+        val dotOne = mView.find<ImageView>(R.id.landingDotOne)
+        val dotTwo = mView.find<ImageView>(R.id.landingDotTwo)
+        val dotThree = mView.find<ImageView>(R.id.landingDotThree)
+        val dotFour = mView.find<ImageView>(R.id.landingDotFour)
+        val dotFive = mView.find<ImageView>(R.id.landingDotFive)
 
         val dotArray = arrayOf(dotOne, dotTwo, dotThree, dotFour, dotFive)
         for (dot in dotArray) {
-            dot.image = getDrawable(R.drawable.ic_inactive_dot)
+            dot.image = activity!!.getDrawable(R.drawable.ic_inactive_dot)
         }
-        dotArray[currentPosition].image = getDrawable(R.drawable.ic_active_dot)
+        dotArray[currentPosition].image = activity!!.getDrawable(R.drawable.ic_active_dot)
     }
 
     fun authenticateEncryptedWallet() {
-        val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        val mKeyguardManager =  activity!!.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!mKeyguardManager.isKeyguardSecure) {
             // Show a message that the user hasn't set up a lock screen.
 
-            Toast.makeText(this,
-                    R.string.ALERT_no_passcode_setup,
-                    Toast.LENGTH_LONG).show()
+            toast(R.string.ALERT_no_passcode_setup)
             return
         } else {
-            val intent = Intent(this, LoginNEP6Activity::class.java)
-            if (deepLink != null) {
-                intent.putExtra("deepLink", deepLink!!)
-            }
-            startActivity(intent)
+            findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
         }
     }
 
-    fun generateNewWallet() {
-        NEP6.removeFromDevice()
-        val generatedWIF = Neoutils.newWallet().wif
-        clearPersistentStore()
-        val intent = Intent(this@LandingActivity, CreateNewWalletActivity::class.java)
-        intent.putExtra("wif", generatedWIF)
-        startActivity(intent)
-    }
 
-    fun createWalletTapped() {
-        val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        if (!mKeyguardManager.isKeyguardSecure) {
-            Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
-            return
-        } else {
-            if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
-                alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
-                    yesButton { generateNewWallet() }
-                    noButton {}
-                }.show()
-            } else {
-                generateNewWallet()
-            }
-        }
-    }
 
     fun loginTapped() {
-        val mKeyguardManager =  getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        val mKeyguardManager =  activity!!.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!mKeyguardManager.isKeyguardSecure) {
             // Show a message that the user hasn't set up a lock screen.
-            Toast.makeText(this, resources.getString(R.string.ALERT_no_passcode_setup), Toast.LENGTH_LONG).show()
+            toast(resources.getString(R.string.ALERT_no_passcode_setup))
             return
         }
         if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
             alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
                 yesButton {
-                    val intent = Intent(this@LandingActivity, LoginActivity::class.java)
-                    startActivity(intent)
+                    findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
                 }
                 noButton {}
             }.show()
         } else {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
         }
     }
 }
-
-
-

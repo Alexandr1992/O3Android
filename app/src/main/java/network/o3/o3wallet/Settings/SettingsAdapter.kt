@@ -1,6 +1,5 @@
 package network.o3.o3wallet.Settings
 
-import android.app.KeyguardManager
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.Toast
 import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.net.Uri
@@ -17,11 +15,8 @@ import network.o3.o3wallet.*
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
-import network.o3.o3wallet.Onboarding.LandingActivity
-import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
+import network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingRootActivity
 import org.jetbrains.anko.*
 import zendesk.support.request.RequestActivity
 
@@ -143,7 +138,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
                     Account.deleteKeyFromDevice()
                     Account.deleteNEP6PassFromDevice()
                     NEP6.removeFromDevice()
-                    val intent = Intent(mContext, LandingActivity::class.java)
+                    val intent = Intent(mContext, OnboardingRootActivity::class.java)
                     startActivity(mContext, intent, null)
                 }
                 noButton {

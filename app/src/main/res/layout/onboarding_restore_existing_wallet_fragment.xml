@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Onboarding.OnboardingV2.RestoreExistingWalletFragment"
+    android:animateLayoutChanges="true"
+    >
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/enterKeyContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="10dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxStrokeColor="@color/colorSubtitleGrey"
+        app:boxStrokeWidth="0.5dp"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView47">
+
+        <EditText
+            android:id="@+id/enterKeyEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/ONBOARDING_private_key"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:minLines="2"
+            android:paddingLeft="10dp"
+            android:paddingRight="38dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/enterEncryptionPasswordEditTextContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="10dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxStrokeColor="@color/colorSubtitleGrey"
+        app:boxStrokeWidth="0.5dp"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterKeyContainer">
+
+        <EditText
+            android:id="@+id/enterEncryptionPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/MULTIWALLET_enter_ecnryption_password"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp" />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/confirmEncryptionPasswordEditTextContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxStrokeColor="@color/colorSubtitleGrey"
+        app:boxStrokeWidth="0.5dp"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterEncryptionPasswordEditTextContainer">
+
+        <EditText
+            android:id="@+id/confirmEncryptionPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/MULTIWALLET_enter_confirm_password"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/continueButton"
+        style="@style/AccentButton.Rounded"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/ONBOARDING_create_new_wallet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirmEncryptionPasswordEditTextContainer" />
+
+    <ImageView
+        android:id="@+id/showConfirmImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="10dp"
+        android:alpha="0.3"
+        android:src="@drawable/ic_eye"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmEncryptionPasswordEditTextContainer"
+        app:layout_constraintEnd_toEndOf="@+id/confirmEncryptionPasswordEditTextContainer"
+        app:layout_constraintTop_toTopOf="@+id/confirmEncryptionPasswordEditTextContainer" />
+
+    <ImageView
+        android:id="@+id/scanButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_scan"
+        app:layout_constraintBottom_toBottomOf="@+id/enterKeyContainer"
+        app:layout_constraintEnd_toEndOf="@+id/enterKeyContainer"
+        app:layout_constraintTop_toTopOf="@+id/enterKeyContainer" />
+
+    <ImageView
+        android:id="@+id/showEnterImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="10dp"
+        android:alpha="0.3"
+        android:src="@drawable/ic_eye"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/enterEncryptionPasswordEditTextContainer"
+        app:layout_constraintEnd_toEndOf="@+id/enterEncryptionPasswordEditTextContainer"
+        app:layout_constraintTop_toTopOf="@+id/enterEncryptionPasswordEditTextContainer" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/ONBOARDING_login_title"
+        android:textAlignment="center"
+        android:textAppearance="@style/RegularText"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView47"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/ONBOARDING_login_subtitle"
+        android:textAppearance="@style/SubtitleText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+</android.support.constraint.ConstraintLayout>

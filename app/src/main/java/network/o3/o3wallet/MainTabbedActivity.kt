@@ -48,7 +48,6 @@ import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
 import zendesk.support.Support
 
-
 class MainTabbedActivity : AppCompatActivity() {
 
     var activeTabID: Int? = 0
@@ -77,6 +76,8 @@ class MainTabbedActivity : AppCompatActivity() {
                 intent.putExtra("uri", result.contents)
                 startActivity(intent)
             }
+        } else if (requestCode == 101) {
+            Log.d("hello", "hello")
         }
     }
 
