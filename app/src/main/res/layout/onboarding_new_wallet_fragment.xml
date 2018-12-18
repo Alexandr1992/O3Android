@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Onboarding.OnboardingV2.OnboardingNewWalletFragment">
+    tools:context=".Onboarding.OnboardingV2.OnboardingNewWalletFragment"
+    tools:layout_editor_absoluteY="81dp">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/enterEncryptionPasswordEditTextContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="10dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxStrokeColor="@color/colorSubtitleGrey"
+        app:boxStrokeWidth="0.5dp"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp">
+        app:layout_constraintTop_toBottomOf="@+id/textView19">
 
         <EditText
             android:id="@+id/enterEncryptionPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ems="10"
+            android:paddingLeft="10dp"
             android:hint="@string/MULTIWALLET_enter_ecnryption_password"
             android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
@@ -31,26 +42,39 @@
         android:id="@+id/confirmEncryptionPasswordEditTextContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="10dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxStrokeColor="@color/colorSubtitleGrey"
+        app:boxStrokeWidth="0.5dp"
+        app:errorEnabled="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/enterEncryptionPasswordEditTextContainer">
+
         <EditText
             android:id="@+id/confirmEncryptionPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ems="10"
+            android:paddingLeft="10dp"
             android:hint="@string/MULTIWALLET_enter_confirm_password"
             android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
 
     <ImageView
         android:id="@+id/showConfirmImageView"
-        android:alpha="0.3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.3"
         android:src="@drawable/ic_eye"
         app:layout_constraintBottom_toBottomOf="@+id/confirmEncryptionPasswordEditTextContainer"
         app:layout_constraintEnd_toEndOf="@+id/confirmEncryptionPasswordEditTextContainer"
@@ -58,9 +82,11 @@
 
     <ImageView
         android:id="@+id/showEnterImageView"
-        android:alpha="0.3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.3"
         android:src="@drawable/ic_eye"
         app:layout_constraintBottom_toBottomOf="@+id/enterEncryptionPasswordEditTextContainer"
         app:layout_constraintEnd_toEndOf="@+id/enterEncryptionPasswordEditTextContainer"
@@ -74,9 +100,39 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="Button"
+        android:text="@string/ONBOARDING_create_new_wallet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmEncryptionPasswordEditTextContainer" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/ONBOARDING_enter_a_password_warning"
+        android:textAlignment="center"
+        android:textAppearance="@style/SubtitleText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/ONBOARDING_new_wallet_title"
+        android:textAlignment="center"
+        android:textAppearance="@style/RegularText"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

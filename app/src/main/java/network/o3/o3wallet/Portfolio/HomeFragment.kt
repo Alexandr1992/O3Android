@@ -345,6 +345,11 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        assetListAdapter?.notifyDataSetChanged()
+    }
+
     companion object {
         fun newInstance(): HomeFragment {
             return HomeFragment()

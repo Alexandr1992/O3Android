@@ -21,6 +21,7 @@ import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootAc
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.LandingActivity
+import network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingRootActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import org.jetbrains.anko.*
 import zendesk.support.request.RequestActivity
@@ -143,7 +144,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
                     Account.deleteKeyFromDevice()
                     Account.deleteNEP6PassFromDevice()
                     NEP6.removeFromDevice()
-                    val intent = Intent(mContext, LandingActivity::class.java)
+                    val intent = Intent(mContext, OnboardingRootActivity::class.java)
                     startActivity(mContext, intent, null)
                 }
                 noButton {

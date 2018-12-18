@@ -4,6 +4,7 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,16 +12,12 @@ import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.amplitude.api.Amplitude
-import kotlinx.android.synthetic.main.multiwallet_unlock_watch_address.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
@@ -28,9 +25,9 @@ import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.yesButton
-import org.json.JSONObject
 import java.lang.Exception
 
 
@@ -41,6 +38,8 @@ class OnboardingNewWalletFragment : Fragment() {
     lateinit var passwordHideImageView: ImageView
     lateinit var confirmPasswordField: EditText
     lateinit var confirmPasswordHideImageView: ImageView
+    lateinit var enterPasswordContainer: TextInputLayout
+    lateinit var confirmPasswordContainer: TextInputLayout
 
     var passwordIsHidden = true
     var confirmPasswordIsHidden = true
@@ -48,12 +47,14 @@ class OnboardingNewWalletFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        mView = inflater.inflate(R.layout.onboarding_new_wallet, container, false)
+        mView = inflater.inflate(R.layout.onboarding_new_wallet_fragment, container, false)
         continueButton = mView.find(R.id.continueButton)
         passwordField = mView.find(R.id.enterEncryptionPasswordEditText)
         confirmPasswordField = mView.find(R.id.confirmEncryptionPasswordEditText)
         passwordHideImageView = mView.find(R.id.showEnterImageView)
         confirmPasswordHideImageView = mView.find(R.id.showConfirmImageView)
+        confirmPasswordContainer = mView.find(R.id.confirmEncryptionPasswordEditTextContainer)
+        enterPasswordContainer = mView.find(R.id.enterEncryptionPasswordEditTextContainer)
 
         initiateContinueButton()
         initiatePasswordFields()
@@ -61,15 +62,13 @@ class OnboardingNewWalletFragment : Fragment() {
     }
 
     fun validatePassword(): Boolean {
-        if (passwordField.text.length < 8) {
-            alert (resources.getString(R.string.MULTIWALLET_passwords_do_not_match)) {
-                yesButton {  }
-            }.show()
+        var password = passwordField.text.toString()
+        var confirmPassword = confirmPasswordField.text.toString()
+        if (password.length < 8) {
+            enterPasswordContainer.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
             return false
-        } else if (passwordField.text.toString() != confirmPasswordField.text.toString()){
-            alert (resources.getString(R.string.MULTIWALLET_password_to_short)) {
-                yesButton {  }
-            }.show()
+        } else if (password != confirmPassword){
+            confirmPasswordContainer.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
             return false
         }
         return true
@@ -120,10 +119,20 @@ class OnboardingNewWalletFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (passwordField.text.toString() != "" && confirmPasswordField.text.toString() != "") {
-                    continueButton.isEnabled = true
-                } else {
-                    continueButton.isEnabled = false
+                onUiThread {
+                    val password = passwordField.text.toString()
+                    if (password.isBlank()) {
+                        enterPasswordContainer.error = null
+                    } else if (password.length < 8){
+                        enterPasswordContainer.error = resources.getString(R.string.ONBOARDING_password_length_minimum)
+                    } else {
+                        enterPasswordContainer.error = null
+                    }
+                    if (passwordField.text.toString() != "" && confirmPasswordField.text.toString() != "") {
+                        continueButton.isEnabled = true
+                    } else {
+                        continueButton.isEnabled = false
+                    }
                 }
             }
         })
@@ -132,10 +141,20 @@ class OnboardingNewWalletFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (passwordField.text.toString() != "" && confirmPasswordField.text.toString() != "") {
-                    continueButton.isEnabled = true
-                } else {
-                    continueButton.isEnabled = false
+                onUiThread {
+                    val password = passwordField.text.toString()
+                    val confirmPassword = confirmPasswordField.text.toString()
+                    if (password.length > 0 && password != confirmPassword) {
+                        confirmPasswordContainer.error =
+                                resources.getString(R.string.ONBOARDING_password_no_match)
+                    } else {
+                        confirmPasswordContainer.error = null
+                    }
+                    if (passwordField.text.toString() != "" && confirmPasswordField.text.toString() != "") {
+                        continueButton.isEnabled = true
+                    } else {
+                        continueButton.isEnabled = false
+                    }
                 }
             }
         })
@@ -152,11 +171,12 @@ class OnboardingNewWalletFragment : Fragment() {
         nep6.writeToFileSystem()
         nep6.makeNewDefault(nep2.address, passwordField.text.toString().trim())
         Account.deleteKeyFromDevice()
-
-
-
         val intent = Intent(activity, SelectingBestNode::class.java)
         startActivity(intent)
+
+        //reminder to back up on new wallet
+        PersistentStore.setHasDismissedBackup(false)
+        PersistentStore.setHasInitiatedBackup(false)
     }
 
     fun generateAndEncryptWallet() {

@@ -2,7 +2,6 @@ package network.o3.o3wallet.Onboarding.OnboardingV2
 
 import android.app.KeyguardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -12,20 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
-import neoutils.Neoutils
 import network.o3.o3wallet.*
-import network.o3.o3wallet.Onboarding.CreateKey.CreateNewWalletActivity
 import network.o3.o3wallet.Onboarding.LandingPagerAdapter
-import network.o3.o3wallet.Onboarding.LoginActivity
-import network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.toast
 
 class LandingFragment: Fragment() {
@@ -160,11 +151,7 @@ class LandingFragment: Fragment() {
             toast(R.string.ALERT_no_passcode_setup)
             return
         } else {
-            val intent = Intent(context, LoginNEP6Activity::class.java)
-            if (deepLink != null) {
-                intent.putExtra("deepLink", deepLink!!)
-            }
-            startActivity(intent)
+            findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
         }
     }
 
@@ -180,14 +167,12 @@ class LandingFragment: Fragment() {
         if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
             alert(resources.getString(R.string.ONBOARDING_remove_wallet)) {
                 yesButton {
-                    val intent = Intent(context, LoginActivity::class.java)
-                    startActivity(intent)
+                    findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
                 }
                 noButton {}
             }.show()
         } else {
-            val intent = Intent(context, LoginActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
         }
     }
 }

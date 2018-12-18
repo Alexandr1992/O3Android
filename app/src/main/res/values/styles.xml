@@ -34,6 +34,7 @@
         <item name="android:dividerHeight">1.5dp</item>
         <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -88,7 +89,7 @@
         <item name="android:textColorHint">@color/colorSubtitleGrey</item>
         <item name="android:textColorSecondary">@color/colorWhite</item>
         <item name="android:listDivider">@color/colorBlack</item>
-        <item name="colorControlNormal">@color/colorSubtitleGreyDark</item>
+        <item name="colorControlNormal">@color/colorSubtitleGrey</item>
         <item name="android:dividerHeight">1.5dp</item>
         <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
@@ -144,6 +145,8 @@
         <item name="defaultSubtitleTextColor">@color/colorSubtitleGrey</item>
         <item name="primaryBackgroundColor">@color/colorWhite</item>
         <item name="secondaryBackgroundColor">@color/colorGhostWhite</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorSubtitleGrey</item>
     </style>
 
     <style name="WhiteActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">

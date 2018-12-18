@@ -107,7 +107,7 @@
     <string name="ONBOARDING_COPY_dialog_button" comment="button title for the screenshot dialog">Sounds good, I\'m ready!</string>
 
     <string name="ONBOARDING_verify_private_key" comment="Title for when verifying private key that was written on paper">Verify Private Key</string>
-    <string name="ONBOARDING_private_key" comment="Title above edit text for private key">Private Key</string>
+    <string name="ONBOARDING_private_key" comment="Title above edit text for private key">WIF or Encrypted Key</string>
     <string name="ONBOARDING_verify_header" comment="Brief description when needing to verify">Sometimes people make a mistake when writing down their Private Key by hand. Please reenter so that you can be sure sure that your key is safe and sound</string>
     <string name="ONBOARDING_verify_and_continue" comment="Title for verify when performing paper wallet backup">Verify and Continue</string>
     <string name="ONBOARDING_paper_dialog_title" comment="Dialog title for when succesffully backed up private key on paper">Key Verified!</string>
@@ -622,4 +622,13 @@
     <string name="BACKUP_secondary_warning_description">Neither your password or private key can be recovered if you lose access to them</string>
     <string name="BACKUP_dismiss">Dismiss</string>
 
+    <string name="ONBOARDING_enter_a_password_warning">Enter a password for your new wallet.
+        This password is not stored on O3 servers and cannot be recovered if lost</string>
+
+    <string name="ONBOARDING_password_no_match">Passwords don\'t match</string>
+    <string name="ONBOARDING_invalid_key">Invalid Key</string>
+    <string name="ONBOARDING_password_length_minimum">Password must be at least 8 characters</string>
+    <string name="ONBOARDING_login_title">Login with an existing wallet</string>
+    <string name="ONBOARDING_login_subtitle">You can either use your WIF or Encrypted Key</string>
+    <string name="ONBOARDING_new_wallet_title">Let\'s get started!</string>
 </resources>

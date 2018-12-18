@@ -223,10 +223,12 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
             val notificationTitleView = view.find<TextView>(R.id.notificationTitleView)
             val notificationDescriptionView = view.find<TextView>(R.id.notificationDescriptionView)
 
-            view.find<Button>(R.id.notificationActionButton).onClick {
+            val primaryActionButton = view.find<Button>(R.id.notificationActionButton)
+            primaryActionButton.text = view.context.resources.getString(R.string.MULTIWALLET_backup)
+            primaryActionButton.onClick {
                 PersistentStore.setHasInitiatedBackup(true)
                 backupAction()
-                mAdapter.notifyDataSetChanged()
+
             }
 
             val secondaryActionButton = view.find<Button>(R.id.notificationSecondaryActionButton)
