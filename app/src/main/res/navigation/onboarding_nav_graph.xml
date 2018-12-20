@@ -12,10 +12,14 @@
         tools:layout="@layout/onboarding_landing_fragment" >
         <action
             android:id="@+id/action_landingFragment_to_onboardingNewWalletFragment"
-            app:destination="@id/onboardingNewWalletFragment" />
+            app:destination="@id/onboardingNewWalletFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right"
+            app:popExitAnim="@anim/fab_slide_out_to_left" />
         <action
             android:id="@+id/action_landingFragment_to_restoreExistingWalletFragment"
-            app:destination="@id/restoreExistingWalletFragment" />
+            app:destination="@id/restoreExistingWalletFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right"
+            app:popExitAnim="@anim/fab_slide_out_to_left" />
     </fragment>
     <fragment
         android:id="@+id/onboardingNewWalletFragment"

@@ -150,7 +150,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     fun parseAndAnalyze(unsignedJson: String) {
         unsignedJson.removeSuffix("0000")
         val index = unsignedJson.indexOf("7b")
-        val unsignedJsonSubstring = unsignedJson.substring(index)
+         val unsignedJsonSubstring = unsignedJson.substring(index)
         Amplitude.getInstance().logEvent("Switcheo_Signed_JSON", JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
     }
 

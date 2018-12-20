@@ -2,6 +2,7 @@ package network.o3.o3wallet.Onboarding.OnboardingV2
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Onboarding.LandingPagerAdapter
+import network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.toast
@@ -151,7 +153,8 @@ class LandingFragment: Fragment() {
             toast(R.string.ALERT_no_passcode_setup)
             return
         } else {
-            findNavController().navigate(R.id.action_landingFragment_to_restoreExistingWalletFragment)
+            val intent = Intent(activity, LoginNEP6Activity::class.java)
+            startActivity(intent)
         }
     }
 
