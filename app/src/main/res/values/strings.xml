@@ -630,4 +630,7 @@
     <string name="ONBOARDING_login_title">Login with an existing wallet</string>
     <string name="ONBOARDING_login_subtitle">You can either use your WIF or Encrypted Key</string>
     <string name="ONBOARDING_new_wallet_title">Let\'s get started!</string>
+    <string name="ONBOARDING_welcome_to_o3">Welcome to O3!</string>
+    <string name="ONBOARDING_you_will_like">We think you\'ll like it here</string>
+
 </resources>

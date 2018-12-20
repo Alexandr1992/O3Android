@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
@@ -171,12 +172,10 @@ class OnboardingNewWalletFragment : Fragment() {
         nep6.writeToFileSystem()
         nep6.makeNewDefault(nep2.address, passwordField.text.toString().trim())
         Account.deleteKeyFromDevice()
-        val intent = Intent(activity, SelectingBestNode::class.java)
-        startActivity(intent)
-
         //reminder to back up on new wallet
         PersistentStore.setHasDismissedBackup(false)
         PersistentStore.setHasInitiatedBackup(false)
+        findNavController().navigate(R.id.action_onboardingNewWalletFragment_to_onboardingSuccessFragment)
     }
 
     fun generateAndEncryptWallet() {

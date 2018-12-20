@@ -25,10 +25,23 @@
         android:id="@+id/onboardingNewWalletFragment"
         android:name="network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingNewWalletFragment"
         android:label="onboarding_new_wallet"
-        tools:layout="@layout/onboarding_new_wallet_fragment" />
+        tools:layout="@layout/onboarding_new_wallet_fragment" >
+        <action
+            android:id="@+id/action_onboardingNewWalletFragment_to_onboardingSuccessFragment"
+            app:destination="@id/onboardingSuccessFragment" />
+    </fragment>
     <fragment
         android:id="@+id/restoreExistingWalletFragment"
         android:name="network.o3.o3wallet.Onboarding.OnboardingV2.RestoreExistingWalletFragment"
         android:label="onboarding_restore_existing_wallet_fragment"
-        tools:layout="@layout/onboarding_restore_existing_wallet_fragment" />
+        tools:layout="@layout/onboarding_restore_existing_wallet_fragment" >
+        <action
+            android:id="@+id/action_restoreExistingWalletFragment_to_onboardingSuccessFragment"
+            app:destination="@id/onboardingSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onboardingSuccessFragment"
+        android:name="network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingSuccessFragment"
+        android:label="onboarding_success_fragment"
+        tools:layout="@layout/onboarding_success_fragment" />
 </navigation>
