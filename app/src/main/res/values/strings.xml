@@ -187,6 +187,10 @@
     <string name="SEND_could_not_resolve">We could not resolve this .neo address, please double check it</string>
 
 
+    <string name="SETTINGS_help_and_support">Help and support</string>
+    <string name="SETTINGS_get_support">Get support</string>
+    <string name="SETTINGS_help_guides">Help Guides</string>
+
     <!-- Settings: Private Key -->
     <string name="SETTINGS_write_down_warning" comment="A comment saying that writing down your private key is most secur ">
         The most secure way to back up your key is to write it down on paper and store it somewhere safe from theft or damage

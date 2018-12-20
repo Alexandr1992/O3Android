@@ -1,9 +1,11 @@
 package network.o3.o3wallet.Settings.Help
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,10 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
+import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk15.coroutines.onClick
 import zendesk.support.request.RequestActivity
 
@@ -77,7 +81,7 @@ class HelpOptionsFragment: Fragment() {
                 val view = layoutInflater.inflate(R.layout.settings_row_layout, viewGroup, false)
                 return SupportOptionViewHolder(view)
             } else {
-                val view = layoutInflater.inflate(R.layout.settings_row_layout, viewGroup, false)
+                val view = layoutInflater.inflate(R.layout.settings_guide_row_layout, viewGroup, false)
                 return GuideViewHolder(view, mFragment)
 
             }
@@ -87,9 +91,11 @@ class HelpOptionsFragment: Fragment() {
             val mView = v
             fun bindHeader(position: Int) {
                 if (position == 0) {
-                    mView.find<TextView>(R.id.headerTextView).text = "Support Options"
+                    mView.find<TextView>(R.id.headerTextView).text =
+                            mView.context.resources.getString(R.string.SETTINGS_get_support)
                 } else {
-                    mView.find<TextView>(R.id.headerTextView).text = "Guides"
+                    mView.find<TextView>(R.id.headerTextView).text =
+                            mView.context.resources.getString(R.string.SETTINGS_help_guides)
                 }
             }
         }
@@ -97,9 +103,12 @@ class HelpOptionsFragment: Fragment() {
         class SupportOptionViewHolder(v: View): RecyclerView.ViewHolder(v) {
             val mView = v
             var titles = arrayOf("Community", "Contact")
+            var images = arrayOf(ContextCompat.getDrawable(mView.context, R.drawable.ic_community),
+                    ContextCompat.getDrawable(mView.context, R.drawable.ic_envelope))
             fun bindSupportOption(position: Int) {
                 var sectionedPosition = position - 1
                 mView.find<TextView>(R.id.titleTextView).text = titles[sectionedPosition]
+                mView.find<ImageView>(R.id.settingsIcon).image = images[sectionedPosition]
                 mView.onClick {
                     if (sectionedPosition == 0 ) {
                         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))
@@ -118,11 +127,15 @@ class HelpOptionsFragment: Fragment() {
             val mView = v
             val mFragment = fragment
             var titles = arrayOf("Crypto 101")
+            var subtitles = arrayOf("New to crypto? Get started with the basics")
             fun bindGuide(position: Int) {
                 val sectionedPosition = position - HelpRecyclerAdapter.NUM_SUPPORT_METHODS - 2
                 mView.find<TextView>(R.id.titleTextView).text = titles[sectionedPosition]
+                mView.find<TextView>(R.id.subtitleTextView).text = subtitles[sectionedPosition]
+                mView.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mView.context, R.drawable.ic_guide)
                 mView.onClick {
                     mFragment.findNavController().navigate(R.id.action_helpOptionsFragment_to_helpGuideFragment)
+                    mFragment.activity?.find<TextView>(R.id.mytext)?.text = titles[sectionedPosition]
                 }
             }
         }
