@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/buy_with_fiat"
+        android:icon="@drawable/ic_credit_card"
+        android:contentDescription="@string/PORTFOLIO_buy_with_fiat"
+        android:title="@string/PORTFOLIO_buy_with_fiat" />
+    <item
+        android:id="@+id/buy_with_crypto"
+        android:contentDescription="@string/PORTFOLIO_buy_with_crypto"
+        android:icon="@drawable/ic_bitcoin_sign"
+        android:title="@string/PORTFOLIO_buy_with_crypto" />
+</menu>

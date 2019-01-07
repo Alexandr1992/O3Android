@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingRootActivity
+import network.o3.o3wallet.Settings.Help.HelpRootActivity
 import org.jetbrains.anko.*
 import zendesk.support.request.RequestActivity
 
@@ -31,7 +32,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
     var images =  listOf(R.drawable.ic_address_book, R.drawable.ic_wallet_swap,
             R.drawable.ic_currency, R.drawable.ic_moon,
-            R.drawable.ic_comment, R.drawable.ic_settingscontacticon,
+            R.drawable.ic_comment,
             R.drawable.ic_mobile_android_alt, R.drawable.ic_trash, R.drawable.ic_bug)
     init {
         mContext = context
@@ -41,7 +42,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     enum class CellType {
         HEADER, CONTACTS, MULTIWALLET,
         CURRENCY, THEME,
-        SUPPORT, CONTACT,
+        SUPPORT,
         VERSION, LOGOUT, ADVANCED
 
     }
@@ -122,14 +123,8 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
                 return
             }
         } else if (position == CellType.SUPPORT.ordinal) {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://community.o3.network/"))
-            startActivity(mContext, browserIntent, null)
-        } else if (position == CellType.CONTACT.ordinal) {
-            RequestActivity.builder()
-                    .withTags("Android", mContext.packageManager.getPackageInfo(mContext.packageName, 0).versionName)
-                    .withRequestSubject("Android Support Ticket")
-                    .show(mContext)
-            return
+            var intent = Intent(mContext, HelpRootActivity::class.java)
+            startActivity(mContext, intent, null)
         } else if (position == CellType.LOGOUT.ordinal) {
 
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {

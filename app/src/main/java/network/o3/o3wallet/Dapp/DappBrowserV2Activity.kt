@@ -104,7 +104,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 URL(url).authority == "mnns.nel.group") {
             legacyInterface = DappBrowserJSInterface(this, webView)
             webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
-        } else {2
+        } else {
             jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
             webView.addJavascriptInterface(jsInterface, "_o3dapi")
         }
@@ -156,7 +156,8 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                             lastClickTime = SystemClock.elapsedRealtime()
                         }
                     } else {
-                        if (it.first?.get(asset.toUpperCase()) != null) {
+                        if (it.first?.get(asset.toUpperCase()) != null &&
+                                it.first?.get(asset.toUpperCase())!!.asJsonObject.get("trading_active").asBoolean == true) {
                             dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
                             dappBrowserView.find<Button>(R.id.buyButton).onClick {
                                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){

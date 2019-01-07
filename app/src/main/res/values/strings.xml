@@ -32,7 +32,7 @@
 
     <string-array name="ONBOARDING_landing_subtitles" comment="These are the subtitles for each image in the onboarding">
         <item>A simple, user-friendly smart wallet, designed for the smart economy.</item>
-        <item>Send, receive, claim GAS &amp; manage NEP5 Tokens all in one place with ease.</item>
+        <item>Send &amp; receive NEO and ONT, claim GAS &amp; ONG, and manage NEP5 Tokens all in one place.</item>
         <item>With latest security features, you can be sure your assets are safe and sound.</item>
         <item>Get the latest NEO news and discover new projects from right inside the app.</item>
         <item>Get started by setting up a new wallet or logging in with your private key.</item>
@@ -167,8 +167,7 @@
         <item>Manage Wallets</item>
         <item>Currency</item>
         <item>Theme</item>
-        <item>Support</item>
-        <item>Contact</item>
+        <item>Help</item>
         <item>Version</item>
         <item>Clear App Data</item>
         <item>Advanced</item>
@@ -187,6 +186,10 @@
     <string name="SETTINGS_nns_share">My .neo name is %s, you can send funds here if you have a NNS compatible wallet or to my regular address %s</string>
     <string name="SEND_could_not_resolve">We could not resolve this .neo address, please double check it</string>
 
+
+    <string name="SETTINGS_help_and_support">Help and support</string>
+    <string name="SETTINGS_get_support">Get support</string>
+    <string name="SETTINGS_help_guides">Help Guides</string>
 
     <!-- Settings: Private Key -->
     <string name="SETTINGS_write_down_warning" comment="A comment saying that writing down your private key is most secur ">
@@ -454,7 +457,7 @@
     <string name="ONBOARDING_logout">logout</string>
     <string name="ONBOARDING_signin">Sign in to O3</string>
     <string name="SEND_select_asset">Select Asset</string>
-    <string name="PORTFOLIO_deposit_tokens">Deposit Tokens</string>
+    <string name="PORTFOLIO_deposit_tokens">Deposit</string>
     <string name="PORTOFOLIO_wallet_is_empty">Your wallet is empty</string>
     <string name="WALLET_share">Share</string>
     <string name="title_activity_dapp_browser">O3 Web Browser</string>
@@ -631,4 +634,10 @@
     <string name="ONBOARDING_login_title">Login with an existing wallet</string>
     <string name="ONBOARDING_login_subtitle">You can either use your WIF or Encrypted Key</string>
     <string name="ONBOARDING_new_wallet_title">Let\'s get started!</string>
+    <string name="ONBOARDING_welcome_to_o3">Welcome to O3!</string>
+    <string name="ONBOARDING_you_will_like">You are all ready to go! The next thing to do is take a look around the app, get some tokens in your wallet and enjoy the Smart Economy.\n\nIf you need any help, let us know.</string>
+    <string name="PORTFOLIO_buy_tokens">Buy NEO</string>
+    <string name="PORTFOLIO_buy_with_fiat">With Fiat</string>
+    <string name="PORTFOLIO_buy_with_crypto">With Crypto</string>
+    <string name="ONBOARDING_go_to_my_wallet">Go to my wallet</string>
 </resources>

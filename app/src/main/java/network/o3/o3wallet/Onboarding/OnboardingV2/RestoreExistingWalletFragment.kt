@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.multiwallet_manage_wallet_base.*
 import kotlinx.android.synthetic.main.send_success_fragment.view.*
@@ -251,8 +252,7 @@ class RestoreExistingWalletFragment : Fragment() {
                     nep6.writeToFileSystem()
                     nep6.makeNewDefault(nep2.address, password)
                     Account.deleteKeyFromDevice()
-                    val intent = Intent(activity, SelectingBestNode::class.java)
-                    startActivity(intent)
+                    findNavController().navigate(R.id.action_restoreExistingWalletFragment_to_onboardingSuccessFragment)
                 } else if (keyType == KeyType.ENCRYPTED) {
                     try {
                         val wif = Neoutils.neP2Decrypt(key, password)
@@ -262,8 +262,7 @@ class RestoreExistingWalletFragment : Fragment() {
                         nep6.writeToFileSystem()
                         nep6.makeNewDefault(nep2.address, password)
                         Account.deleteKeyFromDevice()
-                        val intent = Intent(activity, SelectingBestNode::class.java)
-                        startActivity(intent)
+                        findNavController().navigate(R.id.action_restoreExistingWalletFragment_to_onboardingSuccessFragment)
                     } catch (e: Exception) {
                         alert {
                             resources.getString(R.string.MULTIWALLET_cannot_decrypt)
@@ -307,18 +306,6 @@ class RestoreExistingWalletFragment : Fragment() {
             confirmPasswordIsHidden = !confirmPasswordIsHidden
             setTransparencyConfirmPasswordEye()
             confirmPasswordEditText.setSelection(confirmPasswordEditText.text?.length ?: 0)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents == null) {
-            toast(resources.getString(R.string.ALERT_cancelled))
-        } else if (result == null) {
-            return
-        } else {
-            enterKeyEditText.text = SpannableStringBuilder(result.contents)
         }
     }
 }

@@ -43,13 +43,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Onboarding.LoginActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".MainTabbedActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTopBar.White" />
+            android:theme="@style/AppTheme.White.NoTopBar" />
         <activity
             android:name=".Settings.AddContact"
             android:screenOrientation="portrait"
@@ -97,9 +93,6 @@
             android:name=".MarketPlace.TokenSales.TokenSaleRootActivity"
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".Settings.AdvancedSettingsActivity" />
-        <activity android:name=".Onboarding.CreateKey.CreateNewWalletActivity" />
-        <activity android:name=".Onboarding.CreateKey.Backup.VerifyPaperKeyActivity" />
-        <activity android:name=".Onboarding.CreateKey.Backup.Nep2BackupActivity" />
         <activity android:name=".Onboarding.PasscodeRequestActivity" />
         <activity android:name=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity" />
         <activity
@@ -107,12 +100,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".Dapp.DAppBrowserActivity"
-            android:hardwareAccelerated="true"
-            android:label="@string/title_activity_dapp_browser"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTopBar.White" />
         <activity
             android:name=".Dapp.DAppBrowserActivityV2"
             android:hardwareAccelerated="true"
@@ -139,5 +126,11 @@
         <activity
             android:name=".Dapp.ContractInfoActivity"
             android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".Identity.KYCActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".Settings.Help.HelpRootActivity"
+            android:theme="@style/AppTheme.NoTopBar.White" />
     </application>
 </manifest>

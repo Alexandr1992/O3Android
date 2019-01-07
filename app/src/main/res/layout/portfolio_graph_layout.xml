@@ -44,44 +44,69 @@
         app:layout_constraintBottom_toTopOf="@+id/intervalButtonLayout"
         app:layout_constraintTop_toTopOf="@+id/graphLayout">
 
-        <Button
-            android:id="@+id/emptyPortfolioActionButton"
-            style="@style/AccentButton.Rounded"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/emptyActionsContainer"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="4dp"
-            android:text="@string/PORTFOLIO_deposit_tokens"
-            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.7">
+
+            <Button
+                android:id="@+id/emptyPortfolioActionButtonTwo"
+                style="@style/BorderLessButton.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_weight="0.5"
+                android:drawableLeft="@drawable/ic_credit_card"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/colorGain"
+                android:fontFamily="@font/muli_bold"
+                android:text="@string/PORTFOLIO_buy_tokens"
+                android:textColor="@color/colorGain"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/emptyPortfolioActionButton"
+                style="@style/BorderLessButton.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_weight="0.5"
+                android:drawableLeft="@drawable/ic_qrcode_button"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/colorAccent"
+                android:fontFamily="@font/muli_bold"
+                android:text="@string/PORTFOLIO_deposit_tokens"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/emptyPortfolioTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/PORTOFOLIO_wallet_is_empty"
             android:textAppearance="@style/SubtitleText"
+            app:layout_constraintBottom_toTopOf="@+id/emptyActionsContainer"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="45dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="16dp"
-            android:alpha="0.3"
-            android:src="@drawable/ic_tab_portfolio"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <View
+            android:id="@+id/emptyActionsDivider"
+            android:layout_width="0.25dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorSubtitleGrey"
+            app:layout_constraintBottom_toBottomOf="@+id/emptyActionsContainer"
+            app:layout_constraintEnd_toEndOf="@+id/emptyActionsContainer"
+            app:layout_constraintStart_toStartOf="@+id/emptyActionsContainer"
+            app:layout_constraintTop_toTopOf="@+id/emptyActionsContainer" />
     </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
@@ -89,6 +114,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"

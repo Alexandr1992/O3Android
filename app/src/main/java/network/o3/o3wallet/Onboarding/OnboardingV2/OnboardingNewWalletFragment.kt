@@ -16,12 +16,14 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
+import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
@@ -161,22 +163,29 @@ class OnboardingNewWalletFragment : Fragment() {
     }
 
     fun generateNewWallet() {
-        NEP6.removeFromDevice()
-        var wallet = Neoutils.newWallet()
-        PersistentStore.clearPersistentStore()
-        val nep2 = Neoutils.neP2Encrypt(wallet.wif, passwordField.text.toString().trim())
-        val nep6 = NEP6.getFromFileSystem()
+        onUiThread {
+            continueButton.isEnabled = false
+            continueButton.text = "Generating Key..."
+        }
+        
+        bg {
+            NEP6.removeFromDevice()
+            var wallet = Neoutils.newWallet()
+            PersistentStore.clearPersistentStore()
+            val nep2 = Neoutils.neP2Encrypt(wallet.wif, passwordField.text.toString().trim())
+            val nep6 = NEP6.getFromFileSystem()
 
-        nep6.addEncryptedKey(nep2.address, "My O3 Wallet", nep2.encryptedKey)
-        nep6.writeToFileSystem()
-        nep6.makeNewDefault(nep2.address, passwordField.text.toString().trim())
-        Account.deleteKeyFromDevice()
-        val intent = Intent(activity, SelectingBestNode::class.java)
-        startActivity(intent)
-
-        //reminder to back up on new wallet
-        PersistentStore.setHasDismissedBackup(false)
-        PersistentStore.setHasInitiatedBackup(false)
+            nep6.addEncryptedKey(nep2.address, "My O3 Wallet", nep2.encryptedKey)
+            nep6.makeNewDefault(nep2.address, passwordField.text.toString().trim())
+            nep6.writeToFileSystem()
+            Account.deleteKeyFromDevice()
+            //reminder to back up on new wallet
+            PersistentStore.setHasDismissedBackup(false)
+            PersistentStore.setHasInitiatedBackup(false)
+            onUiThread {
+                findNavController().navigate(R.id.action_onboardingNewWalletFragment_to_onboardingSuccessFragment)
+            }
+        }
     }
 
     fun generateAndEncryptWallet() {

@@ -37,9 +37,9 @@ class NativeTradeBaseAssetBottomSheet : RoundedBottomSheetDialogFragment() {
         val confirmedNeo = tradingAccount.switcheo.confirmed.find { it.symbol.toLowerCase() == "neo" }
         val basePairs = arrayListOf<Pair<String, Double>>()
         if (confirmedGas != null && orderasset.toUpperCase() != "GAS") {
-            basePairs.add(Pair("GAS", confirmedGas.value.toDouble()))
+            //basePairs.add(Pair("GAS", confirmedGas.value.toDouble()))
         } else if (!isBuyOrder) {
-            basePairs.add(gasPair)
+            //basePairs.add(gasPair)
         }
 
         if (confirmedNeo != null && orderasset.toUpperCase() != "NEO") {
