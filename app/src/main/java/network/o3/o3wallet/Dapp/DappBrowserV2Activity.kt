@@ -104,7 +104,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 URL(url).authority == "mnns.nel.group") {
             legacyInterface = DappBrowserJSInterface(this, webView)
             webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
-        } else {2
+        } else {
             jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
             webView.addJavascriptInterface(jsInterface, "_o3dapi")
         }

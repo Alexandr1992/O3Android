@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager
 import com.robinhood.spark.SparkView
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager.*
@@ -30,8 +31,12 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.onUiThread
 import android.support.v7.widget.DividerItemDecoration
+import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
+import com.commit451.modalbottomsheetdialogfragment.Option
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
+import org.jetbrains.anko.sdk25.coroutines.onContextClick
 
 
 interface HomeViewModelProtocol {
@@ -41,7 +46,7 @@ interface HomeViewModelProtocol {
     fun updatePortfolioData(portfolio: Portfolio)
 }
 
-class HomeFragment : Fragment(), HomeViewModelProtocol {
+class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFragment.Listener {
     var selectedButton: Button? = null
     lateinit var homeModel: HomeViewModelV2
     var viewPager: ViewPager? = null
@@ -220,26 +225,35 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
     fun setEmptyOrGraph(portfolio: Portfolio) {
         val emptyWalletView = view?.find<ConstraintLayout>(R.id.emptyWalletContainer)
         val emptyPortfolioActionButton = view?.find<Button>(R.id.emptyPortfolioActionButton)
+        val emptyPortfolioActionButtonTwo = view?.find<Button>(R.id.emptyPortfolioActionButtonTwo)
         val emptyPortfolioTextView = view?.find<TextView>(R.id.emptyPortfolioTextView)
+        val emptyActionsDivider = view?.find<View>(R.id.emptyActionsDivider)
+
         if ((portfolio.data.first().averageBTC == 0.0 && homeModel.getPosition() == 0) ||
                 homeModel.getPosition() == 1 && NEP6.getFromFileSystem().accounts.count() <= 1) {
             sparkView?.visibility = View.INVISIBLE
             mView.find<LinearLayout>(R.id.intervalButtonLayout).visibility = View.INVISIBLE
             emptyWalletView?.visibility = View.VISIBLE
             emptyPortfolioActionButton?.visibility = View.VISIBLE
+            emptyPortfolioActionButtonTwo?.visibility = View.VISIBLE
+            emptyPortfolioActionButton?.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.getDrawable(context!!, R.drawable.ic_qrcode_button), null, null, null)
+            emptyActionsDivider?.visibility = View.VISIBLE
         } else {
             sparkView?.visibility = View.VISIBLE
             mView.find<LinearLayout>(R.id.intervalButtonLayout).visibility = View.VISIBLE
             emptyWalletView?.visibility = View.INVISIBLE
-            emptyPortfolioActionButton?.visibility = View.INVISIBLE
+            emptyPortfolioActionButton?.visibility = View.GONE
         }
 
         if (homeModel.getPosition() > 0) {
+            emptyActionsDivider?.visibility = View.GONE
             emptyPortfolioTextView?.text = resources.getString(R.string.MULTIWALLET_no_additional_wallets)
+            emptyPortfolioActionButtonTwo?.visibility = View.GONE
             if (!NEP6.nep6HasActivated()) {
                 emptyPortfolioActionButton?.text = resources.getString(R.string.MULTIWALLET_activate_multiwallet)
             } else {
                 emptyPortfolioActionButton?.text = resources.getString(R.string.MULTIWALLET_add_additional_wallets)
+                emptyPortfolioActionButton?.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.getDrawable(context!!, R.drawable.ic_wallet), null, null, null)
             }
 
 
@@ -259,6 +273,23 @@ class HomeFragment : Fragment(), HomeViewModelProtocol {
                 val addressBottomSheet = MyAddressFragment()
                 addressBottomSheet.show(activity!!.supportFragmentManager, "myaddress")
             }
+            emptyPortfolioActionButtonTwo?.setOnClickListener {
+                ModalBottomSheetDialogFragment.Builder()
+                        .add(R.menu.buy_menu)
+                        .show(childFragmentManager, "buy_options")
+            }
+        }
+    }
+
+    override fun onModalOptionSelected(tag: String?, option: Option) {
+        if (option.id == R.id.buy_with_crypto) {
+            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            intent.putExtra("url", "https://o3.network/swap")
+            startActivity(intent)
+        } else {
+            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            intent.putExtra("url", "https://buy.o3.network/")
+            startActivity(intent)
         }
     }
 

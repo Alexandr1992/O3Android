@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorWhite"
     tools:context=".Onboarding.OnboardingV2.OnboardingSuccessFragment">
 
     <TextView
@@ -25,7 +26,7 @@
         android:id="@+id/welcomeAnimationView"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="48dp"
         android:scaleType="centerInside"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,6 +47,7 @@
         android:textAlignment="center"
         android:textAppearance="@style/RegularText"
         android:textColor="@color/colorPrimary"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -60,7 +62,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/ONBOARDING_done_action"
+        android:text="@string/ONBOARDING_go_to_my_wallet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

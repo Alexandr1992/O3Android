@@ -140,9 +140,9 @@ class LandingFragment: Fragment() {
 
         val dotArray = arrayOf(dotOne, dotTwo, dotThree, dotFour, dotFive)
         for (dot in dotArray) {
-            dot.image = activity!!.getDrawable(R.drawable.ic_inactive_dot)
+            dot.image = activity?.getDrawable(R.drawable.ic_inactive_dot)
         }
-        dotArray[currentPosition].image = activity!!.getDrawable(R.drawable.ic_active_dot)
+        dotArray[currentPosition].image = activity?.getDrawable(R.drawable.ic_active_dot)
     }
 
     fun authenticateEncryptedWallet() {

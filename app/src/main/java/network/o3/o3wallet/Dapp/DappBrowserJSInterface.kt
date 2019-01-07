@@ -150,9 +150,14 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
     fun parseAndAnalyze(unsignedJson: String) {
         unsignedJson.removeSuffix("0000")
         val index = unsignedJson.indexOf("7b")
-        if (index != -1 ) {
+        if (index != -1 && index % 2 == 0) {
             val unsignedJsonSubstring = unsignedJson.substring(index)
-            Amplitude.getInstance().logEvent("Switcheo_Signed_JSON", JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
+            try {
+                Amplitude.getInstance().logEvent("Switcheo_Signed_JSON", JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
+            } catch (e: Exception) {
+
+            }
+
         }
     }
 
@@ -166,6 +171,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         }
         if (unsignedTx.length < 2) {
             callback(message.command, JsonObject(), "invalid unsigned raw transaction", true)
+            return
         }
 
 

@@ -308,16 +308,4 @@ class RestoreExistingWalletFragment : Fragment() {
             confirmPasswordEditText.setSelection(confirmPasswordEditText.text?.length ?: 0)
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents == null) {
-            toast(resources.getString(R.string.ALERT_cancelled))
-        } else if (result == null) {
-            return
-        } else {
-            enterKeyEditText.text = SpannableStringBuilder(result.contents)
-        }
-    }
 }

@@ -20,9 +20,10 @@ class HelpGuideFragment: Fragment() {
         mView = inflater.inflate(R.layout.help_guide_fragment, null)
 
         //mView.find<MarkdownView>(R.id.markdown_view).addStyleSheet(ExternalStyleSheet.fromAsset("github.css", null))
-        mView.find<MarkdownView>(R.id.markdown_view).addStyleSheet(Github())
+        var css = Github()
+        css.removeRule(".scrollup")
+        mView.find<MarkdownView>(R.id.markdown_view).addStyleSheet(css)
         mView.find<MarkdownView>(R.id.markdown_view).loadMarkdownFromUrl("https://raw.githubusercontent.com/saltyskip/slate/master/guide.md")
-
         return mView
     }
 }

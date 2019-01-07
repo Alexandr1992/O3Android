@@ -63,6 +63,7 @@ class PortfolioHeader: Fragment {
         walletStatusIcon.image = null
 
         configureArrows()
+
         return mView
     }
 
