@@ -133,5 +133,4 @@
             android:name=".Settings.Help.HelpRootActivity"
             android:theme="@style/AppTheme.NoTopBar.White" />
     </application>
-
 </manifest>

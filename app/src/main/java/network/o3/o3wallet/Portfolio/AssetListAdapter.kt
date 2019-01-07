@@ -87,8 +87,6 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
             (vh as PortfolioAssetViewHolder).bindPortfolioAsset(assets[position - 1], portfolio, referenceCurrency)
             return
         }
-
-
     }
 
     class PortfolioAssetViewHolder(v: View): RecyclerView.ViewHolder(v) {
@@ -228,9 +226,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
             primaryActionButton.onClick {
                 PersistentStore.setHasInitiatedBackup(true)
                 backupAction()
-
             }
-
+          
             val secondaryActionButton = view.find<Button>(R.id.notificationSecondaryActionButton)
             secondaryActionButton.text = view.context.resources.getString(R.string.BACKUP_dismiss)
             if (!PersistentStore.getHasInitiatedBackup()) {
