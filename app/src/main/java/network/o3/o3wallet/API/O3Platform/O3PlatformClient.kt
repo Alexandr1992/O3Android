@@ -346,8 +346,13 @@ class O3PlatformClient {
         }
 
         for (fill in order.fills) {
-            errorMargin +=1
-            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
+            if (order.side.toLowerCase() == "buy") {
+                errorMargin +=1
+                fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / order.want_amount.toDouble()
+            } else {
+                errorMargin +=1
+                fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / order.offer_amount.toDouble()
+            }
         }
         val percentFilled = fillSum * 100
         return Pair(percentFilled, errorMargin)

@@ -165,7 +165,7 @@ class OnboardingNewWalletFragment : Fragment() {
     fun generateNewWallet() {
         onUiThread {
             continueButton.isEnabled = false
-            continueButton.text = "Generating Key..."
+            continueButton.text = "Generating..."
         }
         
         bg {

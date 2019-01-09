@@ -249,8 +249,13 @@ fun O3SwitcheoOrders.calculatePercentFilled(): Pair<Double, Double> {
     }
 
     for (fill in this.fills) {
-        errorMargin +=1
-        fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / this.want_amount.toDouble()
+        if (this.side.toLowerCase() == "buy") {
+            errorMargin +=1
+            fillSum  += (fill.want_amount.toDoubleOrNull() ?: 0.0) / this.want_amount.toDouble()
+        } else {
+            errorMargin +=1
+            fillSum  += (fill.fill_amount.toDoubleOrNull() ?: 0.0) / this.offer_amount.toDouble()
+        }
     }
     val percentFilled = fillSum * 100
     return Pair(percentFilled, errorMargin)
