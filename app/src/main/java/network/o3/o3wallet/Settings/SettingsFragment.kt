@@ -12,10 +12,13 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.*
+import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
+import com.commit451.modalbottomsheetdialogfragment.Option
 import com.google.gson.Gson
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.Identity.NNSBottomSheet
 import network.o3.o3wallet.Portfolio.PortfolioHeader
 import network.o3.o3wallet.Wallet.toast
@@ -25,7 +28,7 @@ import org.jetbrains.anko.support.v4.onUiThread
 import org.json.JSONStringer
 
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : Fragment(), ModalBottomSheetDialogFragment.Listener {
 
     lateinit var headerView: View
 
@@ -99,6 +102,18 @@ class SettingsFragment : Fragment() {
 
         setAddressInfo()
         return view
+    }
+
+    override fun onModalOptionSelected(tag: String?, option: Option) {
+        if (option.id == R.id.buy_with_crypto) {
+            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            intent.putExtra("url", "https://o3.network/swap")
+            startActivity(intent)
+        } else {
+            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            intent.putExtra("url", "https://buy.o3.network/?c=NEO")
+            startActivity(intent)
+        }
     }
 
     override fun onDestroy() {

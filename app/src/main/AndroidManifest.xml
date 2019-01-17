@@ -34,8 +34,8 @@
 
         <activity
             android:name=".Onboarding.OnboardingV2.OnboardingRootActivity"
-            android:theme="@style/AppTheme.NoTopBar.White"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTopBar.White">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -132,5 +132,7 @@
         <activity
             android:name=".Settings.Help.HelpRootActivity"
             android:theme="@style/AppTheme.NoTopBar.White" />
+        <activity android:name=".MultiWallet.VerifyManualBackupActivity"></activity>
     </application>
+
 </manifest>

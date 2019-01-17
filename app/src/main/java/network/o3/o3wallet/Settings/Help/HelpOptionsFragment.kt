@@ -16,6 +16,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
@@ -134,6 +135,10 @@ class HelpOptionsFragment: Fragment() {
                 mView.find<TextView>(R.id.subtitleTextView).text = subtitles[sectionedPosition]
                 mView.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mView.context, R.drawable.ic_guide)
                 mView.onClick {
+                    val intent = Intent(mFragment.context, DAppBrowserActivityV2::class.java)
+                    //intent.putExtra("url", "https://docs.o3.network/docs/ontStake/?mode=embed")
+                    //mFragment.startActivity(intent)
+
                     mFragment.findNavController().navigate(R.id.action_helpOptionsFragment_to_helpGuideFragment)
                     mFragment.activity?.find<TextView>(R.id.mytext)?.text = titles[sectionedPosition]
                 }

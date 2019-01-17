@@ -13,7 +13,7 @@ import network.o3.o3wallet.Wallet.TransactionHistory.TransactionHistoryFragment
 class MarketPlaceFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPagerAdapter(fm) {
 
     private val PAGE_COUNT = 2
-    private val tabTitles = arrayOf("Tokens", "Apps", "Token Sales")
+    private val tabTitles = arrayOf("Apps", "Tokens", "Token Sales")
     private val context: Context = context
 
 
@@ -23,9 +23,9 @@ class MarketPlaceFragmentPagerAdapter(fm: FragmentManager, context: Context) : F
 
     override fun getItem(position: Int): Fragment {
         if (position == 0) {
-            return TokensFragment.newInstance()
-        } else if (position == 1){
             return DappsFragment.newInstance()
+        } else if (position == 1){
+            return TokensFragment.newInstance()
         } else {
             return TokenSalesFragment.newInstance()
         }

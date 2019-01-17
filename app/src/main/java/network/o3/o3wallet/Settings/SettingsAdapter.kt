@@ -14,6 +14,7 @@ import android.net.Uri
 import network.o3.o3wallet.*
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingRootActivity
@@ -30,7 +31,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private val mContext: Context
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
-    var images =  listOf(R.drawable.ic_address_book, R.drawable.ic_wallet_swap,
+    var images =  listOf(R.drawable.ic_credit_card, R.drawable.ic_address_book, R.drawable.ic_wallet_swap,
             R.drawable.ic_currency, R.drawable.ic_moon,
             R.drawable.ic_comment,
             R.drawable.ic_mobile_android_alt, R.drawable.ic_trash, R.drawable.ic_bug)
@@ -40,7 +41,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     enum class CellType {
-        HEADER, CONTACTS, MULTIWALLET,
+        HEADER, BUY, CONTACTS, MULTIWALLET,
         CURRENCY, THEME,
         SUPPORT,
         VERSION, LOGOUT, ADVANCED
@@ -88,7 +89,10 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             view.findViewById<ImageView>(R.id.settingsIcon).image = null
         }
 
-
+        if (position == CellType.BUY.ordinal) {
+            view.findViewById<ImageView>(R.id.settingsIcon).image?.setTint(ContextCompat.getColor(mContext, R.color.colorGain))
+            view.findViewById<TextView>(R.id.titleTextView).textColor = ContextCompat.getColor(mContext, R.color.colorGain)
+        }
 
         view.setOnClickListener {
             getClickListenerForPosition(position)
@@ -97,7 +101,11 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     fun getClickListenerForPosition(position: Int) {
-        if (position == CellType.CURRENCY.ordinal) {
+        if (position == CellType.BUY.ordinal) {
+            ModalBottomSheetDialogFragment.Builder()
+                    .add(R.menu.buy_menu)
+                    .show(mFragment.childFragmentManager, "buy_options")
+        } else if (position == CellType.CURRENCY.ordinal) {
             val currencyModal = CurrencyFragment.newInstance()
             currencyModal.show((mContext as AppCompatActivity).supportFragmentManager, currencyModal.tag)
             return

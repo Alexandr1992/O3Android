@@ -216,6 +216,11 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                     )
 
                     .addItem(DappPopupMenuItem(
+                            resources.getString(R.string.DAPP_share),
+                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_share_alt))
+                    )
+
+                    .addItem(DappPopupMenuItem(
                             "Connected to " + PersistentStore.getNetworkType() + "Net",
                             null)
                     )
@@ -230,6 +235,12 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                     webView.reload()
                 } else if (position == 1) {
                     this@DAppBrowserActivityV2.finish()
+                } else if (position == 2) {
+                    val shareIntent = Intent()
+                    shareIntent.action = Intent.ACTION_SEND
+                    shareIntent.type="text/plain"
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, intent.getStringExtra("url"));
+                    startActivity(Intent.createChooser(shareIntent, ""))
                 }
                 customPowerMenu.dismiss()
             }

@@ -1,5 +1,6 @@
 package network.o3.o3wallet.MultiWallet.Activate
 
+import android.content.Intent
 import android.content.res.Resources
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import kotlinx.android.synthetic.main.token_sale_root_activity.*
+import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -21,7 +23,7 @@ class MultiwalletActivateActivity : AppCompatActivity() {
         setContentView(R.layout.multiwallet_activate_activity)
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.actionbar_layout)
-        find<TextView>(R.id.mytext).text = resources.getString(R.string.MULTIWALLET_activate_multiwallet)
+        find<TextView>(R.id.mytext).text = resources.getString(R.string.MULTIWALLET_security_update)
         find<ImageButton>(R.id.rightNavButton).visibility = View.GONE
     }
 
@@ -30,7 +32,9 @@ class MultiwalletActivateActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (currentFragment is EncryptExistingKeySuccessFragment) {
-            finish()
+            val intent = Intent(this, SelectingBestNode::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         } else {
             super.onBackPressed()
         }

@@ -11,11 +11,9 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import neoutils.Neoutils.selectBestSeedNode
 import neoutils.SeedNodeResponse
+import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.MainTabbedActivity
-import network.o3.o3wallet.O3Wallet
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.find
@@ -45,12 +43,18 @@ class SelectingBestNode : AppCompatActivity() {
     fun gotBestNode(node: String) {
         PersistentStore.setNodeURL(node)
         //close activity and start the main tabbed one fresh
-        val intent = Intent(this, MainTabbedActivity::class.java)
-        if (deepLink != null) {
-            intent.putExtra("deepLink", deepLink!!)
+        if (NEP6.nep6HasActivated() == false) {
+            val intent = Intent(this, MultiwalletActivateActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        } else {
+            val intent = Intent(this, MainTabbedActivity::class.java)
+            if (deepLink != null) {
+                intent.putExtra("deepLink", deepLink!!)
+            }
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
     }
 
     fun getBestNode() {

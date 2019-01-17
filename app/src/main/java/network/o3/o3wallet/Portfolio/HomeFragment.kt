@@ -288,7 +288,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFr
             startActivity(intent)
         } else {
             val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
-            intent.putExtra("url", "https://buy.o3.network/")
+            intent.putExtra("url", "https://buy.o3.network/?c=NEO")
             startActivity(intent)
         }
     }

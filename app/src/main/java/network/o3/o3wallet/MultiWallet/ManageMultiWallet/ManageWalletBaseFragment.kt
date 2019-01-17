@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.amplitude.api.Amplitude
 import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
@@ -69,6 +70,14 @@ class ManageWalletBaseFragment : Fragment() {
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadWalletPage,
                 IntentFilter("need-update-watch-address-event"))
         return mView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if ((activity as MultiwalletManageWallet).viewModel.shouldNavToVerify) {
+            (activity as MultiwalletManageWallet).viewModel.shouldNavToVerify = false
+            findNavController().navigate(R.id.action_manageWalletBaseFragment_to_verifyManualBackupFragment)
+        }
     }
 
     fun initiateListView() {
@@ -258,6 +267,10 @@ class ManageWalletBaseFragment : Fragment() {
             tmpDir.delete()
         }
 
+        fun verifyManualBackupAction() {
+            mFragment.findNavController()?.navigate(R.id.action_manageWalletBaseFragment_to_verifyManualBackupFragment)
+        }
+
         fun setAction(v: View, position: Int) {
             if (mVm.key == null) {
                 v.onClick { removeWalletAction() }
@@ -272,7 +285,9 @@ class ManageWalletBaseFragment : Fragment() {
                     v.onClick { showRawKeyAction() }
                 } 2 -> {
                     v.onClick { unlockAction()}
-                } 3 -> {
+                } 3-> {
+                    v.onClick { verifyManualBackupAction() }
+                } 4 -> {
                     v.onClick { removeWalletAction() }
                 }
             }
@@ -283,7 +298,9 @@ class ManageWalletBaseFragment : Fragment() {
             val titles = mutableListOf<String>(mContext.resources.getString(R.string.MULTIWALLET_backup_existing),
                     mContext.resources.getString(R.string.MULTIWALLET_show_raw_key),
                     mContext.resources.getString(R.string.MULTIWALLET_unlock),
-                    mContext.resources.getString(R.string.MULTIWALLET_remove_wallet))
+                    mContext.resources.getString(R.string.MULTIWALLET_verify_manual_backup),
+                    mContext.resources.getString(R.string.MULTIWALLET_remove_wallet)
+                    )
 
 
             val view = mContext.layoutInflater.inflate(R.layout.settings_row_layout, null, false)
@@ -299,10 +316,9 @@ class ManageWalletBaseFragment : Fragment() {
             }
 
 
-
             view.find<ImageView>(R.id.settingsIcon).visibility = View.GONE
             nameTextView.text = titles[position]
-            if (position == 3) {
+            if (position == 4) {
                 nameTextView.textColor = ContextCompat.getColor(mContext, R.color.colorLoss)
                 view.find<ImageView>(R.id.settingsIcon).visibility = View.VISIBLE
                 view.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mContext, R.drawable.ic_trash)
@@ -322,7 +338,7 @@ class ManageWalletBaseFragment : Fragment() {
             if (mVm.key == null) {
                 return 1
             }
-            return 4
+            return 5
         }
 
         override fun getItemId(position: Int): Long {
