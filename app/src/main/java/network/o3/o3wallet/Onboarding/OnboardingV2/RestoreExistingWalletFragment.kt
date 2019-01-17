@@ -25,6 +25,7 @@ import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.SelectingBestNode
+import network.o3.o3wallet.PersistentStore
 
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -252,6 +253,7 @@ class RestoreExistingWalletFragment : Fragment() {
                     nep6.writeToFileSystem()
                     nep6.makeNewDefault(nep2.address, password)
                     Account.deleteKeyFromDevice()
+                    PersistentStore.setHasDismissedBackup(true)
                     findNavController().navigate(R.id.action_restoreExistingWalletFragment_to_onboardingSuccessFragment)
                 } else if (keyType == KeyType.ENCRYPTED) {
                     try {
@@ -262,6 +264,7 @@ class RestoreExistingWalletFragment : Fragment() {
                         nep6.writeToFileSystem()
                         nep6.makeNewDefault(nep2.address, password)
                         Account.deleteKeyFromDevice()
+                        PersistentStore.setHasDismissedBackup(true)
                         findNavController().navigate(R.id.action_restoreExistingWalletFragment_to_onboardingSuccessFragment)
                     } catch (e: Exception) {
                         alert {

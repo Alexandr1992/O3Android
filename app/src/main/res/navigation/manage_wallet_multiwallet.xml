@@ -12,7 +12,12 @@
         tools:layout="@layout/multiwallet_manage_wallet_base" >
         <action
             android:id="@+id/action_manageWalletBaseFragment_to_unlockWatchAddressFragment"
-            app:destination="@id/unlockWatchAddressFragment" />
+            app:destination="@id/unlockWatchAddressFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
+        <action
+            android:id="@+id/action_manageWalletBaseFragment_to_verifyManualBackupFragment"
+            app:destination="@id/verifyManualBackupFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
     </fragment>
     <fragment
         android:id="@+id/unlockWatchAddressFragment"
@@ -21,10 +26,16 @@
         tools:layout="@layout/multiwallet_unlock_watch_address" >
         <action
             android:id="@+id/action_unlockWatchAddressFragment_to_unlockKeySuccessFragment"
-            app:destination="@id/unlockKeySuccessFragment" />
+            app:destination="@id/unlockKeySuccessFragment"
+            app:enterAnim="@anim/fab_slide_in_from_right" />
     </fragment>
     <fragment
         android:id="@+id/unlockKeySuccessFragment"
         android:name="network.o3.o3wallet.MultiWallet.ManageMultiWallet.UnlockKeySuccessFragment"
         android:label="UnlockKeySuccessFragment" />
+    <fragment
+        android:id="@+id/verifyManualBackupFragment"
+        android:name="network.o3.o3wallet.MultiWallet.VerifyManualBackupFragment"
+        android:label="multiwallet_verify_manual_backup_fragment"
+        tools:layout="@layout/multiwallet_verify_manual_backup_fragment" />
 </navigation>

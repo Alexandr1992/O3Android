@@ -76,7 +76,7 @@
 
 
     <string name="ONBOARDING_login_action" comment="This is the title for the login action in the onboarding flow">Login</string>
-    <string name="ONBOARDING_login_with_key_action" comment="This is the title for the login action in the onboarding flow">Login With Key</string>
+    <string name="ONBOARDING_login_with_key_action" comment="This is the title for the login action in the onboarding flow">Login With Existing Wallet</string>
     <string name="ONBOARDING_stylized_or" comment="A stylized or to seperate the login and create new wallet action">— OR —</string>
 
     <string name="ONBOARDING_new_wallet_question" comment="Informative text asking if the user is using O3 for the first time">New to O3?</string>
@@ -163,6 +163,7 @@
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
+        <item>Buy Neo Today</item>
         <item>Manage Contacts</item>
         <item>Manage Wallets</item>
         <item>Currency</item>
@@ -546,11 +547,13 @@
         it somewhere safe in case you lose access to your wallet.\n\n Don\'t forget your password or it won\'t work</string>
     <string name="MULTIWALLET_backup">Back up</string>
     <string name="MULTIWALLET_done">Done</string>
-    <string name="MULTIWALLET_activate">In order to enable multi wallet, we need to create an encrypted version of your key.\n\n Please enter a strong password that will be required when switching wallets</string>
+    <string name="MULTIWALLET_activate">O3 has recently improved its security and added multiple wallet functionality. To continue using the app, all wallets now require a safer encrypted private key with a passphrase.
+
+</string>
     <string name="MULTIWALLET_enter_ecnryption_password">Enter a password</string>
     <string name="MULTIWALLET_enter_confirm_password">Confirm password</string>
-    <string name="MULTIWALLET_next">Next</string>
-    <string name="MULTIWALLET_restore_subtitle">You will need this password to restore your key from backup</string>
+    <string name="MULTIWALLET_generate">Generate Encrypted Key</string>
+    <string name="MULTIWALLET_restore_subtitle">This passphrase will be used to encrypt your private key</string>
     <string name="MULTIWALLET_activate_multiwallet">Activate MultiWallet</string>
     <string name="MULTIWALLET_passwords_do_not_match">Your passwords do not match. Please double check it.</string>
     <string name="MULTIWALLET_password_to_short">Your password is too short. Please make sure it is at least 8 characters in length.</string>
@@ -559,6 +562,7 @@
     <string name="MULTIWALLET_add_wallet">Add Wallet</string>
     <string name="MULTIWALLET_generate_wallet">Generate a new wallet</string>
     <string name="MULTIWALLET_invalid_wallet_error">Invalid wallet format. Please double check it</string>
+    <string name="MULTIWALLET_security_update">O3 Security Update</string>
 
     <string name="MULTIWALLET_name_your_wallet">Give this wallet a name</string>
     <string name="MULTIWALLET_name_hint">My Awesome Wallet</string>
@@ -574,6 +578,7 @@
     <string name="MULTIWALLET_unlock_question">Unlock?</string>
     <string name="MULTIWALLET_remove_wallet">Remove Wallet</string>
     <string name="MULTIWALLET_add_key_to_watch_address">Add a key to this wallet</string>
+    <string name="MULTIWALLET_verify_manual_backup">Verify Manual Backup</string>
 
     <string name="MULTIWALLET_cannot_delete_default">You cannot remove your default key.</string>
     <string name="MULTIWALLET_cannot_unlock_default">Your default wallet is already unlocked</string>
@@ -592,6 +597,21 @@
     <string name="MUTLIWALLET_duplicate_address_error">You have already added this address, and cannot add it twice</string>
     <string name="MUTLIWALLET_duplicate_key_error">You have already added this encrypted key, and cannot add it twice</string>
     <string name="MUTLWALLET_duplicate_name_error">You already have a wallet with this name, please choose another one</string>
+    <string name="MULTIWALLET_use_raw_key">Use raw key</string>
+    <string name="MULTIWALLET_took_screenshot">I took a screenshot</string>
+    <string name="MULTIWALLET_copied_by_hand">I copied it by hand</string>
+    <string name="MULTIWALLET_i_saved_it_another_way">I saved it another way</string>
+    <string name="MULTIWALLET_encrypted_description">
+        Verify your backup by saving your raw or encrypted key in another secure place.\n\n
+        Your encrypted key is password protected, and your funds can only be recovered if you have it, AND your password.
+    </string>
+    <string name="MULTIWALLET_raw_key_description">
+        Verify your backup by saving your raw or encrypted key in another secure place.\n\n
+        Your raw private key is not password protected, anyone with access to this private key can recover your funds.
+    </string>
+    <string name="MULTIWALLET_verify_backup">Verify Backup</string>
+    <string name="MULTIWALLET_password_protected">This key is password protected, you will need to unlock it in order to backup the pricate key</string>
+
     <string name="DAPP_connection_warning">This will be able to see your public information related to this address</string>
     <string name="DAPP_requesting_to_connect">is requesting to connect to your wallet</string>
     <string name="DAPP_connect">Connect</string>
@@ -613,16 +633,19 @@
     <string name="DAPP_view_tx_details">View transaction details</string>
     <string name="DAPP_disconnect">Disconnect &amp; return to O3</string>
     <string name="DAPP_refresh">Refresh</string>
+    <string name="DAPP_share">Share</string>
     <string name="ONBOARDING_wallet_not_backed_up">Wallet not backed up</string>
     <string name="ONBOARDING_back_up_description">Not having a back up of your key is very dangerous.
     If you lose access to your device, your funds could be lost</string>
     <string name="ONBOARDING_backup_key">Backup key</string>
+    <string name="ONBOARDING_open_wallet">Open Wallet</string>
 
     <string name="BACKUP_initial_warning_title">Wallet not backed up</string>
     <string name="BACKUP_initial_warning_description">Not having a backup of your key is very dangerous.
         If you lose access to your devices, your funds will be lost.</string>
-    <string name="BACKUP_secondary_warning_title">Are you sure it\'s backed up?</string>
-    <string name="BACKUP_secondary_warning_description">Neither your password or private key can be recovered if you lose access to them</string>
+    <string name="BACKUP_secondary_warning_title">Create Secondary Backup?</string>
+    <string name="BACKUP_secondary_warning_description">A secondary backup reduces the risk of you losing access to your wallet</string>
+    <string name="BACKUP_secondary_warning_action">Create Second Backup</string>
     <string name="BACKUP_dismiss">Dismiss</string>
 
     <string name="ONBOARDING_enter_a_password_warning">Enter a password for your new wallet.

@@ -277,4 +277,26 @@ object PersistentStore {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
                 .putBoolean("HAS_DISMISSED_BACKUP", value).apply()
     }
+
+    enum class VerificationType() {
+        SCREENSHOT,
+        BYHAND,
+        OTHER
+    }
+
+    fun getManualVerificationType(address: String): List<VerificationType> {
+        val jsonString = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getString(address + "_VERIFICATIONTYPE", "")
+        if (jsonString == "") {
+            return listOf()
+        }
+        val list = Gson().fromJson<List<String>>(jsonString)
+        return list.map { VerificationType.valueOf(it)}
+
+    }
+
+    fun setManualVerificationType(address: String, types: List<VerificationType>) {
+        var jsonString = Gson().toJson(types.map { it.name })
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
+                putString(address + "_VERIFICATIONTYPE", jsonString).apply()
+    }
 }

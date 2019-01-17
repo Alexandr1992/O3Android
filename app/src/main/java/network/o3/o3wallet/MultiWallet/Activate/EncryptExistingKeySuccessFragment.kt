@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.NEP6
+import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import java.io.File
@@ -39,7 +40,12 @@ class EncryptExistingKeySuccessFragment : Fragment() {
         backupButton = mView.find(R.id.backupButton)
         initiateEncryptedKeyValues()
 
-        doneButton.setOnClickListener { activity?.finish() }
+        doneButton.setOnClickListener {
+            //reset after activation
+            val intent = Intent(activity, SelectingBestNode::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            activity?.startActivity(intent)
+        }
         backupButton.setOnClickListener { sendBackupEmail() }
 
         return mView

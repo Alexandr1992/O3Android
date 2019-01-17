@@ -23,7 +23,7 @@ class HelpGuideFragment: Fragment() {
         var css = Github()
         css.removeRule(".scrollup")
         mView.find<MarkdownView>(R.id.markdown_view).addStyleSheet(css)
-        mView.find<MarkdownView>(R.id.markdown_view).loadMarkdownFromUrl("https://raw.githubusercontent.com/saltyskip/slate/master/guide.md")
+        mView.find<MarkdownView>(R.id.markdown_view).loadMarkdownFromUrl("https://docs.o3.network/docs/ontStake/?mode=embed")
         return mView
     }
 }

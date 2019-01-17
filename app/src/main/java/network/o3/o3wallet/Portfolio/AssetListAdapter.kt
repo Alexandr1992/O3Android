@@ -19,6 +19,7 @@ import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.MultiWallet.ManageMultiWallet.MultiwalletManageWallet
 import network.o3.o3wallet.R.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk15.coroutines.onClick
@@ -217,24 +218,40 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
             tmpDir.delete()
         }
 
+        fun manualBackupAction() {
+            val nep6Account = NEP6.getFromFileSystem().getDefaultAccount()
+            val intent = Intent(mFragment.context, MultiwalletManageWallet::class.java)
+            intent.putExtra("address", nep6Account.address)
+            intent.putExtra("key", nep6Account.key ?: "")
+            intent.putExtra("name", nep6Account.label)
+            intent.putExtra("isDefault", nep6Account.isDefault)
+            intent.putExtra("shouldNavToManual", true)
+            mFragment.context?.startActivity(intent, null)
+        }
+
         fun bindNotification(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
             val notificationTitleView = view.find<TextView>(R.id.notificationTitleView)
             val notificationDescriptionView = view.find<TextView>(R.id.notificationDescriptionView)
 
             val primaryActionButton = view.find<Button>(R.id.notificationActionButton)
-            primaryActionButton.text = view.context.resources.getString(R.string.MULTIWALLET_backup)
             primaryActionButton.onClick {
-                PersistentStore.setHasInitiatedBackup(true)
-                backupAction()
+                if (PersistentStore.getHasInitiatedBackup() == false) {
+                    PersistentStore.setHasInitiatedBackup(true)
+                    backupAction()
+                } else {
+                   manualBackupAction()
+                }
             }
           
             val secondaryActionButton = view.find<Button>(R.id.notificationSecondaryActionButton)
             secondaryActionButton.text = view.context.resources.getString(R.string.BACKUP_dismiss)
             if (!PersistentStore.getHasInitiatedBackup()) {
+                primaryActionButton.text = view.context.resources.getString(R.string.MULTIWALLET_backup)
                 secondaryActionButton.visibility = View.GONE
                 notificationTitleView.text = view.context.resources.getString(R.string.BACKUP_initial_warning_title)
                 notificationDescriptionView.text = view.context.resources.getString(R.string.BACKUP_initial_warning_description)
             } else {
+                primaryActionButton.text = view.context.resources.getString(R.string.BACKUP_secondary_warning_action)
                 secondaryActionButton.visibility = View.VISIBLE
                 notificationTitleView.text = view.context.resources.getString(R.string.BACKUP_secondary_warning_title)
                 notificationDescriptionView.text = view.context.resources.getString(R.string.BACKUP_secondary_warning_description)
