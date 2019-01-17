@@ -12,6 +12,7 @@ import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.json.JSONObject
 import java.math.BigDecimal
 import java.net.URL
 import java.util.*
@@ -485,7 +486,8 @@ class SwitcheoAPI {
                     val orderRequest = Gson().fromJson<SwitcheoOrders>(data!!)
                     completion(Pair<SwitcheoOrders?, Error?>(orderRequest, null))
                 } else {
-                    completion(Pair<SwitcheoOrders?, Error?>(null, Error(error.localizedMessage)))
+                    var error = JSONObject(String(response.data)).get("error") as String
+                    completion(Pair<SwitcheoOrders?, Error?>(null, Error(error)))
                 }
             }
         }
