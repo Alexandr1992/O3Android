@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
@@ -64,6 +65,9 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
     var pendingDappMessage: DappMessage? = null
     var lastClickTime: Long  = 0
+
+    var mUploadMessage: ValueCallback<Array<Uri>>? = null
+    val FILECHOOSER_RESULTCODE = 101
 
     data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String)
 
@@ -298,6 +302,19 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 super.onProgressChanged(view, newProgress)
                 progressBar.progress = newProgress
             }
+
+
+            override fun onShowFileChooser(webView:WebView, filePathCallback:ValueCallback<Array<Uri>>, fileChooserParams:FileChooserParams):Boolean {
+                mUploadMessage = filePathCallback
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                intent.type = "image/*"
+                var chooser = Intent.createChooser(intent, "Upload File")
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(Intent(MediaStore.ACTION_IMAGE_CAPTURE)))
+
+                startActivityForResult(chooser, 1)
+                return true
+            }
         }
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
@@ -466,6 +483,19 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (null == mUploadMessage)
+                return
+            val result = if (intent == null || resultCode !== Activity.RESULT_OK)
+                null
+            else
+                intent.data
+            mUploadMessage!!.onReceiveValue(arrayOf(result!!))
+            mUploadMessage = null
+            return
+        }
+
+
         if (result != null && result.contents == null) {
             return
         } else {
