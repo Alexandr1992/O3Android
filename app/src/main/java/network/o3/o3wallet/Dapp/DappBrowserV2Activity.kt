@@ -11,9 +11,11 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.menu.MenuAdapter
@@ -42,10 +44,16 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.OnMenuItemClickListener
 import kotlinx.android.synthetic.main.dialog_single_input.view.*
+import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import org.json.JSONObject
 import org.w3c.dom.Text
+import java.io.File
+import java.io.FileOutputStream
+import java.net.URI
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DAppBrowserActivityV2 : AppCompatActivity() {
@@ -296,6 +304,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         setMoreActions()
     }
 
+    var photoURI: Uri? = null
     fun setupWebClients() {
         webView.webChromeClient = object: WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
@@ -303,16 +312,16 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 progressBar.progress = newProgress
             }
 
-
-            override fun onShowFileChooser(webView:WebView, filePathCallback:ValueCallback<Array<Uri>>, fileChooserParams:FileChooserParams):Boolean {
+           override fun onShowFileChooser(webView:WebView, filePathCallback:ValueCallback<Array<Uri>>, fileChooserParams:FileChooserParams):Boolean {
                 mUploadMessage = filePathCallback
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                intent.type = "image/*"
-                var chooser = Intent.createChooser(intent, "Upload File")
+                val fileIntent = Intent(Intent.ACTION_GET_CONTENT)
+                fileIntent.addCategory(Intent.CATEGORY_OPENABLE)
+                fileIntent.type = "image/*"
+
+                var chooser = Intent.createChooser(fileIntent, "Upload File")
                 chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(Intent(MediaStore.ACTION_IMAGE_CAPTURE)))
 
-                startActivityForResult(chooser, 1)
+                startActivityForResult(chooser, FILECHOOSER_RESULTCODE)
                 return true
             }
         }
@@ -486,11 +495,25 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         if (requestCode == FILECHOOSER_RESULTCODE) {
             if (null == mUploadMessage)
                 return
-            val result = if (intent == null || resultCode !== Activity.RESULT_OK)
+            var toParse = if (data == null || resultCode !== Activity.RESULT_OK)
                 null
             else
-                intent.data
-            mUploadMessage!!.onReceiveValue(arrayOf(result!!))
+                data.data
+            if (toParse == null && data?.extras != null) {
+                val tmpDir = File(this?.filesDir?.absolutePath + "/tmp")
+                tmpDir.mkdirs()
+                val fileImage = File(tmpDir, "camera.png")
+                val fout = FileOutputStream(fileImage)
+                val imageBitmap = data.extras!!.get("data") as Bitmap
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
+                toParse = FileProvider.getUriForFile(this, "network.o3.o3wallet", fileImage)
+            }
+
+            if (toParse == null) {
+                mUploadMessage!!.onReceiveValue(arrayOf())
+            } else {
+                mUploadMessage!!.onReceiveValue(arrayOf(toParse!!))
+            }
             mUploadMessage = null
             return
         }
