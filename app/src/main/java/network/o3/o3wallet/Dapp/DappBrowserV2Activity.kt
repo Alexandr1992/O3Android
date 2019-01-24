@@ -11,8 +11,11 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.SystemClock
+import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.menu.MenuAdapter
@@ -41,10 +44,16 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.OnMenuItemClickListener
 import kotlinx.android.synthetic.main.dialog_single_input.view.*
+import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import org.json.JSONObject
 import org.w3c.dom.Text
+import java.io.File
+import java.io.FileOutputStream
+import java.net.URI
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DAppBrowserActivityV2 : AppCompatActivity() {
@@ -64,6 +73,9 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
     var pendingDappMessage: DappMessage? = null
     var lastClickTime: Long  = 0
+
+    var mUploadMessage: ValueCallback<Array<Uri>>? = null
+    val FILECHOOSER_RESULTCODE = 101
 
     data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String)
 
@@ -292,11 +304,25 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         setMoreActions()
     }
 
+    var photoURI: Uri? = null
     fun setupWebClients() {
         webView.webChromeClient = object: WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 progressBar.progress = newProgress
+            }
+
+           override fun onShowFileChooser(webView:WebView, filePathCallback:ValueCallback<Array<Uri>>, fileChooserParams:FileChooserParams):Boolean {
+                mUploadMessage = filePathCallback
+                val fileIntent = Intent(Intent.ACTION_GET_CONTENT)
+                fileIntent.addCategory(Intent.CATEGORY_OPENABLE)
+                fileIntent.type = "image/*"
+
+                var chooser = Intent.createChooser(fileIntent, "Upload File")
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(Intent(MediaStore.ACTION_IMAGE_CAPTURE)))
+
+                startActivityForResult(chooser, FILECHOOSER_RESULTCODE)
+                return true
             }
         }
         webView.webViewClient = object : WebViewClient() {
@@ -466,6 +492,33 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (null == mUploadMessage)
+                return
+            var toParse = if (data == null || resultCode !== Activity.RESULT_OK)
+                null
+            else
+                data.data
+            if (toParse == null && data?.extras != null) {
+                val tmpDir = File(this?.filesDir?.absolutePath + "/tmp")
+                tmpDir.mkdirs()
+                val fileImage = File(tmpDir, "camera.png")
+                val fout = FileOutputStream(fileImage)
+                val imageBitmap = data.extras!!.get("data") as Bitmap
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
+                toParse = FileProvider.getUriForFile(this, "network.o3.o3wallet", fileImage)
+            }
+
+            if (toParse == null) {
+                mUploadMessage!!.onReceiveValue(arrayOf())
+            } else {
+                mUploadMessage!!.onReceiveValue(arrayOf(toParse!!))
+            }
+            mUploadMessage = null
+            return
+        }
+
+
         if (result != null && result.contents == null) {
             return
         } else {
