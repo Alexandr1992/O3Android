@@ -44,6 +44,7 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.OnMenuItemClickListener
 import kotlinx.android.synthetic.main.dialog_single_input.view.*
+import neoutils.Wallet
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
@@ -223,13 +224,18 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                     )
 
                     .addItem(DappPopupMenuItem(
-                            resources.getString(R.string.DAPP_disconnect),
-                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_home))
+                            resources.getString(R.string.DAPP_share),
+                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_share_alt))
                     )
 
                     .addItem(DappPopupMenuItem(
-                            resources.getString(R.string.DAPP_share),
-                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_share_alt))
+                            resources.getString(R.string.DAPP_disconnect),
+                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_power_off))
+                    )
+
+                    .addItem(DappPopupMenuItem(
+                            resources.getString(R.string.DAPP_return_to_o3),
+                            ContextCompat.getDrawable(this@DAppBrowserActivityV2, R.drawable.ic_home))
                     )
 
                     .addItem(DappPopupMenuItem(
@@ -246,13 +252,15 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 if (position == 0) {
                     webView.reload()
                 } else if (position == 1) {
-                    this@DAppBrowserActivityV2.finish()
-                } else if (position == 2) {
                     val shareIntent = Intent()
                     shareIntent.action = Intent.ACTION_SEND
-                    shareIntent.type="text/plain"
+                    shareIntent.type = "text/plain"
                     shareIntent.putExtra(Intent.EXTRA_TEXT, intent.getStringExtra("url"));
                     startActivity(Intent.createChooser(shareIntent, ""))
+                } else if (position == 2) {
+                    jsInterface.manualDisconnect()
+                } else if (position == 3) {
+                    this@DAppBrowserActivityV2.finish()
                 }
                 customPowerMenu.dismiss()
             }
@@ -279,6 +287,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 headerView.find<TextView>(R.id.walletNameTitle).text = this@DAppBrowserActivityV2.jsInterface.getDappExposedWalletName()
                 headerView.find<Button>(R.id.swapButton).onClick {
                     val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
+                    swapWalletSheet.needsAuth = false
                     swapWalletSheet.show(this@DAppBrowserActivityV2!!.supportFragmentManager, swapWalletSheet.tag)
                     customPowerMenu.dismiss()
                 }
@@ -311,15 +320,21 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 super.onProgressChanged(view, newProgress)
                 progressBar.progress = newProgress
             }
-
            override fun onShowFileChooser(webView:WebView, filePathCallback:ValueCallback<Array<Uri>>, fileChooserParams:FileChooserParams):Boolean {
                 mUploadMessage = filePathCallback
                 val fileIntent = Intent(Intent.ACTION_GET_CONTENT)
                 fileIntent.addCategory(Intent.CATEGORY_OPENABLE)
                 fileIntent.type = "image/*"
 
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val tmpDir = File(filesDir?.absolutePath + "/tmp")
+                tmpDir.mkdirs()
+                val fileImage = File(tmpDir, Calendar.getInstance().timeInMillis.toString() +  "_tmp.jpg")
+                photoURI = FileProvider.getUriForFile(this@DAppBrowserActivityV2, "network.o3.o3wallet", fileImage)
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+
                 var chooser = Intent.createChooser(fileIntent, "Upload File")
-                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(Intent(MediaStore.ACTION_IMAGE_CAPTURE)))
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
 
                 startActivityForResult(chooser, FILECHOOSER_RESULTCODE)
                 return true
@@ -499,14 +514,8 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 null
             else
                 data.data
-            if (toParse == null && data?.extras != null) {
-                val tmpDir = File(this?.filesDir?.absolutePath + "/tmp")
-                tmpDir.mkdirs()
-                val fileImage = File(tmpDir, "camera.png")
-                val fout = FileOutputStream(fileImage)
-                val imageBitmap = data.extras!!.get("data") as Bitmap
-                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
-                toParse = FileProvider.getUriForFile(this, "network.o3.o3wallet", fileImage)
+            if (toParse == null && resultCode != Activity.RESULT_CANCELED) {
+                toParse = photoURI
             }
 
             if (toParse == null) {
@@ -527,7 +536,8 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                     if (NEP6.getFromFileSystem().accounts.isEmpty()) {
                         jsInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
                     } else {
-                        jsInterface.setDappExposedWallet(Account.getWallet(), NEP6.getFromFileSystem().getDefaultAccount().label)
+                        jsInterface.setDappExposedWallet(walletToExpose,
+                                walletToExposeName)
                     }
                     jsInterface.authorizedAccountCredentials(pendingDappMessage!!)
                     pendingDappMessage = null
@@ -539,6 +549,9 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             }
         }
     }
+
+    var walletToExpose: Wallet = Account.getWallet()
+    var walletToExposeName: String = NEP6.getFromFileSystem().getDefaultAccount().label
 
     fun verifyPassCodeAndSign(message: DappMessage? = null) {
         val mKeyguardManager = webView.context!!.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager

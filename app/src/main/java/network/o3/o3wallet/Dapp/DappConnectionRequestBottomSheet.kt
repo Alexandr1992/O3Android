@@ -112,14 +112,10 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     }
 
     fun setAccountDetails() {
-        val wallet = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet() ?: Account.getWallet()
-        var label = ""
-        if ((activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName() == "") {
-            label = NEP6.getFromFileSystem().accounts.find { it.isDefault }?.label ?: "My O3 Wallet"
-        }
+        val wallet = (activity as DAppBrowserActivityV2).walletToExpose
 
         addressTextView.text = wallet.address
-        addressNameTextView.text = label
+        addressNameTextView.text = (activity as DAppBrowserActivityV2).walletToExposeName
     }
 
     fun loadOpenGraphDetails() {

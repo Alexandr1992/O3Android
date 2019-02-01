@@ -23,7 +23,8 @@ class NeoDappProtocol {
     data class GetProviderResponse(val compatibility: List<String>,
                                    val name: String,
                                    val version: String,
-                                   val website: String)
+                                   val website: String,
+                                   val extra: JsonObject)
 
     //Get Balances
     data class GetBalanceRequest(val params: List<GetBalanceRequestElement>, val network: String?)
@@ -96,7 +97,7 @@ class NeoDappProtocol {
 
     companion object {
         val availableCommmands = listOf("getProvider", "getNetworks", "getAccount",
-                "getBalance", "getStorage", "invokeRead", "invoke", "send")
+                "getBalance", "getStorage", "invokeRead", "invoke", "send", "disconnect")
         val needAuthCommands = listOf("getAccount", "getAddress", "invoke", "send")
     }
 }

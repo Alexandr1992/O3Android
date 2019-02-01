@@ -631,7 +631,8 @@
     <string name="DAPP_contact">Contact:</string>
     <string name="DAPP_wallet_with">With:</string>
     <string name="DAPP_view_tx_details">View transaction details</string>
-    <string name="DAPP_disconnect">Disconnect &amp; return to O3</string>
+    <string name="DAPP_disconnect">Disconnect Wallet</string>
+    <string name="DAPP_return_to_o3">Return to O3</string>
     <string name="DAPP_refresh">Refresh</string>
     <string name="DAPP_share">Share</string>
     <string name="ONBOARDING_wallet_not_backed_up">Wallet not backed up</string>

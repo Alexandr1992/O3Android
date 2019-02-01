@@ -28,6 +28,8 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
     lateinit var mView: View
     lateinit var listView: ListView
 
+    var needsAuth = true
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -66,8 +68,16 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
                 neo2DialogFragment.decryptionSucceededCallback = { pass, wif ->
                     (mFragment as RoundedBottomSheetDialogFragment).dismiss()
                     neo2DialogFragment.dismiss()
-                    (mFragment.activity as DAppBrowserActivityV2).jsInterface
-                            .setDappExposedWallet(Neoutils.generateFromWIF(wif), NEP6.getFromFileSystem().getDefaultAccount().label)
+                    val walletToExpose = Neoutils.generateFromWIF(wif)
+                    val walletToExposeName = NEP6.getFromFileSystem().getWalletAccounts().find { it.address == walletToExpose.address }!!.label
+                    (mFragment.activity as DAppBrowserActivityV2).walletToExpose = walletToExpose
+                    (mFragment.activity as DAppBrowserActivityV2).walletToExposeName = walletToExposeName
+                    if (!(mFragment as DappWalletForSessionBottomSheet).needsAuth) {
+                        (mFragment.activity as DAppBrowserActivityV2).jsInterface.setDappExposedWallet(walletToExpose, walletToExposeName)
+                    }
+
+                    val intent = Intent("update-exposed-dapp-wallet")
+                    LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
                 }
 
                 neo2DialogFragment.encryptedKey = getItem(position).key!!
@@ -78,7 +88,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
 
         override fun getItem(position: Int): NEP6.Account {
             var accounts = NEP6.getFromFileSystem().getWalletAccounts().toMutableList()
-            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()!!.address}
+            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()?.address}
             if (index == -1) {
                 index = accounts.indexOfFirst { it.isDefault }
             }
