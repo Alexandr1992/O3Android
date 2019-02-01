@@ -7,23 +7,24 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import android.widget.ImageView
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import neoutils.Neoutils
 import neoutils.Wallet
+import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.O3Wallet
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.toHex
+import org.jetbrains.anko.find
+import org.jetbrains.anko.image
 import java.lang.Exception
 import java.math.BigDecimal
 import java.util.concurrent.CountDownLatch
@@ -38,6 +39,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 "getBalance", "getStorage", "invokeRead", "invoke", "send")
         when (message.command.toLowerCase()) {
             "getprovider" -> handleGetProvider(message)
+            "disconnect" -> handleDisconnect(message)
             "getnetworks" -> handleGetNetworks(message)
             "getaccount" -> handleGetAccount(message)
             "getbalance" -> handleGetBalance(message)
@@ -58,16 +60,47 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun setDappExposedWallet(wallet: Wallet, name: String) {
+        val shouldFireAccountChanged = dappExposedWallet != null
         dappExposedWallet = wallet
         dappExposedWalletName = name
-        fireAccountChangedEvent()
+
+        if (shouldFireAccountChanged) {
+            fireAccountChangedEvent()
+        }
         val intent = Intent("update-exposed-dapp-wallet")
         LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
     }
 
+
+    fun handleDisconnect(message: DappMessage) {
+        dappExposedWallet = null
+        dappExposedWalletName = ""
+        fireDisconnect()
+        val intent = Intent("update-exposed-dapp-wallet")
+        LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
+        (webView.context as DAppBrowserActivityV2).walletToExpose = Account.getWallet()
+        (webView.context as DAppBrowserActivityV2).walletToExposeName =
+                NEP6.getFromFileSystem().getDefaultAccount().label
+        callback(message,  jsonObject())
+    }
+
+    fun manualDisconnect() {
+        dappExposedWallet = null
+        dappExposedWalletName = ""
+        fireDisconnect()
+        val intent = Intent("update-exposed-dapp-wallet")
+        LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
+        (webView.context as DAppBrowserActivityV2).walletToExpose = Account.getWallet()
+        (webView.context as DAppBrowserActivityV2).walletToExposeName =
+                NEP6.getFromFileSystem().getDefaultAccount().label
+    }
+
+
     fun handleGetProvider(message: DappMessage) {
-        val response = NeoDappProtocol.GetProviderResponse(name = "o3", version = "v1",
-                website = "https://o3.network", compatibility = listOf("NEP-dapi"))
+        val theme = if (PersistentStore.getTheme() == "Light") "Light Mode" else "Dark Mode"
+
+        val response = NeoDappProtocol.GetProviderResponse(name = "o3-Android", version = "v2",
+                website = "https://o3.network", compatibility = listOf("NEP-dapi"), extra = jsonObject("theme" to theme))
         callback(message, response)
     }
 
@@ -153,7 +186,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 var balances = mutableListOf<NeoDappProtocol.GetBalanceResponseElement>()
                 if (it.second == null) {
                     for (asset in it.first?.assets ?: arrayListOf()) {
-                        if (input.assets.find {it.toLowerCase() ==  asset.symbol.toLowerCase() } != null) {
+                        if (input.assets == null) {
+                            balances.add(NeoDappProtocol.GetBalanceResponseElement(
+                                    amount = asset.value.toPlainString(), scriptHash = asset.id,
+                                    symbol = asset.symbol, unspent = listOf()))
+                        } else if (input.assets.find {it.toLowerCase() == asset.symbol.toLowerCase() } != null) {
                             balances.add(NeoDappProtocol.GetBalanceResponseElement(
                                     amount = asset.value.toPlainString(), scriptHash = asset.id,
                                     symbol = asset.symbol, unspent = listOf()))
@@ -181,18 +218,20 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             val gasUTXOS = mutableListOf<JsonObject>()
             val neoUTXOS = mutableListOf<JsonObject>()
             for (utxo in jsonUTXOS[input.address].asJsonArray ) {
-                if (utxo["asset"].asString == "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7") {
+                    if (utxo["asset"].asString == "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7") {
                     gasUTXOS.add(utxo.asJsonObject)
                 } else {
                     neoUTXOS.add(utxo.asJsonObject)
                 }
             }
 
-            for (asset in jsonResponse[input.address].asJsonArray) {
-                if (asset.asJsonObject["symbol"].asString.toLowerCase() == "neo") {
-                    asset.asJsonObject["unspent"] = neoUTXOS.toJsonArray()
-                } else {
-                    asset.asJsonObject["unspent"] = gasUTXOS.toJsonArray()
+            if (jsonResponse[input.address] != null) {
+                for (asset in jsonResponse[input.address].asJsonArray) {
+                    if (asset.asJsonObject["symbol"].asString.toLowerCase() == "neo") {
+                        asset.asJsonObject["unspent"] = neoUTXOS.toJsonArray()
+                    } else {
+                        asset.asJsonObject["unspent"] = gasUTXOS.toJsonArray()
+                    }
                 }
             }
         }
@@ -390,15 +429,34 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         mainHandler.post(myRunnable)
     }
 
-    fun callback(message: DappMessage, data: Any) {
+    fun fireDisconnect() {
+        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
+        val fireDisconnectResponse = jsonObject("command" to "event",
+                "eventName" to "DISCONNECTED",
+                "data" to jsonObject(),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
 
+        val myRunnable = Runnable {
+            val script = "_o3dapi.receiveMessage(" + fireDisconnectResponse.toString() + ")"
+            webView.evaluateJavascript(script) { value ->
+                Log.d("javascript", value)
+            }
+        }
+        mainHandler.post(myRunnable)
+        (webView.context as DAppBrowserActivityV2).find<ImageView>(R.id.walletStatusImageView).image =
+                ContextCompat.getDrawable(context, R.drawable.ic_walletitem)
+    }
+
+    fun callback(message: DappMessage, data: Any) {
         val json = Gson().typedToJsonTree(message).asJsonObject
         if (Gson().typedToJsonTree(data).isJsonObject && Gson().typedToJsonTree(data).asJsonObject.has("error")) {
             json["error"] = Gson().typedToJsonTree(data)["error"]
         } else {
             json["data"] = Gson().typedToJsonTree(data)
         }
-
 
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val myRunnable = Runnable {
