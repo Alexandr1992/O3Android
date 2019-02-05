@@ -81,7 +81,7 @@ class NeoDappProtocol {
                            var toAddress: String,
                            val asset: String,
                            val amount: String,
-                           val remark: String,
+                           val remark: String?,
                            var fee: String?,
                            val network: String?
                            )

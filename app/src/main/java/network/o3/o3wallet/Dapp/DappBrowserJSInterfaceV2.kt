@@ -246,8 +246,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         } else {
             NeoNodeRPC.Asset.GAS
         }
-
-        val attributes = arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
+        val attributes = if (sendRequest.remark != null) {
+            arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
+        } else {
+            arrayOf()
+        }
 
         val recipientAddress = sendRequest.toAddress
         val amount = sendRequest.amount
@@ -284,7 +287,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             fee = BigDecimal(sendRequest.fee)
         } catch (e : Exception) { }
 
-        val attributes = arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
+        val attributes = if (sendRequest.remark != null) {
+            arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
+        } else {
+            arrayOf()
+        }
 
         val latch = CountDownLatch(1)
         O3PlatformClient().getTransferableAssets(dappExposedWallet!!.address) {

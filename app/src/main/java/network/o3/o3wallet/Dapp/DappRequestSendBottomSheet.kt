@@ -66,7 +66,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         memoTextView = mView.find(R.id.memoTextView)
         totalTextView = mView.find(R.id.totalTextView)
         assetLogoImageView = mView.find(R.id.assetLogoImageView)
-        val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", sendRequest.asset)
+        val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", sendRequest.asset.toUpperCase())
         Glide.with(context).load(imageURL).into(assetLogoImageView)
 
         sendButton = mView.find(R.id.acceptSendButton)
