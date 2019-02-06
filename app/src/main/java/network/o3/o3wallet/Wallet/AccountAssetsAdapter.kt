@@ -365,15 +365,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
                             intent.putExtra("is_buy", true)
-                            if (asset.symbol.toUpperCase() == "NEO") {
-                                //TODO: NO direct neo market so we have to go around it
-                                val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                                intent.putExtra("asset", "GAS")
-                                intent.putExtra("is_buy", false )
-                                mView.context.startActivity(intent)
-                            } else {
-                                mView.context.startActivity(intent)
-                            }
+                            mView.context.startActivity(intent)
                         } else if (itemId == R.id.sell_menu_item) {
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
@@ -382,15 +374,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                                     "asset" to asset.symbol,
                                     "source" to "trading_account_menu_item")
                             Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
-                            if (asset.symbol.toUpperCase() == "NEO") {
-                                //TODO: NO direct neo market so we have to go around it
-                                val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                                intent.putExtra("asset", "GAS")
-                                intent.putExtra("is_buy", true)
-                                mView.context.startActivity(intent)
-                            }  else {
-                                mView.context.startActivity(intent)
-                            }
+                            mView.context.startActivity(intent)
                         } else if (itemId == R.id.withdraw_menu_item) {
                             val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                             val withdrawAttrs = mapOf(
@@ -426,19 +410,6 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
                         if (itemId == R.id.send_menu_item) {
                             mFragment.sendButtonTapped("", asset.id)
-
-                            /*val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                            intent.putExtra("asset", asset.symbol)
-                            intent.putExtra("is_buy", true)
-                            if (asset.symbol.toUpperCase() == "NEO") {
-                                //TODO: NO direct neo market so we have to go around it
-                                val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                                intent.putExtra("asset", "GAS")
-                                intent.putExtra("is_buy", false )
-                                mView.context.startActivity(intent)
-                            } else {
-                                mView.context.startActivity(intent)
-                            }*/
                         } else if (itemId == R.id.request_menu_item) {
                             mFragment.showMyAddress()
                         } else if (itemId == R.id.view_details_menu_item) {

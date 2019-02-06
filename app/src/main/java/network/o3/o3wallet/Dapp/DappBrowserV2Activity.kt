@@ -129,83 +129,43 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 runOnUiThread {
                     val asset = uri.lastPathSegment!!
                     //TODO: Since there is no existing NEO to GAS market
-                    if (asset.toUpperCase() == "NEO") {
+                    if (it.first?.get(asset.toUpperCase()) != null &&
+                            it.first?.get(asset.toUpperCase())!!.asJsonObject.get("trading_active").asBoolean == true) {
                         dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
                         dappBrowserView.find<Button>(R.id.buyButton).onClick {
                             if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                                 return@onClick
                             }
-                            alert(resources.getString(R.string.NATIVE_TRADE_neo_buy_limitation)) {
-                                yesButton {
-                                    val buyAttrs = mapOf(
-                                            "asset" to asset,
-                                            "source" to "token_details")
-                                    Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
-                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                                    intent.putExtra("asset", "GAS")
-                                    intent.putExtra("is_buy", false)
-                                    startActivity(intent)
-                                }
-                            }.show()
+                            val buyAttrs = mapOf(
+                                    "asset" to asset,
+                                    "source" to "token_details")
+                            Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
+                            val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset)
+                            intent.putExtra("is_buy", true)
+                            startActivity(intent)
                             lastClickTime = SystemClock.elapsedRealtime()
-                        }
 
+                        }
                         dappBrowserView.find<Button>(R.id.sellButton).onClick {
                             if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                                 return@onClick
                             }
-                            alert(resources.getString(R.string.NATIVE_TRADE_neo_sell_limitation)) {
-                                yesButton {
-                                    val sellAttrs = mapOf(
-                                            "asset" to asset,
-                                            "source" to "token_details")
-                                    Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
-                                    val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                                    intent.putExtra("asset", "GAS")
-                                    intent.putExtra("is_buy", true)
-                                    startActivity(intent)
-                                }
-                            }.show()
+                            val sellAttrs = mapOf(
+                                    "asset" to asset,
+                                    "source" to "token_details")
+                            Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
+                            val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
+                            intent.putExtra("asset", asset)
+                            intent.putExtra("is_buy", false)
+                            startActivity(intent)
                             lastClickTime = SystemClock.elapsedRealtime()
                         }
                     } else {
-                        if (it.first?.get(asset.toUpperCase()) != null &&
-                                it.first?.get(asset.toUpperCase())!!.asJsonObject.get("trading_active").asBoolean == true) {
-                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.VISIBLE
-                            dappBrowserView.find<Button>(R.id.buyButton).onClick {
-                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
-                                    return@onClick
-                                }
-                                val buyAttrs = mapOf(
-                                        "asset" to asset,
-                                        "source" to "token_details")
-                                Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
-                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                                intent.putExtra("asset", asset)
-                                intent.putExtra("is_buy", true)
-                                startActivity(intent)
-                                lastClickTime = SystemClock.elapsedRealtime()
-
-                            }
-                            dappBrowserView.find<Button>(R.id.sellButton).onClick {
-                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
-                                    return@onClick
-                                }
-                                val sellAttrs = mapOf(
-                                        "asset" to asset,
-                                        "source" to "token_details")
-                                Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
-                                val intent = Intent(dappBrowserView.context, NativeTradeRootActivity::class.java)
-                                intent.putExtra("asset", asset)
-                                intent.putExtra("is_buy", false)
-                                startActivity(intent)
-                                lastClickTime = SystemClock.elapsedRealtime()
-                            }
-                        } else {
-                            dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
-                        }
+                        dappBrowserView.find<View>(R.id.dappFooter).visibility = View.GONE
                     }
                 }
+
             }
 
         } else {

@@ -31,15 +31,15 @@ class NativeTradeBaseAssetBottomSheet : RoundedBottomSheetDialogFragment() {
         val tradingAccount = Gson().fromJson<TradingAccount>(arguments!!.getString("trading_account"))
         val orderasset = arguments!!.getString("order_asset")
         val isBuyOrder = arguments!!.getBoolean("is_buy_order")
-        var gasPair = Pair("GAS", 0.0)
+        var usdPair = Pair("SDUSD", 0.0)
         var neoPair = Pair("NEO", 0.0)
-        val confirmedGas = tradingAccount.switcheo.confirmed.find { it.symbol.toLowerCase() == "gas" }
+        val confirmedUSD = tradingAccount.switcheo.confirmed.find { it.symbol.toLowerCase() == "sdusd" }
         val confirmedNeo = tradingAccount.switcheo.confirmed.find { it.symbol.toLowerCase() == "neo" }
         val basePairs = arrayListOf<Pair<String, Double>>()
-        if (confirmedGas != null && orderasset.toUpperCase() != "GAS") {
-            //basePairs.add(Pair("GAS", confirmedGas.value.toDouble()))
-        } else if (!isBuyOrder) {
-            //basePairs.add(gasPair)
+        if (confirmedUSD != null && orderasset.toUpperCase() != "SDUSD" && orderasset.toUpperCase() == "NEO") {
+            basePairs.add(Pair("SDUSD", confirmedUSD.value.toDouble()))
+        } else if (!isBuyOrder && orderasset.toUpperCase() == "NEO") {
+            basePairs.add(usdPair)
         }
 
         if (confirmedNeo != null && orderasset.toUpperCase() != "NEO") {

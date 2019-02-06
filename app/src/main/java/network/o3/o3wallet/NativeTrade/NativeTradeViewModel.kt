@@ -17,7 +17,7 @@ import java.math.RoundingMode
 import java.util.concurrent.CountDownLatch
 
 class NativeTradeViewModel: ViewModel() {
-    val availableBaseAssets = arrayOf(Pair<String, Double?>("NEO", null), Pair<String, Double?>("GAS", null))
+    val availableBaseAssets = arrayOf(Pair<String, Double?>("NEO", null))
 
     var isBuyOrder: Boolean = true
 
@@ -155,10 +155,12 @@ class NativeTradeViewModel: ViewModel() {
         var fiatPrice: Double = 0.0
         O3PlatformClient().getRealTimePrice(orderAsset, PersistentStore.getCurrency()) {
             if (it.second != null) {
+                latch.countDown()
                 error.postValue(it.second)
                 return@getRealTimePrice
             }
             if (it.first?.price == null) {
+                latch.countDown()
                 error.postValue(Error("Unknown error occured"))
                 return@getRealTimePrice
             }
@@ -174,10 +176,12 @@ class NativeTradeViewModel: ViewModel() {
             O3PlatformClient().getRealTimePrice(orderAsset, selectedBaseAsset.value!!) {
                 if (it.second != null) {
                     error.postValue(it.second)
+                    latch.countDown()
                     return@getRealTimePrice
                 }
                 if (it.first?.price == null) {
                     error.postValue(Error("Unknown error occured"))
+                    latch.countDown()
                     return@getRealTimePrice
                 }
                 cryptoPrice = BigDecimal(it.first!!.price).setScale(precision, RoundingMode.HALF_UP).toDouble()
