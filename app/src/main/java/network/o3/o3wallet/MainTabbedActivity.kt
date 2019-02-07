@@ -42,7 +42,9 @@ import android.os.Handler
 import android.util.Log
 import android.widget.ImageButton
 import com.amplitude.api.Amplitude
+import com.crashlytics.android.Crashlytics
 import com.tapadoo.alerter.Alerter
+import io.fabric.sdk.android.Fabric
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
@@ -136,6 +138,7 @@ class MainTabbedActivity : AppCompatActivity() {
         setContentView(R.layout.tabbar_activity_main_tabbed)
         if (!BuildConfig.DEBUG) {
             Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
+            Fabric.with(this, Crashlytics())
         }
 
         val selectedFragment = fragments!!.get(0)
