@@ -31,7 +31,7 @@
                     android:id="@+id/openGraphLogoView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_unknown_app" />
+                    />
             </android.support.v7.widget.CardView>
 
             <TextView

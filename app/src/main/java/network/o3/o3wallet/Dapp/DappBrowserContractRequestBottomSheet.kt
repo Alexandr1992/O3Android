@@ -12,6 +12,10 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import network.o3.o3wallet.API.NEO.NeoNodeRPC
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.removeTrailingZeros
@@ -39,27 +43,53 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
     lateinit var invokeButton: Button
     lateinit var cancelButton: Button
 
+    lateinit var contractOperationTextView: TextView
+    lateinit var contractNameTextView: TextView
+    lateinit var withWalletTextView: TextView
+
     fun bindViews() {
         openGraphTitleTextView = mView.find(R.id.openGraphTitleView)
         openGraphLogoView = mView.find(R.id.openGraphLogoView)
+        contractOperationTextView = mView.find(R.id.contractOperationTextView)
+        contractNameTextView = mView.find(R.id.contractNameTextView)
+        withWalletTextView = mView.find(R.id.withWalletTextView)
+
 
         invokeButton = mView.find(R.id.acceptApproveButton)
         cancelButton = mView.find(R.id.rejectInvokeButton)
     }
 
+    fun getContractDetails() {
+        bg {
+            NeoNodeRPC(PersistentStore.getNodeURL()).getContractState(invokeRequest.scriptHash) {
+                if (it.first != null) {
+                    val contract = it.first!!
+                    onUiThread {
+                        contractNameTextView.text = contract.author
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.dapp_contract_request_bottom_sheet, container, false)
+        invokeRequest = Gson().fromJson(Gson().toJson(dappMessage.data))
+        getContractDetails()
         contactRow = mView.find(R.id.contactRow)
         contactRow.onClick {
             val intent = Intent(activity, ContractInfoActivity::class.java)
-            intent.putExtra("contract", "33ee36c712b37df8acfbda4a1beb165e100ed3e0")
+            intent.putExtra("contract", invokeRequest.scriptHash)
             startActivity(intent)
         }
 
         bindViews()
         setFeeControls()
         loadOpenGraphDetails()
+        contractOperationTextView.text = resources.getString(R.string.DAPP_invoke_request, invokeRequest.operation)
+        withWalletTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()!!.address
+
         invokeButton.onClick {
             val success = (activity as DAppBrowserActivityV2).jsInterface.handleInvoke(dappMessage!!)
             dismiss()

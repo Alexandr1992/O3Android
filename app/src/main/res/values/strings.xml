@@ -635,6 +635,8 @@
     <string name="DAPP_return_to_o3">Return to O3</string>
     <string name="DAPP_refresh">Refresh</string>
     <string name="DAPP_share">Share</string>
+    <string name="DAPP_invoke_request">is requesting to %1$s</string>
+
     <string name="ONBOARDING_wallet_not_backed_up">Wallet not backed up</string>
     <string name="ONBOARDING_back_up_description">Not having a back up of your key is very dangerous.
     If you lose access to your device, your funds could be lost</string>

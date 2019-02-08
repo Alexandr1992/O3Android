@@ -346,6 +346,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 webView.visibility = View.VISIBLE
                 progressBar.visibility = View.INVISIBLE
                 progressBar.progress = 0
+                jsInterface.fireReady()
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {

@@ -138,6 +138,7 @@ class MainTabbedActivity : AppCompatActivity() {
         setContentView(R.layout.tabbar_activity_main_tabbed)
         if (!BuildConfig.DEBUG) {
             Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
+            Amplitude.getInstance().logEvent("Loaded_Main_Tab")
             Fabric.with(this, Crashlytics())
         }
 

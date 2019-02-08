@@ -457,6 +457,25 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                 ContextCompat.getDrawable(context, R.drawable.ic_walletitem)
     }
 
+    fun fireReady() {
+        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
+        val fireDisconnectResponse = jsonObject("command" to "event",
+                "eventName" to "READU",
+                "data" to jsonObject(),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
+
+        val myRunnable = Runnable {
+            val script = "_o3dapi.receiveMessage(" + fireDisconnectResponse.toString() + ")"
+            webView.evaluateJavascript(script) { value ->
+                Log.d("javascript", value)
+            }
+        }
+        mainHandler.post(myRunnable)
+    }
+
     fun callback(message: DappMessage, data: Any) {
         val json = Gson().typedToJsonTree(message).asJsonObject
         if (Gson().typedToJsonTree(data).isJsonObject && Gson().typedToJsonTree(data).asJsonObject.has("error")) {
