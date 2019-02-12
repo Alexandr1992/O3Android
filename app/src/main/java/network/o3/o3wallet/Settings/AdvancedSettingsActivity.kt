@@ -115,7 +115,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
-            val url =  "https://dapp.neoeconomy.io"
+            val url =  "https://www.ftwlotto.com/o3"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
             intent.putExtra("allowSearch", true)

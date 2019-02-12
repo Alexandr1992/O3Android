@@ -28,7 +28,6 @@
                 android:id="@+id/openGraphLogoView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_unknown_app"
                 />
         </android.support.v7.widget.CardView>
 
@@ -45,7 +44,7 @@
             app:layout_constraintTop_toTopOf="@+id/logoContainer" />
 
         <TextView
-            android:id="@+id/textView43"
+            android:id="@+id/contractOperationTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -93,7 +92,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="My O3 Wallet"
                 android:textAlignment="textEnd"
                 android:textAppearance="@style/RegularText"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -135,7 +133,6 @@
             android:layout_marginBottom="8dp"
             android:ellipsize="middle"
             android:singleLine="true"
-            android:text="AafQxV6wQhtGYGYFboEyBjw3eMYNtBFW8J"
             android:textAlignment="textEnd"
             android:textAppearance="@style/RegularText"
             app:layout_constraintBottom_toBottomOf="parent"

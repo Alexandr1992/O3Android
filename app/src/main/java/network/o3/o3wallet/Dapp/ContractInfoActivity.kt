@@ -24,6 +24,7 @@ class ContractInfoActivity : AppCompatActivity() {
 
 
         val contractHash = intent.getStringExtra("contract")
+        val invokeRequestString = intent.getStringExtra("invokeRequestString")
         val contractView = find<ListView>(R.id.contractDetailsListView)
         NeoNodeRPC(PersistentStore.getNodeURL()).getContractState(contractHash) {
             if (it.first != null) {
@@ -40,7 +41,9 @@ class ContractInfoActivity : AppCompatActivity() {
                         "uses storage" to contract.properties.storage.toString(),
                         "dynamic invoke" to contract.properties.dynamic_invoke.toString()
                         )
-                contractView.adapter = ContractInfoAdapter(this, params)
+                runOnUiThread {
+                    contractView.adapter = ContractInfoAdapter(this, params)
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.ImageView
+import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -25,18 +26,24 @@ import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
+import org.json.JSONObject
 import java.lang.Exception
 import java.math.BigDecimal
 import java.util.concurrent.CountDownLatch
 
 class DappBrowserJSInterfaceV2(private val context: Context, private val webView: WebView,
-                               private var dappExposedWallet: Wallet?, private var dappExposedWalletName: String) {
+                               private var dappExposedWallet: Wallet?, private var dappExposedWalletName: String, private val url: String) {
     @JavascriptInterface
     fun messageHandler(jsonString: String) {
         val gson = Gson()
         val message = gson.fromJson<DappMessage>(jsonString)
         listOf("getProvider", "getNetworks", "getAccount",
                 "getBalance", "getStorage", "invokeRead", "invoke", "send")
+        val attrs = mapOf("url" to url,
+                "blockchain" to "NEO",
+                "net" to PersistentStore.getNetworkType(),
+                "method" to message.command)
+        Amplitude.getInstance().logEvent("dAPI_method_call", JSONObject(attrs))
         when (message.command.toLowerCase()) {
             "getprovider" -> handleGetProvider(message)
             "disconnect" -> handleDisconnect(message)
@@ -271,6 +278,13 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             } else {
                 callback(message, jsonObject("error" to "RPC_ERROR"))
             }
+            val attrs = mapOf("url" to url,
+                    "blockchain" to "NEO",
+                    "net" to PersistentStore.getNetworkType(),
+                    "method" to "send",
+                    "success" to success)
+            Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+
             latch.countDown()
 
         }
@@ -306,7 +320,12 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                     } else {
                         callback(message, jsonObject("error" to "RPC_ERROR"))
                     }
-
+                    val attrs = mapOf("url" to url,
+                            "blockchain" to "NEO",
+                            "net" to PersistentStore.getNetworkType(),
+                            "method" to "send",
+                            "success" to success)
+                    Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
                     latch.countDown()
                 }
             } else {
@@ -325,6 +344,12 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                             } else {
                                 callback(message, jsonObject("error" to "RPC_ERROR"))
                             }
+                            val attrs = mapOf("url" to url,
+                                    "blockchain" to "NEO",
+                                    "net" to PersistentStore.getNetworkType(),
+                                    "method" to "send",
+                                    "success" to success)
+                            Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
                             latch.countDown()
                         }
                     }
@@ -401,13 +426,21 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             } else {
                 NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(dappExposedWallet!!,
                         assets, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
-                        fee, arrayOf(), invokeRequest.attachedAssets!!) {
+                        fee, arrayOf(), invokeRequest.attachedAssets) {
                     if (it.second == null) {
                         success = true
-                        callback(message, jsonObject("result" to it.first!!.toLowerCase()))
+                        val obj = jsonObject("txid" to it.first!!.toLowerCase(),
+                                "nodeUrl" to PersistentStore.getNodeURL())
+                        callback(message, obj)
                     } else {
                         callback(message, jsonObject("result" to "RPC_ERROR"))
                     }
+                    val attrs = mapOf("url" to url,
+                            "blockchain" to "NEO",
+                            "net" to PersistentStore.getNetworkType(),
+                            "method" to "invoke",
+                            "success" to success)
+                    Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
                     latch.countDown()
                 }
             }
@@ -455,6 +488,25 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         mainHandler.post(myRunnable)
         (webView.context as DAppBrowserActivityV2).find<ImageView>(R.id.walletStatusImageView).image =
                 ContextCompat.getDrawable(context, R.drawable.ic_walletitem)
+    }
+
+    fun fireReady() {
+        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
+        val fireDisconnectResponse = jsonObject("command" to "event",
+                "eventName" to "READU",
+                "data" to jsonObject(),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
+
+        val myRunnable = Runnable {
+            val script = "_o3dapi.receiveMessage(" + fireDisconnectResponse.toString() + ")"
+            webView.evaluateJavascript(script) { value ->
+                Log.d("javascript", value)
+            }
+        }
+        mainHandler.post(myRunnable)
     }
 
     fun callback(message: DappMessage, data: Any) {

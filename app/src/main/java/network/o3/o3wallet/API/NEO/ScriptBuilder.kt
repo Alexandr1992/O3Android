@@ -81,7 +81,7 @@ class ScriptBuilder {
     }
 
     fun pushArray(array: Array<Any?>) {
-        for (elem in array) {
+        for (elem in array.reversedArray()) {
             pushData(elem)
         }
         pushInt(array.size.toLong())
@@ -113,7 +113,7 @@ class ScriptBuilder {
     }
 
     fun pushTypedArray(array: List<NeoDappProtocol.Arg?>) {
-        for (elem in array) {
+        for (elem in array.asReversed()) {
             pushTypedData(elem)
         }
         pushInt(array.size.toLong())
