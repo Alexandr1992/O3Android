@@ -626,7 +626,7 @@ class NeoNodeRPC {
         val toAddressHash = toAddress.hashFromAddress()
         val scriptBuilder = ScriptBuilder()
         scriptBuilder.pushContractInvoke(scriptHash, operation = "transfer",
-                args = arrayOf(amountToSendInMemory, toAddressHash, fromAddressHash)
+                args = arrayOf(fromAddressHash, toAddressHash, amountToSendInMemory)
         )
         var script = scriptBuilder.getScriptHexString()
         return byteArrayOf((script.length / 2).toUByte()) + script.hexStringToByteArray()
@@ -661,7 +661,7 @@ class NeoNodeRPC {
     fun genericWriteInvoke(wallet: Wallet, utxos: UTXOS?, contractHash: String,
                            operation: String, args: List<NeoDappProtocol.Arg>, fee: BigDecimal,
                            attributes: Array<TransactionAttribute> = arrayOf(),
-                           attachedAssets: NeoDappProtocol.InvokeRequest.AttachedAssets,
+                           attachedAssets: NeoDappProtocol.InvokeRequest.AttachedAssets?,
                            completion: (Pair<String?, Error?>) -> Unit)  {
 
         var finalAttributes = arrayOf<TransactionAttribute>(
@@ -675,7 +675,7 @@ class NeoNodeRPC {
         val scriptBytes = byteArrayOf((script.length / 2).toUByte()) + script.hexStringToByteArray()
 
         val finalPayload = generateInvokeTransactionPayload(wallet, utxos, scriptBytes.toHex(), contractHash,
-                BigDecimal(attachedAssets.NEO ?: "0"), BigDecimal(attachedAssets.GAS ?: "0"),
+                BigDecimal(attachedAssets?.NEO ?: "0"), BigDecimal(attachedAssets?.GAS ?: "0"),
                 finalAttributes, fee)
         sendRawTransaction(finalPayload.first, finalPayload.second) {
             var txid = it.first

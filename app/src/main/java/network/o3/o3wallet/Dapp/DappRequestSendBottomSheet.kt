@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -27,6 +28,7 @@ import org.jetbrains.anko.textColor
 import org.opengraph.OpenGraph
 import java.lang.Exception
 import java.math.BigDecimal
+import java.net.URL
 
 class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
 
@@ -141,7 +143,11 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
                         openGraphLogoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
                     } else {
                         openGraphTitleTextView.text = title
-                        Glide.with(mView).load(image).into(openGraphLogoView)
+                        if (URLUtil.isNetworkUrl(image)) {
+                            Glide.with(mView).load(image).into(openGraphLogoView)
+                        } else {
+                            Glide.with(mView).load(URL(url!!).protocol + "://" +  URL(url!!).authority + image).into(openGraphLogoView)
+                        }
                     }
                 }
             }

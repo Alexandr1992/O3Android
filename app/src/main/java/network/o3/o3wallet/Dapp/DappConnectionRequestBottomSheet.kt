@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -32,6 +33,7 @@ import org.jetbrains.anko.sdk15.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.opengraph.OpenGraph
 import java.lang.Exception
+import java.net.URL
 
 
 class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
@@ -127,12 +129,16 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
                 val image = dapp.getContent("image")
 
                 onUiThread {
-                    if (title == null) {
+                    if(title == null) {
                         titleView.text = url!!
                         logoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
                     } else {
                         titleView.text = title
-                        Glide.with(mView).load(image).into(logoView)
+                        if (URLUtil.isNetworkUrl(image)) {
+                            Glide.with(mView).load(image).into(logoView)
+                        } else {
+                            Glide.with(mView).load(URL(url!!).protocol + "://" +  URL(url!!).authority + image).into(logoView)
+                        }
                     }
                 }
             }

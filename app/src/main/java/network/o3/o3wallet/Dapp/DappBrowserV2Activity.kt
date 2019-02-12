@@ -118,7 +118,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             legacyInterface = DappBrowserJSInterface(this, webView)
             webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
         } else {
-            jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "")
+            jsInterface = DappBrowserJSInterfaceV2(this, webView, null, "", webView.url)
             webView.addJavascriptInterface(jsInterface, "_o3dapi")
         }
     }
@@ -346,7 +346,9 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                 webView.visibility = View.VISIBLE
                 progressBar.visibility = View.INVISIBLE
                 progressBar.progress = 0
-                jsInterface.fireReady()
+                if (legacyInterface == null) {
+                    jsInterface.fireReady()
+                }
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
