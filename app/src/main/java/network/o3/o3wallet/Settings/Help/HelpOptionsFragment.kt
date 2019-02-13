@@ -136,11 +136,12 @@ class HelpOptionsFragment: Fragment() {
                 mView.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mView.context, R.drawable.ic_guide)
                 mView.onClick {
                     val intent = Intent(mFragment.context, DAppBrowserActivityV2::class.java)
-                    //intent.putExtra("url", "https://docs.o3.network/docs/ontStake/?mode=embed")
-                    //mFragment.startActivity(intent)
 
-                    mFragment.findNavController().navigate(R.id.action_helpOptionsFragment_to_helpGuideFragment)
-                    mFragment.activity?.find<TextView>(R.id.mytext)?.text = titles[sectionedPosition]
+                    intent.putExtra("url", "https://docs.o3.network/docs/privateKeysAddressesAndSignatures/?mode=embed")
+                    mFragment.startActivity(intent)
+
+                    //mFragment.findNavController().navigate(R.id.action_helpOptionsFragment_to_helpGuideFragment)
+                    //mFragment.activity?.find<TextView>(R.id.mytext)?.text = titles[sectionedPosition]
                 }
             }
         }

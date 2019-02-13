@@ -40,12 +40,15 @@ import android.content.IntentFilter
 import android.content.res.Resources
 import android.os.Handler
 import android.util.Log
+import android.webkit.URLUtil
 import android.widget.ImageButton
 import com.amplitude.api.Amplitude
 import com.crashlytics.android.Crashlytics
 import com.tapadoo.alerter.Alerter
 import io.fabric.sdk.android.Fabric
+import io.fabric.sdk.android.services.network.UrlUtils
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
 import zendesk.support.Support
@@ -74,9 +77,15 @@ class MainTabbedActivity : AppCompatActivity() {
             if (result != null && result.contents == null) {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             } else {
-                val intent = Intent(this, SendV2Activity::class.java)
-                intent.putExtra("uri", result.contents)
-                startActivity(intent)
+                if (URLUtil.isNetworkUrl(result.contents)) {
+                    val intent = Intent(this, DAppBrowserActivityV2::class.java)
+                    intent.putExtra("url", result.contents)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(this, SendV2Activity::class.java)
+                    intent.putExtra("uri", result.contents)
+                    startActivity(intent)
+                }
             }
         } else if (requestCode == 101) {
             Log.d("hello", "hello")

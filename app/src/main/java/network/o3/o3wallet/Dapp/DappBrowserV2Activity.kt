@@ -106,6 +106,8 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         setupTopBar(intent.getBooleanExtra("allowSearch", false))
         setupWebClients()
 
+        val useLegacy = intent.getBooleanExtra("legacy", false)
+
         webView.visibility = View.INVISIBLE
         webView.loadUrl(url)
         val webSettings = webView.settings
@@ -114,7 +116,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         WebView.setWebContentsDebuggingEnabled(true)
 
         if (URL(url).authority == "switcheo.exchange" || URL(url).authority == "legacy.switcheo.exchange" ||
-                URL(url).authority == "mnns.nel.group") {
+                URL(url).authority == "mnns.nel.group" || useLegacy) {
             legacyInterface = DappBrowserJSInterface(this, webView)
             webView.addJavascriptInterface(legacyInterface, "O3AndroidInterface")
         } else {

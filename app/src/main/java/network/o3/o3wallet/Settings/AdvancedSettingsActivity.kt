@@ -23,6 +23,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
     lateinit var mainnetCheckBox: CheckBox
     lateinit var testnetCheckbox: CheckBox
     lateinit var overrideCheckbox: CheckBox
+    lateinit var useLegacyCheckBox: CheckBox
     lateinit var browserButton: Button
     lateinit var setCustomButton: Button
     lateinit var customNodeEditText: EditText
@@ -35,6 +36,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         setCustomButton = find(R.id.connectButton)
         browserButton = find(R.id.browserButton)
         customNodeEditText = find(R.id.customEndpointEditText)
+        useLegacyCheckBox = find(R.id.useLegacyCheckbox)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +120,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
             val url =  "https://www.ftwlotto.com/o3"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
+            intent.putExtra("legacy", useLegacyCheckBox.isChecked)
             intent.putExtra("allowSearch", true)
             startActivity(intent)
         }

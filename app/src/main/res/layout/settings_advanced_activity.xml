@@ -66,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customEndpointEditText"
+        app:layout_constraintTop_toBottomOf="@+id/useLegacyCheckbox"
         tools:ignore="HardcodedText" />
 
     <CheckBox
@@ -102,5 +102,14 @@
         android:textAppearance="@style/RegularText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/useLegacyCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Use Legacy Signatures"
+        app:layout_constraintStart_toStartOf="@+id/rpcOverrideCheckbox"
+        app:layout_constraintTop_toBottomOf="@+id/customEndpointEditText" />
 
 </android.support.constraint.ConstraintLayout>

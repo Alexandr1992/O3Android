@@ -493,7 +493,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     fun fireReady() {
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireDisconnectResponse = jsonObject("command" to "event",
-                "eventName" to "READU",
+                "eventName" to "READY",
                 "data" to jsonObject(),
                 "blockchain" to "NEO",
                 "platform" to "o3-dapi",
