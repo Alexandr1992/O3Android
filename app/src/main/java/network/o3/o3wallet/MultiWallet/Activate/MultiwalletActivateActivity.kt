@@ -9,7 +9,7 @@ import android.support.v7.app.ActionBar
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import kotlinx.android.synthetic.main.token_sale_root_activity.*
+import kotlinx.android.synthetic.main.multiwallet_activate_activity.*
 import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R

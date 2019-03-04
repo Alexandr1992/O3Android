@@ -24,7 +24,6 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.coroutines.experimental.channels.Send
 import neoutils.Neoutils
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.ContactsFragment

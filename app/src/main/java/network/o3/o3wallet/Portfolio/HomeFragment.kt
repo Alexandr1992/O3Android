@@ -36,7 +36,6 @@ import com.commit451.modalbottomsheetdialogfragment.Option
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
-import org.jetbrains.anko.sdk25.coroutines.onContextClick
 
 
 interface HomeViewModelProtocol {

@@ -13,7 +13,7 @@ import network.o3.o3wallet.API.O3Platform.ReverseLookupNNS
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class  NNSAdapter(context: Context, reverseLookups: List<ReverseLookupNNS>): BaseAdapter() {
 

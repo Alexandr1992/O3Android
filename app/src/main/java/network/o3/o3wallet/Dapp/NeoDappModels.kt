@@ -18,7 +18,7 @@ class NeoDappProtocol {
     data class GetNetworkResponse(val networks: List<String>)
 
     data class GetAccountResponse(val address: String,
-                                  val publicKey: String)
+                                  val label: String)
 
     data class GetProviderResponse(val compatibility: List<String>,
                                    val name: String,

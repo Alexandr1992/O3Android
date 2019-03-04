@@ -33,13 +33,11 @@ import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import java.text.DecimalFormatSymbols
 import kotlin.math.floor
 import android.app.Activity
 import android.support.v4.content.ContextCompat.getSystemService
-
-
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 
 class SendWhatFragment : Fragment() {

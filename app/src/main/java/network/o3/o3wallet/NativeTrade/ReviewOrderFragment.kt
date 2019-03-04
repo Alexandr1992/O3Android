@@ -19,7 +19,7 @@ import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalResultDialog
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton

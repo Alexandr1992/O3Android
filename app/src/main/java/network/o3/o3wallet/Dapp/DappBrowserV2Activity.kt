@@ -37,7 +37,6 @@ import neoutils.Neoutils
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Settings.AddContact
 import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk15.coroutines.onClick
 import java.io.InputStream
 import java.net.URL
 import com.skydoves.powermenu.MenuAnimation
@@ -48,6 +47,7 @@ import neoutils.Wallet
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.json.JSONObject
 import org.w3c.dom.Text
 import java.io.File
@@ -149,7 +149,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
                             lastClickTime = SystemClock.elapsedRealtime()
 
                         }
-                        dappBrowserView.find<Button>(R.id.sellButton).onClick {
+                        dappBrowserView.find<Button>(R.id.sellButton).onClick{
                             if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                                 return@onClick
                             }

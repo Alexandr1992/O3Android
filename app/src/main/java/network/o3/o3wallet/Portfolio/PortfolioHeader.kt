@@ -14,7 +14,7 @@ import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.SwapWalletBottomSheet
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.view
 import org.w3c.dom.Text

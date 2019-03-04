@@ -7,9 +7,6 @@ import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.jsonArray
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.gson.Gson
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import neoutils.Neoutils
 import neoutils.SeedNodeResponse
 import network.o3.o3wallet.API.NEO.NeoNodeRPC

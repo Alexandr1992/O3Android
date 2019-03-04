@@ -24,7 +24,7 @@ import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import network.o3.o3wallet.toHex
 import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
@@ -48,7 +48,7 @@ class MultiWalletAddNew : Fragment() {
         initateContinueButton()
         initiateGenerateNewButton()
 
-        findNavController().addOnNavigatedListener { controller, destination ->
+        findNavController().addOnDestinationChangedListener  { controller, destination, args ->
             if (destination.id != R.id.multiWalletAddNew) {
                 activity?.find<ImageButton>(R.id.rightNavButton)?.visibility = View.GONE
             }

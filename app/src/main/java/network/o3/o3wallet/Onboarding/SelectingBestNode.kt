@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import neoutils.Neoutils.selectBestSeedNode
 import neoutils.SeedNodeResponse
 import network.o3.o3wallet.*

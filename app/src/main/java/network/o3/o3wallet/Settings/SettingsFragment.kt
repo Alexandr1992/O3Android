@@ -23,7 +23,7 @@ import network.o3.o3wallet.Identity.NNSBottomSheet
 import network.o3.o3wallet.Portfolio.PortfolioHeader
 import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.json.JSONStringer
 

@@ -23,7 +23,7 @@ import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.opengraph.OpenGraph
 import java.lang.Exception

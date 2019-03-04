@@ -25,7 +25,7 @@ import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast

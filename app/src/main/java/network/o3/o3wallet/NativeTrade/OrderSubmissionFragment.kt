@@ -26,8 +26,8 @@ import network.o3.o3wallet.*
 
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onFocusChange
-import org.jetbrains.anko.sdk15.coroutines.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onFocusChange
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.find
@@ -322,7 +322,7 @@ class OrderSubmissionFragment : Fragment() {
         }
         baseAssetAmountEditText.showSoftInputOnFocus = false
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-        baseAssetAmountEditText.onFocusChange { v, hasFocus ->
+        baseAssetAmountEditText.onFocusChange  { v, hasFocus ->
             if (hasFocus) {
                 (activity as NativeTradeRootActivity).viewModel.setIsEditingBaseAmount(true)
             }

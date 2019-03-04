@@ -31,7 +31,7 @@ import network.o3.o3wallet.Settings.PrivateKeyFragment
 import network.o3.o3wallet.Wallet.toast
 import network.o3.o3wallet.toBitmap
 import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import java.io.File

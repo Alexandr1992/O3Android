@@ -22,7 +22,7 @@ import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.MultiwalletManageWallet
 import network.o3.o3wallet.R.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream

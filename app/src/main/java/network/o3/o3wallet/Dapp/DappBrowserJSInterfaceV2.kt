@@ -125,7 +125,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
     fun authorizedAccountCredentials(message: DappMessage) {
         val response = NeoDappProtocol.GetAccountResponse(address = dappExposedWallet!!.address,
-                publicKey = dappExposedWallet!!.publicKey.toHex())
+                label = dappExposedWalletName)
         callback(message, response)
         (webView.context as DAppBrowserActivityV2).setUnlockState()
     }
@@ -454,7 +454,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireAccountChanged = jsonObject("command" to "event",
                 "eventName" to "ACCOUNT_CHANGED",
-                "data" to jsonObject("address" to dappExposedWallet!!.address, "publicKey" to dappExposedWalletName),
+                "data" to jsonObject("address" to dappExposedWallet!!.address, "label" to dappExposedWalletName),
                 "blockchain" to "NEO",
                 "platform" to "o3-dapi",
                 "version" to "1"

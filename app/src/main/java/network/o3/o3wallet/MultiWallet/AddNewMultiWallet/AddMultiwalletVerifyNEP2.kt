@@ -18,7 +18,7 @@ import neoutils.Neoutils
 
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
 import java.lang.Exception

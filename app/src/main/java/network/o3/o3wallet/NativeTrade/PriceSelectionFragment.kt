@@ -17,7 +17,6 @@ import network.o3.o3wallet.*
 
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onLongClick
 import org.jetbrains.anko.textColor
 import java.text.DecimalFormatSymbols
 import kotlin.math.absoluteValue
@@ -25,7 +24,8 @@ import network.o3.o3wallet.R.id.constraintLayout
 import android.support.constraint.ConstraintSet
 import kotlinx.android.synthetic.main.pinpad_layout.*
 import network.o3.o3wallet.R.id.imageView
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.w3c.dom.Text
 

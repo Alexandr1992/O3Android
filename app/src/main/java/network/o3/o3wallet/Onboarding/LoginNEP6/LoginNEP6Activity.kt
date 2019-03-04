@@ -21,7 +21,7 @@ import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk15.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class LoginNEP6Activity : AppCompatActivity() {
 
