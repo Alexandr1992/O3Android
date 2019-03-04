@@ -375,9 +375,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         var storageRequest = Gson().fromJson<NeoDappProtocol.GetStorageRequest>(Gson().toJson(message.data))
         NeoNodeRPC(PersistentStore.getNodeURL()).getStorage(storageRequest.scriptHash, storageRequest.key) {
             if (it.second != null) {
-                callback(message, jsonObject("result" to it.first))
-            } else {
                 callback(message, jsonObject("result" to "RPC_ERROR"))
+            } else {
+                callback(message, jsonObject("result" to it.first))
             }
 
             latch.countDown()
