@@ -36,7 +36,7 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
     lateinit var dappMessage: DappMessage
     lateinit var invokeRequest: NeoDappProtocol.InvokeRequest
 
-    lateinit var contactRow: ConstraintLayout
+    lateinit var detailsRow: ConstraintLayout
     lateinit var acceptApproveButton: Button
 
     lateinit var openGraphTitleTextView: TextView
@@ -46,14 +46,12 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
     lateinit var cancelButton: Button
 
     lateinit var contractOperationTextView: TextView
-    lateinit var contractNameTextView: TextView
     lateinit var withWalletTextView: TextView
 
     fun bindViews() {
         openGraphTitleTextView = mView.find(R.id.openGraphTitleView)
         openGraphLogoView = mView.find(R.id.openGraphLogoView)
         contractOperationTextView = mView.find(R.id.contractOperationTextView)
-        contractNameTextView = mView.find(R.id.contractNameTextView)
         withWalletTextView = mView.find(R.id.withWalletTextView)
 
 
@@ -66,9 +64,6 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
             NeoNodeRPC(PersistentStore.getNodeURL()).getContractState(invokeRequest.scriptHash) {
                 if (it.first != null) {
                     val contract = it.first!!
-                    onUiThread {
-                        contractNameTextView.text = contract.author
-                    }
                 }
             }
         }
@@ -79,8 +74,8 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
         mView = inflater.inflate(R.layout.dapp_contract_request_bottom_sheet, container, false)
         invokeRequest = Gson().fromJson(Gson().toJson(dappMessage.data))
         getContractDetails()
-        contactRow = mView.find(R.id.contactRow)
-        contactRow.onClick {
+        detailsRow = mView.find(R.id.invokeTxDetailsRow)
+        detailsRow.onClick {
             val intent = Intent(activity, ContractInfoActivity::class.java)
             intent.putExtra("contract", invokeRequest.scriptHash)
             startActivity(intent)
