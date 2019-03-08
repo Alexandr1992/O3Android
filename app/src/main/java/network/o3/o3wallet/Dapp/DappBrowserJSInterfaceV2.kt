@@ -114,11 +114,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     fun handleGetNetworks(message: DappMessage) {
         val response: NeoDappProtocol.GetNetworkResponse
         if (PersistentStore.getNetworkType() == "Test") {
-            response = NeoDappProtocol.GetNetworkResponse(listOf("TestNet"))
+            response = NeoDappProtocol.GetNetworkResponse(listOf("TestNet"), "TestNet")
         } else if (PersistentStore.getNetworkType() == "Main"){
-            response = NeoDappProtocol.GetNetworkResponse(listOf("MainNet"))
+            response = NeoDappProtocol.GetNetworkResponse(listOf("MainNet"), "MainNet")
         } else {
-            response = NeoDappProtocol.GetNetworkResponse(listOf("PrivateNet"))
+            response = NeoDappProtocol.GetNetworkResponse(listOf(), "")
         }
         callback(message, response)
     }
@@ -131,8 +131,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun rejectedAccountCredentials(message: DappMessage) {
-        val response = NeoDappProtocol.GetAccountResponse("", "")
-        callback(message, response)
+        callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
     }
 
 
@@ -179,15 +178,19 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         val jsonResponse = jsonObject()
         val jsonUTXOS = jsonObject()
         for (input in inputs) {
-            O3PlatformClient().getUTXOS(input.address) {
-                if (it.second == null) {
-                    jsonUTXOS.add(input.address, Gson().toJsonTree(it.first?.data))
-                    latch.countDown()
-                } else {
-                    latch.countDown()
-                }
-            }
 
+            if (input.fetchUTXO == true) {
+                O3PlatformClient().getUTXOS(input.address) {
+                    if (it.second == null) {
+                        jsonUTXOS.add(input.address, Gson().toJsonTree(it.first?.data))
+                        latch.countDown()
+                    } else {
+                        latch.countDown()
+                    }
+                }
+            } else {
+                latch.countDown()
+            }
 
             O3PlatformClient().getTransferableAssets(input.address) {
                 var balances = mutableListOf<NeoDappProtocol.GetBalanceResponseElement>()
@@ -196,11 +199,11 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                         if (input.assets == null) {
                             balances.add(NeoDappProtocol.GetBalanceResponseElement(
                                     amount = asset.value.toPlainString(), scriptHash = asset.id,
-                                    symbol = asset.symbol, unspent = listOf()))
+                                    symbol = asset.symbol, unspent = null))
                         } else if (input.assets.find {it.toLowerCase() == asset.symbol.toLowerCase() } != null) {
                             balances.add(NeoDappProtocol.GetBalanceResponseElement(
                                     amount = asset.value.toPlainString(), scriptHash = asset.id,
-                                    symbol = asset.symbol, unspent = listOf()))
+                                    symbol = asset.symbol, unspent = null))
                         }
                     }
 
@@ -208,7 +211,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
                         if (input.assets.find {it.toLowerCase() ==  asset.symbol.toLowerCase() } != null) {
                             balances.add(NeoDappProtocol.GetBalanceResponseElement(
                                     amount = asset.value.toPlainString(), scriptHash = asset.id,
-                                    symbol = asset.symbol, unspent = listOf()))
+                                    symbol = asset.symbol, unspent = null))
                         }
                     }
 
@@ -222,22 +225,24 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
         latch.await()
         for (input in inputs) {
-            val gasUTXOS = mutableListOf<JsonObject>()
-            val neoUTXOS = mutableListOf<JsonObject>()
-            for (utxo in jsonUTXOS[input.address].asJsonArray ) {
+            if (input.fetchUTXO == true) {
+                val gasUTXOS = mutableListOf<JsonObject>()
+                val neoUTXOS = mutableListOf<JsonObject>()
+                for (utxo in jsonUTXOS[input.address].asJsonArray) {
                     if (utxo["asset"].asString == "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7") {
-                    gasUTXOS.add(utxo.asJsonObject)
-                } else {
-                    neoUTXOS.add(utxo.asJsonObject)
-                }
-            }
-
-            if (jsonResponse[input.address] != null) {
-                for (asset in jsonResponse[input.address].asJsonArray) {
-                    if (asset.asJsonObject["symbol"].asString.toLowerCase() == "neo") {
-                        asset.asJsonObject["unspent"] = neoUTXOS.toJsonArray()
+                        gasUTXOS.add(utxo.asJsonObject)
                     } else {
-                        asset.asJsonObject["unspent"] = gasUTXOS.toJsonArray()
+                        neoUTXOS.add(utxo.asJsonObject)
+                    }
+                }
+
+                if (jsonResponse[input.address] != null) {
+                    for (asset in jsonResponse[input.address].asJsonArray) {
+                        if (asset.asJsonObject["symbol"].asString.toLowerCase() == "neo") {
+                            asset.asJsonObject["unspent"] = neoUTXOS.toJsonArray()
+                        } else {
+                            asset.asJsonObject["unspent"] = gasUTXOS.toJsonArray()
+                        }
                     }
                 }
             }

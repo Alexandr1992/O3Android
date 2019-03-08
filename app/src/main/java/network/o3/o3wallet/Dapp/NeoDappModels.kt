@@ -32,7 +32,7 @@ private constructor(): JsonDeserializer<T> {
 
 
 class NeoDappProtocol {
-    data class GetNetworkResponse(val networks: List<String>)
+    data class GetNetworkResponse(val networks: List<String>, val defaultNetwork: String)
 
     data class GetAccountResponse(val address: String,
                                   val label: String)
@@ -46,11 +46,12 @@ class NeoDappProtocol {
     //Get Balances
     data class GetBalanceRequest(val params: List<GetBalanceRequestElement>, val network: String?)
     data class GetBalanceRequestElement(val address: String,
-                                        val assets: List<String>)
+                                        val assets: List<String>,
+                                        val fetchUTXO: Boolean? = false)
     data class GetBalanceResponseElement(val amount: String,
                                          val scriptHash: String,
                                          val symbol: String,
-                                         val unspent: List<Unspent>) {
+                                         val unspent: List<Unspent>?) {
         data class Unspent(val n: Int,
                            val txid: String,
                            val value: String)

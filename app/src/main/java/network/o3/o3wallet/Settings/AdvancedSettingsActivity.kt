@@ -65,7 +65,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         if (mainnetCheckBox.isChecked) {
             PersistentStore.setNetworkType("Main")
         } else if (testnetCheckbox.isChecked) {
-            PersistentStore.setNetworkType("Text")
+            PersistentStore.setNetworkType("Test")
         }
 
         testnetCheckbox.setOnClickListener {
@@ -117,7 +117,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
-            val url =  "https://www.ftwlotto.com/o3"
+            val url =  "https://www.ftwlotto.com/o3?provider=o3"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
             intent.putExtra("legacy", useLegacyCheckBox.isChecked)
