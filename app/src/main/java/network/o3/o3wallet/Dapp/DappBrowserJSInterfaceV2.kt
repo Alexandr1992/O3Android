@@ -131,8 +131,7 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
     }
 
     fun rejectedAccountCredentials(message: DappMessage) {
-        val response = NeoDappProtocol.GetAccountResponse("", "")
-        callback(message, response)
+        callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
     }
 
 
