@@ -104,7 +104,9 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         }
 
         rejectConnectionButton.onClick {
-            (activity as DAppBrowserActivityV2).jsInterface.rejectedAccountCredentials(dappMessage!!)
+            if ((activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet() == null) {
+                (activity as DAppBrowserActivityV2).jsInterface.rejectedAccountCredentials(dappMessage!!)
+            }
             dismiss()
         }
     }

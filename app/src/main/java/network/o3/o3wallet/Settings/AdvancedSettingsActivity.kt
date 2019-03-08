@@ -65,7 +65,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         if (mainnetCheckBox.isChecked) {
             PersistentStore.setNetworkType("Main")
         } else if (testnetCheckbox.isChecked) {
-            PersistentStore.setNetworkType("Text")
+            PersistentStore.setNetworkType("Test")
         }
 
         testnetCheckbox.setOnClickListener {
