@@ -93,6 +93,7 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
         }
 
         cancelButton.onClick {
+            (activity as DAppBrowserActivityV2).jsInterface.rejectedInvoke(dappMessage!!)
             dismiss()
         }
 

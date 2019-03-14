@@ -134,6 +134,10 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
     }
 
+    fun rejectedInvoke(message: DappMessage) {
+        callback(message, jsonObject("error" to "CANCELED"))
+    }
+
 
     fun handleGetAccount(message: DappMessage) {
         if (dappExposedWallet != null) {
