@@ -90,9 +90,13 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                     vm.address = account.address
                     nep6.addEncryptedKey(vm.address, nameField.text.toString(), account.encryptedKey)
                     nep6.writeToFileSystem()
-                    val walledAddAttrs = mapOf(
-                            "total_num_wallets" to nep6.getWalletAccounts().count())
-                    Amplitude.getInstance().logEvent("wallet_added", JSONObject(walledAddAttrs))
+                    val attrs = mapOf(
+                            "type" to "import_key",
+                            "method" to "import",
+                            "address_count" to NEP6.getFromFileSystem().accounts.size)
+                    Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
+
+
                     mView.findNavController().navigate(R.id.action_enterMultiwalletEncryptPrivateKey_to_keyEncryptionSuccess)
                 } catch (e: Exception) {
                     //idk

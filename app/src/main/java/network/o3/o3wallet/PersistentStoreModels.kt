@@ -273,6 +273,26 @@ object PersistentStore {
                 .putBoolean("HAS_INITIATED_BACKUP", value).apply()
     }
 
+    fun getHasLoggedFirstWallet(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getBoolean("HAS_LOGGED_FIRST_WALLET", false)
+    }
+
+    fun setHasLoggedFirstWallet(value: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putBoolean("HAS_LOGGED_FIRST_WALLET", value).apply()
+    }
+
+    fun didGenerateFirstWallet(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getBoolean("DID_GENERATE_FIRST_WALLET", false)
+    }
+
+    fun setDidGenerateFirstWallet(value: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
+                .putBoolean("DID_GENERATE_FIRST_WALLET", value).apply()
+    }
+
     fun setHasDismissedBackup(value: Boolean) {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit()
                 .putBoolean("HAS_DISMISSED_BACKUP", value).apply()

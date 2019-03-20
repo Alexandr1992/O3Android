@@ -163,6 +163,7 @@ class OnboardingNewWalletFragment : Fragment() {
     }
 
     fun generateNewWallet() {
+        PersistentStore.setDidGenerateFirstWallet(true)
         onUiThread {
             continueButton.isEnabled = false
             continueButton.text = "Generating..."

@@ -1,6 +1,7 @@
 package network.o3.o3wallet.API.Ontology
 
 import android.content.Intent
+import com.amplitude.api.Amplitude
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
@@ -18,6 +19,7 @@ import network.o3.o3wallet.Account
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.PersistentStore
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
 
@@ -71,6 +73,10 @@ class OntologyClient {
                 try {
                     Neoutils.claimONG(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
                             Account.getWallet().wif)
+                    val attrs = mapOf(
+                            "type" to "ONG",
+                            "is_ledger" to false)
+                    Amplitude.getInstance().logEvent("CLAIM", JSONObject(attrs))
                     completion(Pair<Boolean, Error?>(true, null))
                 }
                 catch (e: Exception) {

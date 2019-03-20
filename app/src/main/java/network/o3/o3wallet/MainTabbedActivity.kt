@@ -49,6 +49,7 @@ import io.fabric.sdk.android.Fabric
 import io.fabric.sdk.android.services.network.UrlUtils
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import org.json.JSONObject
 import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
 import zendesk.support.Support
@@ -148,6 +149,25 @@ class MainTabbedActivity : AppCompatActivity() {
         if (!BuildConfig.DEBUG) {
             Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
             Amplitude.getInstance().logEvent("Loaded_Main_Tab")
+            if (PersistentStore.getHasLoggedFirstWallet() == false) {
+                val type = if (PersistentStore.didGenerateFirstWallet()) {
+                    "new_key"
+                } else {
+                    "import_key"
+                }
+
+                val method = if (PersistentStore.didGenerateFirstWallet()) {
+                    "new"
+                } else {
+                    "import"
+                }
+                val attrs = mapOf(
+                        "type" to type,
+                        "method" to method,
+                        "address_count" to NEP6.getFromFileSystem().accounts.size)
+                Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
+                PersistentStore.setHasLoggedFirstWallet(true)
+            }
             Fabric.with(this, Crashlytics())
         }
 

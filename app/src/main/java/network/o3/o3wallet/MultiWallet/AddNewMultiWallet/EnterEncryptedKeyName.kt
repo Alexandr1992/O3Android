@@ -60,9 +60,11 @@ class EnterEncryptedKeyNameFragment : Fragment() {
             vm.nickname = nameEditText.text.toString()
             newNep6.addEncryptedKey(vm.address, vm.nickname, vm.encryptedKey)
             newNep6.writeToFileSystem()
-            val walledAddAttrs = mapOf(
-                    "total_num_wallets" to newNep6.getWalletAccounts().count())
-            Amplitude.getInstance().logEvent("wallet_added", JSONObject(walledAddAttrs))
+            val attrs = mapOf(
+                    "type" to "import_key",
+                    "method" to "import",
+                    "address_count" to NEP6.getFromFileSystem().accounts.size)
+            Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
 
             mView.findNavController().navigate(R.id.action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment)
         }
