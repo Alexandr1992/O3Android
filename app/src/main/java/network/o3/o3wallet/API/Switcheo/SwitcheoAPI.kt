@@ -27,8 +27,8 @@ class SwitcheoAPI {
         baseTestUrl
     }
 
-    val testNetContract = "a195c1549e7da61b8da315765a790ac7e7633b82"
-    val mainNetContract = "91b83e96f2a7c4fdf0c1688441ec61986c7cae26"
+    val testNetContract = "aff38ca20ef96a7b86618d86f1bd3879db78c8bb"
+    val mainNetContract = "a32bcf5d7082f740a4007b16e812cf66a457c3d4"
     val defaultContract = if (PersistentStore.getNetworkType() == "Main") {
         mainNetContract
     } else {

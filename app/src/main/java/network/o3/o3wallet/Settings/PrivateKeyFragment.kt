@@ -46,7 +46,7 @@ class PrivateKeyFragment : BottomSheetDialogFragment() {
 
         view.findViewById<TextView>(R.id.copyKeyToClipboardTextView).setOnClickListener {
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.SETTINGS_copied_key),Account.getWallet().wif)
+            val clip = ClipData.newPlainText(resources.getString(R.string.SETTINGS_copied_key),key)
             clipboard.primaryClip = clip
             onUiThread {
                 O3Wallet.appContext?.toast(resources.getString(R.string.SETTINGS_copied_key))

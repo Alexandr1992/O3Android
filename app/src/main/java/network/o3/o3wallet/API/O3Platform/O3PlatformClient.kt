@@ -41,7 +41,7 @@ class O3PlatformClient {
 
     fun networkQueryString(): String {
         if (PersistentStore.getNetworkType() == "Main") {
-            return ""
+            return "?network=main"
         } else if (PersistentStore.getNetworkType() == "Test") {
             return "?network=test"
         } else {
@@ -303,7 +303,8 @@ class O3PlatformClient {
 
 
     fun getTradingAccounts(completion: (Pair<TradingAccount?, Error?>) -> (Unit)) {
-        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" + Account.getWallet().address + networkQueryString()
+        val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" +
+                Account.getWallet().address + networkQueryString() + "&version=3"
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.responseString { request, response, result ->
@@ -321,7 +322,7 @@ class O3PlatformClient {
 
     fun getOrders(completion: (Pair<O3Orders?, Error?>) -> (Unit) ) {
         val url = "https://platform.o3.network/api/v1/" + Route.TRADING.routeName() + "/" +
-                Account.getWallet().address + "/" + Route.ORDERS.routeName() + networkQueryString()
+                Account.getWallet().address + "/" + Route.ORDERS.routeName() + networkQueryString() + "&version=3"
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
         request.responseString { request, response, result ->
@@ -449,7 +450,7 @@ class O3PlatformClient {
     //default value will be two in case of error
     data class SwitcheoPair(val name: String, val precision: Int)
     fun getPrecisionForPair(baseAsset: String, otherAsset: String, completion: (Int) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/trading/switcheo/pairs"
+        val url = "https://platform.o3.network/api/v1/trading/switcheo/pairs" + "?version=3"
         val pair = otherAsset.toUpperCase() + "_" + baseAsset.toUpperCase()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
@@ -468,7 +469,7 @@ class O3PlatformClient {
 
     data class SwitcheoToken(val id: String, val name: String, val symbol: String, val decimals: Int, val precision: Int)
     fun getPrecisionForToken(tokenSymbol: String, completion: (Int) -> Unit) {
-        val url = "https://platform.o3.network/api/v1/trading/switcheo/pairs"
+        val url = "https://platform.o3.network/api/v1/trading/switcheo/pairs" + "?version=3"
         val token = tokenSymbol.toUpperCase()
         var request = url.httpGet()
         request.headers["User-Agent"] = "O3Android"
