@@ -3,9 +3,6 @@ package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
@@ -16,23 +13,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.android.synthetic.main.multiwallet_verify_nep2.*
 import neoutils.Neoutils
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.O3Wallet
-
 import network.o3.o3wallet.R
-import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
-import java.lang.Exception
 
 class UnlockWatchAddressFragment : Fragment() {
 

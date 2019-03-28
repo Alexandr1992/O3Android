@@ -1,21 +1,15 @@
 package network.o3.o3wallet
 
-import android.content.Context
-import android.content.res.Configuration
+import android.text.Editable
+import android.text.InputFilter
+import android.text.Spanned
+import java.math.BigDecimal
+import java.security.MessageDigest
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import android.text.Spanned
-import android.text.InputFilter
-import java.math.BigDecimal
 import java.util.regex.Pattern
-import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
-import android.content.res.Configuration.SCREENLAYOUT_SIZE_NORMAL
-import android.content.res.Configuration.SCREENLAYOUT_SIZE_SMALL
-import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
-import android.text.Editable
-import java.security.MessageDigest
-import java.text.DecimalFormat
 
 
 /**

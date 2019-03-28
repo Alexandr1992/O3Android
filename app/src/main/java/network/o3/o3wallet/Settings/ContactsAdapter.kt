@@ -3,17 +3,16 @@
  */
 package network.o3.o3wallet.Settings
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.Contact
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.opengl.Visibility
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
 import network.o3.o3wallet.Wallet.toast
 

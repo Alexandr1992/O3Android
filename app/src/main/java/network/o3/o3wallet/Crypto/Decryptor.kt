@@ -1,6 +1,5 @@
 package network.o3.o3wallet.Crypto
 
-import android.util.Log
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.SecretKey

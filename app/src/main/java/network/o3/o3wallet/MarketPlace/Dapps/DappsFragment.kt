@@ -2,17 +2,14 @@ package network.o3.o3wallet.MarketPlace.Dapps
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.MarketPlace.NEP5Tokens.TokensFragment
-
 import network.o3.o3wallet.R
-import org.jetbrains.anko.Orientation
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
 
@@ -35,7 +32,7 @@ class DappsFragment : Fragment() {
         val mView = inflater.inflate(R.layout.marketplace_dapps_fragment, container, false)
         val dappsRecycler = mView.find<RecyclerView>(R.id.dappsRecyclerView)
         dappsRecycler.layoutManager = LinearLayoutManager(context)
-        (dappsRecycler.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.VERTICAL
+        (dappsRecycler.layoutManager as LinearLayoutManager).orientation = RecyclerView.VERTICAL
         O3PlatformClient().getDapps {
             onUiThread {
                 dappsRecycler.adapter = DappsAdapter(it.first!!)

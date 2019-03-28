@@ -3,7 +3,6 @@ package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.DialogFragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -15,17 +14,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import neoutils.Neoutils
-import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
-import network.o3.o3wallet.Settings.PrivateKeyFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.support.v4.toast
-import org.jetbrains.anko.toast
-import java.lang.Exception
 
 
 class DialogUnlockEncryptedKey : DialogFragment() {

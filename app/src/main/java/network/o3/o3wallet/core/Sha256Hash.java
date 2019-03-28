@@ -18,7 +18,7 @@ package network.o3.o3wallet.core;
  */
 
 import com.google.common.io.ByteStreams;
-import com.google.common.primitives.*;
+import com.google.common.primitives.Ints;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import com.google.common.io.BaseEncoding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

@@ -1,26 +1,15 @@
 package network.o3.o3wallet.API.Ontology
 
-import android.content.Intent
 import com.amplitude.api.Amplitude
-import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.jsonArray
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.gson.Gson
 import neoutils.Neoutils
-import neoutils.SeedNodeResponse
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
-import network.o3.o3wallet.API.O3Platform.O3Inbox
-import network.o3.o3wallet.API.O3Platform.O3InboxItem
-import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.API.O3Platform.PlatformResponse
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.PersistentStore
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 class OntologyClient {

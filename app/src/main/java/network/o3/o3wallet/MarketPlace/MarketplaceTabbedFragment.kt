@@ -1,12 +1,12 @@
 package network.o3.o3wallet.MarketPlace
 
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import network.o3.o3wallet.R
 
 class MarketplaceTabbedFragment: Fragment() {

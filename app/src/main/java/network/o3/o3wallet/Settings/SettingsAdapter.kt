@@ -1,26 +1,24 @@
 package network.o3.o3wallet.Settings
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
-import android.widget.TextView
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.support.v4.content.ContextCompat.startActivity
-import android.content.Intent
-import android.net.Uri
-import network.o3.o3wallet.*
-import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
+import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingRootActivity
 import network.o3.o3wallet.Settings.Help.HelpRootActivity
 import org.jetbrains.anko.*
-import zendesk.support.request.RequestActivity
 
 
 /**

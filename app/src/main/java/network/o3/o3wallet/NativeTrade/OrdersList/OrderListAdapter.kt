@@ -1,6 +1,5 @@
 package network.o3.o3wallet.NativeTrade.OrdersList
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,19 +7,16 @@ import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
-import network.o3.o3wallet.API.O3.FooterRow
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import network.o3.o3wallet.API.O3Platform.calculatePercentFilled
 import network.o3.o3wallet.API.O3Platform.orderIsClosed
-import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.NativeTrade.OrderResultDialog
 import network.o3.o3wallet.R
 import network.o3.o3wallet.formattedPercentString
 import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
-import org.json.JSONObject
 import java.lang.Math.pow
 import java.text.SimpleDateFormat
 import java.util.*

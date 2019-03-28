@@ -1,12 +1,7 @@
 package network.o3.o3wallet.Wallet.SendV2
 
 
-import android.arch.lifecycle.Observer
-import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.Fragment
 import android.text.InputFilter
 import android.text.InputType
 import android.text.SpannableStringBuilder
@@ -14,30 +9,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import org.jetbrains.anko.find
-import com.xw.repo.BubbleSeekBar
-import kotlinx.android.synthetic.main.send_what_fragment.*
+import kotlinx.android.synthetic.main.native_trade_deposit_withdrawal_activity.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
+import org.jetbrains.anko.find
+import org.jetbrains.anko.image
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
-import org.w3c.dom.Text
 import java.math.BigDecimal
-import java.text.NumberFormat
-import network.o3.o3wallet.R.id.view
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.support.v4.content.ContextCompat.getSystemService
-import android.util.Log
-import android.view.inputmethod.InputMethodManager
-import org.jetbrains.anko.image
 import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
 import kotlin.math.floor
-import android.app.Activity
-import android.support.v4.content.ContextCompat.getSystemService
-import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 
 class SendWhatFragment : Fragment() {
@@ -187,7 +176,7 @@ class SendWhatFragment : Fragment() {
     fun initiateAssetSelector() {
         val assetContainer = mView.find<ConstraintLayout>(R.id.assetSelectorContainer)
         val imageURL = String.format("https://cdn.o3.network/img/neo/%s.png", "NEO")
-        Glide.with(this).load(imageURL).into(mView.find(R.id.assetLogoImageView))
+        Glide.with(this).load(imageURL).into(mView.find<ImageView>(R.id.assetLogoImageView))
         var formatter = NumberFormat.getNumberInstance()
         (activity as SendV2Activity).sendViewModel.getOwnedAssets(true).observe ( this, Observer { ownedAssets ->
             if((activity as SendV2Activity).sendViewModel.selectedAsset?.value == null) {

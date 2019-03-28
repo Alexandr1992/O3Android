@@ -1,10 +1,7 @@
 package network.o3.o3wallet.Onboarding.OnboardingV2
 
 
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
@@ -16,25 +13,19 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.android.synthetic.main.multiwallet_manage_wallet_base.*
-import kotlinx.android.synthetic.main.send_success_fragment.view.*
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
-
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
-import org.jetbrains.anko.support.v4.toast
-import org.jetbrains.anko.yesButton
-import java.lang.Exception
 
 class RestoreExistingWalletFragment : Fragment() {
     lateinit var mView: View

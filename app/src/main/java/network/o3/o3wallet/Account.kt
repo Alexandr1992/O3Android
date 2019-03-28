@@ -1,14 +1,12 @@
 package network.o3.o3wallet
 
-import android.preference.PreferenceManager
 import neoutils.Neoutils
 import neoutils.Neoutils.*
 import neoutils.Wallet
 import network.o3.o3wallet.Crypto.Decryptor
-import network.o3.o3wallet.Crypto.Encryptor
 import network.o3.o3wallet.Crypto.EncryptedSettingsRepository
 import network.o3.o3wallet.Crypto.EncryptedSettingsRepository.setProperty
-import java.lang.Exception
+import network.o3.o3wallet.Crypto.Encryptor
 import java.security.SecureRandom
 
 /**

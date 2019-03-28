@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -62,7 +62,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.ConstraintLayout>
         <View
             android:id="@+id/seperator1"
             android:layout_width="match_parent"
@@ -70,7 +70,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.ConstraintLayout
             android:id="@+id/swapWalletContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -113,7 +113,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.ConstraintLayout>
 
         <View
             android:id="@+id/seperator2"
@@ -122,7 +122,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -179,6 +179,6 @@
                 app:layout_constraintGuide_percent="0.5" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.ConstraintLayout>
     </LinearLayout>
 </FrameLayout>

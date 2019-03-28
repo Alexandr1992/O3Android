@@ -1,41 +1,41 @@
 package network.o3.o3wallet.Portfolio
 
-import android.arch.lifecycle.Observer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.view.ViewGroup
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
-import com.robinhood.spark.SparkView
-import android.os.Handler
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.view.ViewPager.*
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.widget.*
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewpager.widget.ViewPager
 import com.airbnb.lottie.LottieAnimationView
+import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
+import com.commit451.modalbottomsheetdialogfragment.Option
+import com.robinhood.spark.SparkView
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
+import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.Wallet.MyAddressFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.onUiThread
-import android.support.v7.widget.DividerItemDecoration
-import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
-import com.commit451.modalbottomsheetdialogfragment.Option
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
-import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 
 
 interface HomeViewModelProtocol {
@@ -97,7 +97,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFr
         recyclerView.addItemDecoration(itemDecorator)
 
         val layoutManager = LinearLayoutManager(this.activity)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        layoutManager.orientation = RecyclerView.VERTICAL
         recyclerView.layoutManager = layoutManager
         return mView
     }
@@ -186,7 +186,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFr
         viewPager = view.findViewById<ViewPager>(R.id.portfolioHeaderFragment)
         val portfolioHeaderAdapter = PortfolioHeaderPagerAdapter(childFragmentManager)
         viewPager?.adapter = portfolioHeaderAdapter
-        viewPager?.addOnPageChangeListener(object : SimpleOnPageChangeListener() {
+        viewPager?.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 Handler().postDelayed({
                     homeModel.setPosition(position)

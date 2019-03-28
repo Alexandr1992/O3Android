@@ -1,8 +1,9 @@
 package network.o3.o3wallet
 
-import android.support.test.espresso.DataInteraction
-import android.support.test.rule.ActivityTestRule
-import com.agoda.kakao.*
+import com.agoda.kakao.KAdapterItem
+import com.agoda.kakao.KListView
+import com.agoda.kakao.KTextView
+import com.agoda.kakao.Screen
 import org.junit.Rule
 import org.junit.Test
 

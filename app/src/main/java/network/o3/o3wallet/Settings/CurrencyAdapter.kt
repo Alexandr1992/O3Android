@@ -2,22 +2,18 @@ package network.o3.o3wallet.Settings
 
 import android.content.Context
 import android.content.Intent
-import android.service.wallpaper.WallpaperService
-import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.TextView
-import kotlinx.android.synthetic.main.wallet_account_asset_row.view.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor
-import org.jetbrains.anko.toast
-import org.w3c.dom.Text
 
 /**
  * Created by drei on 12/11/17.

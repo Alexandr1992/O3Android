@@ -4,19 +4,17 @@ package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 import android.content.*
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.navigation.Navigation.findNavController
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.amplitude.api.Amplitude
@@ -25,15 +23,12 @@ import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.O3Wallet
-
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
 import network.o3.o3wallet.Wallet.toast
-import network.o3.o3wallet.toBitmap
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
-import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 
@@ -211,7 +206,7 @@ class ManageWalletBaseFragment : Fragment() {
                 val bundle = Bundle()
                 bundle.putString("key", neo2DialogFragment.decryptedKey)
                 privateKeyModal.arguments = bundle
-                privateKeyModal.show(mFragment.activity?.supportFragmentManager, privateKeyModal.tag)
+                privateKeyModal.show(mFragment.activity?.supportFragmentManager!!, privateKeyModal.tag)
             }
 
             neo2DialogFragment.encryptedKey = mVm.key!!

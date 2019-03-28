@@ -1,13 +1,11 @@
 package network.o3.o3wallet.MarketPlace
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import network.o3.o3wallet.MarketPlace.Dapps.DappsFragment
 import network.o3.o3wallet.MarketPlace.NEP5Tokens.TokensFragment
-import network.o3.o3wallet.Wallet.AccountFragment
-import network.o3.o3wallet.Wallet.TransactionHistory.TransactionHistoryFragment
 
 class MarketPlaceFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPagerAdapter(fm) {
 

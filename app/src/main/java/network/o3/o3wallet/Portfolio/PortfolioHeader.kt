@@ -1,14 +1,14 @@
 package network.o3.o3wallet.Portfolio
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.portfolio_fragment_portfolio_header.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.SwapWalletBottomSheet
@@ -16,8 +16,6 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
-import org.jetbrains.anko.view
-import org.w3c.dom.Text
 import java.util.*
 
 class PortfolioHeader: Fragment {

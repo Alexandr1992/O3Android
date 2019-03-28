@@ -1,25 +1,28 @@
 package network.o3.o3wallet.Wallet.TransactionHistory
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import network.o3.o3wallet.*
-import org.jetbrains.anko.find
-import org.jetbrains.anko.textColor
-import android.content.Intent
 import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import neoutils.Neoutils
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.AddContact
+import org.jetbrains.anko.find
+import org.jetbrains.anko.textColor
 import java.text.SimpleDateFormat
 import java.util.*
 

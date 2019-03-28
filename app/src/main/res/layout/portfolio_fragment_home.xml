@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="network.o3.o3wallet.Portfolio.HomeFragment"
     android:tag="homeFragment">
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -57,5 +57,5 @@
                     </LinearLayout>
                     </android.support.v4.widget.NestedScrollView>
             </android.support.v4.widget.SwipeRefreshLayout>
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.ConstraintLayout>
 </FrameLayout>

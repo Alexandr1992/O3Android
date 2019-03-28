@@ -1,8 +1,6 @@
 package network.o3.o3wallet.API.Switcheo
 
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import org.json.JSONObject
 
 data class Ticker(val pair: String, val open: String, val close: String,
                   val high: String, val low: String, val volume: String,

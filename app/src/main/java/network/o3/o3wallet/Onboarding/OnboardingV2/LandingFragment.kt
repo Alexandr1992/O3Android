@@ -5,21 +5,26 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager.widget.ViewPager
 import com.airbnb.lottie.LottieAnimationView
-import network.o3.o3wallet.*
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.LandingPagerAdapter
 import network.o3.o3wallet.Onboarding.LoginNEP6.LoginNEP6Activity
-import org.jetbrains.anko.*
+import network.o3.o3wallet.R
+import org.jetbrains.anko.find
+import org.jetbrains.anko.image
+import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.yesButton
 
 class LandingFragment: Fragment() {
     private lateinit var pager: ViewPager

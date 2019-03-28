@@ -1,24 +1,18 @@
 package network.o3.o3wallet.Dapp
 
-import android.app.Activity
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.os.Bundle
 import android.os.Handler
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import neoutils.Neoutils
 import neoutils.Wallet
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
@@ -27,7 +21,6 @@ import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.json.JSONObject
-import java.lang.Exception
 import java.math.BigDecimal
 import java.util.concurrent.CountDownLatch
 

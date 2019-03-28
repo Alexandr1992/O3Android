@@ -1,12 +1,12 @@
 package network.o3.o3wallet.MarketPlace.Dapps
 
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.Dapp
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2

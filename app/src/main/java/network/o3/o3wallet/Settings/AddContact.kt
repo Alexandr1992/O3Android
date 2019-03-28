@@ -4,27 +4,25 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.ActionBar
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
+import network.o3.o3wallet.API.NEO.NeoNodeRPC
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.R
 import network.o3.o3wallet.afterTextChanged
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.yesButton
-import java.lang.Exception
 
 class AddContact : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

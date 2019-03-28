@@ -3,7 +3,6 @@ package network.o3.o3wallet.NativeTrade
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

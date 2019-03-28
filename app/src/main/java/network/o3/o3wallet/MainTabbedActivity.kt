@@ -1,54 +1,42 @@
 package network.o3.o3wallet
 
 import android.app.Activity
-import android.app.Dialog
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
-import android.view.MenuItem
-import network.o3.o3wallet.Feed.NewsFeedFragment
-import network.o3.o3wallet.Portfolio.HomeFragment
-import network.o3.o3wallet.Settings.SettingsFragment
-import network.o3.o3wallet.Wallet.TabbedAccount
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.support.design.bottomnavigation.LabelVisibilityMode
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.ActionBar
-import android.text.Layout
-import android.view.Gravity
+import android.content.IntentFilter
+import android.content.res.Resources
+import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.TextView
+import android.webkit.URLUtil
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import co.getchannel.channel.Channel
 import co.getchannel.channel.callback.ChannelCallback
 import co.kyash.rkd.KeyboardDetector
 import co.kyash.rkd.KeyboardStatus
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
+import com.amplitude.api.Amplitude
+import com.crashlytics.android.Crashlytics
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.zxing.integration.android.IntentIntegrator
+import com.tapadoo.alerter.Alerter
+import io.fabric.sdk.android.Fabric
+import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Feed.NewsFeedFragment
 import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
+import network.o3.o3wallet.Portfolio.HomeFragment
+import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
+import network.o3.o3wallet.Wallet.TabbedAccount
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
-import android.content.res.Resources
-import android.os.Handler
-import android.util.Log
-import android.webkit.URLUtil
-import android.widget.ImageButton
-import com.amplitude.api.Amplitude
-import com.crashlytics.android.Crashlytics
-import com.tapadoo.alerter.Alerter
-import io.fabric.sdk.android.Fabric
-import io.fabric.sdk.android.services.network.UrlUtils
-import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
 import org.json.JSONObject
 import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
@@ -187,7 +175,8 @@ class MainTabbedActivity : AppCompatActivity() {
         activeTabID = selectedFragment.id
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
-        bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
+        setupBottomNavigationBar()
+        /*bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var selectedFragment: Fragment? = null
                 //avoid loading the data again when tap at the same tab
@@ -232,8 +221,40 @@ class MainTabbedActivity : AppCompatActivity() {
                         .putCustomAttribute("Tab Name", tabName))
                 return true
             }
-        })
+        })*/
     }
+
+    private fun setupBottomNavigationBar() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        val navGraphIds = listOf(R.navigation.portfolio, R.navigation.wallet, R.navigation.marketplace,
+                R.navigation.news, R.navigation.settings)
+
+        // Setup the bottom navigation view with a list of navigation graphs
+        val controller = bottomNavigationView.setupWithNavController(
+                navGraphIds = navGraphIds,
+                fragmentManager = supportFragmentManager,
+                containerId = R.id.nav_host_container,
+                intent = intent
+        )
+
+        // Whenever the selected controller changes, setup the action bar.
+
+       // currentNavController = controller
+    }
+
+    /*override fun onSupportNavigateUp(): Boolean {
+        return currentNavController?.value?.navigateUp() ?: false
+    }*/
+
+    /**
+     * Overriding popBackStack is necessary in this case if the app is started from the deep link.
+     */
+    /*override fun onBackPressed() {
+        if (currentNavController?.value?.popBackStack() != true) {
+            super.onBackPressed()
+        }
+    }*/
 
     private fun switchFragment(index: Int) {
 
@@ -241,7 +262,7 @@ class MainTabbedActivity : AppCompatActivity() {
 
         // if the fragment has not yet been added to the container, add it first
         if (supportFragmentManager.findFragmentByTag(index.toString()) == null) {
-            transaction.add(R.id.frame_layout, fragments!!.get(index), index.toString())
+            transaction.add(R.id.nav_host_container, fragments!!.get(index), index.toString())
         }
 
         transaction.hide(fragments!!.get(activeTabPosition!!))

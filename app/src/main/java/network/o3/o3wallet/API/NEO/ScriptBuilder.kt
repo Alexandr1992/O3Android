@@ -2,11 +2,8 @@ package network.o3.o3wallet.API.NEO
 
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import neoutils.Neoutils
-import neoutils.Wallet
 import network.o3.o3wallet.*
 import network.o3.o3wallet.Dapp.NeoDappProtocol
-import java.nio.ByteOrder
 
 /**
  * Created by drei on 1/19/18.

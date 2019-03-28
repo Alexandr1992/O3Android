@@ -1,12 +1,10 @@
 package network.o3.o3wallet.MultiWallet.Activate
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.amplitude.api.Amplitude
-import com.github.salomonbrys.kotson.jsonObject
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
-import org.json.JSONObject
 
 
 class ActivateMultiWalletViewModel: ViewModel() {

@@ -1,24 +1,22 @@
 package network.o3.o3wallet.MarketPlace.NEP5Tokens
 
 
-import android.app.ActionBar
-import android.arch.lifecycle.Observer
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
-import android.support.design.widget.BottomNavigationView
-import android.support.v7.widget.CardView
-import network.o3.o3wallet.MainTabbedActivity
 import org.jetbrains.anko.support.v4.onUiThread
 
 
@@ -50,7 +48,7 @@ class TokensFragment : Fragment() {
         tokensGridRecycler = view.find(R.id.tokensGridView)
         searchView = view.find(R.id.searchView)
 
-        val v = searchView.find<View>(android.support.v7.appcompat.R.id.search_plate)
+        val v = searchView.find<View>(R.id.search_plate)
         v.setBackgroundColor(context!!.getColor(R.color.zxing_transparent))
 
         view.find<CardView>(R.id.searchContainerCardView).setOnClickListener {

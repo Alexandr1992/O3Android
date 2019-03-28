@@ -1,11 +1,8 @@
 package network.o3.o3wallet
 
 import android.preference.PreferenceManager
-import android.util.Base64
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import network.o3.o3wallet.API.NEO.NEP5Token
-import network.o3.o3wallet.API.O3.O3Response
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets

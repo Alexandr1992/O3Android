@@ -5,16 +5,13 @@
     <color name="colorPrimaryDark">#16498f</color>
     <color name="colorLanding">#002D5D</color>
     <color name="colorAccent">#f6a623</color>
-    <color name="colorAccentLight">#FFCC80</color>
     <color name="colorLoss">#d0011b</color>
     <color name="colorGain">#7ED321</color>
     <color name="colorSell">#D32167</color>
     <color name="colorSubtitleGrey">#cecece</color>
     <color name="colorDisabled">#55cecece</color>
-    <color name="colorWeakGrayBackground">#f6f6f6</color>
 
 
-    <color name="colorSubtleGrey">#FAFAFA</color>
     <color name="colorSubtitleGreyDark">#909090</color>
     <color name="colorDisabledButton">#1a4f4f4f</color>
 

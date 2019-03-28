@@ -1,20 +1,18 @@
 package network.o3.o3wallet.NativeTrade
 
-import android.arch.lifecycle.Observer
 import android.content.res.Resources
 import android.os.Bundle
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.contentView
 import org.jetbrains.anko.find
 import org.jetbrains.anko.yesButton
 

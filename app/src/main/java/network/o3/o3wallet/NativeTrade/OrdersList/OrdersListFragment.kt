@@ -2,29 +2,22 @@ package network.o3.o3wallet.NativeTrade.OrdersList
 
 
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearLayoutManager.VERTICAL
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.amplitude.api.Amplitude
-import kotlinx.android.synthetic.main.wallet_fragment_account.*
+import com.google.android.material.tabs.TabLayout
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import network.o3.o3wallet.API.O3Platform.orderIsClosed
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
 import network.o3.o3wallet.MainTabbedActivity
-import network.o3.o3wallet.NativeTrade.NativeTradeBaseAssetBottomSheet
 import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.getColorFromAttr
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
@@ -73,7 +66,7 @@ class OrdersListFragment : Fragment() {
         mView = inflater.inflate(R.layout.native_trade_orders_list_fragment, container, false)!!
         ordersListView = mView.find(R.id.ordersListView)
         val recyclerLayout = LinearLayoutManager(context)
-        recyclerLayout.orientation = VERTICAL
+        recyclerLayout.orientation = RecyclerView.VERTICAL
         ordersListView.layoutManager = recyclerLayout
         loadOrders()
 

@@ -2,32 +2,24 @@ package network.o3.o3wallet.Dapp
 
 import android.app.Activity
 import android.app.KeyguardManager
-import android.webkit.JavascriptInterface
-import android.widget.Toast
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import android.webkit.WebView
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.github.salomonbrys.kotson.*
 import android.os.Handler
-import android.support.v4.content.ContextCompat.getSystemService
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
 import com.amplitude.api.Amplitude
+import com.github.salomonbrys.kotson.*
+import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import neoutils.Neoutils
 import neoutils.Wallet
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.O3.O3API
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Onboarding.PasscodeRequestActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 data class O3Message(var command: String, var data: JsonElement)

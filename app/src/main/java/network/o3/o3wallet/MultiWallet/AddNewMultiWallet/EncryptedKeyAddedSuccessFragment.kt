@@ -1,12 +1,12 @@
 package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/wallet">
+    <fragment
+        android:id="@+id/walletDestination"
+        android:name="network.o3.o3wallet.Wallet.AccountFragment"
+        android:label="settings_fragment"
+        tools:layout="@layout/wallet_fragment_account"/>
+</navigation>

@@ -3,15 +3,12 @@ package network.o3.o3wallet.Onboarding
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import neoutils.Neoutils.selectBestSeedNode
-import neoutils.SeedNodeResponse
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.find
 
