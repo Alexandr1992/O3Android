@@ -17,7 +17,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "network.o3.o3wallet"
-        minSdkVersion 26
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 84
         versionName "2.7.3"
@@ -81,7 +81,7 @@ dependencies {
     implementation "com.github.skydoves:powermenu:2.0.5"
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'com.shawnlin:number-picker:2.4.6'
-    implementation 'com.google.guava:guava:24.1-jre'
+    implementation 'com.google.guava:guava:27.1-android'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.firebase:firebase-messaging:17.5.0'
     implementation 'com.robinhood.ticker:ticker:1.2.2'
