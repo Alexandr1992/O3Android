@@ -13,7 +13,9 @@ import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.NavController
 import co.getchannel.channel.Channel
 import co.getchannel.channel.callback.ChannelCallback
 import co.kyash.rkd.KeyboardDetector
@@ -50,6 +52,9 @@ class MainTabbedActivity : AppCompatActivity() {
             TabbedAccount.newInstance(), MarketplaceTabbedFragment.newInstance(), NewsFeedFragment.newInstance(),
             SettingsFragment.newInstance())
     var deepLink: String? = null
+
+    private var currentNavController: LiveData<NavController>? = null
+
 
     override fun onBackPressed() {
         alert(resources.getString(R.string.TABBAR_logout_warning)) {
@@ -240,12 +245,12 @@ class MainTabbedActivity : AppCompatActivity() {
 
         // Whenever the selected controller changes, setup the action bar.
 
-       // currentNavController = controller
+        currentNavController = controller
     }
 
-    /*override fun onSupportNavigateUp(): Boolean {
+    override fun onSupportNavigateUp(): Boolean {
         return currentNavController?.value?.navigateUp() ?: false
-    }*/
+    }
 
     /**
      * Overriding popBackStack is necessary in this case if the app is started from the deep link.
