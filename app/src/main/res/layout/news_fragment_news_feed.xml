@@ -6,7 +6,7 @@
     android:tag="newFeedFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <androidx.constraintlayout.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -16,6 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
-    </androidx.constraintlayout.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

@@ -161,7 +161,7 @@ class MainTabbedActivity : AppCompatActivity() {
 
         val selectedFragment = fragments!!.get(0)
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.frame_layout, selectedFragment, 0.toString())
+        transaction.replace(R.id.nav_host_container, selectedFragment, 0.toString())
         transaction.commit()
         if (intent != null) {
             if (intent.getStringExtra("deepLink") != null) {

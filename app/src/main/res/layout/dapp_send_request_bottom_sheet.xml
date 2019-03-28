@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -60,7 +60,7 @@
                 app:layout_constraintStart_toStartOf="@+id/openGraphTitleView"
                 app:layout_constraintTop_toBottomOf="@+id/openGraphTitleView"
                 app:layout_constraintVertical_bias="0.0" />
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:id="@+id/seperator1"
@@ -68,7 +68,7 @@
             android:layout_height="1dp"
             android:background="?attr/primaryBackgroundColor" />
 
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -101,7 +101,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView44"
                 app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <View
             android:id="@+id/seperator2"
             android:layout_width="match_parent"
@@ -109,7 +109,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -142,7 +142,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <View
             android:id="@+id/seperator3"
             android:layout_width="match_parent"
@@ -150,7 +150,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -183,7 +183,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView441"
                 app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:id="@+id/seperator4"
@@ -192,7 +192,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -234,7 +234,7 @@
                 app:layout_constraintStart_toEndOf="@+id/textView442"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:id="@+id/seperator5"
@@ -243,7 +243,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -283,7 +283,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/totalTextView"
                 app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:id="@+id/seperator6"
@@ -292,7 +292,7 @@
             android:background="?attr/primaryBackgroundColor"
             />
 
-        <androidx.constraintlayout.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -360,7 +360,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/loadingAnimationView"
                 app:layout_constraintStart_toEndOf="@+id/loadingAnimationView"
                 app:layout_constraintTop_toTopOf="@+id/loadingAnimationView" />
-        </androidx.constraintlayout.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
