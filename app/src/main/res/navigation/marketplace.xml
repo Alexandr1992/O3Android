@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/marketplace">
+    android:id="@+id/marketplace"
+    app:startDestination="@id/marketplaceDestination">
     <fragment
         android:id="@+id/marketplaceDestination"
         android:name="network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment"

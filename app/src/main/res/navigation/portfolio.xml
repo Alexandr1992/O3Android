@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/portfolio">
+    android:id="@+id/portfolio"
+    app:startDestination="@id/portfolioDestination">
     <fragment
         android:id="@+id/portfolioDestination"
         android:name="network.o3.o3wallet.Portfolio.HomeFragment"
