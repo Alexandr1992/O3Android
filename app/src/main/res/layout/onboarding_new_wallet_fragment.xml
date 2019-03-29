@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/enterEncryptionPasswordEditTextContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,10 +40,10 @@
             android:paddingLeft="10dp"
             android:hint="@string/MULTIWALLET_enter_ecnryption_password"
             android:inputType="textPassword" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/confirmEncryptionPasswordEditTextContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
             android:paddingLeft="10dp"
             android:hint="@string/MULTIWALLET_enter_confirm_password"
             android:inputType="textPassword" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
             android:id="@+id/showConfirmImageView"
