@@ -119,7 +119,7 @@ class AccountFragment : Fragment() {
         if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
             walletName = NEP6.getFromFileSystem().accounts[0].label
         }
-        activity?.find<TextView>(R.id.accountTitleTextView)?.text = walletName
+        activity?.find<TextView>(R.id.walletAccountTitleTextView)?.text = walletName
         if (NEP6.getFromFileSystem().getNonDefaultAccounts().isNotEmpty() ) {
             activity?.find<ImageView>(R.id.walletSwapButton)?.setOnClickListener {
                 val bottomSheet = SwapWalletBottomSheet()

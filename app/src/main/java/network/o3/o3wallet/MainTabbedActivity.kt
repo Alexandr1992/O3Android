@@ -12,7 +12,6 @@ import android.view.View
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
@@ -29,16 +28,8 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
 import io.fabric.sdk.android.Fabric
 import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
-import network.o3.o3wallet.Feed.NewsFeedFragment
-import network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment
-import network.o3.o3wallet.Portfolio.HomeFragment
-import network.o3.o3wallet.Settings.SettingsFragment
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
-import network.o3.o3wallet.Wallet.TabbedAccount
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
 import org.json.JSONObject
 import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
@@ -46,21 +37,88 @@ import zendesk.support.Support
 
 class MainTabbedActivity : AppCompatActivity() {
 
-    var activeTabID: Int? = 0
-    var activeTabPosition: Int? = 0
-    var fragments: Array<Fragment>? = arrayOf(HomeFragment.newInstance(),
-            TabbedAccount.newInstance(), MarketplaceTabbedFragment.newInstance(), NewsFeedFragment.newInstance(),
-            SettingsFragment.newInstance())
-    var deepLink: String? = null
-
     private var currentNavController: LiveData<NavController>? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.tabbar_activity_main_tabbed)
+        setupKeyboardDetector()
+        setupChannel()
+        setupZendesk()
 
+        if (savedInstanceState == null) {
+            setupBottomNavigationBar()
+        }
+        if (!BuildConfig.DEBUG) {
+            Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
+            Amplitude.getInstance().logEvent("Loaded_Main_Tab")
+            if (PersistentStore.getHasLoggedFirstWallet() == false) {
+                val type = if (PersistentStore.didGenerateFirstWallet()) {
+                    "new_key"
+                } else {
+                    "import_key"
+                }
+
+                val method = if (PersistentStore.didGenerateFirstWallet()) {
+                    "new"
+                } else {
+                    "import"
+                }
+                val attrs = mapOf(
+                        "type" to type,
+                        "method" to method,
+                        "address_count" to NEP6.getFromFileSystem().accounts.size)
+                Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
+                PersistentStore.setHasLoggedFirstWallet(true)
+            }
+            Fabric.with(this, Crashlytics())
+        }
+
+
+        // Else, need to wait for onRestoreInstanceState
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // Now that BottomNavigationBar has restored its instance state
+        // and its selectedItemId, we can proceed with setting up the
+        // BottomNavigationBar with Navigation
+        setupBottomNavigationBar()
+    }
+
+    /**
+     * Called on first creation and when restoring state.
+     */
+    private fun setupBottomNavigationBar() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
+
+        val navGraphIds = listOf(R.navigation.portfolio, R.navigation.wallet, R.navigation.marketplace,
+                R.navigation.news, R.navigation.settings)
+
+        // Setup the bottom navigation view with a list of navigation graphs
+        val controller = bottomNavigationView.setupWithNavController(
+                navGraphIds = navGraphIds,
+                fragmentManager = supportFragmentManager,
+                containerId = R.id.nav_host_container,
+                intent = intent
+        )
+
+        // Whenever the selected controller changes, setup the action bar.
+        currentNavController = controller
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return currentNavController?.value?.navigateUp() ?: false
+    }
+
+    /**
+     * Overriding popBackStack is necessary in this case if the app is started from the deep link.
+     */
     override fun onBackPressed() {
-        alert(resources.getString(R.string.TABBAR_logout_warning)) {
-            yesButton { super.onBackPressed() }
-            noButton { }
-        }.show()
+        if (currentNavController?.value?.popBackStack() != true) {
+            super.onBackPressed()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -103,12 +161,12 @@ class MainTabbedActivity : AppCompatActivity() {
 
         Channel.setupApplicationContextWithApplicationKey(O3Wallet.appContext, "app_gUHDmimXT8oXRSpJvCxrz5DZvUisko_mliB61uda9iY", object: ChannelCallback {
             override fun onSuccess() {
-    val refreshedToken = FirebaseInstanceId.getInstance().token
-                        Channel.saveDeviceToken(refreshedToken, object : ChannelCallback {
-            override fun onSuccess() {}
+                val refreshedToken = FirebaseInstanceId.getInstance().token
+                Channel.saveDeviceToken(refreshedToken, object : ChannelCallback {
+                    override fun onSuccess() {}
 
-            override fun onFail(message: String) {}
-        })
+                    override fun onFail(message: String) {}
+                })
 
                 Channel.subscribeToTopic(Account.getWallet().address.toString(), object : ChannelCallback {
                     override fun onSuccess() {
@@ -134,158 +192,6 @@ class MainTabbedActivity : AppCompatActivity() {
         val identity = AnonymousIdentity()
         Zendesk.INSTANCE.setIdentity(identity)
         Support.INSTANCE.init(Zendesk.INSTANCE)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.tabbar_activity_main_tabbed)
-        if (!BuildConfig.DEBUG) {
-            Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
-            Amplitude.getInstance().logEvent("Loaded_Main_Tab")
-            if (PersistentStore.getHasLoggedFirstWallet() == false) {
-                val type = if (PersistentStore.didGenerateFirstWallet()) {
-                    "new_key"
-                } else {
-                    "import_key"
-                }
-
-                val method = if (PersistentStore.didGenerateFirstWallet()) {
-                    "new"
-                } else {
-                    "import"
-                }
-                val attrs = mapOf(
-                        "type" to type,
-                        "method" to method,
-                        "address_count" to NEP6.getFromFileSystem().accounts.size)
-                Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
-                PersistentStore.setHasLoggedFirstWallet(true)
-            }
-            Fabric.with(this, Crashlytics())
-        }
-
-        val selectedFragment = fragments!!.get(0)
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.nav_host_container, selectedFragment, 0.toString())
-        transaction.commit()
-        if (intent != null) {
-            if (intent.getStringExtra("deepLink") != null) {
-                deepLink = intent.getStringExtra("deepLink")
-            }
-        }
-        setupKeyboardDetector()
-        setupChannel()
-        setupZendesk()
-
-        activeTabID = selectedFragment.id
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
-        if (savedInstanceState == null) {
-            setupBottomNavigationBar()
-        } // Else, need to wait for onRestoreInstanceState
-        /*bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                var selectedFragment: Fragment? = null
-                //avoid loading the data again when tap at the same tab
-                if (activeTabID == item.itemId) {
-                    return false
-                }
-
-                var tabName = ""
-                when (item.itemId) {
-                    R.id.action_item1 -> {
-                        switchFragment(0)
-                        activeTabID = item.itemId
-                        activeTabPosition = 0
-                        tabName = "Home"
-                    }
-                    R.id.action_item2 -> {
-                        switchFragment(1)
-                        activeTabID = item.itemId
-                        activeTabPosition = 1
-                        tabName = "Wallet"
-                    }
-                    R.id.action_item3 -> {
-                        switchFragment(2)
-                        activeTabID = item.itemId
-                        activeTabPosition = 2
-                        tabName = "Marketplace"
-                    }
-                    R.id.action_item4 -> {
-                        switchFragment(3)
-                        activeTabID = item.itemId
-                        activeTabPosition = 3
-                        tabName = "News"
-                    }
-                    R.id.action_item5 -> {
-                        switchFragment(4)
-                        activeTabID = item.itemId
-                        activeTabPosition = 4
-                        tabName = ""
-                    }
-                }
-                Answers().logCustom(CustomEvent("Tab Tapped")
-                        .putCustomAttribute("Tab Name", tabName))
-                return true
-            }
-        })*/
-    }
-
-    private fun setupBottomNavigationBar() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-
-        val navGraphIds = listOf(R.navigation.portfolio, R.navigation.wallet, R.navigation.marketplace,
-                R.navigation.news, R.navigation.settings)
-
-        // Setup the bottom navigation view with a list of navigation graphs
-        val controller = bottomNavigationView.setupWithNavController(
-                navGraphIds = navGraphIds,
-                fragmentManager = supportFragmentManager,
-                containerId = R.id.nav_host_container,
-                intent = intent
-        )
-
-        // Whenever the selected controller changes, setup the action bar.
-
-        currentNavController = controller
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        // Now that BottomNavigationBar has restored its instance state
-        // and its selectedItemId, we can proceed with setting up the
-        // BottomNavigationBar with Navigation
-        setupBottomNavigationBar()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return currentNavController?.value?.navigateUp() ?: false
-    }
-
-    /**
-     * Overriding popBackStack is necessary in this case if the app is started from the deep link.
-     */
-    /*override fun onBackPressed() {
-        if (currentNavController?.value?.popBackStack() != true) {
-            super.onBackPressed()
-        }
-    }*/
-
-    private fun switchFragment(index: Int) {
-
-        val transaction = supportFragmentManager.beginTransaction()
-
-        // if the fragment has not yet been added to the container, add it first
-        if (supportFragmentManager.findFragmentByTag(index.toString()) == null) {
-            transaction.add(R.id.nav_host_container, fragments!!.get(index), index.toString())
-        }
-
-        transaction.hide(fragments!!.get(activeTabPosition!!))
-        transaction.show(fragments!!.get(index))
-        transaction.commit()
-        if (index == 0) {
-           (fragments!!.get(index) as HomeFragment).homeModel.getDisplayedAssets(false)
-        }
     }
 
     override fun onStart() {

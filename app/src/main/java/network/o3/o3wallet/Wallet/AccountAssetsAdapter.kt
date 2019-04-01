@@ -311,7 +311,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         fun bindAccount(assets: List<TransferableAsset>, priceData: String?, accountName: String, isWallet: Boolean) {
             mAssets = assets
             mPriceData = priceData
-            mView.findViewById<TextView>(R.id.accountTitleTextView).text = accountName
+            mView.findViewById<TextView>(R.id.walletAccountTitleTextView).text = accountName
             fillLogos()
             fillPrice()
             initiateToolbarButtons(isWallet)

@@ -6,7 +6,7 @@
     app:startDestination="@id/walletDestination">
     <fragment
         android:id="@+id/walletDestination"
-        android:name="network.o3.o3wallet.Wallet.AccountFragment"
+        android:name="network.o3.o3wallet.Wallet.TabbedAccount"
         android:label="settings_fragment"
-        tools:layout="@layout/wallet_fragment_account"/>
+        tools:layout="@layout/wallet_fragment_tabbed_account"/>
 </navigation>

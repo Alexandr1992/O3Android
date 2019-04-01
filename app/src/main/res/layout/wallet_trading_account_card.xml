@@ -48,7 +48,7 @@
                 app:srcCompat="@color/colorAccent" />
 
             <TextView
-                android:id="@+id/accountTitleTextView"
+                android:id="@+id/walletAccountTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -65,7 +65,7 @@
                 android:textAppearance="@style/RegularText"
                 android:textSize="30sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/accountTitleTextView" />
+                app:layout_constraintTop_toBottomOf="@+id/walletAccountTitleTextView" />
 
             <ImageView
                 android:id="@+id/assetLogo1"
@@ -84,9 +84,9 @@
                 android:layout_width="250dp"
                 android:layout_height="40dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="@+id/accountTitleTextView"
+                app:layout_constraintBottom_toBottomOf="@+id/walletAccountTitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/accountTitleTextView">
+                app:layout_constraintTop_toTopOf="@+id/walletAccountTitleTextView">
 
                 <Button
                     android:id="@+id/leftToolbarButton"
