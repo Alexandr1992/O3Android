@@ -8,5 +8,9 @@
         android:id="@+id/newsDestination"
         android:name="network.o3.o3wallet.Feed.NewsFeedFragment"
         android:label="settings_fragment"
-        tools:layout="@layout/news_fragment_news_feed" />
+        tools:layout="@layout/news_fragment_news_feed" >
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="o3://news" />
+    </fragment>
 </navigation>

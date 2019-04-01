@@ -46,7 +46,14 @@
         <activity
             android:name=".MainTabbedActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.White.NoTopBar" />
+            android:theme="@style/AppTheme.White.NoTopBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="o3" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Settings.AddContact"
             android:screenOrientation="portrait"

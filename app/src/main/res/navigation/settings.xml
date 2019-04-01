@@ -8,5 +8,9 @@
         android:id="@+id/settingsDestination"
         android:name="network.o3.o3wallet.Settings.SettingsFragment"
         android:label="settings_fragment"
-        tools:layout="@layout/settings_fragment_menu"/>
+        tools:layout="@layout/settings_fragment_menu">
+        <deepLink
+            android:id="@+id/deepLink3"
+            app:uri="o3://settings" />
+    </fragment>
 </navigation>

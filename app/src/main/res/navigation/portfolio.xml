@@ -9,4 +9,7 @@
         android:name="network.o3.o3wallet.Portfolio.HomeFragment"
         android:label="settings_fragment"
         tools:layout="@layout/portfolio_fragment_home"/>
+    <deepLink
+        android:id="@+id/deepLink4"
+        app:uri="o3://portfolio" />
 </navigation>

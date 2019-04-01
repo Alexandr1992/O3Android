@@ -116,7 +116,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
-            val url =  "https://www.ftwlotto.com/o3?provider=o3"
+            val url =  "http://10.0.2.2:8000/deeplink.html"
             val intent = Intent(this, DAppBrowserActivityV2::class.java)
             intent.putExtra("url", url)
             intent.putExtra("legacy", useLegacyCheckBox.isChecked)

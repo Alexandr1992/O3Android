@@ -8,5 +8,10 @@
         android:id="@+id/walletDestination"
         android:name="network.o3.o3wallet.Wallet.TabbedAccount"
         android:label="settings_fragment"
-        tools:layout="@layout/wallet_fragment_tabbed_account"/>
+        tools:layout="@layout/wallet_fragment_tabbed_account">
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="o3://wallet"
+            />
+    </fragment>
 </navigation>

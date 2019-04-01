@@ -8,5 +8,9 @@
         android:id="@+id/marketplaceDestination"
         android:name="network.o3.o3wallet.MarketPlace.MarketplaceTabbedFragment"
         android:label="settings_fragment"
-        tools:layout="@layout/marketplace_tabbed_fragment"/>
+        tools:layout="@layout/marketplace_tabbed_fragment">
+        <deepLink
+            android:id="@+id/deepLink5"
+            app:uri="o3://marketplace" />
+    </fragment>
 </navigation>
