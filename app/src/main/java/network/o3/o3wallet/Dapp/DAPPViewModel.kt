@@ -11,6 +11,8 @@ import com.google.gson.JsonObject
 import neoutils.Wallet
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.Account
+import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.PersistentStore
 import java.util.concurrent.CountDownLatch
 
@@ -26,8 +28,8 @@ class DAPPViewModel(url: String): ViewModel() {
     var legacyInterface: DappBrowserJSInterface? = null
 
     //dapp active wallets
-    var dappExposedWallet: Wallet? = null
-    var dappExposedWalletName: String = ""
+    var dappExposedWallet: Wallet = Account.getWallet()
+    var dappExposedWalletName: String = NEP6.getFromFileSystem().getDefaultAccount().label
 
     //for managing file uploading
     var mUploadMessage: ValueCallback<Array<Uri>>? = null
@@ -231,7 +233,7 @@ class DAPPViewModel(url: String): ViewModel() {
             if (it.second == null) {
                 setDappResponse(message, jsonObject("result" to it.first))
             } else {
-                setDappResponse(message, jsonObject("result" to "RPC_ERROR"))
+                setDappResponse(message, jsonObject("error" to "RPC_ERROR"))
             }
             latch.countDown()
         }
@@ -253,7 +255,7 @@ class DAPPViewModel(url: String): ViewModel() {
             setDappResponse(message, response)
             setLockStatus(false)
         } else {
-            setDappResponse(message, jsonObject("result" to "CONNECTION_REFUSED"))
+            setDappResponse(message, jsonObject("error" to "CONNECTION_REFUSED"))
         }
     }
 }

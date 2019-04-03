@@ -1,10 +1,7 @@
 package network.o3.o3wallet.Dapp
 
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +43,8 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     var dappMessage: DappMessage? = null
 
     lateinit var dappViewModel: DAPPViewModel
+
+    var didAccept = false
 
 
     val needReloadExposedDappWallet = object : BroadcastReceiver() {
@@ -98,24 +97,15 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         acceptConnectionButton = mView.find(R.id.acceptConnectionButton)
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
-            val wallet = if (dappViewModel.dappExposedWallet == null) {
-                Account.getWallet()
-            } else {
-                dappViewModel.dappExposedWallet
-            }
-
-            val walletName = if (dappViewModel.dappExposedWallet == null) {
-                NEP6.getFromFileSystem().getDefaultAccount().label
-            } else {
-                dappViewModel.dappExposedWalletName
-            }
-            dappViewModel.dappExposedWalletName = walletName
-            dappViewModel.dappExposedWallet = wallet
             (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, true)
             dismiss()
         }
 
         rejectConnectionButton.onClick {
+            //in case they swapped but did not confirm reset to default
+            dappViewModel.dappExposedWallet = Account.getWallet()
+            dappViewModel.dappExposedWalletName = NEP6.getFromFileSystem().getDefaultAccount().label
+            didAccept = false
             (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
             dismiss()
         }
@@ -169,6 +159,14 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
             titleView.text = url!!
             logoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        if (didAccept == false) {
+            dappViewModel.dappExposedWallet = Account.getWallet()
+            dappViewModel.dappExposedWalletName = NEP6.getFromFileSystem().getDefaultAccount().label
+        }
+        super.onDismiss(dialog)
     }
 
     companion object {
