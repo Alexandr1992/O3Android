@@ -29,7 +29,7 @@ import com.robinhood.spark.SparkView
 import com.robinhood.spark.animation.MorphSparkAnimator
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
 import network.o3.o3wallet.Wallet.MyAddressFragment
@@ -80,6 +80,7 @@ class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFr
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         homeModel = HomeViewModelV2()
+        homeModel.getBestNode()
         homeModel.delegate = this
     }
 
@@ -282,11 +283,11 @@ class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFr
 
     override fun onModalOptionSelected(tag: String?, option: Option) {
         if (option.id == R.id.buy_with_crypto) {
-            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            val intent = Intent(this.context, DappContainerActivity::class.java)
             intent.putExtra("url", "https://o3.network/swap")
             startActivity(intent)
         } else {
-            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            val intent = Intent(this.context, DappContainerActivity::class.java)
             intent.putExtra("url", "https://buy.o3.network/?c=NEO")
             startActivity(intent)
         }

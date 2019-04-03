@@ -10,7 +10,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
@@ -117,7 +117,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
             val url =  "http://10.0.2.2:8000/deeplink.html"
-            val intent = Intent(this, DAppBrowserActivityV2::class.java)
+            val intent = Intent(this, DappContainerActivity::class.java)
             intent.putExtra("url", url)
             intent.putExtra("legacy", useLegacyCheckBox.isChecked)
             intent.putExtra("allowSearch", true)

@@ -274,4 +274,20 @@ class HomeViewModelV2: ViewModel() {
             }
         }
     }
+
+    fun getBestNode() {
+        if (PersistentStore.getNetworkType() == "Private") {
+            PersistentStore.setNodeURL(PersistentStore.getNodeURL())
+            return
+        }
+
+        O3PlatformClient().getChainNetworks {
+            if (it.first == null) {
+                getBestNode()
+            } else {
+                PersistentStore.setOntologyNodeURL(it.first!!.ontology.best)
+                PersistentStore.setNodeURL(it.first!!.neo.best)
+            }
+        }
+    }
 }

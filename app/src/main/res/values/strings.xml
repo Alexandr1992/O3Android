@@ -53,7 +53,8 @@
     <string name="ONBOARDING_please_select_wallet" comment="select which wallet to use title">Please select a wallet to login with</string>
 
     <!-- Login Page -->
-    <string name="ONBOARDING_scan_prompt" comment="Prompt asking the user to scan their QR code in order to log ib">Scan the QR code of your Encrypted or Private Key</string><![CDATA[
+    <string name="ONBOARDING_scan_prompt" comment="Prompt asking the user to scan their QR code in order to log ib">Scan the QR code of your Encrypted or Private Key</string>
+    <![CDATA[
     >
     ]]>
     <string name="ONBOARDING_decryption_failed" comment="Toast to show when decrypting nep2 key failure occurs">Decryption failed, check your password</string>

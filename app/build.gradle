@@ -64,7 +64,7 @@ buildscript {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation group: 'com.zendesk', name: 'support', version: '2.1.1'
-    implementation'org.slf4j:slf4j-nop:1.7.25'
+    implementation 'org.slf4j:slf4j-nop:1.7.25'
     implementation 'jp.wasabeef:blurry:3.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.0'
@@ -157,4 +157,3 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-

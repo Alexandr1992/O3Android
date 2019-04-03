@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import net.glxn.qrgen.android.QRCode
+import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.R
@@ -42,9 +43,15 @@ class EncryptExistingKeySuccessFragment : Fragment() {
 
         doneButton.setOnClickListener {
             //reset after activation
-            val intent = Intent(activity, SelectingBestNode::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            activity?.startActivity(intent)
+            if (NEP6.nep6HasActivated() == false) {
+                val intent = Intent(activity, MultiwalletActivateActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            } else {
+                val intent = Intent(activity, MainTabbedActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
         }
         backupButton.setOnClickListener { sendBackupEmail() }
 

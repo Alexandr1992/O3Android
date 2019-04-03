@@ -17,7 +17,7 @@ import com.google.gson.Gson
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.Identity.NNSBottomSheet
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.toast
@@ -104,11 +104,11 @@ class SettingsFragment : Fragment(), ModalBottomSheetDialogFragment.Listener {
 
     override fun onModalOptionSelected(tag: String?, option: Option) {
         if (option.id == R.id.buy_with_crypto) {
-            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            val intent = Intent(this.context, DappContainerActivity::class.java)
             intent.putExtra("url", "https://o3.network/swap")
             startActivity(intent)
         } else {
-            val intent = Intent(this.context, DAppBrowserActivityV2::class.java)
+            val intent = Intent(this.context, DappContainerActivity::class.java)
             intent.putExtra("url", "https://buy.o3.network/?c=NEO")
             startActivity(intent)
         }

@@ -20,6 +20,7 @@ import network.o3.o3wallet.R
 import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.yesButton
 import org.json.JSONObject
@@ -38,7 +39,7 @@ class OrdersListFragment : Fragment() {
             }
         }
         if (activity is MainTabbedActivity) {
-            val tab = activity?.find<TabLayout>(R.id.tabLayout)?.getTabAt(2)
+            val tab = parentFragment?.find<TabLayout>(R.id.tabLayout)?.getTabAt(2)
             if (tab != null) {
                 if (count > 0) {
                     tab.text = resources.getString(R.string.NATIVE_TRADE_orders) + " (" + count.toString() + ")"

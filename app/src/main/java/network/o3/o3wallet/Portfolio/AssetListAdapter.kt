@@ -19,7 +19,7 @@ import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.MultiwalletManageWallet
 import network.o3.o3wallet.R.*
 import org.jetbrains.anko.find
@@ -167,7 +167,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
 
                 val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "portfolio_row")
                 Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
-                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
+                val intent = Intent(view.context, DappContainerActivity::class.java)
                 intent.putExtra("url", detailURL)
                 view.context.startActivity(intent)
             }

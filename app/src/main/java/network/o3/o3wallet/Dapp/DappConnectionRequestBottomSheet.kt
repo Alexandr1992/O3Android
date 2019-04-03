@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
@@ -43,6 +44,9 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     lateinit var rejectConnectionButton: Button
 
     var dappMessage: DappMessage? = null
+
+    lateinit var dappViewModel: DAPPViewModel
+
 
     val needReloadExposedDappWallet = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -80,7 +84,7 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         }
 
 
-
+        dappViewModel = (activity as DappContainerActivity).dappViewModel
         registerReceivers()
         loadOpenGraphDetails()
         setAccountDetails()
@@ -88,16 +92,31 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         return mView
     }
 
+
+
     fun setupConnectionResultButtons() {
         acceptConnectionButton = mView.find(R.id.acceptConnectionButton)
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
-            (activity as DAppBrowserActivityV2).verifyPassCodeAndSign(dappMessage!!)
+            val wallet = if (dappViewModel.dappExposedWallet == null) {
+                Account.getWallet()
+            } else {
+                dappViewModel.dappExposedWallet
+            }
+
+            val walletName = if (dappViewModel.dappExposedWallet == null) {
+                NEP6.getFromFileSystem().getDefaultAccount().label
+            } else {
+                dappViewModel.dappExposedWalletName
+            }
+            dappViewModel.dappExposedWalletName = walletName
+            dappViewModel.dappExposedWallet = wallet
+            (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, true)
             dismiss()
         }
 
         rejectConnectionButton.onClick {
-            (activity as DAppBrowserActivityV2).jsInterface.rejectedAccountCredentials(dappMessage!!)
+            (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
             dismiss()
         }
     }
@@ -107,10 +126,20 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     }
 
     fun setAccountDetails() {
-        val wallet = (activity as DAppBrowserActivityV2).walletToExpose
+        val wallet = if (dappViewModel.dappExposedWallet == null) {
+            Account.getWallet()
+        } else {
+            dappViewModel.dappExposedWallet
+        }
 
-        addressTextView.text = wallet.address
-        addressNameTextView.text = (activity as DAppBrowserActivityV2).walletToExposeName
+        val walletName = if (dappViewModel.dappExposedWallet == null) {
+            NEP6.getFromFileSystem().getDefaultAccount().label
+        } else {
+            dappViewModel.dappExposedWalletName
+        }
+
+        addressTextView.text = wallet!!.address
+        addressNameTextView.text = walletName
     }
 
     fun loadOpenGraphDetails() {

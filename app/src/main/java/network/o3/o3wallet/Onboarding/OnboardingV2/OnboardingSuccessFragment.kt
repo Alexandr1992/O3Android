@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import network.o3.o3wallet.Onboarding.SelectingBestNode
+import network.o3.o3wallet.MainTabbedActivity
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
+import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
@@ -20,8 +22,15 @@ class OnboardingSuccessFragment: Fragment() {
         finishButton = mView.find(R.id.finishButton)
 
         finishButton.onClick {
-            val intent = Intent(activity, SelectingBestNode::class.java)
-            startActivity(intent)
+            if (NEP6.nep6HasActivated() == false) {
+                val intent = Intent(activity, MultiwalletActivateActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            } else {
+                val intent = Intent(activity, MainTabbedActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
         }
         return mView
     }

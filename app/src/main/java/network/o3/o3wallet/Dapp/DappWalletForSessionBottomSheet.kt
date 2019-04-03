@@ -70,11 +70,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
                     neo2DialogFragment.dismiss()
                     val walletToExpose = Neoutils.generateFromWIF(wif)
                     val walletToExposeName = NEP6.getFromFileSystem().getWalletAccounts().find { it.address == walletToExpose.address }!!.label
-                    (mFragment.activity as DAppBrowserActivityV2).walletToExpose = walletToExpose
-                    (mFragment.activity as DAppBrowserActivityV2).walletToExposeName = walletToExposeName
-                    if (!(mFragment as DappWalletForSessionBottomSheet).needsAuth) {
-                        (mFragment.activity as DAppBrowserActivityV2).jsInterface.setDappExposedWallet(walletToExpose, walletToExposeName)
-                    }
+                    (mFragment.activity as DappContainerActivity).dappViewModel.setWalletToExpose(walletToExpose, walletToExposeName)
 
                     val intent = Intent("update-exposed-dapp-wallet")
                     LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
@@ -88,7 +84,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
 
         override fun getItem(position: Int): NEP6.Account {
             var accounts = NEP6.getFromFileSystem().getWalletAccounts().toMutableList()
-            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()?.address}
+            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DappContainerActivity).dappViewModel.dappExposedWallet?.address}
             if (index == -1) {
                 index = accounts.indexOfFirst { it.isDefault }
             }

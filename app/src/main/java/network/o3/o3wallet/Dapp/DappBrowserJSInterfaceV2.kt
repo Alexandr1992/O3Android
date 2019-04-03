@@ -1,80 +1,55 @@
 package network.o3.o3wallet.Dapp
 
-import android.content.Context
-import android.content.Intent
-import android.os.Handler
-import android.util.Log
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.amplitude.api.Amplitude
-import com.github.salomonbrys.kotson.*
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import com.google.gson.JsonObject
-import neoutils.Wallet
-import network.o3.o3wallet.*
-import network.o3.o3wallet.API.NEO.NeoNodeRPC
-import network.o3.o3wallet.API.NEO.TransactionAttribute
-import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import org.jetbrains.anko.find
-import org.jetbrains.anko.image
+import network.o3.o3wallet.PersistentStore
 import org.json.JSONObject
-import java.math.BigDecimal
-import java.util.concurrent.CountDownLatch
 
-class DappBrowserJSInterfaceV2(private val context: Context, private val webView: WebView,
-                               private var dappExposedWallet: Wallet?, private var dappExposedWalletName: String, private val url: String) {
+class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
     @JavascriptInterface
     fun messageHandler(jsonString: String) {
         val gson = Gson()
         val message = gson.fromJson<DappMessage>(jsonString)
         listOf("getProvider", "getNetworks", "getAccount",
                 "getBalance", "getStorage", "invokeRead", "invoke", "send")
-        val attrs = mapOf("url" to url,
+        val attrs = mapOf("url" to vm.url,
                 "blockchain" to "NEO",
                 "net" to PersistentStore.getNetworkType(),
                 "method" to message.command)
         Amplitude.getInstance().logEvent("dAPI_method_call", JSONObject(attrs))
         when (message.command.toLowerCase()) {
-            "getprovider" -> handleGetProvider(message)
-            "disconnect" -> handleDisconnect(message)
-            "getnetworks" -> handleGetNetworks(message)
-            "getaccount" -> handleGetAccount(message)
-            "getbalance" -> handleGetBalance(message)
-            "getstorage" -> handleGetStorage(message)
-            "invokeread" -> handleInvokeRead(message)
-            "invoke" -> authorizeInvoke(message)
-            "send"-> authorizeSend(message)
+            "getprovider" -> vm.handleGetProvider(message)
+           // "disconnect" -> vm.handleDisconnect(message)
+            "getnetworks" -> vm.handleGetNetworks(message)
+            "getbalance" -> vm.handleGetBalance(message)
+            "getstorage" -> vm.handleGetStorage(message)
+            "invokeread" -> vm.handleInvokeRead(message)
+
+            "getaccount" -> vm.requestAuthorizeWalletInfo(message)
+            "invoke" -> vm.requestAuthorizeInvoke(message)
+            "send"-> vm.requestAuthorizeSend(message)
             else -> return
         }
     }
 
-    fun getDappExposedWallet(): Wallet? {
-            return dappExposedWallet
-    }
-
-    fun getDappExposedWalletName(): String {
-        return dappExposedWalletName
-    }
-
-    fun setDappExposedWallet(wallet: Wallet, name: String) {
-        val shouldFireAccountChanged = dappExposedWallet != null
-        dappExposedWallet = wallet
-        dappExposedWalletName = name
+   /* fun setDappExposedWallet(wallet: Wallet, name: String) {
+        val shouldFireAccountChanged = vm.dappExposedWallet != null
+        vm.dappExposedWallet = wallet
+        vm.dappExposedWalletName = name
 
         if (shouldFireAccountChanged) {
             fireAccountChangedEvent()
         }
         val intent = Intent("update-exposed-dapp-wallet")
         LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
-    }
+    }*/
 
 
-    fun handleDisconnect(message: DappMessage) {
-        dappExposedWallet = null
-        dappExposedWalletName = ""
+    /*fun handleDisconnect(message: DappMessage) {
+        vm.dappExposedWallet = null
+        vm.dappExposedWalletName = ""
         fireDisconnect()
         val intent = Intent("update-exposed-dapp-wallet")
         LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
@@ -82,9 +57,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         (webView.context as DAppBrowserActivityV2).walletToExposeName =
                 NEP6.getFromFileSystem().getDefaultAccount().label
         callback(message,  jsonObject())
-    }
+    }*/
 
-    fun manualDisconnect() {
+    /*fun manualDisconnect() {
         dappExposedWallet = null
         dappExposedWalletName = ""
         fireDisconnect()
@@ -93,34 +68,14 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         (webView.context as DAppBrowserActivityV2).walletToExpose = Account.getWallet()
         (webView.context as DAppBrowserActivityV2).walletToExposeName =
                 NEP6.getFromFileSystem().getDefaultAccount().label
-    }
+    }*/
 
 
-    fun handleGetProvider(message: DappMessage) {
-        val theme = if (PersistentStore.getTheme() == "Light") "Light Mode" else "Dark Mode"
-
-        val response = NeoDappProtocol.GetProviderResponse(name = "o3-Android", version = "v2",
-                website = "https://o3.network", compatibility = listOf("NEP-dapi"), extra = jsonObject("theme" to theme))
+    /*fun authorizedAccountCredentials(message: DappMessage) {
+        val response = NeoDappProtocol.GetAccountResponse(address = vm.dappExposedWallet!!.address,
+                label = vm.dappExposedWalletName)
         callback(message, response)
-    }
-
-    fun handleGetNetworks(message: DappMessage) {
-        val response: NeoDappProtocol.GetNetworkResponse
-        if (PersistentStore.getNetworkType() == "Test") {
-            response = NeoDappProtocol.GetNetworkResponse(listOf("TestNet"), "TestNet")
-        } else if (PersistentStore.getNetworkType() == "Main"){
-            response = NeoDappProtocol.GetNetworkResponse(listOf("MainNet"), "MainNet")
-        } else {
-            response = NeoDappProtocol.GetNetworkResponse(listOf(), "")
-        }
-        callback(message, response)
-    }
-
-    fun authorizedAccountCredentials(message: DappMessage) {
-        val response = NeoDappProtocol.GetAccountResponse(address = dappExposedWallet!!.address,
-                label = dappExposedWalletName)
-        callback(message, response)
-        (webView.context as DAppBrowserActivityV2).setUnlockState()
+        //(webView.context as DAppBrowserActivityV2).setUnlockState()
     }
 
     fun rejectedAccountCredentials(message: DappMessage) {
@@ -129,18 +84,19 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
     fun rejectedInvoke(message: DappMessage) {
         callback(message, jsonObject("error" to "CANCELED"))
-    }
+    }*/
 
 
-    fun handleGetAccount(message: DappMessage) {
-        if (dappExposedWallet != null) {
+    /*fun handleGetAccount(message: DappMessage) {
+        if (vm.dappExposedWallet != null) {
             authorizedAccountCredentials(message)
         } else {
-            (webView.context as DAppBrowserActivityV2).authorizeWalletInfo(message)
+            //(webView.context as DAppBrowserActivityV2).authorizeWalletInfo(message)
+            vm.authorizeWalletInfo(message)
         }
-    }
+    }*/
 
-    fun authorizeSend(message: DappMessage) {
+    /*fun authorizeSend(message: DappMessage) {
         val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
         var network = sendRequest.network ?: "MainNet"
         if (network == "") {
@@ -148,14 +104,15 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
         if (!network.contains(PersistentStore.getNetworkType())) {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
-        } else if (sendRequest.fromAddress != dappExposedWallet?.address ?: "") {
+        } else if (sendRequest.fromAddress != vm.dappExposedWallet?.address ?: "") {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
         } else {
-            (webView.context as DAppBrowserActivityV2).authorizeSend(message)
+            vm.authorizeSend(message)
+            //(webView.context as DAppBrowserActivityV2).authorizeSend(message)
         }
-    }
+    }*/
 
-    fun authorizeInvoke(message: DappMessage) {
+    /*fun authorizeInvoke(message: DappMessage) {
         val sendRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
         var network = sendRequest.network ?: "MainNet"
         if (network == "") {
@@ -164,11 +121,12 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         if (!network.contains(PersistentStore.getNetworkType())) {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
         } else {
-            (webView.context as DAppBrowserActivityV2).authorizeInvoke(message)
+            vm.requestAuthorizeInvoke(message)
+            //(webView.context as DAppBrowserActivityV2).authorizeInvoke(message)
         }
-    }
+    }*/
 
-    fun handleGetBalance(message: DappMessage) {
+    /*fun handleGetBalance(message: DappMessage) {
         val inputs =  Gson().fromJson<NeoDappProtocol.GetBalanceRequest>(Gson().toJson(message.data)).params
         val latch = CountDownLatch(inputs.count() * 2)
 
@@ -245,9 +203,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             }
         }
         callback(message, jsonResponse)
-    }
+    }*/
 
-    fun sendNativeNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
+    /*fun sendNativeNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
         var success = false
         var toSendAsset: NeoNodeRPC.Asset? = null
         toSendAsset = if (sendRequest.asset.toLowerCase() == "neo") {
@@ -292,9 +250,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
         latch.await()
         return success
-    }
+    }*/
 
-    fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
+    /*fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
         sendRequest.toAddress = dappExposedWallet!!.address
         var success = false
 
@@ -360,9 +318,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         }
         latch.await()
         return success
-    }
+    }*/
 
-    fun handleSend(message: DappMessage): Boolean {
+    /*fun handleSend(message: DappMessage): Boolean {
         val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
         if (sendRequest.asset.toUpperCase()
                 == "NEO" || sendRequest.asset.toUpperCase() == "GAS") {
@@ -370,9 +328,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         } else {
             return sendTokenNeoAsset(message, sendRequest)
         }
-    }
+    }*/
 
-    fun handleGetStorage(message: DappMessage) {
+    /*fun handleGetStorage(message: DappMessage) {
         val latch = CountDownLatch(1)
         var storageRequest = Gson().fromJson<NeoDappProtocol.GetStorageRequest>(Gson().toJson(message.data))
         NeoNodeRPC(PersistentStore.getNodeURL()).getStorage(storageRequest.scriptHash, storageRequest.key) {
@@ -385,9 +343,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             latch.countDown()
         }
         latch.await()
-    }
+    }*/
 
-    fun handleInvokeRead(message: DappMessage) {
+    /*fun handleInvokeRead(message: DappMessage) {
         var invokeReadRequest = Gson().fromJson<NeoDappProtocol.InvokeReadRequest>(Gson().toJson(message.data))
         var network = invokeReadRequest.network ?: "MainNet"
         if (network == "") {
@@ -408,9 +366,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             latch.countDown()
         }
         latch.await()
-    }
+    }*/
 
-    fun handleInvoke(message: DappMessage): Boolean {
+    /*fun handleInvoke(message: DappMessage): Boolean {
         var invokeRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
         var success = false
         var fee = BigDecimal.ZERO
@@ -450,9 +408,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
 
         latch.await()
         return success
-    }
+    }*/
 
-    fun fireAccountChangedEvent() {
+    /*fun fireAccountChangedEvent() {
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireAccountChanged = jsonObject("command" to "event",
                 "eventName" to "ACCOUNT_CHANGED",
@@ -469,9 +427,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             }
         }
         mainHandler.post(myRunnable)
-    }
+    }*/
 
-    fun fireDisconnect() {
+    /*fun fireDisconnect() {
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireDisconnectResponse = jsonObject("command" to "event",
                 "eventName" to "DISCONNECTED",
@@ -490,9 +448,9 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
         mainHandler.post(myRunnable)
         (webView.context as DAppBrowserActivityV2).find<ImageView>(R.id.walletStatusImageView).image =
                 ContextCompat.getDrawable(context, R.drawable.ic_walletitem)
-    }
+    }*/
 
-    fun fireReady() {
+    /*fun fireReady() {
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireDisconnectResponse = jsonObject("command" to "event",
                 "eventName" to "READY",
@@ -509,23 +467,15 @@ class DappBrowserJSInterfaceV2(private val context: Context, private val webView
             }
         }
         mainHandler.post(myRunnable)
-    }
+    }*/
 
-    fun callback(message: DappMessage, data: Any) {
+    /*fun callback(message: DappMessage, data: Any) {
         val json = Gson().typedToJsonTree(message).asJsonObject
         if (Gson().typedToJsonTree(data).isJsonObject && Gson().typedToJsonTree(data).asJsonObject.has("error")) {
             json["error"] = Gson().typedToJsonTree(data)["error"]
         } else {
             json["data"] = Gson().typedToJsonTree(data)
         }
-
-        val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
-        val myRunnable = Runnable {
-            val script = "_o3dapi.receiveMessage(" + json.toString() + ")"
-            webView.evaluateJavascript(script) { value ->
-                Log.d("javascript", value)
-            }
-        }
-        mainHandler.post(myRunnable)
-    }
+        vm.setDappResponse(json.toString())
+    }*/
 }

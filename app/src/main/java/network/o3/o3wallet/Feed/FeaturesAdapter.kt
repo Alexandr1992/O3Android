@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
 import network.o3.o3wallet.API.O3.Feature
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.R
 
 
@@ -50,7 +50,7 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
                         .putContentType(feature?.category )
                         .putContentId(feature?.title)
                         .putContentName("Featured Item View"))
-                val browserIntent = Intent(view.context, DAppBrowserActivityV2::class.java)
+                val browserIntent = Intent(view.context, DappContainerActivity::class.java)
                 browserIntent.putExtra("url", feature?.actionURL)
                 view.context.startActivity(browserIntent)
             }
@@ -66,7 +66,7 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
             view.findViewById<TextView>(R.id.featureSubtitle).text = feature?.subtitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).text = feature?.actionTitle ?: ""
             view.findViewById<Button>(R.id.featureBadge).setOnClickListener {
-                val browserIntent = Intent(view.context, DAppBrowserActivityV2::class.java)
+                val browserIntent = Intent(view.context, DappContainerActivity::class.java)
                 browserIntent.putExtra("url", feature?.actionURL)
                 view.context.startActivity(browserIntent)
             }

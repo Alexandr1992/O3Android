@@ -84,15 +84,15 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
         setFeeControls()
         loadOpenGraphDetails()
         contractOperationTextView.text = resources.getString(R.string.DAPP_invoke_request, invokeRequest.operation)
-        withWalletTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()!!.address
+        withWalletTextView.text = (activity as DappContainerActivity).dappViewModel.dappExposedWallet!!.address
 
         invokeButton.onClick {
-            val success = (activity as DAppBrowserActivityV2).jsInterface.handleInvoke(dappMessage!!)
+            val success = (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, true)
             dismiss()
         }
 
         cancelButton.onClick {
-            (activity as DAppBrowserActivityV2).jsInterface.rejectedInvoke(dappMessage!!)
+            (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, false)
             dismiss()
         }
 

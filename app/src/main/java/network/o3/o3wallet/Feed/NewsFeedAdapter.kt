@@ -15,7 +15,7 @@ import com.crashlytics.android.answers.ContentViewEvent
 import network.o3.o3wallet.API.O3.FeedData
 import network.o3.o3wallet.API.O3.FeedItem
 import network.o3.o3wallet.API.O3.NewsImage
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.R
 import java.text.SimpleDateFormat
 
@@ -72,7 +72,7 @@ class NewsFeedAdapter(context: Context, fragment: NewsFeedFragment): BaseAdapter
                     .putContentName("NewsFeed Item View"))
 
             val url = feedItem.link
-            val i = Intent(view.context, DAppBrowserActivityV2::class.java)
+            val i = Intent(view.context, (mFragment.activity as DappContainerActivity).dappViewModel::class.java)
             i.putExtra("url", url)
             view.context.startActivity(i)
         }

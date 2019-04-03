@@ -76,19 +76,20 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         loadingTextView = mView.find(R.id.loadingStateTextView)
 
 
-        fromWalletNameTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName()
+        fromWalletNameTextView.text = (activity as DappContainerActivity).dappViewModel.dappExposedWalletName
         toWalletAddressTextView.text = sendRequest.toAddress
         memoTextView.text = sendRequest.remark
         totalTextView.text = sendRequest.amount + " " + sendRequest.asset
 
         cancelButton.onClick {
+            val success = (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, false)
             dismiss()
         }
 
         sendButton.onClick {
             showSendingState()
             bg {
-                val success = (activity as DAppBrowserActivityV2).jsInterface.handleSend(dappMessage!!)
+                val success = (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, true)
                 finishSending(success)
             }
 

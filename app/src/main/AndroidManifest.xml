@@ -21,6 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
@@ -49,8 +50,10 @@
             android:theme="@style/AppTheme.White.NoTopBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="o3" />
             </intent-filter>
         </activity>
@@ -88,8 +91,7 @@
             android:value="9079b668cf1db3164eb997197887d9ae1c30a673" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_stat_notification" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
+            android:resource="@drawable/ic_stat_notification" /> <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
@@ -97,9 +99,7 @@
         <activity
             android:name=".Onboarding.SelectingBestNode"
             android:theme="@style/AppTheme.Dark" />
-        <activity
-            android:name=".MarketPlace.TokenSales.TokenSaleRootActivity"
-            android:theme="@style/AppTheme.Dark" />
+
         <activity android:name=".Settings.AdvancedSettingsActivity" />
         <activity android:name=".Onboarding.PasscodeRequestActivity" />
         <activity android:name=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity" />
@@ -108,12 +108,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".Dapp.DAppBrowserActivityV2"
+
+        <activity android:name=".Dapp.DappContainerActivity"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_dapp_browser"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTopBar.White" />
+            android:theme="@style/AppTheme.NoTopBar.White"
+        />
         <activity
             android:name=".MultiWallet.Activate.MultiwalletActivateActivity"
             android:screenOrientation="portrait"
@@ -140,7 +141,7 @@
         <activity
             android:name=".Settings.Help.HelpRootActivity"
             android:theme="@style/AppTheme.NoTopBar.White" />
-        <activity android:name=".MultiWallet.VerifyManualBackupActivity"></activity>
+        <activity android:name=".MultiWallet.VerifyManualBackupActivity" />
     </application>
 
 </manifest>

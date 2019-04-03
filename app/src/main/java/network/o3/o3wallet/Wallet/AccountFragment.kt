@@ -34,6 +34,7 @@ import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.yesButton
@@ -44,7 +45,7 @@ class AccountFragment : Fragment() {
     // toolbar items
     private lateinit var myQrButton: Button
     private lateinit var sendButton: Button
-    private lateinit var scanButton: ImageView
+    private lateinit var scanButton: Button
 
     //assets list
     private lateinit var swipeContainer: SwipeRefreshLayout
@@ -81,7 +82,7 @@ class AccountFragment : Fragment() {
             setupNeoClaimsListener()
             setupNeoGasClaimViews()
             setupOntologyGasClaimViews()
-            setupActionButtons()
+            //setupActionButtons()
             setupOntologyClaimListener()
             setupTopBar()
         }
@@ -109,7 +110,7 @@ class AccountFragment : Fragment() {
         setupNeoClaimsListener()
         setupNeoGasClaimViews()
         setupOntologyGasClaimViews()
-        setupActionButtons()
+        //setupActionButtons()
         setupOntologyClaimListener()
         setupTopBar()
     }
@@ -119,28 +120,29 @@ class AccountFragment : Fragment() {
         if (NEP6.getFromFileSystem().accounts.isNotEmpty()) {
             walletName = NEP6.getFromFileSystem().accounts[0].label
         }
-        activity?.find<TextView>(R.id.walletAccountTitleTextView)?.text = walletName
+
+        parentFragment?.find<TextView>(R.id.walletAccountTitleTextView)?.text = walletName
         if (NEP6.getFromFileSystem().getNonDefaultAccounts().isNotEmpty() ) {
-            activity?.find<ImageView>(R.id.walletSwapButton)?.setOnClickListener {
+            parentFragment?.find<ImageView>(R.id.walletSwapButton)?.setOnClickListener {
                 val bottomSheet = SwapWalletBottomSheet()
                 bottomSheet.show(activity!!.supportFragmentManager, "swapWallet")
             }
         } else {
-            activity?.find<ImageView>(R.id.walletSwapButton)?.visibility = View.GONE
+            parentFragment?.find<ImageView>(R.id.walletSwapButton)?.visibility = View.GONE
         }
     }
 
 
     //region UI Binding
-    fun setupActionButtons() {
+    /*fun setupActionButtons() {
         myQrButton = mView.findViewById(R.id.requestButton)
         sendButton = mView.findViewById(R.id.sendButton)
-        scanButton = activity?.findViewById(R.id.scanButton)!!
+        scanButton = parentFragment?.find(R.id.scanButton)!!
 
         myQrButton.setOnClickListener { showMyAddress() }
         sendButton.setOnClickListener { sendButtonTapped("") }
         scanButton.setOnClickListener { scanAddressTapped() }
-    }
+    }*/
 
     fun setupNeoGasClaimViews() {
         neoGasProgress = mView.find(R.id.neoGasProgress)

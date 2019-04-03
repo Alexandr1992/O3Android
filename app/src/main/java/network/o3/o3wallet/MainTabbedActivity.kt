@@ -27,9 +27,12 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
 import io.fabric.sdk.android.Fabric
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.yesButton
 import org.json.JSONObject
 import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
@@ -116,9 +119,10 @@ class MainTabbedActivity : AppCompatActivity() {
      * Overriding popBackStack is necessary in this case if the app is started from the deep link.
      */
     override fun onBackPressed() {
-        if (currentNavController?.value?.popBackStack() != true) {
-            super.onBackPressed()
-        }
+        alert(resources.getString(R.string.TABBAR_logout_warning)) {
+            yesButton { super.onBackPressed() }
+            noButton { }
+        }.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -130,7 +134,7 @@ class MainTabbedActivity : AppCompatActivity() {
                 Toast.makeText(this, resources.getString(R.string.ALERT_cancelled), Toast.LENGTH_LONG).show()
             } else {
                 if (URLUtil.isNetworkUrl(result.contents)) {
-                    val intent = Intent(this, DAppBrowserActivityV2::class.java)
+                    val intent = Intent(this, DappContainerActivity::class.java)
                     intent.putExtra("url", result.contents)
                     startActivity(intent)
                 } else {

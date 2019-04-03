@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
@@ -132,7 +132,7 @@ class HelpOptionsFragment: Fragment() {
                 mView.find<TextView>(R.id.subtitleTextView).text = subtitles[sectionedPosition]
                 mView.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mView.context, R.drawable.ic_guide)
                 mView.onClick {
-                    val intent = Intent(mFragment.context, DAppBrowserActivityV2::class.java)
+                    val intent = Intent(mFragment.context, (mFragment.activity as DappContainerActivity).dappViewModel::class.java)
 
                     intent.putExtra("url", "https://docs.o3.network/docs/privateKeysAddressesAndSignatures/?mode=embed")
                     mFragment.startActivity(intent)

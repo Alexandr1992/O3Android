@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -72,7 +72,7 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
         fun bindHeader() {
             view.find<Button>(R.id.tradeNowButton).setOnClickListener {
                 val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
+                val intent = Intent(view.context, DappContainerActivity::class.java)
                 intent.putExtra("url", url)
                 intent.putExtra("allowSearch", false)
                 view.context.startActivity(intent)
@@ -92,7 +92,7 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
             val tokenDetailsAttrs = mapOf("asset" to token!!.symbol, "source" to "marketplace_card")
             Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
             val detailURL = token?.url!! + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
-            val intent = Intent(v.context, DAppBrowserActivityV2::class.java)
+            val intent = Intent(v.context, DappContainerActivity::class.java)
             intent.putExtra("url", detailURL)
             v.context.startActivity(intent)
         }

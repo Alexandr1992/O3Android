@@ -1,55 +1,7 @@
 package network.o3.o3wallet.Dapp
 
-import android.app.Activity
-import android.app.KeyguardManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Bundle
-import android.os.SystemClock
-import android.provider.MediaStore
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.EditorInfo
-import android.webkit.*
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.amplitude.api.Amplitude
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
-import com.google.zxing.integration.android.IntentIntegrator
-import com.skydoves.powermenu.CustomPowerMenu
-import com.skydoves.powermenu.MenuAnimation
-import com.skydoves.powermenu.OnMenuItemClickListener
-import com.tapadoo.alerter.Alerter
-import neoutils.Wallet
-import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
-import org.jetbrains.anko.find
-import org.jetbrains.anko.image
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.json.JSONObject
-import java.io.File
-import java.io.InputStream
-import java.net.URL
-import java.util.*
 
-
-class DAppBrowserActivityV2 : AppCompatActivity() {
+/*class DAppBrowserActivityV2 : AppCompatActivity() {
 
     lateinit var dappBrowserView: View
     lateinit var webView: WebView
@@ -95,7 +47,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         val url = intent.getStringExtra("url")
         setStylingForURLText(url)
         initiateTradeFooter(Uri.parse(url))
-        setupTopBar(intent.getBooleanExtra("allowSearch", false))
+        initateBrowserHeader(intent.getBooleanExtra("allowSearch", false))
         setupWebClients()
 
         val useLegacy = intent.getBooleanExtra("legacy", false)
@@ -251,7 +203,7 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
         }
     }
 
-    fun setupTopBar(allowSearch: Boolean) {
+    fun initateBrowserHeader(allowSearch: Boolean) {
         if (allowSearch) {
             searchBar.isFocusable = true
             searchBar.isEnabled = true
@@ -524,4 +476,4 @@ class DAppBrowserActivityV2 : AppCompatActivity() {
             }
         }
     }
-}
+}*/
