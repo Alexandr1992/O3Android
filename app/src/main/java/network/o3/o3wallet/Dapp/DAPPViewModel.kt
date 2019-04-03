@@ -5,15 +5,19 @@ import android.webkit.ValueCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import neoutils.Wallet
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
+import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.PersistentStore
+import org.json.JSONObject
+import java.math.BigDecimal
 import java.util.concurrent.CountDownLatch
 
 class DAPPViewModel(url: String): ViewModel() {
@@ -240,12 +244,172 @@ class DAPPViewModel(url: String): ViewModel() {
         latch.await()
     }
 
-    fun handleInvoke(message: DappMessage, authorized: Boolean) {
+    fun handleInvoke(message: DappMessage, authorized: Boolean): Boolean {
+        var invokeRequest = Gson().fromJson<NeoDappProtocol.InvokeRequest>(Gson().toJson(message.data))
+        var success = false
+        var fee = BigDecimal.ZERO
+        try {
+            fee = BigDecimal(invokeRequest.fee)
+        } catch (e : Exception) {
+        }
 
+        val latch = CountDownLatch(1)
+        O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+            var assets = it.first
+            var error = it.second
+            if (error != null) {
+                latch.countDown()
+            } else {
+                NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(dappExposedWallet!!,
+                        assets, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
+                        fee, arrayOf(), invokeRequest.attachedAssets) {
+                    if (it.second == null) {
+                        success = true
+                        val obj = jsonObject("txid" to it.first!!.toLowerCase(),
+                                "nodeUrl" to PersistentStore.getNodeURL())
+                        setDappResponse(message, obj)
+                    } else {
+                        setDappResponse(message, jsonObject("error" to "RPC_ERROR"))
+                    }
+                    val attrs = mapOf("url" to url,
+                            "blockchain" to "NEO",
+                            "net" to PersistentStore.getNetworkType(),
+                            "method" to "invoke",
+                            "success" to success)
+                    Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+                    latch.countDown()
+                }
+            }
+        }
+
+        latch.await()
+        return success
     }
 
+    fun sendNativeNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
+        var success = false
+        var toSendAsset: NeoNodeRPC.Asset? = null
+        toSendAsset = if (sendRequest.asset.toLowerCase() == "neo") {
+            NeoNodeRPC.Asset.NEO
+        } else {
+            NeoNodeRPC.Asset.GAS
+        }
+        val attributes = if (sendRequest.remark != null) {
+            arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
+        } else {
+            arrayOf()
+        }
+
+        val recipientAddress = sendRequest.toAddress
+        val amount = sendRequest.amount
+        val node = PersistentStore.getNodeURL()
+        val latch = CountDownLatch(1)
+
+        var fee = BigDecimal.ZERO
+        try {
+            fee = BigDecimal(sendRequest.fee)
+        } catch (e : Exception) {
+        }
+
+        NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet!!, toSendAsset, BigDecimal(amount),
+                recipientAddress, attributes, fee) {
+            if (it.first != null) {
+                success = true
+                setDappResponse(message, NeoDappProtocol.SendResponse(txid = it.first!!.toLowerCase(), nodeUrl = node))
+            } else {
+                setDappResponse(message, jsonObject("error" to "RPC_ERROR"))
+            }
+            val attrs = mapOf("url" to url,
+                    "blockchain" to "NEO",
+                    "net" to PersistentStore.getNetworkType(),
+                    "method" to "send",
+                    "success" to success)
+            Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+
+            latch.countDown()
+
+        }
+        latch.await()
+        return success
+    }
+
+    fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
+        sendRequest.toAddress = dappExposedWallet!!.address
+        var success = false
+
+        var fee = BigDecimal.ZERO
+        try {
+            fee = BigDecimal(sendRequest.fee)
+        } catch (e : Exception) { }
+
+        val attributes = if (sendRequest.remark != null) {
+            arrayOf(TransactionAttribute().dapiRemarkAttribute(sendRequest.remark))
+        } else {
+            arrayOf()
+        }
+
+        val latch = CountDownLatch(1)
+        O3PlatformClient().getTransferableAssets(dappExposedWallet!!.address) {
+            var token = it.first?.assets?.find { it.symbol.toLowerCase() == sendRequest.asset.toLowerCase() }
+            if (fee == BigDecimal.ZERO) {
+                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, null, token!!.id,
+                        dappExposedWallet!!.address, sendRequest.toAddress,
+                        BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
+                    if (it.first != null) {
+                        success = true
+                        setDappResponse(message, NeoDappProtocol.SendResponse(txid = it.first!!.toLowerCase(), nodeUrl = PersistentStore.getNodeURL()))
+                    } else {
+                        setDappResponse(message, jsonObject("error" to "RPC_ERROR"))
+                    }
+                    val attrs = mapOf("url" to url,
+                            "blockchain" to "NEO",
+                            "net" to PersistentStore.getNetworkType(),
+                            "method" to "send",
+                            "success" to success)
+                    Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+                    latch.countDown()
+                }
+            } else {
+                O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+                    var assets = it.first
+                    var error = it.second
+                    if (error != null) {
+                        latch.countDown()
+                    } else {
+                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, assets, sendRequest.asset, dappExposedWallet!!.address,
+                                sendRequest.toAddress, BigDecimal(sendRequest.amount),
+                                token?.decimals ?: 8, fee, attributes) {
+                            if (it.first != null) {
+                                success = true
+                                setDappResponse(message, NeoDappProtocol.SendResponse(txid = it.first!!.toLowerCase(), nodeUrl = PersistentStore.getNodeURL()))
+                            } else {
+                                setDappResponse(message, jsonObject("error" to "RPC_ERROR"))
+                            }
+                            val attrs = mapOf("url" to url,
+                                    "blockchain" to "NEO",
+                                    "net" to PersistentStore.getNetworkType(),
+                                    "method" to "send",
+                                    "success" to success)
+                            Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+                            latch.countDown()
+                        }
+                    }
+                }
+            }
+        }
+        latch.await()
+        return success
+    }
+
+
     fun handleSend(message: DappMessage, authorized: Boolean): Boolean {
-        return true
+        val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
+        if (sendRequest.asset.toUpperCase()
+                == "NEO" || sendRequest.asset.toUpperCase() == "GAS") {
+            return sendNativeNeoAsset(message, sendRequest)
+        } else {
+            return sendTokenNeoAsset(message, sendRequest)
+        }
     }
 
     fun handleWalletInfo(message: DappMessage, authorized: Boolean) {
