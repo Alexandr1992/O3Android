@@ -11,6 +11,6 @@
         tools:layout="@layout/settings_fragment_menu">
         <deepLink
             android:id="@+id/deepLink3"
-            app:uri="o3://settings" />
+            app:uri="o3network://settings" />
     </fragment>
 </navigation>

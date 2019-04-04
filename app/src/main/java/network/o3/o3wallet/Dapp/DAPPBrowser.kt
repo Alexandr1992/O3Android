@@ -22,6 +22,7 @@ import com.google.gson.Gson
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.MenuAnimation
 import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
@@ -111,6 +112,7 @@ class DAPPBrowser : Fragment() {
         //can allow for context based footer bars
         initateBrowserHeader(dappViewModel.allowSearch)
         initiateTradeFooter(Uri.parse((activity as DappContainerActivity).dappViewModel.url))
+        showDappBrowserWarning()
 
         return mView
     }
@@ -305,5 +307,12 @@ class DAPPBrowser : Fragment() {
                 }
             }
         })
+    }
+
+    fun showDappBrowserWarning() {
+        if (PersistentStore.getHasAgreedDappDisclaimer() == false) {
+            val warningBottomSheet = DappDisclaimerBottomSheet.newInstance()
+            warningBottomSheet.show((this@DAPPBrowser.activity as DappContainerActivity).supportFragmentManager, warningBottomSheet.tag)
+        }
     }
 }

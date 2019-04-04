@@ -11,6 +11,6 @@
         tools:layout="@layout/marketplace_tabbed_fragment">
         <deepLink
             android:id="@+id/deepLink5"
-            app:uri="o3://marketplace" />
+            app:uri="o3network//marketplace" />
     </fragment>
 </navigation>

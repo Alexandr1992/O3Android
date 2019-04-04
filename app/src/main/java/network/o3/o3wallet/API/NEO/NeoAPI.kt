@@ -3,7 +3,6 @@ package network.o3.o3wallet.API.NEO
 
 
 import android.util.Log
-import com.amplitude.api.Amplitude
 import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.jsonArray
@@ -619,10 +618,7 @@ class NeoNodeRPC {
         payload += hexStringToByteArray(NeoNodeRPC.Asset.GAS.assetID()).reversedArray()
 
         val claimIntermediate = BigDecimal(claims.data.gas)
-        val attrs = mapOf(
-                "type" to "GAS",
-                "is_ledger" to false)
-        Amplitude.getInstance().logEvent("CLAIM", JSONObject(attrs))
+        AnalyticsService.Wallet.logGasClaim()
         val claimLong = claimIntermediate.multiply(BigDecimal(100000000)).toLong()
         payload += ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(claimLong).array()
         payload += wallet.hashedSignature

@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import network.o3.o3wallet.*
@@ -408,7 +407,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
-                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
+                    AnalyticsService.Trading.logTradingBalanceError()
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }
@@ -416,7 +415,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (orderAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         orderAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
-                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
+                    AnalyticsService.Trading.logTradingBalanceError()
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }

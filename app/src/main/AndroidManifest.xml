@@ -113,8 +113,16 @@
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_dapp_browser"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoTopBar.White"
-        />
+            android:theme="@style/AppTheme.NoTopBar.White">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="o3browser" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MultiWallet.Activate.MultiwalletActivateActivity"
             android:screenOrientation="portrait"

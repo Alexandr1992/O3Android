@@ -1,7 +1,6 @@
 package network.o3.o3wallet.MultiWallet.Activate
 
 import androidx.lifecycle.ViewModel
-import com.amplitude.api.Amplitude
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
@@ -21,6 +20,5 @@ class ActivateMultiWalletViewModel: ViewModel() {
         nep6.writeToFileSystem()
         nep6.makeNewDefault(nep2.address, password)
         Account.deleteKeyFromDevice()
-        Amplitude.getInstance().logEvent("multiwallet_activated")
     }
 }

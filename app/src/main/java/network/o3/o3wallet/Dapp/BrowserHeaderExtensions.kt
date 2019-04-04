@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Dapp
 
 import android.content.Intent
+import android.graphics.Color
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -24,6 +25,10 @@ fun DAPPBrowser.initateBrowserHeader(allowSearch: Boolean) {
         }
     } else {
         searchBar.isEnabled = false
+    }
+    mView.find<ImageView>(R.id.returnToO3ImageView).setColorFilter(Color.argb(255, 191, 191, 191))
+    mView.find<ImageView>(R.id.returnToO3ImageView).onClick {
+        activity?.finish()
     }
     setMoreActions()
 }
@@ -73,7 +78,7 @@ fun DAPPBrowser.setMoreActions() {
                 shareIntent.putExtra(Intent.EXTRA_TEXT, activity?.intent?.getStringExtra("url"));
                 startActivity(Intent.createChooser(shareIntent, ""))
             } else if (position == 2) {
-                //jsInterface.manualDisconnect()
+                //dappViewModel.jsInterface.manualDisconnect()
             } else if (position == 3) {
                 this@setMoreActions.activity?.finish()
             }

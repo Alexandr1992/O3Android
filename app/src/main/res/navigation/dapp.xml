@@ -9,5 +9,9 @@
         android:id="@+id/DAPPBrowser"
         android:name="network.o3.o3wallet.Dapp.DAPPBrowser"
         android:label="fragment_dapp_fragment"
-        tools:layout="@layout/fragment_dapp_fragment" />
+        tools:layout="@layout/fragment_dapp_fragment" >
+        <deepLink
+            android:id="@+id/deepLink7"
+            app:uri="o3browser://dapp/?{query}" />
+    </fragment>
 </navigation>

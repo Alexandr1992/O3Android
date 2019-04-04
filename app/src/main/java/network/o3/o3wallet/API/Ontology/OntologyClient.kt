@@ -1,6 +1,5 @@
 package network.o3.o3wallet.API.Ontology
 
-import com.amplitude.api.Amplitude
 import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.jsonArray
@@ -8,6 +7,7 @@ import com.github.salomonbrys.kotson.jsonObject
 import com.google.gson.Gson
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.PersistentStore
 import org.json.JSONObject
 import java.util.*
@@ -62,10 +62,7 @@ class OntologyClient {
                 try {
                     Neoutils.claimONG(PersistentStore.getOntologyNodeURL(), it.first!!, 20000,
                             Account.getWallet().wif)
-                    val attrs = mapOf(
-                            "type" to "ONG",
-                            "is_ledger" to false)
-                    Amplitude.getInstance().logEvent("CLAIM", JSONObject(attrs))
+                    AnalyticsService.Wallet.logOngClaim()
                     completion(Pair<Boolean, Error?>(true, null))
                 }
                 catch (e: Exception) {

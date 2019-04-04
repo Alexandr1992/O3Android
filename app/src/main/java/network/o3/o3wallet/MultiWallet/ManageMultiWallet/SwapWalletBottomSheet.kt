@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.amplitude.api.Amplitude
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
@@ -19,6 +20,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.json.JSONObject
 
 class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
     lateinit var mView: View
@@ -63,7 +65,7 @@ class SwapWalletBottomSheet: RoundedBottomSheetDialogFragment() {
                     (mFragment as RoundedBottomSheetDialogFragment).dismiss()
                     neo2DialogFragment.dismiss()
                     NEP6.getFromFileSystem().makeNewDefault(getItem(position).address, pass)
-                    Amplitude.getInstance().logEvent("wallet_unlocked")
+                    AnalyticsService.Wallet.logWalletUnlocked()
                 }
 
                 neo2DialogFragment.encryptedKey = getItem(position).key!!

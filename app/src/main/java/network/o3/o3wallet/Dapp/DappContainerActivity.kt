@@ -9,10 +9,12 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.webkit.WebView
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
@@ -26,7 +28,15 @@ class DappContainerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dapp_container_activity)
-        val url = intent.getStringExtra("url")
+
+        //check if deeplink or coming locally from the app
+        val url = if(intent.data?.getQueryParameter("url") != null) {
+            intent.data?.getQueryParameter("url")!!
+        } else {
+            intent.getStringExtra("url")
+        }
+
+
 
         dappViewModel = DAPPViewModel(url)
         dappViewModel.allowSearch = intent.getBooleanExtra("allowSearch", false)
@@ -108,11 +118,10 @@ class DappContainerActivity : AppCompatActivity() {
         }
     }
 
-    /*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         //uploading a file
-        if (requestCode == FILECHOOSER_RESULTCODE) {
+        /*if (requestCode == FILECHOOSER_RESULTCODE) {
             if (null == mUploadMessage)
                 return
             var toParse = if (data == null || resultCode !== Activity.RESULT_OK)
@@ -130,22 +139,23 @@ class DappContainerActivity : AppCompatActivity() {
             }
             mUploadMessage = null
             return
-        }
+        }*/
 
         //Changing Wallets
         if (result != null && result.contents == null) {
             return
         } else {
             if (resultCode == -1) {
-                if (dappViewModel.legacyInterface == null) {
-                    if (NEP6.getFromFileSystem().accounts.isEmpty()) {
-                        dappViewModel.dapiInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
-                    } else {
-                        dappViewModel.dapiInterface.setDappExposedWallet(walletToExpose,
-                                walletToExposeName)
-                    }
-                    dappViewModel.dapiInterface.authorizedAccountCredentials(pendingDappMessage!!)
-                    pendingDappMessage = null
+                Log.d("hello", "hello")
+               if (dappViewModel.legacyInterface == null) {
+                   /*if (NEP6.getFromFileSystem().accounts.isEmpty()) {
+                      dappViewModel.dapiInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
+                  } else {
+                      dappViewModel.dapiInterface.setDappExposedWallet(walletToExpose,
+                              walletToExposeName)
+                  }
+                  dappViewModel.dapiInterface.authorizedAccountCredentials(pendingDappMessage!!)
+                  pendingDappMessage = null*/
                 } else {
                     dappViewModel.legacyInterface?.finishConnectionToO3()
                 }
@@ -153,7 +163,7 @@ class DappContainerActivity : AppCompatActivity() {
                 return
             }
         }
-    }*/
+    }
 
 
 

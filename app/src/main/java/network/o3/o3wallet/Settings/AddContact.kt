@@ -12,8 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.google.zxing.integration.android.IntentIntegrator
 import neoutils.Neoutils
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
@@ -81,8 +79,6 @@ class AddContact : AppCompatActivity() {
                     }
                 } else {
                     PersistentStore.addContact(addressField.text.trim().toString(), nickNameField.text.trim().toString())
-                    Answers().logCustom(CustomEvent("Contact Added").
-                            putCustomAttribute("Total Contacts", PersistentStore.getContacts().count()))
                     //RELOAD_DATA = 1
                     setResult(1)
                     finish()

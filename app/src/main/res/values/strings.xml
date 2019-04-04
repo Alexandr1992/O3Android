@@ -411,6 +411,12 @@
     <string name="DAPP_refresh">Refresh</string>
     <string name="DAPP_share">Share</string>
     <string name="DAPP_invoke_request">is requesting to %1$s</string>
+    <string name="DAPP_disclaimer_title">Welcome to O3\'s app browser</string>
+    <string name="DAPP_disclaimer_description">O3 app browser allows you connect with various dAPPs with
+    your O3 Wallet. O3 is not responsible for any content related to third party apps. For more info please read our &lt;a href="https://www.o3.network/tos">Terms of Service&lt;/a></string>
+    <string name="DAPP_disclaimer_checkbox">Don\'t show this again</string>
+    <string name="DAPP_return">Return to O3</string>
+    <string name="DAPP_continue">Continue</string>
 
     <string name="ONBOARDING_open_wallet">Open Wallet</string>
 

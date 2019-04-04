@@ -12,7 +12,6 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
-import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.native_trade_deposit_withdrawal_activity.*
 import network.o3.o3wallet.*
@@ -254,7 +253,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                     runOnUiThread {
                         if (it.first!! == true) {
                             val depositAttrs = mapOf("asset" to symbol, "amount" to viewModel.toSendAmount.toDouble())
-                            Amplitude.getInstance().logEvent("Deposit", JSONObject(depositAttrs))
+                            AnalyticsService.Trading.logDeposit(JSONObject(depositAttrs))
                             resultFragment.showSuccess()
                         } else {
                             resultFragment.showFailure()
@@ -270,7 +269,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                     runOnUiThread {
                         if (it.first!! == true) {
                             val withdrawAttrs = mapOf("asset" to symbol, "amount" to viewModel.toSendAmount.toDouble())
-                            Amplitude.getInstance().logEvent("Withdraw", JSONObject(withdrawAttrs))
+                            AnalyticsService.Trading.logWithdraw(JSONObject(withdrawAttrs))
                             resultFragment.showSuccess()
                         } else {
                             resultFragment.showFailure()

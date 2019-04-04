@@ -5,8 +5,8 @@ import android.net.Uri
 import android.os.SystemClock
 import android.view.View
 import android.widget.Button
-import com.amplitude.api.Amplitude
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -30,7 +30,7 @@ fun DAPPBrowser.initiateTradeFooter(uri: Uri) {
                         val buyAttrs = mapOf(
                                 "asset" to asset,
                                 "source" to "token_details")
-                        Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
+                        AnalyticsService.Trading.logBuyInitiated(JSONObject(buyAttrs))
                         val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                         intent.putExtra("asset", asset)
                         intent.putExtra("is_buy", true)
@@ -45,7 +45,7 @@ fun DAPPBrowser.initiateTradeFooter(uri: Uri) {
                         val sellAttrs = mapOf(
                                 "asset" to asset,
                                 "source" to "token_details")
-                        Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
+                        AnalyticsService.Trading.logSellInitiated(JSONObject(sellAttrs))
                         val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                         intent.putExtra("asset", asset)
                         intent.putExtra("is_buy", false)

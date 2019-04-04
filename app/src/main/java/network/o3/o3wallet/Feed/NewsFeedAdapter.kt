@@ -10,8 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.ContentViewEvent
 import network.o3.o3wallet.API.O3.FeedData
 import network.o3.o3wallet.API.O3.FeedItem
 import network.o3.o3wallet.API.O3.NewsImage
@@ -66,13 +64,8 @@ class NewsFeedAdapter(context: Context, fragment: NewsFeedFragment): BaseAdapter
         Glide.with(mContext).load(feedItem.images[0].url).apply(RequestOptions().centerCrop()).into(imageView)
 
         view?.setOnClickListener {
-            Answers().logContentView(ContentViewEvent()
-                    .putContentType("NEO News Today")
-                    .putContentId(feedItem.title)
-                    .putContentName("NewsFeed Item View"))
-
             val url = feedItem.link
-            val i = Intent(view.context, (mFragment.activity as DappContainerActivity).dappViewModel::class.java)
+            val i = Intent(view.context, DappContainerActivity::class.java)
             i.putExtra("url", url)
             view.context.startActivity(i)
         }

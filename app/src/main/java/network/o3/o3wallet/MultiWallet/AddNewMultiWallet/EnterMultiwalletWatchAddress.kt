@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.amplitude.api.Amplitude
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -62,7 +62,7 @@ class EnterMultiwalletWatchAddress : Fragment() {
             newNep6.writeToFileSystem()
             val walledAddAttrs = mapOf(
                     "total_num_watch_addresses" to newNep6.getReadOnlyAccounts().count())
-            Amplitude.getInstance().logEvent("watch_address_added", JSONObject(walledAddAttrs))
+            AnalyticsService.Wallet.logWatchAddressAdded(JSONObject(walledAddAttrs))
             mView.findNavController().navigate(R.id.action_enterMultiwalletWatchAddress_to_watchAddressAddedSuccess)
         }
     }

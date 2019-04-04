@@ -11,6 +11,6 @@
         tools:layout="@layout/news_fragment_news_feed" >
         <deepLink
             android:id="@+id/deepLink2"
-            app:uri="o3://news" />
+            app:uri="o3network://news" />
     </fragment>
 </navigation>

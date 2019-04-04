@@ -9,8 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.ContentViewEvent
 import network.o3.o3wallet.API.O3.Feature
 import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.R
@@ -46,10 +44,6 @@ class FeaturesAdapter(private val features: ArrayList<Feature>): RecyclerView.Ad
 
         override fun onClick(v: View) {
             if (feature != null) {
-                Answers().logContentView(ContentViewEvent()
-                        .putContentType(feature?.category )
-                        .putContentId(feature?.title)
-                        .putContentName("Featured Item View"))
                 val browserIntent = Intent(view.context, DappContainerActivity::class.java)
                 browserIntent.putExtra("url", feature?.actionURL)
                 view.context.startActivity(browserIntent)

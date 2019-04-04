@@ -54,7 +54,7 @@ class MainTabbedActivity : AppCompatActivity() {
         }
         if (!BuildConfig.DEBUG) {
             Amplitude.getInstance().initialize(this, resources.getString(R.string.Amplitude_API_Key)).enableForegroundTracking(application)
-            Amplitude.getInstance().logEvent("Loaded_Main_Tab")
+            AnalyticsService.Navigation.logLoadedMainTab()
             if (PersistentStore.getHasLoggedFirstWallet() == false) {
                 val type = if (PersistentStore.didGenerateFirstWallet()) {
                     "new_key"
@@ -71,7 +71,7 @@ class MainTabbedActivity : AppCompatActivity() {
                         "type" to type,
                         "method" to method,
                         "address_count" to NEP6.getFromFileSystem().accounts.size)
-                Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
+                AnalyticsService.Wallet.logWalletAdded(JSONObject(attrs))
                 PersistentStore.setHasLoggedFirstWallet(true)
             }
             Fabric.with(this, Crashlytics())

@@ -11,5 +11,5 @@
         tools:layout="@layout/portfolio_fragment_home"/>
     <deepLink
         android:id="@+id/deepLink4"
-        app:uri="o3://portfolio" />
+        app:uri="o3network://portfolio" />
 </navigation>

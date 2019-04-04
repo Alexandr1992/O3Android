@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.jsonObject
 import network.o3.o3wallet.*
@@ -111,7 +110,7 @@ class ReviewOrderFragment : Fragment() {
                                 "base_currency" to vm.selectedBaseAsset.value!!,
                                 "quantity" to vm.orderAssetAmount.value!!,
                                 "price_selection" to (activity as NativeTradeRootActivity).viewModel.priceSelectionType).toString()
-                        Amplitude.getInstance().logEvent("Native_Order_Placed", JSONObject(loggedJson))
+                        AnalyticsService.Trading.logNativeOrderPlaced(JSONObject(loggedJson))
                     }
                 }
             }

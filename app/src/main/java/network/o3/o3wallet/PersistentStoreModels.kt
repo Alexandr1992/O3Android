@@ -316,4 +316,12 @@ object PersistentStore {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
                 putString(address + "_VERIFICATIONTYPE", jsonString).apply()
     }
+
+    fun setHasAgreedDappDisclaimer(hasAgreed: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().putBoolean("has_agreed_dapp", hasAgreed).apply()
+    }
+
+    fun getHasAgreedDappDisclaimer(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getBoolean("has_agreed_dapp", false)
+    }
 }

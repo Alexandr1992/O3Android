@@ -11,7 +11,7 @@
         tools:layout="@layout/wallet_fragment_tabbed_account">
         <deepLink
             android:id="@+id/deepLink"
-            app:uri="o3://wallet"
+            app:uri="o3network://wallet"
             />
     </fragment>
 </navigation>

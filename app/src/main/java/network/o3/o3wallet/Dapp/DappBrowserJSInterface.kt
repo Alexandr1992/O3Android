@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Handler
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -145,7 +144,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         if (index != -1 && index % 2 == 0) {
             val unsignedJsonSubstring = unsignedJson.substring(index)
             try {
-                Amplitude.getInstance().logEvent("Switcheo_Signed_JSON", JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
+                AnalyticsService.SwitcheoDAPP.logSignedJSON(JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
             } catch (e: Exception) {
 
             }
@@ -159,7 +158,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         if (unsignedTx.endsWith("0000")) {
             parseAndAnalyze(unsignedTx)
         } else {
-            Amplitude.getInstance().logEvent("Switcheo_Signed_Raw_TX")
+            AnalyticsService.SwitcheoDAPP.logSignedTX()
         }
         if (unsignedTx.length < 2) {
             callback(message.command, JsonObject(), "invalid unsigned raw transaction", true)

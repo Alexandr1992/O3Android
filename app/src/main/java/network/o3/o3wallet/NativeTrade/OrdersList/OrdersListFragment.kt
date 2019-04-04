@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.amplitude.api.Amplitude
 import com.google.android.material.tabs.TabLayout
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import network.o3.o3wallet.API.O3Platform.orderIsClosed
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.R
 import network.o3.o3wallet.getColorFromAttr
@@ -90,7 +90,7 @@ class OrdersListFragment : Fragment() {
             onUiThread {
                 if (it.first == true) {
                     val orderDetailsAttrs = mapOf("order_id" to orderId)
-                    Amplitude.getInstance().logEvent("Order Cancelled", JSONObject(orderDetailsAttrs))
+                    AnalyticsService.Trading.logOrderCancelled(JSONObject(orderDetailsAttrs))
                     alert(mView.context.getString(R.string.NATIVE_TRADE_cancel_order_succeeeded)) {
                         yesButton { }
                     }.show()

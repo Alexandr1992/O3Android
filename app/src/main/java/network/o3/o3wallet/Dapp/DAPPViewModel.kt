@@ -5,7 +5,6 @@ import android.webkit.ValueCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -14,6 +13,7 @@ import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.PersistentStore
 import org.json.JSONObject
@@ -276,7 +276,7 @@ class DAPPViewModel(url: String): ViewModel() {
                             "net" to PersistentStore.getNetworkType(),
                             "method" to "invoke",
                             "success" to success)
-                    Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+                    AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
                     latch.countDown()
                 }
             }
@@ -324,7 +324,7 @@ class DAPPViewModel(url: String): ViewModel() {
                     "net" to PersistentStore.getNetworkType(),
                     "method" to "send",
                     "success" to success)
-            Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+            AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
 
             latch.countDown()
 
@@ -366,7 +366,7 @@ class DAPPViewModel(url: String): ViewModel() {
                             "net" to PersistentStore.getNetworkType(),
                             "method" to "send",
                             "success" to success)
-                    Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+                    AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
                     latch.countDown()
                 }
             } else {
@@ -390,7 +390,7 @@ class DAPPViewModel(url: String): ViewModel() {
                                     "net" to PersistentStore.getNetworkType(),
                                     "method" to "send",
                                     "success" to success)
-                            Amplitude.getInstance().logEvent("dAPI_tx_accepted", JSONObject(attrs))
+                            AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
                             latch.countDown()
                         }
                     }

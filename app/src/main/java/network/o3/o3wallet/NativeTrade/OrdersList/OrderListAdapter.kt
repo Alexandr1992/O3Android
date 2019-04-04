@@ -8,7 +8,6 @@ import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import network.o3.o3wallet.API.O3Platform.calculatePercentFilled
@@ -106,9 +105,6 @@ class OrdersAdapter(var orders: List<O3SwitcheoOrders>, private var mFragment: O
 
 
             footerButton.setOnClickListener {
-                if (mAdapter.showClosedOrders == false) {
-                    Amplitude.getInstance().logEvent("Show Closed Orders")
-                }
                 mAdapter.showClosedOrders = !mAdapter.showClosedOrders
                 mAdapter.notifyDataSetChanged()
             }

@@ -1,9 +1,9 @@
 package network.o3.o3wallet.Dapp
 
 import android.webkit.JavascriptInterface
-import com.amplitude.api.Amplitude
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.PersistentStore
 import org.json.JSONObject
 
@@ -18,7 +18,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
                 "blockchain" to "NEO",
                 "net" to PersistentStore.getNetworkType(),
                 "method" to message.command)
-        Amplitude.getInstance().logEvent("dAPI_method_call", JSONObject(attrs))
+        AnalyticsService.DAPI.logDapiMethodCall(JSONObject(attrs))
         when (message.command.toLowerCase()) {
             "getprovider" -> vm.handleGetProvider(message)
            // "disconnect" -> vm.handleDisconnect(message)

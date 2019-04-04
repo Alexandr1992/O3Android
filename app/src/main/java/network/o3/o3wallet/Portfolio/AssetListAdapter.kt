@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.*
@@ -166,7 +165,7 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                 }
 
                 val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "portfolio_row")
-                Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
+                AnalyticsService.Navigation.logTokenDetailsSelected(JSONObject(tokenDetailsAttrs))
                 val intent = Intent(view.context, DappContainerActivity::class.java)
                 intent.putExtra("url", detailURL)
                 view.context.startActivity(intent)
