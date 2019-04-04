@@ -11,8 +11,10 @@ import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.VerifiedAddress
 import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.Contact
 import network.o3.o3wallet.PersistentStore
+import org.json.JSONObject
 import java.math.BigDecimal
 
 class SendViewModel: ViewModel() {
@@ -174,6 +176,11 @@ class SendViewModel: ViewModel() {
         val amount = getSelectedSendAmount().toDouble()
         OntologyClient().transferOntologyAsset(toSendAsset.symbol.toUpperCase(), recipientAddress, amount) {
             if (it.first != null ) {
+                val attrs = mapOf("blockchain" to "Ontology",
+                        "asset" to toSendAsset.symbol,
+                        "amount" to amount.toString(),
+                        "isLedger" to false)
+                AnalyticsService.Wallet.logSend(JSONObject(attrs))
                 sendResult?.postValue(it.first!!)
             } else {
                 sendResult?.postValue(null)
@@ -185,7 +192,8 @@ class SendViewModel: ViewModel() {
     fun sendNativeNeoAsset() {
         val wallet = Account.getWallet()
         var toSendAsset: NeoNodeRPC.Asset? = null
-        toSendAsset = if (selectedAsset!!.value!!.symbol.toUpperCase() == "NEO") {
+        val toSendAssetString = selectedAsset!!.value!!.symbol.toUpperCase()
+        toSendAsset = if (toSendAssetString == "NEO") {
             NeoNodeRPC.Asset.NEO
         } else {
             NeoNodeRPC.Asset.GAS
@@ -200,6 +208,11 @@ class SendViewModel: ViewModel() {
             val txid = it.first
             if (txid != null) {
                 txID = txid
+                val attrs = mapOf("blockchain" to "NEO",
+                        "asset" to toSendAssetString,
+                        "amount" to amount.toPlainString(),
+                        "isLedger" to false)
+                AnalyticsService.Wallet.logSend(JSONObject(attrs))
                 sendResult?.postValue(txid)
             } else {
                 txID = ""
@@ -220,6 +233,11 @@ class SendViewModel: ViewModel() {
                 val error = it.second
                 val txid = it.first
                 if (txid != null) {
+                    val attrs = mapOf("blockchain" to "NEO",
+                            "asset" to toSendAsset.symbol,
+                            "amount" to amount.toPlainString(),
+                            "isLedger" to false)
+                    AnalyticsService.Wallet.logSend(JSONObject(attrs))
                     sendResult?.postValue(txid)
                 } else {
                     sendResult?.postValue(null)
@@ -238,6 +256,11 @@ class SendViewModel: ViewModel() {
                         val error = it.second
                         val txid = it.first
                         if (txid != null) {
+                            val attrs = mapOf("blockchain" to "NEO",
+                                    "asset" to toSendAsset.symbol,
+                                    "amount" to amount.toPlainString(),
+                                    "isLedger" to false)
+                            AnalyticsService.Wallet.logSend(JSONObject(attrs))
                             sendResult?.postValue(txid)
                         } else {
                             sendResult?.postValue(null)

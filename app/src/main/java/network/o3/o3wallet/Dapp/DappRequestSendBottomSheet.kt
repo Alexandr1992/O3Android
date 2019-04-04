@@ -15,15 +15,14 @@ import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
-import network.o3.o3wallet.removeTrailingZeros
+import network.o3.o3wallet.*
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
+import org.json.JSONObject
 import org.opengraph.OpenGraph
 import java.math.BigDecimal
 import java.net.URL
@@ -90,6 +89,14 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
             showSendingState()
             bg {
                 val success = (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, true)
+                if (success) {
+                    val attrs = mapOf("blockchain" to "NEO",
+                            "net" to PersistentStore.getNetworkType(),
+                            "method" to "send",
+                            "url" to arguments!!.getString("url"),
+                            "domain" to URL(arguments!!.getString("url")).authority)
+                    AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
+                }
                 finishSending(success)
             }
 

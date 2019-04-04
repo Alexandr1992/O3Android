@@ -14,15 +14,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
+import network.o3.o3wallet.*
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
+import org.json.JSONObject
 import org.opengraph.OpenGraph
 import java.net.URL
 
@@ -98,6 +96,11 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
             (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, true)
+            val attrs = mapOf("blockchain" to "NEO",
+                    "net" to PersistentStore.getNetworkType(),
+                    "url" to arguments!!.getString("url"),
+                    "domain" to URL(arguments!!.getString("url")).authority)
+            AnalyticsService.DAPI.logAccountConnected(JSONObject(attrs))
             dismiss()
         }
 

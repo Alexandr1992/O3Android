@@ -10,15 +10,21 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.util.TypedValue
 import android.webkit.WebView
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.zxing.integration.android.IntentIntegrator
 import com.tapadoo.alerter.Alerter
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
+import org.json.JSONObject
+import java.net.URL
+
 
 class DappContainerActivity : AppCompatActivity() {
     lateinit var dappViewModel: DAPPViewModel
@@ -76,12 +82,21 @@ class DappContainerActivity : AppCompatActivity() {
             return
         }
 
+        val dip = 24f
+        val r = resources
+        val px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.displayMetrics
+        )
+
         val searchBar = find<EditText>(R.id.dappSearch)
+        val searchImage = find<ImageView>(R.id.httpsLock)
         searchBar.text = SpannableStringBuilder(url)
         if (searchBar.text.toString().startsWith("https://")) {
             searchBar.text.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorGain)),
                     0, "https://".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE )
-            searchBar.setPadding(85, 0, 16, 0)
+            searchBar.setPadding(px.toInt() + 16, 0, 16, 0)
         } else {
             searchBar.setPadding(16, 0, 16, 0)
         }
@@ -90,11 +105,15 @@ class DappContainerActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), IntentFilter("Alert"))
+        val json = mapOf("dappVersion" to "V1", "url" to dappViewModel.url, "domain" to URL(dappViewModel.url).authority)
+        AnalyticsService.DAPI.logDappOpened(JSONObject(json))
     }
 
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
+        val json = mapOf("dappVersion" to "V1", "url" to dappViewModel.url, "domain" to URL(dappViewModel.url).authority)
+        AnalyticsService.DAPI.logDappClosed(JSONObject(json))
     }
 
 
@@ -164,6 +183,7 @@ class DappContainerActivity : AppCompatActivity() {
             }
         }
     }
+
 
 
 

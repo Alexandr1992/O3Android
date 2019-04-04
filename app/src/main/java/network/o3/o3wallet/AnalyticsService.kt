@@ -14,6 +14,19 @@ class AnalyticsService {
             fun logDapiTxAccepted(json: JSONObject) {
                 Amplitude.getInstance().logEvent("dAPI_tx_accepted", json)
             }
+
+            fun logDappOpened(json: JSONObject) {
+                Amplitude.getInstance().logEvent("dAPI_open", json)
+            }
+            fun logDappClosed(json: JSONObject) {
+                Amplitude.getInstance().logEvent("dAPI_closed", json)
+            }
+            fun logTxAccepted(json: JSONObject) {
+                Amplitude.getInstance().logEvent("dAPI_tx_accepted", json)
+            }
+            fun logAccountConnected(json: JSONObject) {
+                Amplitude.getInstance().logEvent("dAPI_account_connected", json)
+            }
         }
     }
 
@@ -64,6 +77,9 @@ class AnalyticsService {
                         "type" to "ONG",
                         "is_ledger" to false)
                 Amplitude.getInstance().logEvent("CLAIM", JSONObject(attrs))
+            }
+            fun logSend(json: JSONObject) {
+                Amplitude.getInstance().logEvent("Asset Send", json)
             }
             fun logWalletAdded(json: JSONObject) {
                 Amplitude.getInstance().logEvent("wallet_added", json)
