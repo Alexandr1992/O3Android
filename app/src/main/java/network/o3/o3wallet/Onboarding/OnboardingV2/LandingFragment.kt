@@ -56,7 +56,7 @@ class LandingFragment: Fragment() {
             findNavController().navigate(R.id.action_landingFragment_to_onboardingNewWalletFragment)
         }
 
-        if (Account.isEncryptedWalletPresent() || Account.isEncryptedNEP6PassPresent()) {
+        if (Account.isEncryptedWalletPresent() || Account.isDefaultEncryptedNEP6PassPresent()) {
             authenticateEncryptedWallet()
         } else {
             autoPlayAnimation()

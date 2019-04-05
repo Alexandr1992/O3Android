@@ -20,11 +20,8 @@ import androidx.navigation.fragment.findNavController
 import com.amplitude.api.Amplitude
 import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
-import network.o3.o3wallet.AnalyticsService
+import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.O3Wallet
-import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
 import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.*
@@ -219,16 +216,24 @@ class ManageWalletBaseFragment : Fragment() {
                 mContext.toast (mContext.resources.getString(R.string.MULTIWALLET_cannot_unlock_default))
                 return
             } else if (mVm.key != null){
-                val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
-                    NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
+                if (Account.isStoredPasswordForNep6KeyPresent(mVm.address)) {
+                    var pass = Account.getStoredPassForNEP6Entry(mVm.address)
                     AnalyticsService.Wallet.logWalletUnlocked()
+                    NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
                     mVm.isDefault = true
                     (mFragment as ManageWalletBaseFragment).setTitleIcon()
-                }
+                } else {
+                    val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
+                    neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
+                        NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
+                        AnalyticsService.Wallet.logWalletUnlocked()
+                        mVm.isDefault = true
+                        (mFragment as ManageWalletBaseFragment).setTitleIcon()
+                    }
 
-                neo2DialogFragment.encryptedKey = mVm.key!!
-                neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
+                    neo2DialogFragment.encryptedKey = mVm.key!!
+                    neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
+                }
 
             } else {
                 mFragment.view?.findNavController()?.navigate(R.id.action_manageWalletBaseFragment_to_unlockWatchAddressFragment)

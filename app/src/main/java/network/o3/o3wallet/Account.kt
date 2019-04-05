@@ -1,13 +1,14 @@
 package network.o3.o3wallet
 
 import neoutils.Neoutils
-import neoutils.Neoutils.*
+import neoutils.Neoutils.generateFromWIF
+import neoutils.Neoutils.neP2Decrypt
 import neoutils.Wallet
 import network.o3.o3wallet.Crypto.Decryptor
 import network.o3.o3wallet.Crypto.EncryptedSettingsRepository
 import network.o3.o3wallet.Crypto.EncryptedSettingsRepository.setProperty
 import network.o3.o3wallet.Crypto.Encryptor
-import java.security.SecureRandom
+import java.security.MessageDigest
 
 /**
  * Created by drei on 11/22/17.
@@ -16,6 +17,21 @@ import java.security.SecureRandom
 object Account {
     private var wallet: Wallet? = null
     private var sharedSecretPieceOne: String? = null
+
+    private fun sha256(input: String): String {
+        val HEX_CHARS = "0123456789ABCDEF"
+        val bytes = MessageDigest
+                .getInstance("SHA-256")
+                .digest(input.toByteArray())
+        val result = StringBuilder(bytes.size * 2)
+
+        bytes.forEach {
+            val i = it.toInt()
+            result.append(HEX_CHARS[i shr 4 and 0x0f])
+            result.append(HEX_CHARS[i and 0x0f])
+        }
+        return result.toString()
+    }
 
     private fun storeEncryptedKeyOnDevice() {
         val wif = wallet!!.wif
@@ -49,7 +65,7 @@ object Account {
         setProperty(alias, encryptedPass.toHex(), iv, O3Wallet.appContext!!)
     }
 
-    fun isEncryptedNEP6PassPresent(): Boolean {
+    fun isDefaultEncryptedNEP6PassPresent(): Boolean {
         val alias = "Default NEP6 Pass"
         val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
         if (storedVal.data == null) {
@@ -62,8 +78,49 @@ object Account {
         return true
     }
 
+    // A generic key pass is a key value store for keys into a keystore file
+    // Currently O3 supports One keystore file type which is NEP6
+    // However there maybe alternative file types in the future
+    // the key value mapping will look something like
+    // {"NEP6.2f3475895f3a334245ba91ee3f994392a89dc2b1b6074d086ad1606b19a3dcba: SuperSecurePassword"}
+
+    // Where NEP6 is the file type and 2f3475895f3a334245ba91ee3f994392a89dc2b1b6074d086ad1606b19a3dcba is
+    // double hashed primary key identifier of the file. In the NEP6 file, the primary identifier is the NEO address
+    // this double hash was generated from AKzUziiiv9vHj8hX3bYQFVUktk36u6C5w3
+    // In another file type it could be a generic public key
+    fun storeGenericKeyPassOnDevice(file: String, keyIdentifier: String, password: String) {
+        val encryptor = Encryptor()
+        val alias = file + "." + sha256(sha256(keyIdentifier))
+        val encryptedPass = encryptor.encryptText(alias, password)!!
+
+        val iv = encryptor.getIv()!!
+        setProperty(alias, encryptedPass.toHex(), iv, O3Wallet.appContext!!)
+    }
+
+    fun getStoredPassForNEP6Entry(keyIdentifier: String): String {
+        val alias = "NEP6." + sha256(sha256(keyIdentifier))
+        val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+        val storedEncryptedPass = storedVal.data?.hexStringToByteArray()!!
+        val storedIv = storedVal.iv!!
+        val decrypted = Decryptor().decrypt(alias, storedEncryptedPass , storedIv)
+        return decrypted
+    }
+
+    fun isStoredPasswordForNep6KeyPresent(keyIdentifier: String): Boolean {
+        val alias = "NEP6." + sha256(sha256(keyIdentifier))
+        val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+        if (storedVal.data == null) {
+            return false
+        }
+        val storedEncryptedPassword = storedVal.data?.hexStringToByteArray()
+        if (storedEncryptedPassword == null || storedEncryptedPassword.size == 0 || !Decryptor().keyStoreEntryExists(alias)) {
+            return false
+        }
+        return true
+    }
+
     fun restoreWalletFromDevice() {
-        if (isEncryptedNEP6PassPresent()) {
+        if (isDefaultEncryptedNEP6PassPresent()) {
             val alias = "Default NEP6 Pass"
             val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
             val storedEncryptedPass = storedVal.data?.hexStringToByteArray()!!
@@ -73,6 +130,7 @@ object Account {
             val wif = Neoutils.neP2Decrypt(defaultAccount.key!!, decrypted)
             wallet = generateFromWIF(wif)
         } else {
+            ///O3 Key is the old key version that was used
             val alias = "O3 Key"
             val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
             val storedEncryptedWIF = storedVal.data?.hexStringToByteArray()!!
@@ -82,14 +140,6 @@ object Account {
         }
     }
 
-    fun createNewWallet() {
-        val random = SecureRandom()
-        var bytes = ByteArray(32)
-        random.nextBytes(bytes)
-        val hex = bytes.toHex()
-        wallet = generateFromPrivateKey(hex)
-        storeEncryptedKeyOnDevice()
-    }
 
     fun deleteKeyFromDevice() {
         val alias = "O3 Key"
