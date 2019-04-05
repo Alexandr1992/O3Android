@@ -8,6 +8,14 @@ import network.o3.o3wallet.PersistentStore
 import org.json.JSONObject
 
 class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
+    enum class EVENT {
+        READY,
+        ACCOUNT_CHANGED,
+        CONNECTED,
+        DISCONNECTED,
+        NETWORK_CHANGED
+    }
+
     @JavascriptInterface
     fun messageHandler(jsonString: String) {
         val gson = Gson()

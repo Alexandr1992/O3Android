@@ -197,7 +197,7 @@ class DAPPBrowser : Fragment() {
                 progressBar.visibility = View.INVISIBLE
                 progressBar.progress = 0
                 if (legacyInterface == null) {
-                   // jsInterface.fireReady()
+                    dappViewModel.fireEvent(DappBrowserJSInterfaceV2.EVENT.READY)
                 }
             }
 

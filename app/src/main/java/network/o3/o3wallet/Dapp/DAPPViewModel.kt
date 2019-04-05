@@ -401,7 +401,6 @@ class DAPPViewModel(url: String): ViewModel() {
         return success
     }
 
-
     fun handleSend(message: DappMessage, authorized: Boolean): Boolean {
         val sendRequest = Gson().fromJson<NeoDappProtocol.SendRequest>(Gson().toJson(message.data))
         if (sendRequest.asset.toUpperCase()
@@ -420,6 +419,65 @@ class DAPPViewModel(url: String): ViewModel() {
             setLockStatus(false)
         } else {
             setDappResponse(message, jsonObject("error" to "CONNECTION_REFUSED"))
+        }
+    }
+
+
+    private fun fireReady() {
+        val response = jsonObject("command" to "event",
+                "eventName" to "READY",
+                "data" to jsonObject(),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1")
+        jsResponse.postValue(response.toString())
+    }
+
+    private fun fireConnected() {
+        val response = jsonObject("command" to "event",
+                "eventName" to "DISCONNECTED",
+                "data" to jsonObject(),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
+        jsResponse.postValue(response.toString())
+
+    }
+
+    private fun fireAccountChanged() {
+        val response = jsonObject("command" to "event",
+                "eventName" to "ACCOUNT_CHANGED",
+                "data" to jsonObject("address" to dappExposedWallet!!.address, "label" to dappExposedWalletName),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
+        jsResponse.postValue(response.toString())
+    }
+
+    private fun fireDisconnected() {
+        val response = jsonObject("command" to "event",
+                "eventName" to "DISCONNECTED",
+                "data" to jsonObject(),
+                "blockchain" to "NEO",
+                "platform" to "o3-dapi",
+                "version" to "1"
+        )
+        jsResponse.postValue(response.toString())
+    }
+
+    private fun fireNetworkChanged() {
+        //we do not support network changing at this time
+    }
+
+    fun fireEvent(event: DappBrowserJSInterfaceV2.EVENT) {
+        when(event) {
+            DappBrowserJSInterfaceV2.EVENT.READY -> fireReady()
+            DappBrowserJSInterfaceV2.EVENT.CONNECTED -> fireConnected()
+            DappBrowserJSInterfaceV2.EVENT.ACCOUNT_CHANGED -> fireAccountChanged()
+            DappBrowserJSInterfaceV2.EVENT.DISCONNECTED -> fireDisconnected()
+            DappBrowserJSInterfaceV2.EVENT.NETWORK_CHANGED -> fireNetworkChanged()
         }
     }
 }
