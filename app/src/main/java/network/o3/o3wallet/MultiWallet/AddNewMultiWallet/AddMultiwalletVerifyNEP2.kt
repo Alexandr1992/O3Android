@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.Switch
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import neoutils.Neoutils
 import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
@@ -29,6 +30,7 @@ class AddMultiwalletVerifyNEP2 : Fragment() {
 
     lateinit var mView: View
     lateinit var passwordField: EditText
+    lateinit var passwordContainer: TextInputLayout
     lateinit var passwordHideImageView: ImageView
     lateinit var continueButton: Button
     lateinit var nameEditText: EditText
@@ -40,6 +42,7 @@ class AddMultiwalletVerifyNEP2 : Fragment() {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.multiwallet_verify_nep2, container, false)
         passwordField = mView.find(R.id.passwordEditText)
+        passwordContainer = mView.find(R.id.passwordEditTextContainer)
         nameEditText = mView.find(R.id.walletNameField)
         passwordHideImageView = mView.find(R.id.passwordHideImageView)
         quickSwapSwitch = mView.find(R.id.quickSwapSwitch)
@@ -66,7 +69,17 @@ class AddMultiwalletVerifyNEP2 : Fragment() {
         }
 
         passwordField.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) { continueButton.isEnabled = (s?.length != 0 && nameEditText.text.toString() != "")}
+            override fun afterTextChanged(s: Editable?) {
+                if (s!!.isBlank()) {
+                    passwordContainer.error = null
+                } else if (s!!.length < 8){
+                    passwordContainer.error = resources.getString(R.string.ONBOARDING_password_length_minimum)
+                } else {
+                    passwordContainer.error = null
+                }
+
+                continueButton.isEnabled = (s?.length != 0 && nameEditText.text.toString() != "")
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }

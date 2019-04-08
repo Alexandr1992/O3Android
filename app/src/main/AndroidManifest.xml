@@ -96,10 +96,6 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
 
-        <activity
-            android:name=".Onboarding.SelectingBestNode"
-            android:theme="@style/AppTheme.Dark" />
-
         <activity android:name=".Settings.AdvancedSettingsActivity" />
         <activity android:name=".Onboarding.PasscodeRequestActivity" />
         <activity android:name=".NativeTrade.DepositWithdrawal.DepositWithdrawalActivity" />

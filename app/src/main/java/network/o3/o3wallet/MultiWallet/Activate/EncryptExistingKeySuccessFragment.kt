@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import java.io.File

@@ -343,7 +343,7 @@
     <string name="MULTIWALLET_security_update">O3 Security Update</string>
 
     <string name="MULTIWALLET_name_your_wallet">Give this wallet a name</string>
-    <string name="MULTIWALLET_name_hint">My Awesome Wallet</string>
+    <string name="MULTIWALLET_name_hint">Name</string>
     <string name="MULTIWALLET_continue">Continue</string>
     <string name="MULTIWALLET_watch_address_added">A watch only wallet has been added. You can unlock this address at any time by going to settings, manage wallets and entering the private or encrypted key.</string>
     <string name="MULTIWALLET_encrypt_this_key">Please give your wallet a name and a strong password that you won\'t forget</string>

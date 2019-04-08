@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.multiwallet_activate_activity.*
 import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find

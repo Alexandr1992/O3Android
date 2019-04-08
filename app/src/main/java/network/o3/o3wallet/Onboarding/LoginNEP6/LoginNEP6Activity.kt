@@ -14,12 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.integration.android.IntentIntegrator
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.MainTabbedActivity
+import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.DialogUnlockEncryptedKey
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
@@ -29,6 +26,7 @@ class LoginNEP6Activity : AppCompatActivity() {
     lateinit var mView: View
     lateinit var recyclerView: RecyclerView
     var deepLink: String? = null
+    var quickSwapWallet: NEP6.Account? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +51,10 @@ class LoginNEP6Activity : AppCompatActivity() {
 
         } else {
             if (resultCode == -1) {
+                if (quickSwapWallet!!.isDefault == false) {
+                    NEP6.getFromFileSystem().makeNewDefault(quickSwapWallet!!.address,
+                            Account.getStoredPassForNEP6Entry(quickSwapWallet!!.address))
+                }
                 Account.restoreWalletFromDevice()
                 if (NEP6.nep6HasActivated() == false) {
                     val intent = Intent(this, MultiwalletActivateActivity::class.java)
@@ -139,7 +141,8 @@ class LoginNEP6Activity : AppCompatActivity() {
                 }
 
                 view.onClick {
-                    if (wallet.isDefault) {
+                    if (wallet.isDefault || PersistentStore.getHasQuickSwapEnabled(wallet.address)) {
+                        (activity as LoginNEP6Activity).quickSwapWallet = wallet
                         requestPasscode(view)
                     } else {
                         val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
