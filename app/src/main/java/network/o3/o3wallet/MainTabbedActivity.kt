@@ -77,6 +77,10 @@ class MainTabbedActivity : AppCompatActivity() {
             Fabric.with(this, Crashlytics())
         }
 
+        if (PersistentStore.getHasAgreedAnalyticsDisclaimer() == false) {
+            AnalyticsDisclaimerBottomSheet.newInstance().show(this.supportFragmentManager, "analytics_sheet")
+        }
+
 
         // Else, need to wait for onRestoreInstanceState
     }

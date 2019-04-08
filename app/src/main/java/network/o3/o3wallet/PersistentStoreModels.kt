@@ -325,6 +325,14 @@ object PersistentStore {
         return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getBoolean("has_agreed_dapp", false)
     }
 
+    fun setHasAgreedAnalyticsDisclaimer(hasAgreed: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().putBoolean("has_agreed_analytics", hasAgreed).apply()
+    }
+
+    fun getHasAgreedAnalyticsDisclaimer(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getBoolean("has_agreed_analytics", false)
+    }
+
     //quick swap determines security level of encrypted key
     //unlock with pin code/biometirc or unlock with encrypted key
     fun getHasQuickSwapEnabled(address: String): Boolean {
