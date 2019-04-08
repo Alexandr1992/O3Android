@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.amplitude.api.Amplitude
 import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.*
@@ -26,6 +25,7 @@ import network.o3.o3wallet.Settings.PrivateKeyFragment
 import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.toast
 import java.io.File
 import java.io.FileOutputStream
@@ -62,6 +62,7 @@ class ManageWalletBaseFragment : Fragment() {
         initiateActionBar()
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadWalletPage,
                 IntentFilter("need-update-watch-address-event"))
+        initiateQuickSwap()
         return mView
     }
 
@@ -167,6 +168,31 @@ class ManageWalletBaseFragment : Fragment() {
             initiateUnlockWatchAddr()
         }
     }
+
+    fun initiateQuickSwap() {
+        val switch = mView.find<Switch>(R.id.quickSwapSwitch)
+        switch.isChecked = PersistentStore.getHasQuickSwapEnabled(vm.address)
+        switch.onClick {
+            if (switch.isChecked == false) {
+                alert("Are you sure you want to remopve quick swap, you will have to enter the password from now on ") {
+                    yesButton {
+                        PersistentStore.setHasQuickSwapEnabled(false, vm.address)
+                    }
+                }.show()
+            } else {
+                val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
+                neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
+                    neo2DialogFragment.dismiss()
+                    PersistentStore.setHasQuickSwapEnabled(true, vm.address, pass)
+                    AnalyticsService.Wallet.logWalletUnlocked()
+                }
+
+                neo2DialogFragment.encryptedKey = vm.key!!
+                neo2DialogFragment.showNow(activity!!.supportFragmentManager, "backupkey")
+            }
+        }
+    }
+
 
     class ManageWalletAdapter(context: Context, fragment: Fragment, vm: ManageWalletViewModel): BaseAdapter() {
         var mContext: Context

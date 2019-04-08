@@ -48,12 +48,12 @@ class EncryptExistingKeyFragment : Fragment() {
 
     fun validatePassword(): Boolean {
         if (enterPasswordEditText.text.length < 8) {
-            alert (resources.getString(R.string.MULTIWALLET_passwords_do_not_match)) {
+            alert (resources.getString(R.string.MULTIWALLET_password_to_short)) {
                 yesButton {  }
             }.show()
             return false
         } else if (enterPasswordEditText.text.toString() != confirmPasswordEditText.text.toString()){
-            alert (resources.getString(R.string.MULTIWALLET_password_to_short)) {
+            alert (resources.getString(R.string.MULTIWALLET_passwords_do_not_match)) {
                 yesButton {  }
             }.show()
             return false

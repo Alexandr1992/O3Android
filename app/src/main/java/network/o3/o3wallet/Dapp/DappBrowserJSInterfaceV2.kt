@@ -29,7 +29,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         AnalyticsService.DAPI.logDapiMethodCall(JSONObject(attrs))
         when (message.command.toLowerCase()) {
             "getprovider" -> vm.handleGetProvider(message)
-           // "disconnect" -> vm.handleDisconnect(message)
+            "disconnect" -> vm.handleDisconnect(message)
             "getnetworks" -> vm.handleGetNetworks(message)
             "getbalance" -> vm.handleGetBalance(message)
             "getstorage" -> vm.handleGetStorage(message)
@@ -42,10 +42,10 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         }
     }
 
-   /* fun setDappExposedWallet(wallet: Wallet, name: String) {
-        val shouldFireAccountChanged = vm.dappExposedWallet != null
-        vm.dappExposedWallet = wallet
-        vm.dappExposedWalletName = name
+   /* fun setWalletForSession(wallet: Wallet, name: String) {
+        val shouldFireAccountChanged = vm.walletForSession != null
+        vm.walletForSession = wallet
+        vm.walletForSessionName = name
 
         if (shouldFireAccountChanged) {
             fireAccountChangedEvent()
@@ -56,8 +56,8 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
 
 
     /*fun handleDisconnect(message: DappMessage) {
-        vm.dappExposedWallet = null
-        vm.dappExposedWalletName = ""
+        vm.walletForSession = null
+        vm.walletForSessionName = ""
         fireDisconnect()
         val intent = Intent("update-exposed-dapp-wallet")
         LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
@@ -68,8 +68,8 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
     }*/
 
     /*fun manualDisconnect() {
-        dappExposedWallet = null
-        dappExposedWalletName = ""
+        walletForSession = null
+        walletForSessionName = ""
         fireDisconnect()
         val intent = Intent("update-exposed-dapp-wallet")
         LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
@@ -80,8 +80,8 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
 
 
     /*fun authorizedAccountCredentials(message: DappMessage) {
-        val response = NeoDappProtocol.GetAccountResponse(address = vm.dappExposedWallet!!.address,
-                label = vm.dappExposedWalletName)
+        val response = NeoDappProtocol.GetAccountResponse(address = vm.walletForSession!!.address,
+                label = vm.walletForSessionName)
         callback(message, response)
         //(webView.context as DAppBrowserActivityV2).setUnlockState()
     }
@@ -96,7 +96,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
 
 
     /*fun handleGetAccount(message: DappMessage) {
-        if (vm.dappExposedWallet != null) {
+        if (vm.walletForSession != null) {
             authorizedAccountCredentials(message)
         } else {
             //(webView.context as DAppBrowserActivityV2).authorizeWalletInfo(message)
@@ -112,7 +112,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         }
         if (!network.contains(PersistentStore.getNetworkType())) {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
-        } else if (sendRequest.fromAddress != vm.dappExposedWallet?.address ?: "") {
+        } else if (sendRequest.fromAddress != vm.walletForSession?.address ?: "") {
             callback(message, jsonObject("error" to "CONNECTION_REFUSED"))
         } else {
             vm.authorizeSend(message)
@@ -238,7 +238,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         } catch (e : Exception) {
         }
 
-        NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet!!, toSendAsset, BigDecimal(amount),
+        NeoNodeRPC(node).sendNativeAssetTransaction(walletForSession!!, toSendAsset, BigDecimal(amount),
                 recipientAddress, attributes, fee) {
             if (it.first != null) {
                 success = true
@@ -261,7 +261,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
     }*/
 
     /*fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
-        sendRequest.toAddress = dappExposedWallet!!.address
+        sendRequest.toAddress = walletForSession!!.address
         var success = false
 
         var fee = BigDecimal.ZERO
@@ -276,11 +276,11 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         }
 
         val latch = CountDownLatch(1)
-        O3PlatformClient().getTransferableAssets(dappExposedWallet!!.address) {
+        O3PlatformClient().getTransferableAssets(walletForSession!!.address) {
             var token = it.first?.assets?.find { it.symbol.toLowerCase() == sendRequest.asset.toLowerCase() }
             if (fee == BigDecimal.ZERO) {
-                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, null, token!!.id,
-                        dappExposedWallet!!.address, sendRequest.toAddress,
+                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(walletForSession!!, null, token!!.id,
+                        walletForSession!!.address, sendRequest.toAddress,
                         BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
                     if (it.first != null) {
                         success = true
@@ -297,13 +297,13 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
                     latch.countDown()
                 }
             } else {
-                O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+                O3PlatformClient().getUTXOS(walletForSession!!.address) {
                     var assets = it.first
                     var error = it.second
                     if (error != null) {
                         latch.countDown()
                     } else {
-                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, assets, sendRequest.asset, dappExposedWallet!!.address,
+                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(walletForSession!!, assets, sendRequest.asset, walletForSession!!.address,
                                 sendRequest.toAddress, BigDecimal(sendRequest.amount),
                                 token?.decimals ?: 8, fee, attributes) {
                             if (it.first != null) {
@@ -386,13 +386,13 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         }
 
         val latch = CountDownLatch(1)
-        O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+        O3PlatformClient().getUTXOS(walletForSession!!.address) {
             var assets = it.first
             var error = it.second
             if (error != null) {
                 latch.countDown()
             } else {
-                NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(dappExposedWallet!!,
+                NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(walletForSession!!,
                         assets, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
                         fee, arrayOf(), invokeRequest.attachedAssets) {
                     if (it.second == null) {
@@ -422,7 +422,7 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
         val mainHandler = Handler(O3Wallet.appContext!!.mainLooper)
         val fireAccountChanged = jsonObject("command" to "event",
                 "eventName" to "ACCOUNT_CHANGED",
-                "data" to jsonObject("address" to dappExposedWallet!!.address, "label" to dappExposedWalletName),
+                "data" to jsonObject("address" to walletForSession!!.address, "label" to walletForSessionName),
                 "blockchain" to "NEO",
                 "platform" to "o3-dapi",
                 "version" to "1"

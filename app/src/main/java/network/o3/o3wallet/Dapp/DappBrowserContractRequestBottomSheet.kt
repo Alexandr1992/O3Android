@@ -82,7 +82,7 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
         setFeeControls()
         loadOpenGraphDetails()
         contractOperationTextView.text = resources.getString(R.string.DAPP_invoke_request, invokeRequest.operation)
-        withWalletTextView.text = (activity as DappContainerActivity).dappViewModel.dappExposedWallet!!.address
+        withWalletTextView.text = (activity as DappContainerActivity).dappViewModel.walletForSession!!.address
 
         invokeButton.onClick {
             val success = (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, true)

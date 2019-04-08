@@ -32,8 +32,8 @@ class DAPPViewModel(url: String): ViewModel() {
     var legacyInterface: DappBrowserJSInterface? = null
 
     //dapp active wallets
-    var dappExposedWallet: Wallet = Account.getWallet()
-    var dappExposedWalletName: String = NEP6.getFromFileSystem().getDefaultAccount().label
+    var walletForSession: Wallet = Account.getWallet()
+    var walletForSessionName: String = NEP6.getFromFileSystem().getDefaultAccount().label
 
     //for managing file uploading
     var mUploadMessage: ValueCallback<Array<Uri>>? = null
@@ -53,37 +53,15 @@ class DAPPViewModel(url: String): ViewModel() {
 
 
     //maybe consolidate these into one request auth message
-    fun requestAuthorizeWalletInfo(message: DappMessage){
-        walletInfoRequest.postValue(message)
-    }
 
-    fun getWalletInfo(): LiveData<DappMessage> {
-        return walletInfoRequest
-    }
-
-    fun requestAuthorizeInvoke(message: DappMessage) {
-        invokeRequest.postValue(message)
-    }
-
-    fun getInvokeRequest(): LiveData<DappMessage> {
-        return invokeRequest
-    }
-
-    fun requestAuthorizeSend(message: DappMessage) {
-        sendRequest.postValue(message)
-    }
-
-    fun getSendRequest(): LiveData<DappMessage> {
-        return sendRequest
-    }
 
     fun getDappResponse(): LiveData<String> {
         return jsResponse
     }
 
     fun setWalletToExpose(wallet: Wallet, name: String) {
-        dappExposedWallet =  wallet
-        dappExposedWalletName = name
+        walletForSession =  wallet
+        walletForSessionName = name
     }
 
     fun getLockStatus(): LiveData<Boolean> {
@@ -91,9 +69,40 @@ class DAPPViewModel(url: String): ViewModel() {
     }
 
     fun setLockStatus(isLocked: Boolean) {
+        if (isLocked == true) {
+            fireEvent(DappBrowserJSInterfaceV2.EVENT.DISCONNECTED)
+        }
         lockStatus.postValue(isLocked)
     }
 
+
+    // Authorization requests delegate the UI to show the relevant
+    // bottom sheets in order to fullfill the request
+    // The response will then filter through js response like all other
+    // non auth methods
+    fun getWalletInfo(): LiveData<DappMessage> {
+        return walletInfoRequest
+    }
+
+    fun getInvokeRequest(): LiveData<DappMessage> {
+        return invokeRequest
+    }
+
+    fun getSendRequest(): LiveData<DappMessage> {
+        return sendRequest
+    }
+
+    fun requestAuthorizeWalletInfo(message: DappMessage){
+        walletInfoRequest.postValue(message)
+    }
+
+    fun requestAuthorizeInvoke(message: DappMessage) {
+        invokeRequest.postValue(message)
+    }
+
+    fun requestAuthorizeSend(message: DappMessage) {
+        sendRequest.postValue(message)
+    }
 
     fun setDappResponse(message: DappMessage, data: Any) {
         val json = Gson().typedToJsonTree(message).asJsonObject
@@ -254,13 +263,13 @@ class DAPPViewModel(url: String): ViewModel() {
         }
 
         val latch = CountDownLatch(1)
-        O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+        O3PlatformClient().getUTXOS(walletForSession!!.address) {
             var assets = it.first
             var error = it.second
             if (error != null) {
                 latch.countDown()
             } else {
-                NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(dappExposedWallet!!,
+                NeoNodeRPC(PersistentStore.getNodeURL()).genericWriteInvoke(walletForSession!!,
                         assets, invokeRequest.scriptHash, invokeRequest.operation, invokeRequest.args ?: listOf(),
                         fee, arrayOf(), invokeRequest.attachedAssets) {
                     if (it.second == null) {
@@ -311,7 +320,7 @@ class DAPPViewModel(url: String): ViewModel() {
         } catch (e : Exception) {
         }
 
-        NeoNodeRPC(node).sendNativeAssetTransaction(dappExposedWallet!!, toSendAsset, BigDecimal(amount),
+        NeoNodeRPC(node).sendNativeAssetTransaction(walletForSession!!, toSendAsset, BigDecimal(amount),
                 recipientAddress, attributes, fee) {
             if (it.first != null) {
                 success = true
@@ -334,7 +343,7 @@ class DAPPViewModel(url: String): ViewModel() {
     }
 
     fun sendTokenNeoAsset(message: DappMessage, sendRequest: NeoDappProtocol.SendRequest): Boolean {
-        sendRequest.toAddress = dappExposedWallet!!.address
+        sendRequest.toAddress = walletForSession!!.address
         var success = false
 
         var fee = BigDecimal.ZERO
@@ -349,11 +358,11 @@ class DAPPViewModel(url: String): ViewModel() {
         }
 
         val latch = CountDownLatch(1)
-        O3PlatformClient().getTransferableAssets(dappExposedWallet!!.address) {
+        O3PlatformClient().getTransferableAssets(walletForSession!!.address) {
             var token = it.first?.assets?.find { it.symbol.toLowerCase() == sendRequest.asset.toLowerCase() }
             if (fee == BigDecimal.ZERO) {
-                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, null, token!!.id,
-                        dappExposedWallet!!.address, sendRequest.toAddress,
+                NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(walletForSession!!, null, token!!.id,
+                        walletForSession!!.address, sendRequest.toAddress,
                         BigDecimal(sendRequest.amount), token?.decimals ?: 8, BigDecimal.ZERO, attributes) {
                     if (it.first != null) {
                         success = true
@@ -370,13 +379,13 @@ class DAPPViewModel(url: String): ViewModel() {
                     latch.countDown()
                 }
             } else {
-                O3PlatformClient().getUTXOS(dappExposedWallet!!.address) {
+                O3PlatformClient().getUTXOS(walletForSession!!.address) {
                     var assets = it.first
                     var error = it.second
                     if (error != null) {
                         latch.countDown()
                     } else {
-                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(dappExposedWallet!!, assets, sendRequest.asset, dappExposedWallet!!.address,
+                        NeoNodeRPC(PersistentStore.getNodeURL()).sendNEP5Token(walletForSession!!, assets, sendRequest.asset, walletForSession!!.address,
                                 sendRequest.toAddress, BigDecimal(sendRequest.amount),
                                 token?.decimals ?: 8, fee, attributes) {
                             if (it.first != null) {
@@ -413,13 +422,18 @@ class DAPPViewModel(url: String): ViewModel() {
 
     fun handleWalletInfo(message: DappMessage, authorized: Boolean) {
         if (authorized) {
-            val response = NeoDappProtocol.GetAccountResponse(address = dappExposedWallet!!.address,
-                    label = dappExposedWalletName)
+            val response = NeoDappProtocol.GetAccountResponse(address = walletForSession!!.address,
+                    label = walletForSessionName)
             setDappResponse(message, response)
             setLockStatus(false)
         } else {
             setDappResponse(message, jsonObject("error" to "CONNECTION_REFUSED"))
         }
+    }
+
+    fun handleDisconnect(message: DappMessage) {
+        fireEvent(DappBrowserJSInterfaceV2.EVENT.DISCONNECTED)
+        setDappResponse(message, jsonObject())
     }
 
 
@@ -435,20 +449,20 @@ class DAPPViewModel(url: String): ViewModel() {
 
     private fun fireConnected() {
         val response = jsonObject("command" to "event",
-                "eventName" to "DISCONNECTED",
+                "eventName" to "CONNECTED",
                 "data" to jsonObject(),
                 "blockchain" to "NEO",
                 "platform" to "o3-dapi",
                 "version" to "1"
         )
-        jsResponse.postValue(response.toString())
+       jsResponse.postValue(response.toString())
 
     }
 
     private fun fireAccountChanged() {
         val response = jsonObject("command" to "event",
                 "eventName" to "ACCOUNT_CHANGED",
-                "data" to jsonObject("address" to dappExposedWallet!!.address, "label" to dappExposedWalletName),
+                "data" to jsonObject("address" to walletForSession!!.address, "label" to walletForSessionName),
                 "blockchain" to "NEO",
                 "platform" to "o3-dapi",
                 "version" to "1"
@@ -457,6 +471,8 @@ class DAPPViewModel(url: String): ViewModel() {
     }
 
     private fun fireDisconnected() {
+        walletForSession = Account.getWallet()
+        walletForSessionName = NEP6.getFromFileSystem().getDefaultAccount().label
         val response = jsonObject("command" to "event",
                 "eventName" to "DISCONNECTED",
                 "data" to jsonObject(),

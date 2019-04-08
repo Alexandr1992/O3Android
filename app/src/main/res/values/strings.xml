@@ -443,4 +443,6 @@
     <string name="PORTFOLIO_buy_with_fiat">With Fiat</string>
     <string name="PORTFOLIO_buy_with_crypto">With Crypto</string>
     <string name="ONBOARDING_go_to_my_wallet">Go to my wallet</string>
+    <string name="MULTIWALLET_quick_swap_title">Enable Quick Swap</string>
+    <string name="MULTIWALLET_quick_swap_description">Quick Swap allows you to access this wallet using your device pincode or biometric</string>
 </resources>

@@ -75,7 +75,7 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         loadingTextView = mView.find(R.id.loadingStateTextView)
 
 
-        fromWalletNameTextView.text = (activity as DappContainerActivity).dappViewModel.dappExposedWalletName
+        fromWalletNameTextView.text = (activity as DappContainerActivity).dappViewModel.walletForSessionName
         toWalletAddressTextView.text = sendRequest.toAddress
         memoTextView.text = sendRequest.remark
         totalTextView.text = sendRequest.amount + " " + sendRequest.asset

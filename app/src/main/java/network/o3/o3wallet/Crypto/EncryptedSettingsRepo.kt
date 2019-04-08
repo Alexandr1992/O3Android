@@ -40,4 +40,10 @@ object EncryptedSettingsRepository {
         settingIvPref.putString("${key}_iv", ivString)
         settingIvPref.apply()
     }
+
+    fun removeProperty(key: String, context: Context) {
+        val settingPref = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        settingPref.remove("${key}_iv").apply()
+    }
+
 }

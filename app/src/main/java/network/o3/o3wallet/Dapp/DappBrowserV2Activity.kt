@@ -189,8 +189,8 @@ package network.o3.o3wallet.Dapp
                         .build()
 
                 var headerView = layoutInflater.inflate(R.layout.dapp_popup_header, null, false)
-                headerView.find<TextView>(R.id.walletAddressTitle).text = this@DAppBrowserActivityV2.jsInterface.getDappExposedWallet()!!.address
-                headerView.find<TextView>(R.id.walletNameTitle).text = this@DAppBrowserActivityV2.jsInterface.getDappExposedWalletName()
+                headerView.find<TextView>(R.id.walletAddressTitle).text = this@DAppBrowserActivityV2.jsInterface.getWalletForSession()!!.address
+                headerView.find<TextView>(R.id.walletNameTitle).text = this@DAppBrowserActivityV2.jsInterface.getWalletForSessionName()
                 headerView.find<Button>(R.id.swapButton).onClick {
                     val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
                     swapWalletSheet.needsAuth = false
@@ -443,9 +443,9 @@ package network.o3.o3wallet.Dapp
             if (resultCode == -1) {
                 if (legacyInterface == null) {
                     if (NEP6.getFromFileSystem().accounts.isEmpty()) {
-                        jsInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
+                        jsInterface.setWalletForSession(Account.getWallet(), "My O3 Wallet")
                     } else {
-                        jsInterface.setDappExposedWallet(walletToExpose,
+                        jsInterface.setWalletForSession(walletToExpose,
                                 walletToExposeName)
                     }
                     jsInterface.authorizedAccountCredentials(pendingDappMessage!!)

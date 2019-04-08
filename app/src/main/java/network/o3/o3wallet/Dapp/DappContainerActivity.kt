@@ -168,9 +168,9 @@ class DappContainerActivity : AppCompatActivity() {
                 Log.d("hello", "hello")
                if (dappViewModel.legacyInterface == null) {
                    /*if (NEP6.getFromFileSystem().accounts.isEmpty()) {
-                      dappViewModel.dapiInterface.setDappExposedWallet(Account.getWallet(), "My O3 Wallet")
+                      dappViewModel.dapiInterface.setWalletForSession(Account.getWallet(), "My O3 Wallet")
                   } else {
-                      dappViewModel.dapiInterface.setDappExposedWallet(walletToExpose,
+                      dappViewModel.dapiInterface.setWalletForSession(walletToExpose,
                               walletToExposeName)
                   }
                   dappViewModel.dapiInterface.authorizedAccountCredentials(pendingDappMessage!!)

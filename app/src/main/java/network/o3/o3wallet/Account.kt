@@ -119,6 +119,11 @@ object Account {
         return true
     }
 
+    fun deleteStoredNEP6PasswordEntry(keyIdentifier: String){
+        val alias = "NEP6." + sha256(sha256(keyIdentifier))
+        EncryptedSettingsRepository.removeProperty(alias, O3Wallet.appContext!!)
+    }
+
     fun restoreWalletFromDevice() {
         if (isDefaultEncryptedNEP6PassPresent()) {
             val alias = "Default NEP6 Pass"

@@ -33,16 +33,7 @@ import java.io.InputStream
 import java.net.URL
 import java.util.*
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-/**
- * A simple [Fragment] subclass.
- *
- */
 class DAPPBrowser : Fragment() {
-
 
     lateinit var dappViewModel: DAPPViewModel
     lateinit var webView: WebView
@@ -280,30 +271,36 @@ class DAPPBrowser : Fragment() {
     }
 
     fun listenForUnlockStatus() {
-        dappViewModel.getLockStatus().observe(this, Observer { message ->
+        dappViewModel.getLockStatus().observe(this, Observer { isLocked ->
             runOnUiThread {
                 var walletStatusView = activity!!.find<ImageView>(R.id.walletStatusImageView)
-                walletStatusView.image = resources.getDrawable(R.drawable.ic_dapp_wallet_active)
 
-                walletStatusView.onClick {
-                    val customPowerMenu = CustomPowerMenu.Builder(this@DAPPBrowser.activity, DappPopupMenuAdapter())
-                            .setWidth(800)
-                            .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
-                            .setMenuRadius(10f)
-                            .setMenuShadow(10f)
-                            .build()
+                if (isLocked == false) {
+                    walletStatusView.image = resources.getDrawable(R.drawable.ic_dapp_wallet_active)
+                    walletStatusView.onClick {
+                        val customPowerMenu = CustomPowerMenu.Builder(this@DAPPBrowser.activity, DappPopupMenuAdapter())
+                                .setWidth(800)
+                                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                                .setMenuRadius(10f)
+                                .setMenuShadow(10f)
+                                .build()
 
-                    var headerView = layoutInflater.inflate(R.layout.dapp_popup_header, null, false)
-                    headerView.find<TextView>(R.id.walletAddressTitle).text = dappViewModel.dappExposedWallet?.address
-                    headerView.find<TextView>(R.id.walletNameTitle).text = dappViewModel.dappExposedWalletName
-                    headerView.find<Button>(R.id.swapButton).onClick {
-                        val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
-                        swapWalletSheet.needsAuth = false
-                        swapWalletSheet.show((this@DAPPBrowser.activity as DappContainerActivity).supportFragmentManager, swapWalletSheet.tag)
-                        customPowerMenu.dismiss()
+                        var headerView = layoutInflater.inflate(R.layout.dapp_popup_header, null, false)
+                        headerView.find<TextView>(R.id.walletAddressTitle).text = dappViewModel.walletForSession?.address
+                        headerView.find<TextView>(R.id.walletNameTitle).text = dappViewModel.walletForSessionName
+                        headerView.find<Button>(R.id.swapButton).onClick {
+                            val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
+                            swapWalletSheet.needsAuth = false
+                            swapWalletSheet.show((this@DAPPBrowser.activity as DappContainerActivity).supportFragmentManager, swapWalletSheet.tag)
+                            customPowerMenu.dismiss()
+                        }
+                        customPowerMenu.setHeaderView(headerView)
+                        customPowerMenu.showAsDropDown(walletStatusView)
                     }
-                    customPowerMenu.setHeaderView(headerView)
-                    customPowerMenu.showAsDropDown(walletStatusView)
+                } else {
+                    walletStatusView.image = resources.getDrawable(R.drawable.ic_walletitem)
+                    walletStatusView.onClick {  }
+
                 }
             }
         })

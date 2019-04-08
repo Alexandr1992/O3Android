@@ -152,17 +152,25 @@
         app:layout_constraintStart_toStartOf="@+id/cardView4"
         app:layout_constraintTop_toBottomOf="@+id/cardView4" />
 
+    <include
+        android:id="@+id/quickSwapLayout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/keyTextView"
+        android:background="?attr/secondaryBackgroundColor"
+        android:layout_marginTop="8dp"
+        layout="@layout/multiwallet_enable_quick_swap_layout"
+    />
     <ListView
         android:id="@+id/optionsListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:background="?attr/secondaryBackgroundColor"
         android:divider="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/keyTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/quickSwapLayout" />
 
     <Button
         android:id="@+id/unlockWatchAddrButton"

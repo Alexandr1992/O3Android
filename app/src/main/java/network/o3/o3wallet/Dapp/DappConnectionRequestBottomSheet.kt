@@ -1,7 +1,7 @@
 package network.o3.o3wallet.Dapp
 
 
-import android.content.*
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +12,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
+import neoutils.Wallet
 import network.o3.o3wallet.*
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
@@ -41,25 +45,10 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     var dappMessage: DappMessage? = null
 
     lateinit var dappViewModel: DAPPViewModel
+    lateinit var connectionViewModel: ConnectionViewModel
 
-    var didAccept = false
+    var explicitAction = false
 
-
-    val needReloadExposedDappWallet = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            reloadDappWallet()
-        }
-    }
-
-    fun registerReceivers() {
-        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadExposedDappWallet,
-                IntentFilter("update-exposed-dapp-wallet"))
-    }
-
-    override fun onDestroy() {
-        LocalBroadcastManager.getInstance(this.context!!).unregisterReceiver(needReloadExposedDappWallet)
-        super.onDestroy()
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -74,6 +63,7 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         if (NEP6.getFromFileSystem().getWalletAccounts().count() > 1) {
             swapWalletContainer.onClick {
                 val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
+                swapWalletSheet.connectionViewModel = connectionViewModel
                 swapWalletSheet.show(activity!!.supportFragmentManager, swapWalletSheet.tag)
             }
         } else {
@@ -82,10 +72,12 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
 
 
         dappViewModel = (activity as DappContainerActivity).dappViewModel
-        registerReceivers()
+        connectionViewModel = ConnectionViewModel()
         loadOpenGraphDetails()
-        setAccountDetails()
         setupConnectionResultButtons()
+        listenForWalletChanges()
+
+        connectionViewModel.setWalletDetails(dappViewModel.walletForSession, dappViewModel.walletForSessionName)
         return mView
     }
 
@@ -95,44 +87,30 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         acceptConnectionButton = mView.find(R.id.acceptConnectionButton)
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
-            (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, true)
+            dappViewModel.walletForSession = connectionViewModel.getWalletDetails().value!!.first
+            dappViewModel.walletForSessionName = connectionViewModel.getWalletDetails().value!!.second
+            dappViewModel.handleWalletInfo(dappMessage!!, true)
             val attrs = mapOf("blockchain" to "NEO",
                     "net" to PersistentStore.getNetworkType(),
                     "url" to arguments!!.getString("url"),
                     "domain" to URL(arguments!!.getString("url")).authority)
             AnalyticsService.DAPI.logAccountConnected(JSONObject(attrs))
+            explicitAction = true
             dismiss()
         }
 
         rejectConnectionButton.onClick {
-            //in case they swapped but did not confirm reset to default
-            dappViewModel.dappExposedWallet = Account.getWallet()
-            dappViewModel.dappExposedWalletName = NEP6.getFromFileSystem().getDefaultAccount().label
-            didAccept = false
             (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
+            explicitAction = true
             dismiss()
         }
     }
 
-    fun reloadDappWallet() {
-        setAccountDetails()
-    }
-
-    fun setAccountDetails() {
-        val wallet = if (dappViewModel.dappExposedWallet == null) {
-            Account.getWallet()
-        } else {
-            dappViewModel.dappExposedWallet
-        }
-
-        val walletName = if (dappViewModel.dappExposedWallet == null) {
-            NEP6.getFromFileSystem().getDefaultAccount().label
-        } else {
-            dappViewModel.dappExposedWalletName
-        }
-
-        addressTextView.text = wallet!!.address
-        addressNameTextView.text = walletName
+    fun listenForWalletChanges() {
+        connectionViewModel.getWalletDetails().observe(this, Observer<Pair<Wallet,String>> { walletDetails ->
+            addressTextView.text = walletDetails.first.address
+            addressNameTextView.text = walletDetails.second
+        })
     }
 
     fun loadOpenGraphDetails() {
@@ -165,11 +143,22 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        if (didAccept == false) {
-            dappViewModel.dappExposedWallet = Account.getWallet()
-            dappViewModel.dappExposedWalletName = NEP6.getFromFileSystem().getDefaultAccount().label
+        if (explicitAction == false) {
+            (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
         }
         super.onDismiss(dialog)
+    }
+
+    class ConnectionViewModel(): ViewModel() {
+        var walletDetails = MutableLiveData<Pair<Wallet, String>>()
+
+        fun getWalletDetails(): LiveData<Pair<Wallet, String>> {
+            return walletDetails
+        }
+
+        fun setWalletDetails(wallet: Wallet, walletName: String) {
+            walletDetails.postValue(Pair(wallet, walletName))
+        }
     }
 
     companion object {

@@ -324,4 +324,23 @@ object PersistentStore {
     fun getHasAgreedDappDisclaimer(): Boolean {
         return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getBoolean("has_agreed_dapp", false)
     }
+
+    //quick swap determines security level of encrypted key
+    //unlock with pin code/biometirc or unlock with encrypted key
+    fun getHasQuickSwapEnabled(address: String): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getBoolean("has_enabled_quick_swap_" + address, false)
+    }
+
+    fun setHasQuickSwapEnabled(hasEnabled: Boolean, address: String, password: String? = null) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
+                putBoolean("has_enabled_quick_swap_" + address, hasEnabled).apply()
+        if (hasEnabled == false) {
+            if (Account.isStoredPasswordForNep6KeyPresent(address)) {
+                Account.deleteStoredNEP6PasswordEntry(address)
+            }
+        } else {
+            Account.storeGenericKeyPassOnDevice("NEP6", address, password!!)
+        }
+    }
 }

@@ -45,16 +45,6 @@ class MultiwalletManageWallet : AppCompatActivity() {
         setContentView(view)
     }
 
-    override fun getTheme(): Resources.Theme {
-        val theme = super.getTheme()
-        if (PersistentStore.getTheme() == "Dark") {
-            theme.applyStyle(R.style.AppTheme_Dark, true)
-        } else {
-            theme.applyStyle(R.style.AppTheme_White, true)
-        }
-        return theme
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
@@ -89,5 +79,15 @@ class MultiwalletManageWallet : AppCompatActivity() {
                 newNameEntry.showNow(supportFragmentManager, "change name")
             }
         }
+    }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_White, true)
+        }
+        return theme
     }
 }

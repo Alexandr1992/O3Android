@@ -1,7 +1,6 @@
 package network.o3.o3wallet.Dapp
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +11,10 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import neoutils.Neoutils
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.DialogUnlockEncryptedKey
 import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import org.jetbrains.anko.find
@@ -29,6 +27,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
     lateinit var listView: ListView
 
     var needsAuth = true
+    lateinit var connectionViewModel: DappConnectionRequestBottomSheet.ConnectionViewModel
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -65,26 +64,35 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
 
             walletRow.onClick {
                 val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = { pass, wif ->
-                    (mFragment as RoundedBottomSheetDialogFragment).dismiss()
-                    neo2DialogFragment.dismiss()
-                    val walletToExpose = Neoutils.generateFromWIF(wif)
-                    val walletToExposeName = NEP6.getFromFileSystem().getWalletAccounts().find { it.address == walletToExpose.address }!!.label
-                    (mFragment.activity as DappContainerActivity).dappViewModel.setWalletToExpose(walletToExpose, walletToExposeName)
+                    if (Account.isStoredPasswordForNep6KeyPresent(getItem(position).address) ) {
+                        val nep6Entry = NEP6.getFromFileSystem().getWalletAccounts().
+                                find { it.address == getItem(position).address}!!
+                        val pass = Account.getStoredPassForNEP6Entry(getItem(position).address)
+                        val wif = Neoutils.neP2Decrypt(nep6Entry.key, pass)
+                        val walletToExpose = Neoutils.generateFromWIF(wif)
+                        val walletToExposeName = nep6Entry.label
+                        (mFragment as DappWalletForSessionBottomSheet).connectionViewModel.setWalletDetails(walletToExpose, walletToExposeName)
+                        (mFragment as DappWalletForSessionBottomSheet).dismiss()
+                } else {
+                    neo2DialogFragment.decryptionSucceededCallback = { pass, wif ->
+                        (mFragment as RoundedBottomSheetDialogFragment).dismiss()
+                        neo2DialogFragment.dismiss()
+                        val walletToExpose = Neoutils.generateFromWIF(wif)
+                        val walletToExposeName = NEP6.getFromFileSystem().getWalletAccounts().find { it.address == walletToExpose.address }!!.label
+                        (mFragment as DappWalletForSessionBottomSheet).connectionViewModel.setWalletDetails(walletToExpose, walletToExposeName)
+                        (mFragment as DappWalletForSessionBottomSheet).dismiss()
+                    }
 
-                    val intent = Intent("update-exposed-dapp-wallet")
-                    LocalBroadcastManager.getInstance(O3Wallet.appContext!!).sendBroadcast(intent)
+                    neo2DialogFragment.encryptedKey = getItem(position).key!!
+                    neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
                 }
-
-                neo2DialogFragment.encryptedKey = getItem(position).key!!
-                neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
             }
             return walletRow
         }
 
         override fun getItem(position: Int): NEP6.Account {
             var accounts = NEP6.getFromFileSystem().getWalletAccounts().toMutableList()
-            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DappContainerActivity).dappViewModel.dappExposedWallet?.address}
+            var index = accounts.indexOfFirst { it.address == (mFragment.activity as DappContainerActivity).dappViewModel.walletForSession?.address}
             if (index == -1) {
                 index = accounts.indexOfFirst { it.isDefault }
             }

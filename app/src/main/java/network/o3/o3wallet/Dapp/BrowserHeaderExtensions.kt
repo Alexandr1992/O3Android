@@ -36,6 +36,8 @@ fun DAPPBrowser.initateBrowserHeader(allowSearch: Boolean) {
 fun DAPPBrowser.setMoreActions() {
     val moreButton = mView!!.find<ImageView>(R.id.moreButton)
     moreButton.onClick {
+        val o3Logo = ContextCompat.getDrawable(this@setMoreActions.context!!, R.drawable.ic_o3_logo_white)
+        o3Logo!!.setTint(resources.getColor(R.color.colorDappMenuItem))
         val customPowerMenu = CustomPowerMenu.Builder(this@setMoreActions.activity, DappPopupMenuAdapter())
                 .setWidth(800)
                 .addItem(DappPopupMenuItem(
@@ -49,13 +51,8 @@ fun DAPPBrowser.setMoreActions() {
                 )
 
                 .addItem(DappPopupMenuItem(
-                        resources.getString(R.string.DAPP_disconnect),
-                        ContextCompat.getDrawable(this@setMoreActions.context!!, R.drawable.ic_power_off))
-                )
-
-                .addItem(DappPopupMenuItem(
                         resources.getString(R.string.DAPP_return_to_o3),
-                        ContextCompat.getDrawable(this@setMoreActions.context!!, R.drawable.ic_home))
+                        o3Logo)
                 )
 
                 .addItem(DappPopupMenuItem(
@@ -78,8 +75,7 @@ fun DAPPBrowser.setMoreActions() {
                 shareIntent.putExtra(Intent.EXTRA_TEXT, activity?.intent?.getStringExtra("url"));
                 startActivity(Intent.createChooser(shareIntent, ""))
             } else if (position == 2) {
-                //dappViewModel.jsInterface.manualDisconnect()
-            } else if (position == 3) {
+                dappViewModel.setLockStatus(true)
                 this@setMoreActions.activity?.finish()
             }
             customPowerMenu.dismiss()
