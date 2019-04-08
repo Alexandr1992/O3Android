@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import com.amplitude.api.Amplitude
 import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
@@ -67,7 +65,7 @@ class EnterEncryptedKeyNameFragment : Fragment() {
                     "address_count" to NEP6.getFromFileSystem().accounts.size)
             AnalyticsService.Wallet.logWalletAdded(JSONObject(attrs))
 
-            mView.findNavController().navigate(R.id.action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment)
+           // mView.findNavController().navigate(R.id.action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment)
         }
     }
 }

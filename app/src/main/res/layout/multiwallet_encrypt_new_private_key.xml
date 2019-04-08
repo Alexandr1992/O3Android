@@ -93,6 +93,14 @@
         app:layout_constraintEnd_toEndOf="@+id/confirmPasswordField"
         app:layout_constraintTop_toTopOf="@+id/confirmPasswordField" />
 
+    <include
+        android:id="@+id/quickSwapLayout"
+        layout="@layout/multiwallet_enable_quick_swap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/confirmPasswordField"
+        />
+
     <Button
         android:id="@+id/continueButton"
         style="@style/AccentButton.Rounded"
@@ -104,6 +112,6 @@
         android:text="@string/MULTIWALLET_continue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmPasswordField" />
+        app:layout_constraintTop_toBottomOf="@+id/quickSwapLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

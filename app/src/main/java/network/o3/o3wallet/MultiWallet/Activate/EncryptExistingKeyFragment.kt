@@ -11,8 +11,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Switch
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
@@ -23,9 +25,13 @@ class EncryptExistingKeyFragment : Fragment() {
     lateinit var mView: View
     lateinit var enterPasswordEditText: EditText
     lateinit var confirmPasswordEditText: EditText
+    lateinit var enterPasswordContainer: TextInputLayout
+    lateinit var confirmPasswordContainer: TextInputLayout
+
     lateinit var showEnterImageView: ImageView
     lateinit var showConfirmPasswordImageView: ImageView
     lateinit var encryptButton: Button
+    lateinit var quickSwap: Switch
 
     var passwordIsHidden = true
     var confirmPasswordIsHidden = true
@@ -35,11 +41,15 @@ class EncryptExistingKeyFragment : Fragment() {
         mView = inflater.inflate(R.layout.multiwallet_encrypt_existing_key, container, false)
         enterPasswordEditText = mView.find(R.id.enterEncryptionPasswordEditText)
         confirmPasswordEditText = mView.find(R.id.confirmEncryptionPasswordEditText)
+        enterPasswordContainer = mView.find(R.id.enterEncryptionPasswordEditTextContainer)
+        confirmPasswordContainer = mView.find(R.id.confirmEncryptionPasswordEditTextContainer)
 
         showEnterImageView = mView.find(R.id.showEnterImageView)
         showConfirmPasswordImageView = mView.find(R.id.showConfirmImageView)
 
         encryptButton = mView.find(R.id.encryptExistingKeyButton)
+        quickSwap = mView.find(R.id.quickSwapSwitch)
+        quickSwap.isChecked = true
 
         initiatePasswordListeners()
         initiateEncryptionButton()
@@ -65,7 +75,7 @@ class EncryptExistingKeyFragment : Fragment() {
         encryptButton.isEnabled = false
         encryptButton.setOnClickListener {
             if (validatePassword()) {
-                (activity as MultiwalletActivateActivity).viewModel.encryptKey(enterPasswordEditText.text.toString())
+                (activity as MultiwalletActivateActivity).viewModel.encryptKey(enterPasswordEditText.text.toString(), quickSwap.isChecked)
                 mView.findNavController().navigate(R.id.action_encryptExistingFragment_to_encryptionSuccessFragment)
             }
         }
@@ -102,6 +112,15 @@ class EncryptExistingKeyFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val password = enterPasswordEditText.text.toString()
+                if (password.isBlank()) {
+                    enterPasswordContainer.error = null
+                } else if (password.length < 8){
+                    enterPasswordContainer.error = resources.getString(R.string.ONBOARDING_password_length_minimum)
+                } else {
+                    enterPasswordContainer.error = null
+                }
+
                 if (enterPasswordEditText.text.toString() != "" && confirmPasswordEditText.text.toString() != "") {
                     encryptButton.isEnabled = true
                 } else {
@@ -114,6 +133,14 @@ class EncryptExistingKeyFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val password = enterPasswordEditText.text.toString()
+                val confirmPassword = confirmPasswordEditText.text.toString()
+                if (password.length > 0 && password != confirmPassword) {
+                    confirmPasswordContainer.error =
+                            resources.getString(R.string.ONBOARDING_password_no_match)
+                } else {
+                    confirmPasswordContainer.error = null
+                }
                 if (enterPasswordEditText.text.toString() != "" && confirmPasswordEditText.text.toString() != "") {
                     encryptButton.isEnabled = true
                 } else {

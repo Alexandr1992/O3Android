@@ -25,8 +25,8 @@
         android:label="multiwallet_verify_nep2"
         tools:layout="@layout/multiwallet_verify_nep2" >
         <action
-            android:id="@+id/action_addMultiwalletVerifyNEP2_to_enterEncryptedKeyNameFragment"
-            app:destination="@id/enterEncryptedKeyNameFragment" />
+            android:id="@+id/action_addMultiwalletVerifyNEP2_to_encryptedKeyAddedSuccessFragment"
+            app:destination="@id/encryptedKeyAddedSuccessFragment" />
     </fragment>
     <fragment
         android:id="@+id/keyEncryptionSuccess"
@@ -60,12 +60,4 @@
         android:id="@+id/encryptedKeyAddedSuccessFragment"
         android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EncryptedKeyAddedSuccessFragment"
         android:label="EncryptedKeyAddedSuccessFragment" />
-    <fragment
-        android:id="@+id/enterEncryptedKeyNameFragment"
-        android:name="network.o3.o3wallet.MultiWallet.AddNewMultiWallet.EnterEncryptedKeyNameFragment"
-        android:label="EnterEncryptedKeyNameFragment" >
-        <action
-            android:id="@+id/action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment"
-            app:destination="@id/encryptedKeyAddedSuccessFragment" />
-    </fragment>
 </navigation>
