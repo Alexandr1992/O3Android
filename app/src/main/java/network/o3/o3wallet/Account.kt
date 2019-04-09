@@ -145,6 +145,16 @@ object Account {
         }
     }
 
+    //This allows for setting of the address temporarily
+    // while the long running decryption of NEP6 is taking pl;ace
+    fun accountSetAddress(address: String) {
+        wallet?.address = address
+        wallet?.wif = null
+        wallet?.privateKey = null
+        wallet?.publicKey = null
+        wallet?.hashedSignature = null
+    }
+
 
     fun deleteKeyFromDevice() {
         val alias = "O3 Key"

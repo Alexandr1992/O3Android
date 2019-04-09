@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import org.jetbrains.anko.doAsync
 import java.io.File
 
 data class NEP6(var name: String, var version: String, var scrypt: ScryptParams, var accounts: MutableList<Account>) {
@@ -131,7 +132,9 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         if (defaultIndex == -1) {
             accounts[newDefaultIndex].isDefault = true
             network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
-            network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
+            doAsync {
+                network.o3.o3wallet.Account.fromEncryptedKey(accounts[0].key!!, pass)
+            }
             this.writeToFileSystem()
             return
         }
@@ -144,7 +147,10 @@ data class NEP6(var name: String, var version: String, var scrypt: ScryptParams,
         accounts[newDefaultIndex] = oldDefaultAccount
         network.o3.o3wallet.Account.storeDefaultNep6Pass(pass)
         var defAccount = accounts.find { it.isDefault }!!
-        network.o3.o3wallet.Account.fromEncryptedKey(defAccount.key!!, pass)
+        network.o3.o3wallet.Account.accountSetAddress(defAccount.address)
+        doAsync {
+            network.o3.o3wallet.Account.fromEncryptedKey(defAccount.key!!, pass)
+        }
         this.writeToFileSystem()
     }
 
