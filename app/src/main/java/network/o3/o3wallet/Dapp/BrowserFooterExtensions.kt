@@ -47,8 +47,13 @@ fun DAPPBrowser.initiateTradeFooter(uri: Uri) {
                                 "source" to "token_details")
                         AnalyticsService.Trading.logSellInitiated(JSONObject(sellAttrs))
                         val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                        intent.putExtra("asset", asset)
-                        intent.putExtra("is_buy", false)
+                        if (asset == "SDUSD") {
+                            intent.putExtra("asset", "NEO")
+                            intent.putExtra("is_buy", true)
+                        } else {
+                            intent.putExtra("asset", asset)
+                            intent.putExtra("is_buy", false)
+                        }
                         startActivity(intent)
                         lastClickTime = SystemClock.elapsedRealtime()
                     }

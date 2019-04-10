@@ -273,7 +273,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
                 rightToolbarButton.setOnClickListener {
                     val depositAttrs = mapOf(
-                            "asset" to "",
+                            "asset" to "NEO",
                             "source" to "trading_account")
                     AnalyticsService.Trading.logDepositInitiated(JSONObject(depositAttrs))
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
@@ -370,8 +370,14 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                             mView.context.startActivity(intent)
                         } else if (itemId == R.id.sell_menu_item) {
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                            intent.putExtra("asset", asset.symbol)
-                            intent.putExtra("is_buy", false)
+                            if (asset.symbol == "SDUSD") {
+                                intent.putExtra("asset", "NEO")
+                                intent.putExtra("is_buy", true)
+                            } else {
+                                intent.putExtra("asset", asset.symbol)
+                                intent.putExtra("is_buy", false)
+                            }
+
                             val sellAttrs = mapOf(
                                     "asset" to asset.symbol,
                                     "source" to "trading_account_menu_item")

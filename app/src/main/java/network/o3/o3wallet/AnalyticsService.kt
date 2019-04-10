@@ -10,19 +10,14 @@ class AnalyticsService {
             fun logDapiMethodCall(json: JSONObject) {
                 Amplitude.getInstance().logEvent("dAPI_method_call", json)
             }
-
             fun logDapiTxAccepted(json: JSONObject) {
                 Amplitude.getInstance().logEvent("dAPI_tx_accepted", json)
             }
-
             fun logDappOpened(json: JSONObject) {
                 Amplitude.getInstance().logEvent("dAPI_open", json)
             }
             fun logDappClosed(json: JSONObject) {
                 Amplitude.getInstance().logEvent("dAPI_closed", json)
-            }
-            fun logTxAccepted(json: JSONObject) {
-                Amplitude.getInstance().logEvent("dAPI_tx_accepted", json)
             }
             fun logAccountConnected(json: JSONObject) {
                 Amplitude.getInstance().logEvent("dAPI_account_connected", json)
