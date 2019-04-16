@@ -60,8 +60,9 @@ class DAPPViewModel(url: String): ViewModel() {
     fun setWalletToExpose(wallet: Wallet, name: String) {
         walletForSession =  wallet
         walletForSessionName = name
+        fireEvent(DappBrowserJSInterfaceV2.EVENT.ACCOUNT_CHANGED)
     }
-
+    
     fun getLockStatus(): LiveData<Boolean> {
         return lockStatus
     }

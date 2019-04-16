@@ -27,7 +27,7 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
     lateinit var listView: ListView
 
     var needsAuth = true
-    lateinit var connectionViewModel: DappConnectionRequestBottomSheet.ConnectionViewModel
+    var connectionViewModel: DappConnectionRequestBottomSheet.ConnectionViewModel? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -71,7 +71,12 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
                         val wif = Neoutils.neP2Decrypt(nep6Entry.key, pass)
                         val walletToExpose = Neoutils.generateFromWIF(wif)
                         val walletToExposeName = nep6Entry.label
-                        (mFragment as DappWalletForSessionBottomSheet).connectionViewModel.setWalletDetails(walletToExpose, walletToExposeName)
+                        if ((mFragment as DappWalletForSessionBottomSheet).connectionViewModel!= null) {
+                            (mFragment as DappWalletForSessionBottomSheet).connectionViewModel?.setWalletDetails(walletToExpose, walletToExposeName)
+                        } else {
+                            (mFragment.activity as DappContainerActivity).dappViewModel.setWalletToExpose(walletToExpose, walletToExposeName)
+                        }
+
                         (mFragment as DappWalletForSessionBottomSheet).dismiss()
                 } else {
                     neo2DialogFragment.decryptionSucceededCallback = { pass, wif ->
@@ -79,7 +84,11 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
                         neo2DialogFragment.dismiss()
                         val walletToExpose = Neoutils.generateFromWIF(wif)
                         val walletToExposeName = NEP6.getFromFileSystem().getWalletAccounts().find { it.address == walletToExpose.address }!!.label
-                        (mFragment as DappWalletForSessionBottomSheet).connectionViewModel.setWalletDetails(walletToExpose, walletToExposeName)
+                        if ((mFragment as DappWalletForSessionBottomSheet).connectionViewModel != null) {
+                            (mFragment as DappWalletForSessionBottomSheet).connectionViewModel?.setWalletDetails(walletToExpose, walletToExposeName)
+                        } else {
+                            (mFragment.activity as DappContainerActivity).dappViewModel.setWalletToExpose(walletToExpose, walletToExposeName)
+                        }
                         (mFragment as DappWalletForSessionBottomSheet).dismiss()
                     }
 
