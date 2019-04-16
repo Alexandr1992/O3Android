@@ -1,8 +1,8 @@
 package network.o3.o3wallet.Dapp
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,22 +11,20 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import com.kaopiz.kprogresshud.KProgressHUD
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
-import network.o3.o3wallet.removeTrailingZeros
+import network.o3.o3wallet.*
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
+import org.json.JSONObject
 import org.opengraph.OpenGraph
-import java.lang.Exception
 import java.math.BigDecimal
 import java.net.URL
 
@@ -78,27 +76,41 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         loadingTextView = mView.find(R.id.loadingStateTextView)
 
 
-        fromWalletNameTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWalletName()
+        fromWalletNameTextView.text = (activity as DappContainerActivity).dappViewModel.walletForSessionName
         toWalletAddressTextView.text = sendRequest.toAddress
         memoTextView.text = sendRequest.remark
         totalTextView.text = sendRequest.amount + " " + sendRequest.asset
 
         cancelButton.onClick {
+            val success = (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, false)
             dismiss()
         }
 
         sendButton.onClick {
             showSendingState()
             bg {
-                val success = (activity as DAppBrowserActivityV2).jsInterface.handleSend(dappMessage!!)
+                val success = (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, true)
+                if (success) {
+                    val attrs = mapOf("blockchain" to "NEO",
+                            "net" to PersistentStore.getNetworkType(),
+                            "method" to "send",
+                            "url" to arguments!!.getString("url"),
+                            "domain" to URL(arguments!!.getString("url")).authority)
+                    AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
+                }
                 finishSending(success)
             }
 
         }
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, false)
+    }
+
     fun showSendingState() {
-        onUiThread {
+       onUiThread {
             isCancelable = false
             sendButton.visibility = View.INVISIBLE
             cancelButton.visibility = View.INVISIBLE
@@ -126,13 +138,13 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
             Handler().postDelayed ({
                 dismiss()
             }, 2800)
-        }
+       }
     }
 
     fun loadOpenGraphDetails() {
         val url = arguments!!.getString("url")
         try {
-            bg {
+          bg {
                 val dapp = OpenGraph(url, true)
                 val title = dapp.getContent("title")
                 val image = dapp.getContent("image")

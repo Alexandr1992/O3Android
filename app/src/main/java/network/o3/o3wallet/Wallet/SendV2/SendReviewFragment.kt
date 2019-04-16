@@ -2,27 +2,22 @@ package network.o3.o3wallet.Wallet.SendV2
 
 
 import android.app.KeyguardManager
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import network.o3.o3wallet.R
-import kotlinx.android.synthetic.main.send_review_fragment.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
-import network.o3.o3wallet.format
+import network.o3.o3wallet.R
 import network.o3.o3wallet.formattedFiatString
 import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.onUiThread
-import org.jetbrains.anko.support.v4.toast
-import org.w3c.dom.Text
 
 class   SendReviewFragment : Fragment() {
     private lateinit var mView: View

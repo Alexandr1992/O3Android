@@ -1,28 +1,24 @@
 package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.media.Image
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.text.SpannableStringBuilder
-import android.view.View
-import android.view.ViewGroup
-import android.widget.*
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.zxing.integration.android.IntentIntegrator
-import neoutils.Neoutils
-import net.glxn.qrgen.android.QRCode
-import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
-import network.o3.o3wallet.Settings.PrivateKeyFragment
-import org.jetbrains.anko.*
+import network.o3.o3wallet.NEP6
+import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.R
+import org.jetbrains.anko.find
+import org.jetbrains.anko.findOptional
+import org.jetbrains.anko.image
 
 class MultiwalletManageWallet : AppCompatActivity() {
 
@@ -47,16 +43,6 @@ class MultiwalletManageWallet : AppCompatActivity() {
         viewModel.shouldNavToVerify = intent.getBooleanExtra("shouldNavToManual", false)
         var view = layoutInflater.inflate(R.layout.multiwallet_manage_wallet_activity, null)
         setContentView(view)
-    }
-
-    override fun getTheme(): Resources.Theme {
-        val theme = super.getTheme()
-        if (PersistentStore.getTheme() == "Dark") {
-            theme.applyStyle(R.style.AppTheme_Dark, true)
-        } else {
-            theme.applyStyle(R.style.AppTheme_White, true)
-        }
-        return theme
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -93,5 +79,15 @@ class MultiwalletManageWallet : AppCompatActivity() {
                 newNameEntry.showNow(supportFragmentManager, "change name")
             }
         }
+    }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        if (PersistentStore.getTheme() == "Dark") {
+            theme.applyStyle(R.style.AppTheme_Dark, true)
+        } else {
+            theme.applyStyle(R.style.AppTheme_White, true)
+        }
+        return theme
     }
 }

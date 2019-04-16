@@ -1,6 +1,6 @@
 package network.o3.o3wallet.Identity
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
 class KYCActivity: AppCompatActivity() {
 

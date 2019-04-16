@@ -3,25 +3,25 @@ package network.o3.o3wallet.Portfolio
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import com.amplitude.api.Amplitude
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.send_success_fragment.view.*
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3.Portfolio
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.MultiwalletManageWallet
 import network.o3.o3wallet.R.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.json.JSONObject
 import java.io.File
@@ -165,8 +165,8 @@ class AssetListAdapter(context: Context, fragment: HomeFragment): RecyclerView.A
                 }
 
                 val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "portfolio_row")
-                Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
-                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
+                AnalyticsService.Navigation.logTokenDetailsSelected(JSONObject(tokenDetailsAttrs))
+                val intent = Intent(view.context, DappContainerActivity::class.java)
                 intent.putExtra("url", detailURL)
                 view.context.startActivity(intent)
             }

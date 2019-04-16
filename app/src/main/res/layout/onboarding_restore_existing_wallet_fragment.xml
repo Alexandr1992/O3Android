@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +10,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -26,7 +26,7 @@
                 app:lottie_loop="true"
                 app:lottie_rawRes="@raw/an_enter_key" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/enterKeyContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -57,9 +57,9 @@
             android:paddingLeft="10dp"
             android:paddingRight="38dp" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/enterEncryptionPasswordEditTextContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -88,10 +88,10 @@
             android:hint="@string/MULTIWALLET_enter_ecnryption_password"
             android:inputType="textPassword"
             android:paddingLeft="10dp" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/confirmEncryptionPasswordEditTextContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
             android:hint="@string/MULTIWALLET_enter_confirm_password"
             android:inputType="textPassword"
             android:paddingLeft="10dp" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/continueButton"
@@ -201,7 +201,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

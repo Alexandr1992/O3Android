@@ -1,11 +1,8 @@
 package network.o3.o3wallet
 
 import android.preference.PreferenceManager
-import android.util.Base64
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import network.o3.o3wallet.API.NEO.NEP5Token
-import network.o3.o3wallet.API.O3.O3Response
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.API.O3Platform.TransferableAssets
@@ -318,5 +315,40 @@ object PersistentStore {
         var jsonString = Gson().toJson(types.map { it.name })
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
                 putString(address + "_VERIFICATIONTYPE", jsonString).apply()
+    }
+
+    fun setHasAgreedDappDisclaimer(hasAgreed: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().putBoolean("has_agreed_dapp", hasAgreed).apply()
+    }
+
+    fun getHasAgreedDappDisclaimer(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getBoolean("has_agreed_dapp", false)
+    }
+
+    fun setHasAgreedAnalyticsDisclaimer(hasAgreed: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().putBoolean("has_agreed_analytics", hasAgreed).apply()
+    }
+
+    fun getHasAgreedAnalyticsDisclaimer(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getBoolean("has_agreed_analytics", false)
+    }
+
+    //quick swap determines security level of encrypted key
+    //unlock with pin code/biometirc or unlock with encrypted key
+    fun getHasQuickSwapEnabled(address: String): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getBoolean("has_enabled_quick_swap_" + address, false)
+    }
+
+    fun setHasQuickSwapEnabled(hasEnabled: Boolean, address: String, password: String? = null) {
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
+                putBoolean("has_enabled_quick_swap_" + address, hasEnabled).apply()
+        if (hasEnabled == false) {
+            if (Account.isStoredPasswordForNep6KeyPresent(address)) {
+                Account.deleteStoredNEP6PasswordEntry(address)
+            }
+        } else {
+            Account.storeGenericKeyPassOnDevice("NEP6", address, password!!)
+        }
     }
 }

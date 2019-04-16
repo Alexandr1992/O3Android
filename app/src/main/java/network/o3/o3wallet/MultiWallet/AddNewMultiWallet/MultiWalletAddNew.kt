@@ -1,9 +1,6 @@
 package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,23 +9,18 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import androidx.navigation.Navigation.findNavController
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.integration.android.IntentIntegrator
-
 import neoutils.Neoutils
-import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
-
 import network.o3.o3wallet.R
 import network.o3.o3wallet.toHex
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.yesButton
-import java.lang.Exception
 import java.security.SecureRandom
 
 class MultiWalletAddNew : Fragment() {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/news"
+    app:startDestination="@id/newsDestination">
+    <fragment
+        android:id="@+id/newsDestination"
+        android:name="network.o3.o3wallet.Feed.NewsFeedFragment"
+        android:label="settings_fragment"
+        tools:layout="@layout/news_fragment_news_feed" >
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="o3network://news" />
+    </fragment>
+</navigation>

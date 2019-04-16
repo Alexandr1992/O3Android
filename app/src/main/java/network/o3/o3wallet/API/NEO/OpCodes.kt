@@ -1,9 +1,6 @@
 package network.o3.o3wallet.API.NEO
 
-import network.o3.o3wallet.hexStringToByteArray
-import unsigned.Ubyte
 import unsigned.toUByte
-import unsigned.toUbyte
 
 /**
  * Created by drei on 1/19/18.

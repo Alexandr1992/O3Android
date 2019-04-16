@@ -1,31 +1,19 @@
 package network.o3.o3wallet.Wallet
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import neoutils.Neoutils
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import neoutils.Wallet
-import network.o3.o3wallet.API.NEO.Block
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3.O3API
-import network.o3.o3wallet.API.O3.PriceData
 import network.o3.o3wallet.API.O3Platform.*
 import network.o3.o3wallet.API.Ontology.OntologyClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.formattedFiatString
-import org.jetbrains.anko.coroutines.experimental.bg
-import java.math.BigDecimal
 import java.util.*
-import java.util.concurrent.CountDownLatch
-import kotlin.concurrent.thread
-import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.concurrent.timerTask
 import kotlin.math.pow
 
 

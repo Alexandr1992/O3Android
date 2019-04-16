@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,7 +34,7 @@
 
     </FrameLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/emptyWalletContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -107,7 +107,7 @@
             app:layout_constraintEnd_toEndOf="@+id/emptyActionsContainer"
             app:layout_constraintStart_toStartOf="@+id/emptyActionsContainer"
             app:layout_constraintTop_toTopOf="@+id/emptyActionsContainer" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/intervalButtonLayout"
@@ -182,4 +182,4 @@
     </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

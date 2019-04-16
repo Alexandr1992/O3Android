@@ -1,17 +1,14 @@
 package network.o3.o3wallet.NativeTrade
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import com.github.salomonbrys.kotson.get
-import com.google.common.graph.MutableValueGraph
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TradingAccount
 import network.o3.o3wallet.API.Switcheo.Offer
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.API.Switcheo.SwitcheoOrders
 import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.format
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.concurrent.CountDownLatch

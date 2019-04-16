@@ -5,19 +5,17 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.MultiwalletManageWallet
 import network.o3.o3wallet.PersistentStore
-
 import network.o3.o3wallet.R
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.alert

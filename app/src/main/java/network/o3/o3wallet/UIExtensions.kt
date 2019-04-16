@@ -3,18 +3,14 @@ package network.o3.o3wallet
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.annotation.AttrRes
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import androidx.annotation.AttrRes
 
 /**
  * Created by drei on 4/18/18.

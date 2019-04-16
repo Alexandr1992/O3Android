@@ -3,9 +3,10 @@ package network.o3.o3wallet.API.NEO
 
 
 import android.util.Log
-import com.amplitude.api.Amplitude
 import com.github.kittinunf.fuel.httpPost
-import com.github.salomonbrys.kotson.*
+import com.github.salomonbrys.kotson.fromJson
+import com.github.salomonbrys.kotson.jsonArray
+import com.github.salomonbrys.kotson.jsonObject
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -13,19 +14,29 @@ import neoutils.Neoutils
 import neoutils.Neoutils.sign
 import neoutils.Neoutils.validateNEOAddress
 import neoutils.RawTransaction
-import network.o3.o3wallet.API.O3Platform.*
 import neoutils.Wallet
 import network.o3.o3wallet.*
+import network.o3.o3wallet.API.O3Platform.ClaimData
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
+import network.o3.o3wallet.API.O3Platform.UTXO
+import network.o3.o3wallet.API.O3Platform.UTXOS
 import network.o3.o3wallet.Dapp.NeoDappProtocol
-import okio.GzipSource
-import org.jetbrains.anko.db.DoubleParser
-import org.jetbrains.anko.defaultSharedPreferences
 import org.json.JSONObject
 import unsigned.toUByte
-import java.lang.Exception
 import java.math.BigDecimal
-import java.nio.*
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.*
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.arrayListOf
+import kotlin.collections.count
+import kotlin.collections.filter
+import kotlin.collections.mapOf
+import kotlin.collections.plus
+import kotlin.collections.reversedArray
+import kotlin.collections.set
+import kotlin.collections.sortedBy
 
 
 class NeoNodeRPC {
@@ -607,10 +618,7 @@ class NeoNodeRPC {
         payload += hexStringToByteArray(NeoNodeRPC.Asset.GAS.assetID()).reversedArray()
 
         val claimIntermediate = BigDecimal(claims.data.gas)
-        val attrs = mapOf(
-                "type" to "GAS",
-                "is_ledger" to false)
-        Amplitude.getInstance().logEvent("CLAIM", JSONObject(attrs))
+        AnalyticsService.Wallet.logGasClaim()
         val claimLong = claimIntermediate.multiply(BigDecimal(100000000)).toLong()
         payload += ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(claimLong).array()
         payload += wallet.hashedSignature

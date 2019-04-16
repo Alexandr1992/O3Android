@@ -1,43 +1,31 @@
 package network.o3.o3wallet.NativeTrade
 
 
-import android.arch.lifecycle.Observer
-import android.graphics.Color
-import android.graphics.ColorFilter
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
-import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.afollestad.materialdialogs.Theme
-import com.amplitude.api.Amplitude
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.native_trade_order_card.*
 import network.o3.o3wallet.*
-
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onFocusChange
 import org.jetbrains.anko.sdk27.coroutines.onLongClick
-import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.nio.file.Files.find
-import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
 class OrderSubmissionFragment : Fragment() {
@@ -419,7 +407,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (baseAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         baseAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
-                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
+                    AnalyticsService.Trading.logTradingBalanceError()
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }
@@ -427,7 +415,7 @@ class OrderSubmissionFragment : Fragment() {
                 if (orderAssetAmountEditText.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0 >
                         orderAssetBalanceTextView.text.decimalNoGrouping().toDoubleOrNull() ?: 0.0) {
                     alert("You need a larger balance in your trading account").show()
-                    Amplitude.getInstance().logEvent("Not_enough_trading_balance_error")
+                    AnalyticsService.Trading.logTradingBalanceError()
                 } else {
                     mView.findNavController().navigate(R.id.action_orderSubmissionFragment_to_reviewOrderFragment)
                 }

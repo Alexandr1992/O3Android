@@ -2,16 +2,13 @@ package network.o3.o3wallet.Wallet.SendV2
 
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
 import android.text.InputFilter
 import android.text.InputType
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +18,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.google.zxing.integration.android.IntentIntegrator
@@ -31,8 +30,6 @@ import network.o3.o3wallet.afterTextChanged
 import network.o3.o3wallet.getColorFromAttr
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.support.v4.act
-import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.textColor
 
 class SendWhereFragment : Fragment() {

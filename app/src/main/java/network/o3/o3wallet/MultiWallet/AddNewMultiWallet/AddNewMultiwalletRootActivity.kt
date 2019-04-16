@@ -1,16 +1,17 @@
 package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
-import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
-import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.zxing.integration.android.IntentIntegrator
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R

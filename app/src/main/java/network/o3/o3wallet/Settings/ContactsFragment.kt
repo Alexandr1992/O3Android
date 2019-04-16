@@ -4,19 +4,17 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.app.ActivityCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.TextView
-import kotlinx.android.synthetic.main.settings_fragment_contacts.*
-import network.o3.o3wallet.*
+import network.o3.o3wallet.Contact
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.R
+import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
-import org.jetbrains.anko.find
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.yesButton
 
 

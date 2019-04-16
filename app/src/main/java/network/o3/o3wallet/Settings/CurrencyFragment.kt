@@ -4,7 +4,6 @@ package network.o3.o3wallet.Settings
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

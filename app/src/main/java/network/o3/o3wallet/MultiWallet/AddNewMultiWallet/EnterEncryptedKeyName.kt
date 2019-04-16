@@ -1,7 +1,6 @@
 package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -9,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import androidx.navigation.findNavController
-import com.amplitude.api.Amplitude
+import androidx.fragment.app.Fragment
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -64,9 +63,9 @@ class EnterEncryptedKeyNameFragment : Fragment() {
                     "type" to "import_key",
                     "method" to "import",
                     "address_count" to NEP6.getFromFileSystem().accounts.size)
-            Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
+            AnalyticsService.Wallet.logWalletAdded(JSONObject(attrs))
 
-            mView.findNavController().navigate(R.id.action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment)
+           // mView.findNavController().navigate(R.id.action_enterEncryptedKeyNameFragment_to_encryptedKeyAddedSuccessFragment)
         }
     }
 }

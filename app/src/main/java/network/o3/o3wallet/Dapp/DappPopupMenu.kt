@@ -26,7 +26,7 @@ class DappPopupMenuAdapter : MenuBaseAdapter<DappPopupMenuItem>() {
         optionView.find<TextView>(R.id.optionTitle).text = item.title
         optionView.find<ImageView>(R.id.optionLogo).image  = item.image
 
-        if (index == 4) {
+        if (index == 3) {
             optionView.find<TextView>(R.id.optionTitle).textColor = context.resources.getColor(R.color.colorSubtitleGrey)
         }
 

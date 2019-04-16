@@ -7,21 +7,15 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.glxn.qrgen.android.QRCode
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.R
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.BottomSheetBehavior
-import android.widget.FrameLayout
-import org.jetbrains.anko.find
-import android.content.Context.CLIPBOARD_SERVICE
 import network.o3.o3wallet.O3Wallet
+import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.support.v4.onUiThread
 

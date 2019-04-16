@@ -1,6 +1,6 @@
 package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 class AddNewMultiwalletViewModel: ViewModel() {
     var address: String = ""

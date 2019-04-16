@@ -2,8 +2,6 @@ package network.o3.o3wallet
 
 import android.app.Application
 import android.content.Context
-import android.content.res.Configuration
-
 
 
 /**

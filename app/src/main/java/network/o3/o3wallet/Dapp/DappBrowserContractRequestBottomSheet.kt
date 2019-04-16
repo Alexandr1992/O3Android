@@ -1,9 +1,8 @@
 package network.o3.o3wallet.Dapp
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,21 +11,20 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
-import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
-import network.o3.o3wallet.removeTrailingZeros
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
+import org.json.JSONObject
 import org.opengraph.OpenGraph
-import java.lang.Exception
 import java.math.BigDecimal
 import java.net.URL
 
@@ -85,15 +83,23 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
         setFeeControls()
         loadOpenGraphDetails()
         contractOperationTextView.text = resources.getString(R.string.DAPP_invoke_request, invokeRequest.operation)
-        withWalletTextView.text = (activity as DAppBrowserActivityV2).jsInterface.getDappExposedWallet()!!.address
+        withWalletTextView.text = (activity as DappContainerActivity).dappViewModel.walletForSession!!.address
 
         invokeButton.onClick {
-            val success = (activity as DAppBrowserActivityV2).jsInterface.handleInvoke(dappMessage!!)
+            val success = (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, true)
+            if (success) {
+                val attrs = mapOf("blockchain" to "NEO",
+                        "net" to PersistentStore.getNetworkType(),
+                        "method" to "invoke",
+                        "url" to arguments!!.getString("url"),
+                        "domain" to URL(arguments!!.getString("url")).authority)
+                AnalyticsService.DAPI.logDapiTxAccepted(JSONObject(attrs))
+            }
             dismiss()
         }
 
         cancelButton.onClick {
-            (activity as DAppBrowserActivityV2).jsInterface.rejectedInvoke(dappMessage!!)
+            (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, false)
             dismiss()
         }
 
@@ -129,6 +135,11 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
                 openGraphTitleTextView.text = url!!
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, false)
     }
 
     fun setFeeControls() {

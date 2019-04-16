@@ -1,21 +1,28 @@
 package network.o3.o3wallet.API.Switcheo
 
 import android.util.Log
-import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
-import com.github.salomonbrys.kotson.*
+import com.github.salomonbrys.kotson.fromJson
+import com.github.salomonbrys.kotson.get
+import com.github.salomonbrys.kotson.jsonObject
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import neoutils.Neoutils
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.O3Platform.O3SwitcheoOrders
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.net.URL
 import java.util.*
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.count
+import kotlin.collections.find
+import kotlin.collections.listOf
+import kotlin.collections.mutableListOf
+import kotlin.collections.reversedArray
+import kotlin.collections.set
 
 class SwitcheoAPI {
     val baseTestUrl = "https://test-api.switcheo.network/v2/"

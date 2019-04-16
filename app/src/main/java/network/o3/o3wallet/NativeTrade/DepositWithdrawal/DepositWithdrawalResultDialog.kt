@@ -1,15 +1,13 @@
 package network.o3.o3wallet.NativeTrade.DepositWithdrawal
 
-import android.app.Dialog
 import android.content.DialogInterface
-import android.content.res.Resources
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import com.airbnb.lottie.LottieAnimationView
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
@@ -81,7 +79,7 @@ class DepositWithdrawalResultDialog : DialogFragment() {
         finishButton.isEnabled = true
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         activity?.finish()
     }

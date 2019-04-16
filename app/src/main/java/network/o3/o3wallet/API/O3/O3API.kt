@@ -4,15 +4,10 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.get
 import com.google.gson.Gson
-import neoutils.Neoutils
-import network.o3.o3wallet.API.NEO.AccountAsset
-import network.o3.o3wallet.API.NEO.NEP5Token
-import network.o3.o3wallet.API.NEO.NEP5Tokens
 import network.o3.o3wallet.API.O3Platform.PlatformResponse
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
-import org.jetbrains.anko.defaultSharedPreferences
 import java.util.*
 
 /**

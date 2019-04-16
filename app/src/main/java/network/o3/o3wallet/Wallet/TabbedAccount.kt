@@ -5,19 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.support.design.widget.TabLayout
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import network.o3.o3wallet.R
-import android.support.v4.app.Fragment
-import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
-import kotlinx.android.synthetic.main.wallet_fragment_tabbed_account.*
 
 class TabbedAccount : Fragment() {
 
+    lateinit var viewPager: ViewPager
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.wallet_fragment_tabbed_account, container, false)
@@ -32,7 +31,7 @@ class TabbedAccount : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewPager = view.findViewById<ViewPager>(R.id.viewPager)
+        viewPager = view.findViewById<ViewPager>(R.id.viewPager)
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
 
         viewPager.adapter = AccountFragmentPagerAdapter(childFragmentManager, context!!)

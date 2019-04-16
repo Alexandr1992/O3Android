@@ -2,7 +2,6 @@ package network.o3.o3wallet.API.O3
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import org.jetbrains.anko.doAsyncResult
 import java.text.NumberFormat
 import java.util.*
 

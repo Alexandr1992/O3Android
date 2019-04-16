@@ -3,22 +3,20 @@ package network.o3.o3wallet.Onboarding.LoginNEP6
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.integration.android.IntentIntegrator
-import network.o3.o3wallet.Account
+import network.o3.o3wallet.*
+import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.DialogUnlockEncryptedKey
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.Onboarding.SelectingBestNode
-import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
@@ -28,6 +26,7 @@ class LoginNEP6Activity : AppCompatActivity() {
     lateinit var mView: View
     lateinit var recyclerView: RecyclerView
     var deepLink: String? = null
+    var quickSwapWallet: NEP6.Account? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +51,23 @@ class LoginNEP6Activity : AppCompatActivity() {
 
         } else {
             if (resultCode == -1) {
-                Account.restoreWalletFromDevice()
-                val intent = Intent(this, SelectingBestNode::class.java)
-                if (deepLink != null) {
-                    intent.putExtra("deepLink", deepLink!!)
+                if (quickSwapWallet!!.isDefault == false) {
+                    NEP6.getFromFileSystem().makeNewDefault(quickSwapWallet!!.address,
+                            Account.getStoredPassForNEP6Entry(quickSwapWallet!!.address))
                 }
-                startActivity(intent)
+                Account.restoreWalletFromDevice()
+                if (NEP6.nep6HasActivated() == false) {
+                    val intent = Intent(this, MultiwalletActivateActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(this, MainTabbedActivity::class.java)
+                    if (deepLink != null) {
+                        intent.putExtra("deepLink", deepLink!!)
+                    }
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
             }
         }
     }
@@ -131,15 +141,23 @@ class LoginNEP6Activity : AppCompatActivity() {
                 }
 
                 view.onClick {
-                    if (wallet.isDefault) {
+                    if (wallet.isDefault || PersistentStore.getHasQuickSwapEnabled(wallet.address)) {
+                        (activity as LoginNEP6Activity).quickSwapWallet = wallet
                         requestPasscode(view)
                     } else {
                         val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
                         neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
                             NEP6.getFromFileSystem().makeNewDefault(wallet.address, pass)
                             Account.restoreWalletFromDevice()
-                            val intent = Intent(activity, SelectingBestNode::class.java)
-                            activity.startActivity(intent)
+                            if (NEP6.nep6HasActivated() == false) {
+                                val intent = Intent(activity, MultiwalletActivateActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                activity.startActivity(intent)
+                            } else {
+                                val intent = Intent(activity, MainTabbedActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                activity.startActivity(intent)
+                            }
                         }
 
                         neo2DialogFragment.encryptedKey = wallet.key!!

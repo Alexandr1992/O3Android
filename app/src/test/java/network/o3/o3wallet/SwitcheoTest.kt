@@ -1,6 +1,5 @@
 package network.o3.o3wallet
 
-import android.util.Log
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import org.junit.Test
 import java.util.concurrent.CountDownLatch

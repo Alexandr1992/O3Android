@@ -3,8 +3,7 @@ package network.o3.o3wallet
 /**
  * Created by drei on 11/22/17.
  */
-import java.security.MessageDigest
-import network.o3.o3wallet.core.*
+import network.o3.o3wallet.core.Base58
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 

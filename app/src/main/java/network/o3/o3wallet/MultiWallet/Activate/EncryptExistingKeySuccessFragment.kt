@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.FileProvider
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +12,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import net.glxn.qrgen.android.QRCode
+import network.o3.o3wallet.MainTabbedActivity
 import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import java.io.File
@@ -42,9 +42,15 @@ class EncryptExistingKeySuccessFragment : Fragment() {
 
         doneButton.setOnClickListener {
             //reset after activation
-            val intent = Intent(activity, SelectingBestNode::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            activity?.startActivity(intent)
+            if (NEP6.nep6HasActivated() == false) {
+                val intent = Intent(activity, MultiwalletActivateActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            } else {
+                val intent = Intent(activity, MainTabbedActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
         }
         backupButton.setOnClickListener { sendBackupEmail() }
 

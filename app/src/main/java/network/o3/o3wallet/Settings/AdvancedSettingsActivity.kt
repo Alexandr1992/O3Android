@@ -2,21 +2,20 @@ package network.o3.o3wallet.Settings
 
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.LocalBroadcastManager
 import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
-import java.lang.Exception
 import java.net.URL
 
 class AdvancedSettingsActivity : AppCompatActivity() {
@@ -117,8 +116,8 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
-            val url =  "https://www.ftwlotto.com/o3?provider=o3"
-            val intent = Intent(this, DAppBrowserActivityV2::class.java)
+            val url =  "https://codepen.io/siremilomir/pen/jBbQGo"
+            val intent = Intent(this, DappContainerActivity::class.java)
             intent.putExtra("url", url)
             intent.putExtra("legacy", useLegacyCheckBox.isChecked)
             intent.putExtra("allowSearch", true)

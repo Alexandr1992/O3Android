@@ -1,34 +1,27 @@
 package network.o3.o3wallet.NativeTrade.DepositWithdrawal
 
-import android.arch.lifecycle.Observer
 import android.content.res.Resources
-import android.media.Image
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.ActionBar
 import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
-import com.amplitude.api.Amplitude
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.dialog_backup_key_fragment.*
 import kotlinx.android.synthetic.main.native_trade_deposit_withdrawal_activity.*
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.O3Platform.O3RealTimePrice
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
 import network.o3.o3wallet.Wallet.SendV2.AssetSelectionBottomSheet
-import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
-import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onLongClick
-import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.textColor
-import org.jetbrains.anko.toast
 import org.json.JSONObject
 import java.lang.Math.floor
 import java.math.BigDecimal
@@ -260,7 +253,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                     runOnUiThread {
                         if (it.first!! == true) {
                             val depositAttrs = mapOf("asset" to symbol, "amount" to viewModel.toSendAmount.toDouble())
-                            Amplitude.getInstance().logEvent("Deposit", JSONObject(depositAttrs))
+                            AnalyticsService.Trading.logDeposit(JSONObject(depositAttrs))
                             resultFragment.showSuccess()
                         } else {
                             resultFragment.showFailure()
@@ -276,7 +269,7 @@ class DepositWithdrawalActivity : AppCompatActivity() {
                     runOnUiThread {
                         if (it.first!! == true) {
                             val withdrawAttrs = mapOf("asset" to symbol, "amount" to viewModel.toSendAmount.toDouble())
-                            Amplitude.getInstance().logEvent("Withdraw", JSONObject(withdrawAttrs))
+                            AnalyticsService.Trading.logWithdraw(JSONObject(withdrawAttrs))
                             resultFragment.showSuccess()
                         } else {
                             resultFragment.showFailure()

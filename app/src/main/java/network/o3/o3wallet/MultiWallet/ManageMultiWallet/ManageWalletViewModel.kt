@@ -1,6 +1,6 @@
 package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 class ManageWalletViewModel: ViewModel() {
     var key: String? = null

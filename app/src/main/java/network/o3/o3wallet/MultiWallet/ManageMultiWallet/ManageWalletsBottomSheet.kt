@@ -6,24 +6,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.AddNewMultiwalletRootActivity
-import network.o3.o3wallet.MultiWallet.AddNewMultiWallet.MultiWalletAddNew
 import network.o3.o3wallet.NEP6
-
 import network.o3.o3wallet.R
 import network.o3.o3wallet.RoundedBottomSheetDialogFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.startActivity
 
 class ManageWalletsBottomSheet : RoundedBottomSheetDialogFragment() {
 

@@ -1,7 +1,6 @@
 package network.o3.o3wallet.MultiWallet.AddNewMultiWallet
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
@@ -11,17 +10,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Switch
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.amplitude.api.Amplitude
+import com.google.android.material.textfield.TextInputLayout
+import kotlinx.android.synthetic.main.multiwallet_encrypt_new_private_key.*
 import neoutils.Neoutils
+import network.o3.o3wallet.AnalyticsService
 import network.o3.o3wallet.NEP6
-
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton
 import org.json.JSONObject
-import java.lang.Exception
 
 class EnterMultiwalletEncryptPrivateKey : Fragment() {
 
@@ -29,9 +31,14 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
     lateinit var nameField: EditText
     lateinit var passwordField: EditText
     lateinit var confirmField: EditText
+    lateinit var nameFieldContainer: TextInputLayout
+    lateinit var enterPasswordContainer: TextInputLayout
+    lateinit var confirmPasswordContainer: TextInputLayout
 
     lateinit var passwordHideImageView: ImageView
     lateinit var confirmHideImageView: ImageView
+
+    lateinit var quickSwap: Switch
 
     var passwordIsHidden = true
     var confirmPasswordIsHidden = true
@@ -46,11 +53,18 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
         passwordField = mView.find(R.id.enterPasswordField)
         confirmField = mView.find(R.id.confirmPasswordField)
 
+        nameFieldContainer = mView.find(R.id.walletNameFieldContainer)
+        enterPasswordContainer = mView.find(R.id.enterPasswordFieldContainer)
+        confirmPasswordContainer = mView.find(R.id.confirmPasswordFieldContainer)
+
         passwordHideImageView = mView.find(R.id.passwordHideImageView)
         confirmHideImageView = mView.find(R.id.confirmHideImageView)
 
+        quickSwap = mView.find(R.id.quickSwapSwitch)
+        quickSwap.isChecked = true
         initiateContinueButton()
         initiatePasswordFields()
+        intiateNameField()
         return mView
     }
 
@@ -90,11 +104,15 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                     vm.address = account.address
                     nep6.addEncryptedKey(vm.address, nameField.text.toString(), account.encryptedKey)
                     nep6.writeToFileSystem()
+                    if (quickSwap.isChecked) {
+                        PersistentStore.setHasQuickSwapEnabled(true, account.address, vm.password)
+                    }
+
                     val attrs = mapOf(
                             "type" to "import_key",
                             "method" to "import",
                             "address_count" to NEP6.getFromFileSystem().accounts.size)
-                    Amplitude.getInstance().logEvent("ADD_WALLET", JSONObject(attrs))
+                    AnalyticsService.Wallet.logWalletAdded(JSONObject(attrs))
 
 
                     mView.findNavController().navigate(R.id.action_enterMultiwalletEncryptPrivateKey_to_keyEncryptionSuccess)
@@ -103,6 +121,22 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
                 }
             }
         }
+    }
+
+    fun intiateNameField() {
+        passwordField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+
+                if (passwordField.text.toString() != "" && confirmField.text.toString() != "" && nameField.text.toString() != "") {
+                    continueButton.isEnabled = true
+                } else {
+                    continueButton.isEnabled = false
+                }
+            }
+        })
     }
 
     fun initiatePasswordFields() {
@@ -136,7 +170,16 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (passwordField.text.toString() != "" && confirmField.text.toString() != "") {
+                val password = passwordField.text.toString()
+                if (password.isBlank()) {
+                    enterPasswordContainer.error = null
+                } else if (password.length < 8){
+                    enterPasswordContainer.error = resources.getString(R.string.ONBOARDING_password_length_minimum)
+                } else {
+                    enterPasswordContainer.error = null
+                }
+
+                if (passwordField.text.toString() != "" && confirmField.text.toString() != "" && nameField.text.toString() != "") {
                     continueButton.isEnabled = true
                 } else {
                     continueButton.isEnabled = false
@@ -148,7 +191,17 @@ class EnterMultiwalletEncryptPrivateKey : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (passwordField.text.toString() != "" && confirmField.text.toString() != "") {
+                val password = enterPasswordField.text.toString()
+                val confirmPassword = confirmField.text.toString()
+                if (password.length > 0 && password != confirmPassword) {
+                    confirmPasswordContainer.error =
+                            resources.getString(R.string.ONBOARDING_password_no_match)
+                } else {
+                    confirmPasswordContainer.error = null
+                }
+
+                if (passwordField.text.toString() != "" && confirmField.text.toString() != "" &&
+                        nameField.text.toString() != "") {
                     continueButton.isEnabled = true
                 } else {
                     continueButton.isEnabled = false

@@ -2,32 +2,23 @@ package network.o3.o3wallet.Dapp
 
 import android.app.Activity
 import android.app.KeyguardManager
-import android.webkit.JavascriptInterface
-import android.widget.Toast
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import android.webkit.WebView
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.github.salomonbrys.kotson.*
 import android.os.Handler
-import android.support.v4.content.ContextCompat.getSystemService
-import com.amplitude.api.Amplitude
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import com.github.salomonbrys.kotson.*
+import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import neoutils.Neoutils
 import neoutils.Wallet
 import network.o3.o3wallet.*
-import network.o3.o3wallet.API.O3.O3API
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Onboarding.PasscodeRequestActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 data class O3Message(var command: String, var data: JsonElement)
@@ -153,7 +144,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         if (index != -1 && index % 2 == 0) {
             val unsignedJsonSubstring = unsignedJson.substring(index)
             try {
-                Amplitude.getInstance().logEvent("Switcheo_Signed_JSON", JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
+                AnalyticsService.SwitcheoDAPP.logSignedJSON(JSONObject(String(unsignedJsonSubstring.hexStringToByteArray())))
             } catch (e: Exception) {
 
             }
@@ -167,7 +158,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         if (unsignedTx.endsWith("0000")) {
             parseAndAnalyze(unsignedTx)
         } else {
-            Amplitude.getInstance().logEvent("Switcheo_Signed_Raw_TX")
+            AnalyticsService.SwitcheoDAPP.logSignedTX()
         }
         if (unsignedTx.length < 2) {
             callback(message.command, JsonObject(), "invalid unsigned raw transaction", true)

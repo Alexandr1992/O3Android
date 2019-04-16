@@ -1,10 +1,6 @@
 package network.o3.o3wallet.NativeTrade
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.Fragment
-import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -13,21 +9,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.pinpad_layout.*
 import network.o3.o3wallet.*
-
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
-import org.jetbrains.anko.textColor
-import java.text.DecimalFormatSymbols
-import kotlin.math.absoluteValue
-import network.o3.o3wallet.R.id.constraintLayout
-import android.support.constraint.ConstraintSet
-import kotlinx.android.synthetic.main.pinpad_layout.*
-import network.o3.o3wallet.R.id.imageView
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import org.jetbrains.anko.support.v4.onUiThread
-import org.w3c.dom.Text
+import org.jetbrains.anko.textColor
+import java.text.DecimalFormatSymbols
+import kotlin.math.absoluteValue
 
 
 // TODO: Rename parameter arguments, choose names that match

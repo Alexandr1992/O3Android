@@ -1,19 +1,19 @@
 package network.o3.o3wallet.MarketPlace.NEP5Tokens
 
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.amplitude.api.Amplitude
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import network.o3.o3wallet.API.O3Platform.TokenListing
 import network.o3.o3wallet.Account
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.AnalyticsService
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -72,7 +72,7 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
         fun bindHeader() {
             view.find<Button>(R.id.tradeNowButton).setOnClickListener {
                 val url = "http://analytics.o3.network/redirect/?url=https://switcheo.exchange/?ref=o3"
-                val intent = Intent(view.context, DAppBrowserActivityV2::class.java)
+                val intent = Intent(view.context, DappContainerActivity::class.java)
                 intent.putExtra("url", url)
                 intent.putExtra("allowSearch", false)
                 view.context.startActivity(intent)
@@ -90,9 +90,9 @@ class TokensAdapter(private var tokens: ArrayList<TokenListing>):
 
         override fun onClick(v: View) {
             val tokenDetailsAttrs = mapOf("asset" to token!!.symbol, "source" to "marketplace_card")
-            Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
+            AnalyticsService.Navigation.logTokenDetailsSelected(JSONObject(tokenDetailsAttrs))
             val detailURL = token?.url!! + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
-            val intent = Intent(v.context, DAppBrowserActivityV2::class.java)
+            val intent = Intent(v.context, DappContainerActivity::class.java)
             intent.putExtra("url", detailURL)
             v.context.startActivity(intent)
         }

@@ -1,19 +1,19 @@
 package network.o3.o3wallet.Wallet.SendV2
 
 import android.app.KeyguardManager
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.PersistentStore

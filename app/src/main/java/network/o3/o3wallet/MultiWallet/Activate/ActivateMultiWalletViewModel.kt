@@ -1,19 +1,17 @@
 package network.o3.o3wallet.MultiWallet.Activate
 
-import android.arch.lifecycle.ViewModel
-import com.amplitude.api.Amplitude
-import com.github.salomonbrys.kotson.jsonObject
+import androidx.lifecycle.ViewModel
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
-import org.json.JSONObject
+import network.o3.o3wallet.PersistentStore
 
 
 class ActivateMultiWalletViewModel: ViewModel() {
     var password: String = ""
     var encryptedKey: String = ""
 
-    fun encryptKey(password: String) {
+    fun encryptKey(password: String, quickSwap: Boolean) {
         this.password = password
         val nep2 = Neoutils.neP2Encrypt(Account.getWallet().wif, password)
         encryptedKey = nep2.encryptedKey
@@ -23,6 +21,9 @@ class ActivateMultiWalletViewModel: ViewModel() {
         nep6.writeToFileSystem()
         nep6.makeNewDefault(nep2.address, password)
         Account.deleteKeyFromDevice()
-        Amplitude.getInstance().logEvent("multiwallet_activated")
+
+        if (quickSwap) {
+            PersistentStore.setHasQuickSwapEnabled(true, nep2.address, password)
+        }
     }
 }

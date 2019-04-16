@@ -2,20 +2,22 @@ package network.o3.o3wallet.Wallet
 
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.widget.CardView
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import com.amplitude.api.Amplitude
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.PopupMenu
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.O3Platform.O3InboxItem
 import network.o3.o3wallet.API.O3Platform.TransferableAsset
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalActivity
 import network.o3.o3wallet.NativeTrade.NativeTradeRootActivity
 import network.o3.o3wallet.Wallet.SendV2.SendV2Activity
@@ -261,7 +263,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                     val withdrawAttrs = mapOf(
                             "asset" to "",
                             "source" to "trading_account")
-                    Amplitude.getInstance().logEvent("Withdraw_Initiated", JSONObject(withdrawAttrs))
+                    AnalyticsService.Trading.logWithdrawInitiated(JSONObject(withdrawAttrs))
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                     intent.putExtra("isDeposit", false)
                     mView.context.startActivity(intent)
@@ -271,9 +273,9 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
 
                 rightToolbarButton.setOnClickListener {
                     val depositAttrs = mapOf(
-                            "asset" to "",
+                            "asset" to "NEO",
                             "source" to "trading_account")
-                    Amplitude.getInstance().logEvent("Deposit_Initiated", JSONObject(depositAttrs))
+                    AnalyticsService.Trading.logDepositInitiated(JSONObject(depositAttrs))
                     val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                     intent.putExtra("isDeposit", true)
                     mView.context.startActivity(intent)
@@ -305,7 +307,7 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
         fun bindAccount(assets: List<TransferableAsset>, priceData: String?, accountName: String, isWallet: Boolean) {
             mAssets = assets
             mPriceData = priceData
-            mView.findViewById<TextView>(R.id.accountTitleTextView).text = accountName
+            mView.findViewById<TextView>(R.id.walletAccountTitleTextView).text = accountName
             fillLogos()
             fillPrice()
             initiateToolbarButtons(isWallet)
@@ -361,26 +363,32 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                             val buyAttrs = mapOf(
                                     "asset" to asset.symbol,
                                     "source" to "trading_account_menu_item")
-                            Amplitude.getInstance().logEvent("Buy_Initiated", JSONObject(buyAttrs))
+                            AnalyticsService.Trading.logBuyInitiated(JSONObject(buyAttrs))
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
                             intent.putExtra("asset", asset.symbol)
                             intent.putExtra("is_buy", true)
                             mView.context.startActivity(intent)
                         } else if (itemId == R.id.sell_menu_item) {
                             val intent = Intent(mView.context, NativeTradeRootActivity::class.java)
-                            intent.putExtra("asset", asset.symbol)
-                            intent.putExtra("is_buy", false)
+                            if (asset.symbol == "SDUSD") {
+                                intent.putExtra("asset", "NEO")
+                                intent.putExtra("is_buy", true)
+                            } else {
+                                intent.putExtra("asset", asset.symbol)
+                                intent.putExtra("is_buy", false)
+                            }
+
                             val sellAttrs = mapOf(
                                     "asset" to asset.symbol,
                                     "source" to "trading_account_menu_item")
-                            Amplitude.getInstance().logEvent("Sell_Initiated", JSONObject(sellAttrs))
+                            AnalyticsService.Trading.logSellInitiated(JSONObject(sellAttrs))
                             mView.context.startActivity(intent)
                         } else if (itemId == R.id.withdraw_menu_item) {
                             val intent = Intent(mView.context, DepositWithdrawalActivity::class.java)
                             val withdrawAttrs = mapOf(
                                     "asset" to asset.symbol,
                                     "source" to "trading_account_menu_item")
-                            Amplitude.getInstance().logEvent("Withdraw_Initiated", JSONObject(withdrawAttrs))
+                            AnalyticsService.Trading.logWithdrawInitiated(JSONObject(withdrawAttrs))
                             intent.putExtra("isDeposit", false)
                             intent.putExtra("asset", asset.symbol)
                             mView.context.startActivity(intent)
@@ -396,8 +404,8 @@ class AccountAssetsAdapter(mFragment: AccountFragment) : RecyclerView.Adapter<Re
                         detailURL = "https://public.o3.network/ont/assets/" + asset.symbol + "?address=" + Account.getWallet().address + "&theme=" + PersistentStore.getTheme().toLowerCase()
                     }
                     val tokenDetailsAttrs = mapOf("asset" to asset.symbol, "source" to "wallet_account_menu_item")
-                    Amplitude.getInstance().logEvent("Token_Details_Selected", JSONObject(tokenDetailsAttrs))
-                    val intent = Intent(mView.context, DAppBrowserActivityV2::class.java)
+                    AnalyticsService.Navigation.logTokenDetailsSelected(JSONObject(tokenDetailsAttrs))
+                    val intent = Intent(mView.context, DappContainerActivity::class.java)
                     intent.putExtra("url", detailURL)
                     mView.context.startActivity(intent)
                 }

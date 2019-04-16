@@ -2,13 +2,18 @@ package network.o3.o3wallet.Settings
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import network.o3.o3wallet.*
-import org.jetbrains.anko.*
+import android.widget.BaseAdapter
+import android.widget.CheckBox
+import android.widget.TextView
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.R
+import network.o3.o3wallet.getColorFromAttr
+import org.jetbrains.anko.find
+import org.jetbrains.anko.textColor
 
 class ThemeAdapter(context: Context): BaseAdapter() {
     private val mContext: Context

@@ -7,14 +7,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import kotlinx.android.synthetic.main.send_review_fragment.*
 import net.glxn.qrgen.android.QRCode
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.R
@@ -26,7 +24,7 @@ class MyAddressFragment : RoundedBottomSheetDialogFragment() {
     private lateinit var addressLabel: TextView
     private  lateinit var qrImageView: ImageView
 
-    override fun setupDialog(dialog: Dialog?, style: Int) {
+    override fun setupDialog(dialog: Dialog, style: Int) {
         val contentView = View.inflate(context, R.layout.wallet_fragment_my_address,null)
         dialog!!.setContentView(contentView)
     }

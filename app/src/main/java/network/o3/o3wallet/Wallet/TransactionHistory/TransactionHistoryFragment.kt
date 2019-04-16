@@ -1,27 +1,21 @@
 package network.o3.o3wallet.Wallet.TransactionHistory
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.API.O3Platform.TransactionHistoryEntry
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.R
-import org.jetbrains.anko.find
-import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.onUiThread
-import java.util.concurrent.CountDownLatch
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v4.content.ContextCompat
-import network.o3.o3wallet.API.O3Platform.TransactionHistory
 import network.o3.o3wallet.PersistentStore
-import network.o3.o3wallet.PersistentStore.getPendingTransactions
+import network.o3.o3wallet.R
 import network.o3.o3wallet.getColorFromAttr
+import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.onUiThread
 
 
 /**
@@ -43,7 +37,7 @@ class TransactionHistoryFragment : Fragment() {
         recyclerView = view.find<RecyclerView>(R.id.txHistoryRecyclerView)
         val entries = txHistory?.toMutableList() ?: mutableListOf()
 
-        val layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(this.context, RecyclerView.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = TransactionHistoryAdapter(entries, context!!)

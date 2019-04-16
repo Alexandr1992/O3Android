@@ -1,17 +1,8 @@
 package network.o3.o3wallet.Dapp
 
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.media.Image
+import android.content.DialogInterface
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,20 +10,22 @@ import android.webkit.URLUtil
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
-import neoutils.Neoutils
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.R
-import network.o3.o3wallet.RoundedBottomSheetDialogFragment
+import neoutils.Wallet
+import network.o3.o3wallet.*
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.support.v4.onUiThread
+import org.json.JSONObject
 import org.opengraph.OpenGraph
-import java.lang.Exception
 import java.net.URL
 
 
@@ -51,21 +44,8 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
 
     var dappMessage: DappMessage? = null
 
-    val needReloadExposedDappWallet = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            reloadDappWallet()
-        }
-    }
-
-    fun registerReceivers() {
-        LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadExposedDappWallet,
-                IntentFilter("update-exposed-dapp-wallet"))
-    }
-
-    override fun onDestroy() {
-        LocalBroadcastManager.getInstance(this.context!!).unregisterReceiver(needReloadExposedDappWallet)
-        super.onDestroy()
-    }
+    lateinit var dappViewModel: DAPPViewModel
+    lateinit var connectionViewModel: ConnectionViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -80,6 +60,7 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         if (NEP6.getFromFileSystem().getWalletAccounts().count() > 1) {
             swapWalletContainer.onClick {
                 val swapWalletSheet = DappWalletForSessionBottomSheet.newInstance()
+                swapWalletSheet.connectionViewModel = connectionViewModel
                 swapWalletSheet.show(activity!!.supportFragmentManager, swapWalletSheet.tag)
             }
         } else {
@@ -87,37 +68,44 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         }
 
 
-
-        registerReceivers()
+        dappViewModel = (activity as DappContainerActivity).dappViewModel
+        connectionViewModel = ConnectionViewModel()
         loadOpenGraphDetails()
-        setAccountDetails()
         setupConnectionResultButtons()
+        listenForWalletChanges()
+
+        connectionViewModel.setWalletDetails(dappViewModel.walletForSession, dappViewModel.walletForSessionName)
         return mView
     }
+
+
 
     fun setupConnectionResultButtons() {
         acceptConnectionButton = mView.find(R.id.acceptConnectionButton)
         rejectConnectionButton = mView.find(R.id.rejectConnectionButton)
         acceptConnectionButton.onClick {
-            (activity as DAppBrowserActivityV2).verifyPassCodeAndSign(dappMessage!!)
+            dappViewModel.walletForSession = connectionViewModel.getWalletDetails().value!!.first
+            dappViewModel.walletForSessionName = connectionViewModel.getWalletDetails().value!!.second
+            dappViewModel.handleWalletInfo(dappMessage!!, true)
+            val attrs = mapOf("blockchain" to "NEO",
+                    "net" to PersistentStore.getNetworkType(),
+                    "url" to arguments!!.getString("url"),
+                    "domain" to URL(arguments!!.getString("url")).authority)
+            AnalyticsService.DAPI.logAccountConnected(JSONObject(attrs))
             dismiss()
         }
 
         rejectConnectionButton.onClick {
-            (activity as DAppBrowserActivityV2).jsInterface.rejectedAccountCredentials(dappMessage!!)
+            (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
             dismiss()
         }
     }
 
-    fun reloadDappWallet() {
-        setAccountDetails()
-    }
-
-    fun setAccountDetails() {
-        val wallet = (activity as DAppBrowserActivityV2).walletToExpose
-
-        addressTextView.text = wallet.address
-        addressNameTextView.text = (activity as DAppBrowserActivityV2).walletToExposeName
+    fun listenForWalletChanges() {
+        connectionViewModel.getWalletDetails().observe(this, Observer<Pair<Wallet,String>> { walletDetails ->
+            addressTextView.text = walletDetails.first.address
+            addressNameTextView.text = walletDetails.second
+        })
     }
 
     fun loadOpenGraphDetails() {
@@ -146,6 +134,24 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         } catch (e: Exception) {
             titleView.text = url!!
             logoView.image = ContextCompat.getDrawable(context!!, R.drawable.ic_unknown_app)
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
+    }
+
+
+    class ConnectionViewModel(): ViewModel() {
+        var walletDetails = MutableLiveData<Pair<Wallet, String>>()
+
+        fun getWalletDetails(): LiveData<Pair<Wallet, String>> {
+            return walletDetails
+        }
+
+        fun setWalletDetails(wallet: Wallet, walletName: String) {
+            walletDetails.postValue(Pair(wallet, walletName))
         }
     }
 

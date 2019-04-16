@@ -2,10 +2,7 @@ package network.o3.o3wallet.Onboarding.OnboardingV2
 
 import android.app.KeyguardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
@@ -16,11 +13,12 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import neoutils.Neoutils
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.Onboarding.SelectingBestNode
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.coroutines.experimental.bg
@@ -30,7 +28,6 @@ import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.yesButton
-import java.lang.Exception
 
 
 class OnboardingNewWalletFragment : Fragment() {

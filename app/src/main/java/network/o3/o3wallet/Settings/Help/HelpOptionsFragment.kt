@@ -1,22 +1,19 @@
 package network.o3.o3wallet.Settings.Help
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.startActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.fragment.findNavController
-import network.o3.o3wallet.Dapp.DAppBrowserActivityV2
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
@@ -135,7 +132,7 @@ class HelpOptionsFragment: Fragment() {
                 mView.find<TextView>(R.id.subtitleTextView).text = subtitles[sectionedPosition]
                 mView.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mView.context, R.drawable.ic_guide)
                 mView.onClick {
-                    val intent = Intent(mFragment.context, DAppBrowserActivityV2::class.java)
+                    val intent = Intent(mFragment.context, DappContainerActivity::class.java)
 
                     intent.putExtra("url", "https://docs.o3.network/docs/privateKeysAddressesAndSignatures/?mode=embed")
                     mFragment.startActivity(intent)

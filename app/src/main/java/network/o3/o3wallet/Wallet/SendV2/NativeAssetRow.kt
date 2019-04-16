@@ -1,11 +1,10 @@
 package network.o3.o3wallet.Wallet.SendV2
 
-import android.os.Bundle
 import android.app.Fragment
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import neoutils.Neoutils
 import network.o3.o3wallet.R
 
 

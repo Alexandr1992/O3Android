@@ -1,30 +1,23 @@
 package network.o3.o3wallet.NativeTrade
 
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.amplitude.api.Amplitude
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.jsonObject
-import com.github.salomonbrys.kotson.toMap
 import network.o3.o3wallet.*
 import network.o3.o3wallet.API.Switcheo.SwitcheoAPI
-import network.o3.o3wallet.NativeTrade.DepositWithdrawal.DepositWithdrawalResultDialog
 import org.jetbrains.anko.find
-import org.jetbrains.anko.noButton
 import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.onUiThread
-import org.jetbrains.anko.yesButton
 import org.json.JSONObject
-import org.w3c.dom.Text
 
 class ReviewOrderFragment : Fragment() {
     private lateinit var mView: View
@@ -117,7 +110,7 @@ class ReviewOrderFragment : Fragment() {
                                 "base_currency" to vm.selectedBaseAsset.value!!,
                                 "quantity" to vm.orderAssetAmount.value!!,
                                 "price_selection" to (activity as NativeTradeRootActivity).viewModel.priceSelectionType).toString()
-                        Amplitude.getInstance().logEvent("Native_Order_Placed", JSONObject(loggedJson))
+                        AnalyticsService.Trading.logNativeOrderPlaced(JSONObject(loggedJson))
                     }
                 }
             }

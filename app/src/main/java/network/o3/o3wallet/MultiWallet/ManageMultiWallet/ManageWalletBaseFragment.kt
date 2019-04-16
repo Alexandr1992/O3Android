@@ -4,36 +4,29 @@ package network.o3.o3wallet.MultiWallet.ManageMultiWallet
 import android.content.*
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.navigation.Navigation.findNavController
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.amplitude.api.Amplitude
 import jp.wasabeef.blurry.Blurry
 import net.glxn.qrgen.android.QRCode
+import network.o3.o3wallet.*
 import network.o3.o3wallet.MultiWallet.DialogInputEntryFragment
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.O3Wallet
-
-import network.o3.o3wallet.R
 import network.o3.o3wallet.Settings.PrivateKeyFragment
 import network.o3.o3wallet.Wallet.toast
-import network.o3.o3wallet.toBitmap
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.toast
-import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 
@@ -69,6 +62,7 @@ class ManageWalletBaseFragment : Fragment() {
         initiateActionBar()
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadWalletPage,
                 IntentFilter("need-update-watch-address-event"))
+        initiateQuickSwap()
         return mView
     }
 
@@ -175,6 +169,38 @@ class ManageWalletBaseFragment : Fragment() {
         }
     }
 
+    fun initiateQuickSwap() {
+        if (vm.key == null) {
+            mView.find<View>(R.id.quickSwapLayout).visibility = View.INVISIBLE
+            return
+        }
+        val switch = mView.find<Switch>(R.id.quickSwapSwitch)
+        switch.isChecked = PersistentStore.getHasQuickSwapEnabled(vm.address)
+        switch.onClick {
+            if (switch.isChecked == false) {
+                alert("Are you sure you want to remove quick swap, you will have to enter the password from now on ") {
+                    yesButton {
+                        PersistentStore.setHasQuickSwapEnabled(false, vm.address)
+                    }
+                    noButton {
+
+                    }
+                }.show()
+            } else {
+                val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
+                neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
+                    neo2DialogFragment.dismiss()
+                    PersistentStore.setHasQuickSwapEnabled(true, vm.address, pass)
+                    AnalyticsService.Wallet.logWalletUnlocked()
+                }
+
+                neo2DialogFragment.encryptedKey = vm.key!!
+                neo2DialogFragment.showNow(activity!!.supportFragmentManager, "backupkey")
+            }
+        }
+    }
+
+
     class ManageWalletAdapter(context: Context, fragment: Fragment, vm: ManageWalletViewModel): BaseAdapter() {
         var mContext: Context
         var mVm: ManageWalletViewModel
@@ -211,7 +237,7 @@ class ManageWalletBaseFragment : Fragment() {
                 val bundle = Bundle()
                 bundle.putString("key", neo2DialogFragment.decryptedKey)
                 privateKeyModal.arguments = bundle
-                privateKeyModal.show(mFragment.activity?.supportFragmentManager, privateKeyModal.tag)
+                privateKeyModal.show(mFragment.activity?.supportFragmentManager!!, privateKeyModal.tag)
             }
 
             neo2DialogFragment.encryptedKey = mVm.key!!
@@ -223,16 +249,24 @@ class ManageWalletBaseFragment : Fragment() {
                 mContext.toast (mContext.resources.getString(R.string.MULTIWALLET_cannot_unlock_default))
                 return
             } else if (mVm.key != null){
-                val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
-                neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
+                if (Account.isStoredPasswordForNep6KeyPresent(mVm.address)) {
+                    var pass = Account.getStoredPassForNEP6Entry(mVm.address)
+                    AnalyticsService.Wallet.logWalletUnlocked()
                     NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
-                    Amplitude.getInstance().logEvent("wallet_unlocked")
                     mVm.isDefault = true
                     (mFragment as ManageWalletBaseFragment).setTitleIcon()
-                }
+                } else {
+                    val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
+                    neo2DialogFragment.decryptionSucceededCallback = { pass, _ ->
+                        NEP6.getFromFileSystem().makeNewDefault(mVm.address, pass)
+                        AnalyticsService.Wallet.logWalletUnlocked()
+                        mVm.isDefault = true
+                        (mFragment as ManageWalletBaseFragment).setTitleIcon()
+                    }
 
-                neo2DialogFragment.encryptedKey = mVm.key!!
-                neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
+                    neo2DialogFragment.encryptedKey = mVm.key!!
+                    neo2DialogFragment.showNow(mFragment.activity!!.supportFragmentManager, "backupkey")
+                }
 
             } else {
                 mFragment.view?.findNavController()?.navigate(R.id.action_manageWalletBaseFragment_to_unlockWatchAddressFragment)
@@ -307,8 +341,8 @@ class ManageWalletBaseFragment : Fragment() {
             val nameTextView = view.find<TextView>(R.id.titleTextView)
 
             if (mVm.key == null) {
-                nameTextView.text = titles[3]
-                setAction(view, position)
+                nameTextView.text = titles[4]
+                setAction(view, 4)
                 nameTextView.textColor = ContextCompat.getColor(mContext, R.color.colorLoss)
                 view.find<ImageView>(R.id.settingsIcon).visibility = View.VISIBLE
                 view.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mContext, R.drawable.ic_trash)

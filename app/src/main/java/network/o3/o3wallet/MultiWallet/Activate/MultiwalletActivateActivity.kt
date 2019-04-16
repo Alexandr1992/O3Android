@@ -2,15 +2,16 @@ package network.o3.o3wallet.MultiWallet.Activate
 
 import android.content.Intent
 import android.content.res.Resources
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.ActionBar
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.multiwallet_activate_activity.*
-import network.o3.o3wallet.Onboarding.SelectingBestNode
+import network.o3.o3wallet.MainTabbedActivity
+import network.o3.o3wallet.NEP6
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
@@ -32,9 +33,15 @@ class MultiwalletActivateActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (currentFragment is EncryptExistingKeySuccessFragment) {
-            val intent = Intent(this, SelectingBestNode::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            if (NEP6.nep6HasActivated() == false) {
+                val intent = Intent(this, MultiwalletActivateActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            } else {
+                val intent = Intent(this, MainTabbedActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
         } else {
             super.onBackPressed()
         }

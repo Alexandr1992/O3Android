@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MultiWallet.AddNewMultiWallet.EnterMultiwalletEncryptPrivateKey">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView2"
         android:layout_width="81dp"
@@ -35,43 +41,96 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView2" />
 
-    <EditText
-        android:id="@+id/walletNameField"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/MULTIWALLET_name_hint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView40" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/walletNameFieldContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxBackgroundMode="outline"
+                app:boxCollapsedPaddingTop="10dp"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/colorSubtitleGrey"
+                app:boxStrokeWidth="0.5dp"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView40">
 
-    <EditText
-        android:id="@+id/confirmPasswordField"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/MULTIWALLET_enter_confirm_password"
-        android:inputType="textNoSuggestions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterPasswordField" />
+                <EditText
+                    android:id="@+id/walletNameField"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:paddingLeft="10dp"
+                    android:hint="@string/MULTIWALLET_name_hint"
+                    android:inputType="textMultiLine|textNoSuggestions|textVisiblePassword" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/enterPasswordField"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/MULTIWALLET_enter_ecnryption_password"
-        android:inputType="textNoSuggestions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/walletNameField" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/confirmPasswordFieldContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxBackgroundMode="outline"
+                app:boxCollapsedPaddingTop="10dp"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/colorSubtitleGrey"
+                app:boxStrokeWidth="0.5dp"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/enterPasswordFieldContainer">
+
+                <EditText
+                    android:id="@+id/confirmPasswordField"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:paddingLeft="10dp"
+                    android:hint="@string/MULTIWALLET_enter_confirm_password"
+                    android:inputType="textNoSuggestions" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/enterPasswordFieldContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxBackgroundMode="outline"
+                app:boxCollapsedPaddingTop="10dp"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/colorSubtitleGrey"
+                app:boxStrokeWidth="0.5dp"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/walletNameFieldContainer">
+
+                <EditText
+                    android:id="@+id/enterPasswordField"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:paddingLeft="10dp"
+                    android:hint="@string/MULTIWALLET_enter_ecnryption_password"
+                    android:inputType="textNoSuggestions" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
     <ImageView
         android:id="@+id/passwordHideImageView"
@@ -79,9 +138,11 @@
         android:layout_height="wrap_content"
         android:alpha="0.3"
         android:src="@drawable/ic_eye"
-        app:layout_constraintBottom_toBottomOf="@+id/enterPasswordField"
-        app:layout_constraintEnd_toEndOf="@+id/enterPasswordField"
-        app:layout_constraintTop_toTopOf="@+id/enterPasswordField" />
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/enterPasswordFieldContainer"
+        app:layout_constraintEnd_toEndOf="@+id/enterPasswordFieldContainer"
+        app:layout_constraintTop_toTopOf="@+id/enterPasswordFieldContainer" />
 
     <ImageView
         android:id="@+id/confirmHideImageView"
@@ -89,21 +150,35 @@
         android:layout_height="wrap_content"
         android:alpha="0.3"
         android:src="@drawable/ic_eye"
-        app:layout_constraintBottom_toBottomOf="@+id/confirmPasswordField"
-        app:layout_constraintEnd_toEndOf="@+id/confirmPasswordField"
-        app:layout_constraintTop_toTopOf="@+id/confirmPasswordField" />
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmPasswordFieldContainer"
+        app:layout_constraintEnd_toEndOf="@+id/confirmPasswordFieldContainer"
+        app:layout_constraintTop_toTopOf="@+id/confirmPasswordFieldContainer" />
 
-    <Button
-        android:id="@+id/continueButton"
-        style="@style/AccentButton.Rounded"
-        android:layout_width="0dp"
+    <include
+        android:id="@+id/quickSwapLayout"
+        layout="@layout/multiwallet_enable_quick_swap_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/MULTIWALLET_continue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmPasswordField" />
+        app:layout_constraintTop_toBottomOf="@id/confirmPasswordFieldContainer"
+        />
 
-</android.support.constraint.ConstraintLayout>
+            <Button
+                android:id="@+id/continueButton"
+                style="@style/AccentButton.Rounded"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/MULTIWALLET_continue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quickSwapLayout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

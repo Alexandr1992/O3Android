@@ -1,21 +1,17 @@
 package network.o3.o3wallet.Wallet
 
-import android.app.*
-import android.support.v4.app.NotificationCompat
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
-import network.o3.o3wallet.R
-import android.support.v4.app.NotificationManagerCompat
-import android.os.Build
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.tapadoo.alerter.Alerter
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
 import network.o3.o3wallet.MainTabbedActivity
-import org.jetbrains.anko.activityManager
-import android.support.v4.content.LocalBroadcastManager
-
-
+import network.o3.o3wallet.R
 
 
 class O3FirebaseMessagingService: FirebaseMessagingService() {
