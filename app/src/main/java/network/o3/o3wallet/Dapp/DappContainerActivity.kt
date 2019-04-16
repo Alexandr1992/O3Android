@@ -29,8 +29,6 @@ import java.net.URL
 class DappContainerActivity : AppCompatActivity() {
     lateinit var dappViewModel: DAPPViewModel
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dapp_container_activity)
@@ -112,6 +110,11 @@ class DappContainerActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
+
+    }
+
+    override fun onPause() {
+        super.onPause()
         val json = mapOf("dappVersion" to "V1", "url" to dappViewModel.url, "domain" to URL(dappViewModel.url).authority)
         AnalyticsService.DAPI.logDappClosed(JSONObject(json))
     }

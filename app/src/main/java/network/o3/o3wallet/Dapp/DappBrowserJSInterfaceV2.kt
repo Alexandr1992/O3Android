@@ -38,6 +38,9 @@ class DappBrowserJSInterfaceV2(private val vm: DAPPViewModel) {
             "getaccount" -> vm.requestAuthorizeWalletInfo(message)
             "invoke" -> vm.requestAuthorizeInvoke(message)
             "send"-> vm.requestAuthorizeSend(message)
+
+            // this needs to be put behind an auth dialog in production
+            "getpublickey" -> vm.handleGetPublicKey(message)
             else -> return
         }
     }

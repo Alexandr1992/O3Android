@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Dapp
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -103,8 +104,13 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
         }
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        (activity as DappContainerActivity).dappViewModel.handleSend(dappMessage!!, false)
+    }
+
     fun showSendingState() {
-        onUiThread {
+       onUiThread {
             isCancelable = false
             sendButton.visibility = View.INVISIBLE
             cancelButton.visibility = View.INVISIBLE
@@ -132,13 +138,13 @@ class DappRequestSendBottomSheet : RoundedBottomSheetDialogFragment() {
             Handler().postDelayed ({
                 dismiss()
             }, 2800)
-        }
+       }
     }
 
     fun loadOpenGraphDetails() {
         val url = arguments!!.getString("url")
         try {
-            bg {
+          bg {
                 val dapp = OpenGraph(url, true)
                 val title = dapp.getContent("title")
                 val image = dapp.getContent("image")

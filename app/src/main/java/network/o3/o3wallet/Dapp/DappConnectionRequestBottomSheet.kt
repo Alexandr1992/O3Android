@@ -47,9 +47,6 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
     lateinit var dappViewModel: DAPPViewModel
     lateinit var connectionViewModel: ConnectionViewModel
 
-    var explicitAction = false
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -95,13 +92,11 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
                     "url" to arguments!!.getString("url"),
                     "domain" to URL(arguments!!.getString("url")).authority)
             AnalyticsService.DAPI.logAccountConnected(JSONObject(attrs))
-            explicitAction = true
             dismiss()
         }
 
         rejectConnectionButton.onClick {
             (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
-            explicitAction = true
             dismiss()
         }
     }
@@ -142,12 +137,11 @@ class DappConnectionRequestBottomSheet : RoundedBottomSheetDialogFragment() {
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        if (explicitAction == false) {
-            (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
-        }
-        super.onDismiss(dialog)
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        (activity as DappContainerActivity).dappViewModel.handleWalletInfo(dappMessage!!, false)
     }
+
 
     class ConnectionViewModel(): ViewModel() {
         var walletDetails = MutableLiveData<Pair<Wallet, String>>()

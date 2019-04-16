@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Dapp
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -134,6 +135,11 @@ class DappBrowserContractRequestBottomSheet: RoundedBottomSheetDialogFragment() 
                 openGraphTitleTextView.text = url!!
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        (activity as DappContainerActivity).dappViewModel.handleInvoke(dappMessage!!, false)
     }
 
     fun setFeeControls() {

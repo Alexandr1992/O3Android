@@ -9,13 +9,10 @@ import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import neoutils.Wallet
+import network.o3.o3wallet.*
 import network.o3.o3wallet.API.NEO.NeoNodeRPC
 import network.o3.o3wallet.API.NEO.TransactionAttribute
 import network.o3.o3wallet.API.O3Platform.O3PlatformClient
-import network.o3.o3wallet.Account
-import network.o3.o3wallet.AnalyticsService
-import network.o3.o3wallet.NEP6
-import network.o3.o3wallet.PersistentStore
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.concurrent.CountDownLatch
@@ -46,6 +43,7 @@ class DAPPViewModel(url: String): ViewModel() {
     var walletInfoRequest: MutableLiveData<DappMessage> = MutableLiveData()
     var sendRequest: MutableLiveData<DappMessage> = MutableLiveData()
     var invokeRequest: MutableLiveData<DappMessage> = MutableLiveData()
+    var publicKeyRequest: MutableLiveData<DappMessage> = MutableLiveData()
 
     var lockStatus: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -118,10 +116,16 @@ class DAPPViewModel(url: String): ViewModel() {
     //handlers for non-authenticated messages
     fun handleGetProvider(message: DappMessage) {
         val theme = if (PersistentStore.getTheme() == "Light") "Light Mode" else "Dark Mode"
+        val currency = PersistentStore.getCurrency()
 
         val response = NeoDappProtocol.GetProviderResponse(name = "o3-Android", version = "v2",
-                website = "https://o3.network", compatibility = listOf("NEP-dapi"), extra = jsonObject("theme" to theme))
+                website = "https://o3.network", compatibility = listOf("NEP-dapi"),
+                extra = jsonObject("theme" to theme, "currency" to currency))
         setDappResponse(message, response)
+    }
+
+    fun handleGetPublicKey(message: DappMessage) {
+        setDappResponse(message, jsonObject("address" to walletForSession.address, "publicKey" to walletForSession.publicKey.toHex()))
     }
 
     fun handleGetNetworks(message: DappMessage) {

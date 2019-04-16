@@ -170,13 +170,20 @@ class ManageWalletBaseFragment : Fragment() {
     }
 
     fun initiateQuickSwap() {
+        if (vm.key == null) {
+            mView.find<View>(R.id.quickSwapLayout).visibility = View.INVISIBLE
+            return
+        }
         val switch = mView.find<Switch>(R.id.quickSwapSwitch)
         switch.isChecked = PersistentStore.getHasQuickSwapEnabled(vm.address)
         switch.onClick {
             if (switch.isChecked == false) {
-                alert("Are you sure you want to remopve quick swap, you will have to enter the password from now on ") {
+                alert("Are you sure you want to remove quick swap, you will have to enter the password from now on ") {
                     yesButton {
                         PersistentStore.setHasQuickSwapEnabled(false, vm.address)
+                    }
+                    noButton {
+
                     }
                 }.show()
             } else {
@@ -334,8 +341,8 @@ class ManageWalletBaseFragment : Fragment() {
             val nameTextView = view.find<TextView>(R.id.titleTextView)
 
             if (mVm.key == null) {
-                nameTextView.text = titles[3]
-                setAction(view, position)
+                nameTextView.text = titles[4]
+                setAction(view, 4)
                 nameTextView.textColor = ContextCompat.getColor(mContext, R.color.colorLoss)
                 view.find<ImageView>(R.id.settingsIcon).visibility = View.VISIBLE
                 view.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mContext, R.drawable.ic_trash)

@@ -21,6 +21,7 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.MenuAnimation
+import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
@@ -67,6 +68,7 @@ class DAPPBrowser : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         super.onCreate(savedInstanceState)
+        updateNode()
         mView = inflater.inflate(R.layout.fragment_dapp_fragment, container, false)
 
         dappViewModel = (activity as DappContainerActivity).dappViewModel
@@ -75,6 +77,8 @@ class DAPPBrowser : Fragment() {
         progressBar = mView.find(R.id.dappViewProgressBar)
         activity?.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
+        //for debug
+        webView.clearCache(true)
         setupWebClients()
 
 
@@ -106,6 +110,17 @@ class DAPPBrowser : Fragment() {
         showDappBrowserWarning()
 
         return mView
+    }
+
+    fun updateNode() {
+        O3PlatformClient().getChainNetworks {
+            if (it.first == null) {
+                return@getChainNetworks
+            } else {
+                PersistentStore.setOntologyNodeURL(it.first!!.ontology.best)
+                PersistentStore.setNodeURL(it.first!!.neo.best)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
