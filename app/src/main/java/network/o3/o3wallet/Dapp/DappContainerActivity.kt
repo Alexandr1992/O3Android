@@ -1,5 +1,6 @@
 package network.o3.o3wallet.Dapp
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,7 +10,6 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.util.TypedValue
 import android.webkit.WebView
 import android.widget.EditText
@@ -140,29 +140,33 @@ class DappContainerActivity : AppCompatActivity() {
         }
     }
 
+    //for managing file uploading
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         //uploading a file
-        /*if (requestCode == FILECHOOSER_RESULTCODE) {
-            if (null == mUploadMessage)
+        //if (requestCode == dappViewModel.FILECHOOSER_RESULTCODE) {
+            if (null == dappViewModel.mUploadMessage)
                 return
             var toParse = if (data == null || resultCode !== Activity.RESULT_OK)
                 null
             else
                 data.data
             if (toParse == null && resultCode != Activity.RESULT_CANCELED) {
-                toParse = photoURI
+                toParse = dappViewModel.photoURI
             }
 
             if (toParse == null) {
-                mUploadMessage!!.onReceiveValue(arrayOf())
+                dappViewModel.mUploadMessage!!.onReceiveValue(arrayOf())
             } else {
-                mUploadMessage!!.onReceiveValue(arrayOf(toParse!!))
+                dappViewModel.mUploadMessage!!.onReceiveValue(arrayOf(toParse!!))
             }
-            mUploadMessage = null
+            dappViewModel.mUploadMessage = null
             return
-        }*/
+       // }
 
+        //Removed auth for switching, all auth is done in top level off app now isntead of at dapp level
+        /*
         //Changing Wallets
         if (result != null && result.contents == null) {
             return
@@ -184,7 +188,7 @@ class DappContainerActivity : AppCompatActivity() {
             } else {
                 return
             }
-        }
+        }*/
     }
 
 

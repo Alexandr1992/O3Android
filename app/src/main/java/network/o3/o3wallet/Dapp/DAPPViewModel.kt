@@ -32,11 +32,6 @@ class DAPPViewModel(url: String): ViewModel() {
     var walletForSession: Wallet = Account.getWallet()
     var walletForSessionName: String = NEP6.getFromFileSystem().getDefaultAccount().label
 
-    //for managing file uploading
-    var mUploadMessage: ValueCallback<Array<Uri>>? = null
-    val FILECHOOSER_RESULTCODE = 101
-    var photoURI: Uri? = null
-
     var connectionRequest: MutableLiveData<DappMessage>? = null
 
     //requests that require user auth and an additional bottom sheet to display
@@ -48,6 +43,11 @@ class DAPPViewModel(url: String): ViewModel() {
     var lockStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     var jsResponse: MutableLiveData<String> = MutableLiveData()
+
+    //for uploading files
+    var mUploadMessage: ValueCallback<Array<Uri>>? = null
+    val FILECHOOSER_RESULTCODE = 101
+    var photoURI: Uri? = null
 
 
     //maybe consolidate these into one request auth message
@@ -62,7 +62,7 @@ class DAPPViewModel(url: String): ViewModel() {
         walletForSessionName = name
         fireEvent(DappBrowserJSInterfaceV2.EVENT.ACCOUNT_CHANGED)
     }
-    
+
     fun getLockStatus(): LiveData<Boolean> {
         return lockStatus
     }

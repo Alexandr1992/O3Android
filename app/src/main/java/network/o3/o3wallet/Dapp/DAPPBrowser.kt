@@ -50,9 +50,6 @@ class DAPPBrowser : Fragment() {
     var pendingDappMessage: DappMessage? = null
     var lastClickTime: Long  = 0
 
-    var mUploadMessage: ValueCallback<Array<Uri>>? = null
-    val FILECHOOSER_RESULTCODE = 101
-
     data class ResourceObject(val url: String, val mimeType: String, val resourceID: Int, val encoding: String)
 
     val localResources = arrayOf(
@@ -77,8 +74,6 @@ class DAPPBrowser : Fragment() {
         progressBar = mView.find(R.id.dappViewProgressBar)
         activity?.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        //for debug
-        webView.clearCache(true)
         setupWebClients()
 
 
@@ -129,7 +124,6 @@ class DAPPBrowser : Fragment() {
     }
 
 
-    var photoURI: Uri? = null
     fun setupWebClients() {
         webView.webChromeClient = object: WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
@@ -137,7 +131,7 @@ class DAPPBrowser : Fragment() {
                 progressBar.progress = newProgress
             }
             override fun onShowFileChooser(webView: WebView, filePathCallback: ValueCallback<Array<Uri>>, fileChooserParams: FileChooserParams):Boolean {
-                mUploadMessage = filePathCallback
+                dappViewModel.mUploadMessage = filePathCallback
                 val fileIntent = Intent(Intent.ACTION_GET_CONTENT)
                 fileIntent.addCategory(Intent.CATEGORY_OPENABLE)
                 fileIntent.type = "image/*"
@@ -146,13 +140,13 @@ class DAPPBrowser : Fragment() {
                 val tmpDir = File(activity?.filesDir?.absolutePath + "/tmp")
                 tmpDir.mkdirs()
                 val fileImage = File(tmpDir, Calendar.getInstance().timeInMillis.toString() +  "_tmp.jpg")
-                photoURI = FileProvider.getUriForFile(this@DAPPBrowser.context!!, "network.o3.o3wallet", fileImage)
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                dappViewModel.photoURI = FileProvider.getUriForFile(this@DAPPBrowser.context!!, "network.o3.o3wallet", fileImage)
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, dappViewModel.photoURI)
 
                 var chooser = Intent.createChooser(fileIntent, "Upload File")
                 chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
 
-                startActivityForResult(chooser, FILECHOOSER_RESULTCODE)
+                startActivityForResult(chooser, dappViewModel.FILECHOOSER_RESULTCODE)
                 return true
             }
         }

@@ -132,7 +132,7 @@ class HelpOptionsFragment: Fragment() {
                 mView.find<TextView>(R.id.subtitleTextView).text = subtitles[sectionedPosition]
                 mView.find<ImageView>(R.id.settingsIcon).image = ContextCompat.getDrawable(mView.context, R.drawable.ic_guide)
                 mView.onClick {
-                    val intent = Intent(mFragment.context, (mFragment.activity as DappContainerActivity).dappViewModel::class.java)
+                    val intent = Intent(mFragment.context, DappContainerActivity::class.java)
 
                     intent.putExtra("url", "https://docs.o3.network/docs/privateKeysAddressesAndSignatures/?mode=embed")
                     mFragment.startActivity(intent)

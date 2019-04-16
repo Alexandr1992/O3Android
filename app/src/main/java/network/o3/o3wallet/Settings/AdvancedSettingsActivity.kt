@@ -116,7 +116,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
 
     fun initiateDevBrowser() {
         browserButton.setOnClickListener {
-            val url =  "http://10.0.2.2:8000/compatibility.html"
+            val url =  "https://codepen.io/siremilomir/pen/jBbQGo"
             val intent = Intent(this, DappContainerActivity::class.java)
             intent.putExtra("url", url)
             intent.putExtra("legacy", useLegacyCheckBox.isChecked)
