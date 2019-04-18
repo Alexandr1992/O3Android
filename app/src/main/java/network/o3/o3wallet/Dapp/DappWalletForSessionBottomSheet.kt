@@ -79,10 +79,10 @@ class DappWalletForSessionBottomSheet: RoundedBottomSheetDialogFragment() {
 
                         (mFragment as DappWalletForSessionBottomSheet).dismiss()
                 } else {
-                    neo2DialogFragment.decryptionSucceededCallback = { pass, wif ->
+                    neo2DialogFragment.decryptionSucceededCallback = { pass, wallet ->
                         (mFragment as RoundedBottomSheetDialogFragment).dismiss()
                         neo2DialogFragment.dismiss()
-                        val walletToExpose = Neoutils.generateFromWIF(wif)
+                        val walletToExpose = wallet
                         val walletToExposeName = NEP6.getFromFileSystem().getWalletAccounts().find { it.address == walletToExpose.address }!!.label
                         if ((mFragment as DappWalletForSessionBottomSheet).connectionViewModel != null) {
                             (mFragment as DappWalletForSessionBottomSheet).connectionViewModel?.setWalletDetails(walletToExpose, walletToExposeName)

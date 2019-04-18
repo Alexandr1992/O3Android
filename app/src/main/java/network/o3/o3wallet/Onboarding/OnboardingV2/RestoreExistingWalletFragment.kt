@@ -248,8 +248,8 @@ class RestoreExistingWalletFragment : Fragment() {
                     findNavController().navigate(R.id.action_restoreExistingWalletFragment_to_onboardingSuccessFragment)
                 } else if (keyType == KeyType.ENCRYPTED) {
                     try {
-                        val wif = Neoutils.neP2Decrypt(key, password)
-                        val nep2 = Neoutils.neP2Encrypt(wif, password)
+                        val wallet = Neoutils.neP2DecryptToWallet(key, password)
+                        val nep2 = Neoutils.neP2Encrypt(wallet.wif, password)
                         val nep6 = NEP6.getFromFileSystem()
                         nep6.addEncryptedKey(nep2.address, "My O3 Wallet", nep2.encryptedKey)
                         nep6.writeToFileSystem()

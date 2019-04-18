@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import neoutils.Neoutils
+import neoutils.Wallet
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onUiThread
@@ -26,7 +27,6 @@ import org.jetbrains.anko.support.v4.toast
 
 class DialogUnlockEncryptedKey : DialogFragment() {
     var encryptedKey: String = ""
-    var decryptedKey: String = ""
     // Non loading Views
     lateinit var animationView: LottieAnimationView
     lateinit var nep2Title: TextView
@@ -39,7 +39,7 @@ class DialogUnlockEncryptedKey : DialogFragment() {
     lateinit var decryptionTitle: TextView
 
     var decryptionFailedCallback: (() -> Unit)? = null
-    var decryptionSucceededCallback: ((String, String) -> Unit)? = null
+    var decryptionSucceededCallback: ((String, Wallet) -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -94,8 +94,8 @@ class DialogUnlockEncryptedKey : DialogFragment() {
             Handler().postDelayed ({
             try {
                 Log.w("EKEY: ", encryptedKey)
-                decryptedKey = Neoutils.neP2Decrypt(encryptedKey, nep2PasswordField.text.trim().toString())
-                decryptionSuccessful(decryptedKey)
+                val wallet = Neoutils.neP2DecryptToWallet(encryptedKey, nep2PasswordField.text.trim().toString())
+                decryptionSuccessful(wallet)
             } catch (e: Exception) {
                 decryptionFailed()
                 }
@@ -109,12 +109,12 @@ class DialogUnlockEncryptedKey : DialogFragment() {
         decryptionFailedCallback?.invoke()
     }
 
-    fun decryptionSuccessful(decryptedKey: String) {
+    fun decryptionSuccessful(wallet: Wallet) {
         val password = this.nep2PasswordField.text.toString()
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm!!.hideSoftInputFromWindow(this.nep2PasswordField.getWindowToken(), 0)
         this.dismiss()
-        decryptionSucceededCallback?.invoke(password, decryptedKey)
+        decryptionSucceededCallback?.invoke(password, wallet)
     }
 
     fun showDecryptionProgress() {

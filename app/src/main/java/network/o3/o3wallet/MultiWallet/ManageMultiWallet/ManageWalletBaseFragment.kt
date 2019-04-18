@@ -232,10 +232,10 @@ class ManageWalletBaseFragment : Fragment() {
         fun showRawKeyAction() {
             val neo2DialogFragment = DialogUnlockEncryptedKey.newInstance()
 
-            neo2DialogFragment.decryptionSucceededCallback = { _, _ ->
+            neo2DialogFragment.decryptionSucceededCallback = { _, wallet ->
                 val privateKeyModal = PrivateKeyFragment.newInstance()
                 val bundle = Bundle()
-                bundle.putString("key", neo2DialogFragment.decryptedKey)
+                bundle.putString("key", wallet.wif)
                 privateKeyModal.arguments = bundle
                 privateKeyModal.show(mFragment.activity?.supportFragmentManager!!, privateKeyModal.tag)
             }

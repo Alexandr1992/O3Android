@@ -121,6 +121,9 @@ class HomeFragment : Fragment(), HomeViewModelProtocol, ModalBottomSheetDialogFr
                 assetListAdapter?.assets = displayedAssets ?: arrayListOf()
                 assetListAdapter?.notifyDataSetChanged()
                 homeModel.loadPortfolioValue(displayedAssets ?: arrayListOf())
+            } else if (homeModel.getCurrentPortfolioValue() == 0.0) {
+                updateHeader(0.0.formattedCurrencyString(homeModel.getCurrency()), 0.0)
+
             }
         })
     }

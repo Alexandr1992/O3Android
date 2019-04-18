@@ -105,8 +105,8 @@ class AddMultiwalletVerifyNEP2 : Fragment() {
                     return@onClick
                 }
 
-                val wif = Neoutils.neP2Decrypt(vm.encryptedKey, passwordField.text.toString())
-                vm.address = Neoutils.generateFromWIF(wif).address
+                val wallet = Neoutils.neP2DecryptToWallet(vm.encryptedKey, passwordField.text.toString())
+                vm.address = Neoutils.generateFromWIF(wallet.wif).address
                 vm.nickname = nameEditText.text.toString()
                 newNep6.addEncryptedKey(vm.address, vm.nickname, vm.encryptedKey)
                 newNep6.writeToFileSystem()
