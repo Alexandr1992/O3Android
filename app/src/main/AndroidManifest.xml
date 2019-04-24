@@ -21,6 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Inbox.InboxRootActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -104,8 +105,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <activity android:name=".Dapp.DappContainerActivity"
+        <activity
+            android:name=".Dapp.DappContainerActivity"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_dapp_browser"
             android:screenOrientation="portrait"

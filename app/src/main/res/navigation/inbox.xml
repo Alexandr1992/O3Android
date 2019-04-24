@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/inbox"
+    app:startDestination="@id/inboxMessagesFragment">
+
+
+    <fragment
+        android:id="@+id/inboxMessagesFragment"
+        android:name="network.o3.o3wallet.Inbox.InboxMessagesFragment"
+        android:label="inbox_messages_fragment"
+        tools:layout="@layout/inbox_messages_fragment" />
+</navigation>
