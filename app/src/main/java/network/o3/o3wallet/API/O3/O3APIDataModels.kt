@@ -138,3 +138,12 @@ data class InfoRow(val label: String,
 data class FooterRow(val label: String,
                      val value: String,
                      val link: String)
+
+data class NotificationSubscribeRequestUnsigned(val timestamp: String, val service: String, val topic: String )
+data class NotificationSubscribeRequestSigned(val data: NotificationSubscribeRequestUnsigned, val signature: String)
+
+data class MessagesUnsignedRequest(val timestamp: String)
+data class MessagesSignedRequest(val data: MessagesUnsignedRequest, val signature: String)
+data class Message(val id: String, val title: String, val timestamp: String, val channel: MessageChannel, val action: MessageAction)
+data class MessageChannel(val service: String, val topic: String)
+data class MessageAction(val type: String, val title: String, val url: String)

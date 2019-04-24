@@ -31,7 +31,10 @@ class O3PlatformClient {
         ORDERS,
         DAPPS,
         NNS,
-        UTXO;
+        UTXO,
+        SUBSRCIBE,
+        UNSUBSCRIBE,
+        MESSAGES;
 
 
         fun routeName(): String {
@@ -484,5 +487,23 @@ class O3PlatformClient {
                 completion(2)
             }
         }
+    }
+
+    object o3KeyPair {
+        var pubKey = "abc"
+        var privKey = "xyz"
+    }
+
+    data class
+    fun subscribeToTopic() {
+
+    }
+
+    fun unsubscribeToTopic() {
+
+    }
+
+    fun getInboxMessages() {
+
     }
 }
