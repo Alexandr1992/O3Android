@@ -118,7 +118,7 @@ dependencies {
     implementation project(':neoutils')
     api(name: 'channel', ext: 'aar')
     api 'info.guardianproject.netcipher:netcipher:1.2'
-    //    api  'com.google.code.gson:gson:2.6.2'
+    //    api  'com.google.code.gson:gs on:2.6.2'
     api 'com.squareup.retrofit2:retrofit:2.3.0'
     api 'com.squareup.retrofit2:converter-gson:2.3.0'
     api 'com.squareup.okio:okio:1.14.0'
