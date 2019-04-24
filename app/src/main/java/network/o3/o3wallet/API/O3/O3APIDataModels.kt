@@ -139,7 +139,10 @@ data class FooterRow(val label: String,
                      val value: String,
                      val link: String)
 
-data class NotificationSubscribeRequestUnsigned(val timestamp: String, val service: String, val topic: String )
+
+// IMPORTANT: Data classes that require signing must have their keys initialized in
+// alphabetical order. This allows signature to properly be generated and match the relevant paylokad
+data class NotificationSubscribeRequestUnsigned(val service: String, val timestamp: String, val topic: String )
 data class NotificationSubscribeRequestSigned(val data: NotificationSubscribeRequestUnsigned, val signature: String)
 
 data class MessagesUnsignedRequest(val timestamp: String)

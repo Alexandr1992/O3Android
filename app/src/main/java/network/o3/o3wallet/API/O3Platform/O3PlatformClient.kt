@@ -4,10 +4,12 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import network.o3.o3wallet.API.O3.TokenSaleLogSigned
+import neoutils.Neoutils
+import network.o3.o3wallet.API.O3.*
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.O3Wallet
 import network.o3.o3wallet.PersistentStore
+import network.o3.o3wallet.toHex
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -494,16 +496,67 @@ class O3PlatformClient {
         var privKey = "xyz"
     }
 
-    data class
-    fun subscribeToTopic() {
+    fun subscribeToTopic(service: String, topic: String, completion: (Boolean) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/nc/" + o3KeyPair.pubKey +  "/subscribe"
+        val timeStamp = System.currentTimeMillis() / 1000
+        val subscriptionRequest = NotificationSubscribeRequestUnsigned(service, timeStamp.toString(), topic)
+        val signature = Neoutils.sign(Gson().toJson(subscriptionRequest).toByteArray(), o3KeyPair.privKey)
 
+        val signedSubscriptionRequest = NotificationSubscribeRequestSigned(subscriptionRequest, signature.toHex())
+
+        var request = url.httpPost()
+        request.headers["User-Agent"] = "O3Android"
+        request.body(Gson().toJson(signedSubscriptionRequest )).responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                completion(true)
+            } else {
+                completion(false)
+            }
+        }
     }
 
-    fun unsubscribeToTopic() {
+    fun unsubscribeToTopic(service: String, topic: String, completion: (Boolean) -> Unit    ) {
+        val url = "https://platform.o3.network/api/v1/nc/" + o3KeyPair.pubKey +  "/unsubscribe"
+        val timeStamp = System.currentTimeMillis() / 1000
+        val subscriptionRequest = NotificationSubscribeRequestUnsigned(service, timeStamp.toString(), topic)
+        val signature = Neoutils.sign(Gson().toJson(subscriptionRequest).toByteArray(), o3KeyPair.privKey)
 
+        val signedSubscriptionRequest = NotificationSubscribeRequestSigned(subscriptionRequest, signature.toHex())
+
+        var request = url.httpPost()
+        request.headers["User-Agent"] = "O3Android"
+        request.body(Gson().toJson(signedSubscriptionRequest )).responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                completion(true)
+            } else {
+                completion(false)
+            }
+        }
     }
 
-    fun getInboxMessages() {
+    fun getInboxMessages(completion: (Pair<List<Message>?, Error?>) -> Unit) {
+        val url = "https://platform.o3.network/api/v1/nc/" + o3KeyPair.pubKey
+        val timeStamp = System.currentTimeMillis() / 1000
+        val messagesRequest = MessagesUnsignedRequest(timeStamp.toString())
+        val signature = Neoutils.sign(Gson().toJson(messagesRequest).toByteArray(), o3KeyPair.privKey)
 
+        val signedMessagesRequest = MessagesSignedRequest(messagesRequest, signature.toHex())
+
+        var request = url.httpPost()
+        request.headers["User-Agent"] = "O3Android"
+        request.body(Gson().toJson(signedMessagesRequest)).responseString { request, response, result ->
+            val (data, error) = result
+            if (error == null) {
+                var platformResponse = Gson().fromJson<PlatformResponse>(data!!)
+                val messages = Gson().fromJson<List<Message>>(platformResponse.result.asJsonObject["data"])
+                completion(Pair<List<Message>?, Error?>(messages, null))
+            } else {
+                completion(Pair<List<Message>?, Error?>(null, Error(error.localizedMessage)))
+            }
+        }
     }
 }
