@@ -123,6 +123,7 @@ class InboxMessagesFragment : Fragment() {
                 if (message.action == null) {
                     mView.find<Button>(R.id.messageActionButton).visibility = View.GONE
                 } else {
+                    mView.find<Button>(R.id.messageActionButton).visibility = View.VISIBLE
                     mView.find<Button>(R.id.messageActionButton).text = message.action.title
                     mView.find<Button>(R.id.messageActionButton).onClick {
                         val intent = Intent(mView.context, DappContainerActivity::class.java)

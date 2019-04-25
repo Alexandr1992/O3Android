@@ -1,11 +1,13 @@
 package network.o3.o3wallet.Inbox
 
 import android.content.Context
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Switch
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.skydoves.powermenu.CustomPowerMenu
@@ -13,6 +15,7 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.MenuBaseAdapter
 import com.skydoves.powermenu.OnMenuItemClickListener
 import network.o3.o3wallet.Dapp.DappPopupMenuItem
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
@@ -27,6 +30,31 @@ class NotificationSettingsPopupMenuAdapter: MenuBaseAdapter<NotificationSettings
         val optionView = inflater.inflate(R.layout.inbox_notification_setting_row, viewGroup, false)
         val item = getItem(index) as NotificationSettingsPopupMenuItem
         optionView.find<TextView>(R.id.notificationTypeTitleTextView).text = item.title
+
+        val switch = optionView.find<Switch>(R.id.notificationSettingSwitch)
+        val services = PersistentStore.getInboxServices()
+        switch.isChecked = services.contains(item.title)
+        switch.onClick {
+            if (switch.isChecked) {
+                services.add(item.title)
+                PersistentStore.setInboxServices(services)
+                //let switch animation finish before notifying data changed
+                switch.isClickable = false
+                Handler().postDelayed({
+                    notifyDataSetChanged()
+                    switch.isClickable = false
+                }, 300)
+            } else {
+                services.remove(item.title)
+                PersistentStore.setInboxServices(services)
+                //let switch animation finish before notifying data changed
+                switch.isClickable = false
+                Handler().postDelayed({
+                    notifyDataSetChanged()
+                    switch.isClickable = true
+                }, 300)
+            }
+        }
 
         return optionView
     }

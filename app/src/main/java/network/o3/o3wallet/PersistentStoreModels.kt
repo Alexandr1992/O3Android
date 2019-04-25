@@ -351,4 +351,17 @@ object PersistentStore {
             Account.storeGenericKeyPassOnDevice("NEP6", address, password!!)
         }
     }
+
+
+    fun getInboxServices(): MutableList<String> {
+        val jsonString = PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).
+                getString("inbox_services", "[]")
+        val list = Gson().fromJson<MutableList<String>>(jsonString!!)
+        return list
+    }
+    fun setInboxServices(services: List<String>) {
+        val jsonString = Gson().toJson(services)
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
+                putString("inbox_services", jsonString).apply()
+    }
 }
