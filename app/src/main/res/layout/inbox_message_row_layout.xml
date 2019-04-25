@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/messageDateTextView"
-        style="@style/RegularText.Bold"
+        style="@style/SubtitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -17,8 +17,8 @@
 
     <ImageView
         android:id="@+id/messageImageView"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/messageTitleView"
@@ -30,27 +30,30 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        style="@style/RegularText.Bold"
         android:text="TextView"
         app:layout_constraintStart_toEndOf="@+id/messageImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/messageDescriptionTextView"
-        android:layout_width="wrap_content"
+        style="@style/RegularText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
         android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/messageActionButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/messageTitleView"
         app:layout_constraintTop_toBottomOf="@+id/messageTitleView" />
 
     <Button
         android:id="@+id/messageActionButton"
         style="@style/BorderLessButton"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_height="36dp"
         android:minWidth="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"

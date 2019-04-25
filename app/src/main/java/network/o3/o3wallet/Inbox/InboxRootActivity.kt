@@ -17,9 +17,9 @@ class InboxRootActivity : AppCompatActivity() {
     override fun getTheme(): Resources.Theme {
         val theme = super.getTheme()
         if (PersistentStore.getTheme() == "Dark") {
-            theme.applyStyle(R.style.AppTheme_Dark, true)
+            theme.applyStyle(R.style.AppTheme_Dark_NoTopBar, true)
         } else {
-            theme.applyStyle(R.style.AppTheme_White, true)
+            theme.applyStyle(R.style.AppTheme_White_NoTopBar, true)
         }
         return theme
     }

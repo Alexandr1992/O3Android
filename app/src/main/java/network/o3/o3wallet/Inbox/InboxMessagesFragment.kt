@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Inbox
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3.Message
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.TransactionHistory.PaginationScrollListener
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -41,15 +45,22 @@ class InboxMessagesFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = InboxAdapter()
 
+        setupInboxListeners()
+        setNotificationSettings()
+
+        return mView
+    }
+
+    fun setupInboxListeners() {
         inboxViewModel.getInboxItems().observe(this, Observer { messages ->
             (recyclerView.adapter as InboxAdapter).addPage(messages)
         })
 
         inboxViewModel.getLoadingStatus().observe(this, Observer { isLoading ->
             if (isLoading) {
-                // add the loading footer
+                (recyclerView.adapter as InboxAdapter).addLoadingFooter()
             } else {
-                //remove the loading footer
+                (recyclerView.adapter as InboxAdapter).removeLoadingFooter()
             }
         })
 
@@ -60,8 +71,6 @@ class InboxMessagesFragment : Fragment() {
             }
         }
         recyclerView.addOnScrollListener(paginator)
-
-        return mView
     }
 
     class InboxAdapter: RecyclerView.Adapter<InboxAdapter.MessageHolder>() {
@@ -102,13 +111,25 @@ class InboxMessagesFragment : Fragment() {
             fun bindMessage(message: Message) {
                 mView.find<TextView>(R.id.messageTitleView).text = message.channel.service
                 mView.find<TextView>(R.id.messageDescriptionTextView).text = message.title
-                mView.find<TextView>(R.id.messageDateTextView).text = message.timestamp
-                mView.find<Button>(R.id.messageActionButton).text = message.action.title
                 mView.find<Button>(R.id.messageActionButton).onClick {}
                 mView.find<ImageView>(R.id.messageImageView)
-                Glide.with(mView.context).load("https://cdn.o3.network/img/neo/NEO.png").
+                Glide.with(mView.context).load("https://community.o3.network/uploads/default/original/1X/ef7f27e38a371cb7ef053ce13ee2085fd194292b.jpg").
                         into(mView.find<ImageView>(R.id.messageImageView))
 
+                val sdf =   SimpleDateFormat("MMM dd yyyy @ HH:mm", Locale.getDefault())
+                val date = java.util.Date(message.timestamp.toLong() * 1000)
+                mView.find<TextView>(R.id.messageDateTextView).text = sdf.format(date)
+
+                if (message.action == null) {
+                    mView.find<Button>(R.id.messageActionButton).visibility = View.GONE
+                } else {
+                    mView.find<Button>(R.id.messageActionButton).text = message.action.title
+                    mView.find<Button>(R.id.messageActionButton).onClick {
+                        val intent = Intent(mView.context, DappContainerActivity::class.java)
+                        intent.putExtra("url", message.action.url)
+                        mView.context.startActivity(intent)
+                    }
+                }
             }
         }
     }

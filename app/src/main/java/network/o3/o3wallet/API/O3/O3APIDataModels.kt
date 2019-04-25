@@ -147,6 +147,6 @@ data class NotificationSubscribeRequestSigned(val data: NotificationSubscribeReq
 
 data class MessagesUnsignedRequest(val timestamp: String)
 data class MessagesSignedRequest(val data: MessagesUnsignedRequest, val signature: String)
-data class Message(val id: String, val title: String, val timestamp: String, val channel: MessageChannel, val action: MessageAction)
+data class Message(val id: String, val title: String, val timestamp: String, val channel: MessageChannel, val action: MessageAction? = null)
 data class MessageChannel(val service: String, val topic: String)
 data class MessageAction(val type: String, val title: String, val url: String)
