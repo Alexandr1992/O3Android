@@ -21,7 +21,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Inbox.InboxRootActivity"></activity>
+        <activity
+            android:name=".Inbox.InboxRootActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTopBar"
+        />
 
         <provider
             android:name="androidx.core.content.FileProvider"

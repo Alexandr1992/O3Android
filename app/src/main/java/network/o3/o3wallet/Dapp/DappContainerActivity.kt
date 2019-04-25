@@ -146,8 +146,9 @@ class DappContainerActivity : AppCompatActivity() {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         //uploading a file
         //if (requestCode == dappViewModel.FILECHOOSER_RESULTCODE) {
-            if (null == dappViewModel.mUploadMessage)
+            if (null == dappViewModel.mUploadMessage) {
                 return
+            }
             var toParse = if (data == null || resultCode !== Activity.RESULT_OK)
                 null
             else

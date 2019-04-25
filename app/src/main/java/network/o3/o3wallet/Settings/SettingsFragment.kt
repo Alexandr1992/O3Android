@@ -19,6 +19,7 @@ import network.o3.o3wallet.API.O3Platform.O3PlatformClient
 import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.Identity.NNSBottomSheet
+import network.o3.o3wallet.Inbox.InboxRootActivity
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.toast
 import org.jetbrains.anko.find
@@ -94,6 +95,11 @@ class SettingsFragment : Fragment(), ModalBottomSheetDialogFragment.Listener {
 
         val basicAdapter = SettingsAdapter(this.context!!, this)
         listView.adapter = basicAdapter
+
+        view.find<TextView>(R.id.settingsTitleTextView).text = "Account Details"
+        view.find<ImageView>(R.id.inboxButton).onClick {
+            startActivity(Intent(context, InboxRootActivity::class.java))
+        }
 
         LocalBroadcastManager.getInstance(this.context!!).registerReceiver(needReloadAddressReciever,
                 IntentFilter("need-update-watch-address-event"))
