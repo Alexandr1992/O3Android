@@ -452,5 +452,8 @@
 
     <string name="ANALYTICS_disclaimer_checkbox">Don\'t show this again</string>
     <string name="ANALYTICS_continue">Agree</string>
+    <string name="INBOX_inbox_title">inbox</string>
+    <string name="inbox_welcome_text">Welcome to O3\'s decentralized inbox</string>
+    <string name="Inbox_optin_description">O3\'s decentralized inbox allows you to get up to date information from O3 as well as various projects in the ecosystem like Switcheo, NGD, and others. You can unsubscribe from updates at any time</string>
 
 </resources>

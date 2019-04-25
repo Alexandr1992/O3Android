@@ -47,8 +47,15 @@ class InboxMessagesFragment : Fragment() {
 
         setupInboxListeners()
         setNotificationSettings()
+        showOptInIfNecessary()
 
         return mView
+    }
+
+    fun showOptInIfNecessary() {
+        if (true) {
+            InboxOptInBottomSheet.newInstance().show(activity!!.supportFragmentManager, "optin")
+        }
     }
 
     fun setupInboxListeners() {
