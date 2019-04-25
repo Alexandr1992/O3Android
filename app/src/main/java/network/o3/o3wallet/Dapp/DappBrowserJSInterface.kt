@@ -53,7 +53,7 @@ class DappBrowserJSInterface(private val context: Context, private val webView: 
         val authenticateMessage = webView.context.resources.getString(R.string.DAPP_connection_request, appName)
         context.alert(authenticateMessage) {
             yesButton {
-                verifyPassCodeAndSign()
+                finishConnectionToO3()
             }
             noButton {
                 callback(message.command, JsonObject(), "User rejected connection request", false)
