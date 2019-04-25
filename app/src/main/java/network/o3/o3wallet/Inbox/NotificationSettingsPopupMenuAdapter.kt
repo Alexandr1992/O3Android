@@ -23,6 +23,25 @@ import org.jetbrains.anko.sdk27.coroutines.onClick
 class NotificationSettingsPopupMenuItem(val title: String)
 
 class NotificationSettingsPopupMenuAdapter: MenuBaseAdapter<NotificationSettingsPopupMenuItem>() {
+    fun setupMuteAllSwitch(switch: Switch) {
+        switch.isChecked = PersistentStore.getInboxServices().isEmpty()
+        switch.onClick {
+            if (switch.isChecked) {
+                PersistentStore.setInboxServices(mutableListOf())
+                switch.isClickable = false
+                Handler().postDelayed({
+                    notifyDataSetChanged()
+                    switch.isClickable = false
+                }, 300)
+            } else {
+                switch.isClickable = false
+                Handler().postDelayed({
+                    notifyDataSetChanged()
+                    switch.isClickable = true
+                }, 300)
+            }
+        }
+    }
 
     override fun getView(index: Int, view: View?, viewGroup: ViewGroup): View {
         val context = viewGroup.context
@@ -33,26 +52,33 @@ class NotificationSettingsPopupMenuAdapter: MenuBaseAdapter<NotificationSettings
 
         val switch = optionView.find<Switch>(R.id.notificationSettingSwitch)
         val services = PersistentStore.getInboxServices()
-        switch.isChecked = services.contains(item.title)
-        switch.onClick {
-            if (switch.isChecked) {
-                services.add(item.title)
-                PersistentStore.setInboxServices(services)
-                //let switch animation finish before notifying data changed
-                switch.isClickable = false
-                Handler().postDelayed({
-                    notifyDataSetChanged()
+
+
+        //mute all
+        if (index == count - 1) {
+            setupMuteAllSwitch(switch)
+        } else {
+            switch.isChecked = services.contains(item.title)
+            switch.onClick {
+                if (switch.isChecked) {
+                    services.add(item.title)
+                    PersistentStore.setInboxServices(services)
+                    //let switch animation finish before notifying data changed
                     switch.isClickable = false
-                }, 300)
-            } else {
-                services.remove(item.title)
-                PersistentStore.setInboxServices(services)
-                //let switch animation finish before notifying data changed
-                switch.isClickable = false
-                Handler().postDelayed({
-                    notifyDataSetChanged()
-                    switch.isClickable = true
-                }, 300)
+                    Handler().postDelayed({
+                        notifyDataSetChanged()
+                        switch.isClickable = false
+                    }, 300)
+                } else {
+                    services.remove(item.title)
+                    PersistentStore.setInboxServices(services)
+                    //let switch animation finish before notifying data changed
+                    switch.isClickable = false
+                    Handler().postDelayed({
+                        notifyDataSetChanged()
+                        switch.isClickable = true
+                    }, 300)
+                }
             }
         }
 
