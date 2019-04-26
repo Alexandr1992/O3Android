@@ -17,6 +17,9 @@ object Account {
     private var wallet: Wallet? = null
     private var sharedSecretPieceOne: String? = null
 
+    //this keypair is used for device level auth services
+    private var o3KeyPair: Wallet? = null
+
     private fun sha256(input: String): String {
         val HEX_CHARS = "0123456789ABCDEF"
         val bytes = MessageDigest
@@ -53,6 +56,65 @@ object Account {
             return false
         }
         return true
+    }
+
+    fun createO3Keypair() {
+        val encryptor = Encryptor()
+        val alias = "O3AuthKey"
+        val o3auth = Neoutils.newWallet()
+        val encryptedPass = encryptor.encryptText(alias, o3auth.privateKey.toHex())!!
+
+        val iv = encryptor.getIv()!!
+        setProperty(alias, encryptedPass.toHex(), iv, O3Wallet.appContext!!)
+    }
+
+    fun restoreO3KeyPair() {
+        val alias = "O3AuthKey"
+        val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+        val storedEncryptedPass = storedVal.data?.hexStringToByteArray()!!
+        val storedIv = storedVal.iv!!
+        val decrypted = Decryptor().decrypt(alias, storedEncryptedPass , storedIv)
+        o3KeyPair = Neoutils.generateFromPrivateKey(decrypted)
+    }
+
+    fun getO3AuthPubKey(): String? {
+        if (o3KeyPair != null) {
+            return o3KeyPair!!.publicKey.toHex()
+        }
+
+        val alias = "O3AuthKey"
+        val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+        if (storedVal.data == null) {
+            return null
+        }
+
+        val storedEncryptedPass = storedVal.data?.hexStringToByteArray()
+        if (storedEncryptedPass == null || storedEncryptedPass.size == 0 || !Decryptor().keyStoreEntryExists("O3AuthKey")) {
+            return null
+        }
+
+        restoreO3KeyPair()
+        return o3KeyPair!!.publicKey.toHex()
+    }
+
+    fun getO3AuthPrivKey(): String? {
+        if (o3KeyPair != null) {
+            return o3KeyPair!!.privateKey.toHex()
+        }
+
+        val alias = "O3AuthKey"
+        val storedVal = EncryptedSettingsRepository.getProperty(alias, O3Wallet.appContext!!)
+        if (storedVal.data == null) {
+            return null
+        }
+
+        val storedEncryptedPass = storedVal.data?.hexStringToByteArray()
+        if (storedEncryptedPass == null || storedEncryptedPass.size == 0 || !Decryptor().keyStoreEntryExists("O3AuthKey")) {
+            return null
+        }
+
+        restoreO3KeyPair()
+        return o3KeyPair!!.privateKey.toHex()
     }
 
     fun storeDefaultNep6Pass(password: String) {

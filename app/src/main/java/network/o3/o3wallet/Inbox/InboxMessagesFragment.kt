@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import network.o3.o3wallet.API.O3.Message
+import network.o3.o3wallet.Account
 import network.o3.o3wallet.Dapp.DappContainerActivity
+import network.o3.o3wallet.PersistentStore
 import network.o3.o3wallet.R
 import network.o3.o3wallet.Wallet.TransactionHistory.PaginationScrollListener
 import org.jetbrains.anko.find
@@ -53,7 +55,7 @@ class InboxMessagesFragment : Fragment() {
     }
 
     fun showOptInIfNecessary() {
-        if (true) {
+        if (Account.getO3AuthPubKey() == null) {
             InboxOptInBottomSheet.newInstance().show(activity!!.supportFragmentManager, "optin")
         }
     }
@@ -116,6 +118,11 @@ class InboxMessagesFragment : Fragment() {
             private var mView: View = v
 
             fun bindMessage(message: Message) {
+                if (PersistentStore.getLastInboxOpen() > message.timestamp.toLong()) {
+                    mView.alpha = 0.5f
+                }
+
+
                 mView.find<TextView>(R.id.messageTitleView).text = message.channel.service
                 mView.find<TextView>(R.id.messageDescriptionTextView).text = message.title
                 mView.find<Button>(R.id.messageActionButton).onClick {}

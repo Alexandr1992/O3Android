@@ -364,4 +364,13 @@ object PersistentStore {
         PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().
                 putString("inbox_services", jsonString).apply()
     }
+
+    fun getLastInboxOpen(): Long {
+        return PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).getLong("last_inbox_open", 0)
+    }
+
+    fun updateLastInboxOpen() {
+        val currentTime = System.currentTimeMillis() / 1000
+        PreferenceManager.getDefaultSharedPreferences(O3Wallet.appContext).edit().putLong("last_inbox_open", currentTime).apply()
+    }
 }

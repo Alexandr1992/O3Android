@@ -23,4 +23,9 @@ class InboxRootActivity : AppCompatActivity() {
         }
         return theme
     }
+
+    override fun onStop() {
+        super.onStop()
+        PersistentStore.updateLastInboxOpen()
+    }
 }

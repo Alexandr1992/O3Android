@@ -39,22 +39,9 @@
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <CheckBox
-        android:id="@+id/agreeCheckBox"
-        android:layout_width="wrap_content"
-        android:linksClickable="true"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:buttonTint="@color/colorAccent"
-        android:layout_marginTop="16dp"
-        android:text="@string/ANALYTICS_disclaimer_checkbox"
-        android:textAppearance="@style/SubtitleText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optinDescriptionTextView" />
-
 
     <Button
-        android:id="@+id/agreeToWarning"
+        android:id="@+id/optinToInboxButton"
         style="@style/BorderLessButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,9 +50,9 @@
         android:layout_marginEnd="8dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        android:text="@string/ANALYTICS_continue"
+        android:text="@string/INBOX_get_updates"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/agreeCheckBox" />
+        app:layout_constraintTop_toBottomOf="@+id/optinDescriptionTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
