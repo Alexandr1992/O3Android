@@ -64,11 +64,8 @@
     <!-- Settings: Menu -->
     <string name="SETTINGS_settings_title" comment="A title for the settings menu">Settings</string>
     <string-array name="SETTINGS_settings_menu_titles" comment="A title for the individual item in the settings menu">
-        <item>Buy Neo Today</item>
-        <item>Manage Contacts</item>
-        <item>Manage Wallets</item>
-        <item>Currency</item>
-        <item>Theme</item>
+        <item>General</item>
+        <item>Security Center</item>
         <item>Help</item>
         <item>Version</item>
         <item>Clear App Data</item>
@@ -78,6 +75,8 @@
     <string name="SETTINGS_version" comment="A title for the version label in the settings menu">Version: %1$s</string>
 
     <string name="SETTINGS_Theme">Theme</string>
+    <string name="SETTINGS_Manage_Address_Book">Manage address book</string>
+    <string name="SETTINGS_Night_Mode">Night mode</string>
     <string name="SETTINGS_Dark">Dark</string>
     <string name="SETTINGS_Light">Light</string>
     <string name="SETTINGS_View_In_Explorer">View In Explorer</string>
@@ -456,5 +455,8 @@
     <string name="inbox_welcome_text">Welcome to O3\'s decentralized inbox</string>
     <string name="Inbox_optin_description">O3\'s decentralized inbox allows you to get up to date information from O3 as well as various projects in the ecosystem like Switcheo, NGD, and others. You can unsubscribe from updates at any time</string>
     <string name="INBOX_get_updates">Get Updates</string>
+    <string name="SETTINGS_general_settings">General</string>
+    <string name="SETTINGS_help">Help</string>
+    <string name="SETTINGS_terms_and_privacy">Terms and privacy policy</string>
 
 </resources>

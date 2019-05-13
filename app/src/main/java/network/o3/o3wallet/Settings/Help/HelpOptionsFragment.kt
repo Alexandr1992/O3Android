@@ -79,7 +79,7 @@ class HelpOptionsFragment: Fragment() {
                 val view = layoutInflater.inflate(R.layout.settings_row_layout, viewGroup, false)
                 return SupportOptionViewHolder(view)
             } else {
-                val view = layoutInflater.inflate(R.layout.settings_guide_row_layout, viewGroup, false)
+                val view = layoutInflater.inflate(R.layout.settings_version_row_layout, viewGroup, false)
                 return GuideViewHolder(view, mFragment)
 
             }

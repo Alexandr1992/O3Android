@@ -242,7 +242,7 @@ class TransactionHistoryAdapter(private var transactionHistoryEntries: MutableLi
                 popup.setOnMenuItemClickListener {
                     val itemId = it.itemId
                     if (itemId == R.id.view_in_explorer_menu) {
-                        var url = "https://neoscan.io/transaction/" + tx.txid
+                        var url = "https://scan.o3.network/transactions/" + tx.txid
                         if (tx.asset.tokenHash.contains("000000000")) {
                             url = "https://explorer.ont.io/transaction/" + tx.txid
                         }

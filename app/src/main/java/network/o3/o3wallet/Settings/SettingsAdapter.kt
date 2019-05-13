@@ -2,22 +2,18 @@ package network.o3.o3wallet.Settings
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
-import com.commit451.modalbottomsheetdialogfragment.ModalBottomSheetDialogFragment
 import network.o3.o3wallet.*
-import network.o3.o3wallet.MultiWallet.Activate.MultiwalletActivateActivity
+import network.o3.o3wallet.Dapp.DappContainerActivity
 import network.o3.o3wallet.MultiWallet.ManageMultiWallet.ManageWalletsBottomSheet
 import network.o3.o3wallet.Onboarding.OnboardingV2.OnboardingRootActivity
-import network.o3.o3wallet.Settings.Help.HelpRootActivity
 import org.jetbrains.anko.*
 
 
@@ -30,18 +26,14 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     private var mFragment: SettingsFragment
     var settingsTitles = context.resources.getStringArray(R.array.SETTINGS_settings_menu_titles)
     var images =  listOf(R.drawable.ic_credit_card, R.drawable.ic_address_book, R.drawable.ic_wallet_swap,
-            R.drawable.ic_currency, R.drawable.ic_moon,
-            R.drawable.ic_comment,
-            R.drawable.ic_mobile_android_alt, R.drawable.ic_trash, R.drawable.ic_bug)
+            R.drawable.ic_currency, R.drawable.ic_moon, R.drawable.ic_moon)
     init {
         mContext = context
         mFragment = fragment
     }
 
     enum class CellType {
-        HEADER, BUY, CONTACTS, MULTIWALLET,
-        CURRENCY, THEME,
-        SUPPORT,
+        HEADER, GENERAL, SECURITY_CENTER, HELP,
         VERSION, LOGOUT, ADVANCED
 
     }
@@ -73,9 +65,14 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
         val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
         titleTextView.text = settingsTitles[position - 1]
         if (position == CellType.VERSION.ordinal) {
+            val view = layoutInflater.inflate(R.layout.settings_version_row_layout, viewGroup, false)
             val version = mContext.packageManager.getPackageInfo(mContext.packageName, 0).versionName
-            titleTextView.text = mContext.resources.getString(R.string.SETTINGS_version, version)
-            titleTextView.textColor = ContextCompat.getColor(mContext, R.color.colorSubtitleGrey)
+            view.find<TextView>(R.id.titleTextView).text = mContext.resources.getString(R.string.SETTINGS_version, version)
+            view.find<TextView>(R.id.subtitleTextView).text = mContext.resources.getString(R.string.SETTINGS_terms_and_privacy)
+            view.setOnClickListener {
+                getClickListenerForPosition(position)
+            }
+            return view
         }
 
         if (position == CellType.LOGOUT.ordinal) {
@@ -87,11 +84,6 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
             view.findViewById<ImageView>(R.id.settingsIcon).image = null
         }
 
-        if (position == CellType.BUY.ordinal) {
-            view.findViewById<ImageView>(R.id.settingsIcon).image?.setTint(ContextCompat.getColor(mContext, R.color.colorGain))
-            view.findViewById<TextView>(R.id.titleTextView).textColor = ContextCompat.getColor(mContext, R.color.colorGain)
-        }
-
         view.setOnClickListener {
             getClickListenerForPosition(position)
         }
@@ -99,38 +91,20 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
     }
 
     fun getClickListenerForPosition(position: Int) {
-        if (position == CellType.BUY.ordinal) {
-            ModalBottomSheetDialogFragment.Builder()
-                    .add(R.menu.buy_menu)
-                    .show(mFragment.childFragmentManager, "buy_options")
-        } else if (position == CellType.CURRENCY.ordinal) {
-            val currencyModal = CurrencyFragment.newInstance()
-            currencyModal.show((mContext as AppCompatActivity).supportFragmentManager, currencyModal.tag)
+        if (position == CellType.GENERAL.ordinal) {
+            val intent = Intent(mContext, GeneralSettingsActivity::class.java)
+            ContextCompat.startActivity(mContext, intent, null)
+        } else if (position == CellType.SECURITY_CENTER.ordinal) {
+            val manageWalletsModal = ManageWalletsBottomSheet.newInstance()
+            manageWalletsModal.show(mFragment.activity!!.supportFragmentManager, manageWalletsModal.tag)
             return
-        } else if (position == CellType.CONTACTS.ordinal) {
-            val contactsModal = ContactsFragment.newInstance()
-            val args = Bundle()
-            args.putBoolean("canAddAddress", true)
-            contactsModal.arguments = args
-            contactsModal.show((mContext as AppCompatActivity).supportFragmentManager, contactsModal.tag)
-            return
-        } else if(position == CellType.THEME.ordinal) {
-            val themeModal = ThemeModalFragment.newInstance()
-            themeModal.show((mContext as AppCompatActivity).supportFragmentManager, themeModal.tag)
-            return
-        } else if (position == CellType.MULTIWALLET.ordinal) {
-            if (NEP6.nep6HasActivated()) {
-                val manageWalletsModal = ManageWalletsBottomSheet.newInstance()
-                manageWalletsModal.show(mFragment.activity!!.supportFragmentManager, manageWalletsModal.tag)
-                return
-            } else {
-                val intent = Intent(mContext, MultiwalletActivateActivity::class.java)
-                startActivity(mContext, intent, null)
-                return
-            }
-        } else if (position == CellType.SUPPORT.ordinal) {
-            var intent = Intent(mContext, HelpRootActivity::class.java)
+        } else if (position == CellType.HELP.ordinal) {
+            var intent = Intent(mContext, SettingsHelpActivity::class.java)
             startActivity(mContext, intent, null)
+        } else if (position == CellType.VERSION.ordinal) {
+            val intent = Intent(mContext, DappContainerActivity::class.java)
+            intent.putExtra("url", "https://o3.network/privacy/")
+            mContext.startActivity(intent)
         } else if (position == CellType.LOGOUT.ordinal) {
 
             mContext.alert(O3Wallet.appContext!!.resources.getString(R.string.SETTINGS_logout_warning)) {
@@ -140,7 +114,7 @@ class SettingsAdapter(context: Context, fragment: SettingsFragment): BaseAdapter
                     Account.deleteNEP6PassFromDevice()
                     NEP6.removeFromDevice()
                     val intent = Intent(mContext, OnboardingRootActivity::class.java)
-                    startActivity(mContext, intent, null)
+                    ContextCompat.startActivity(mContext, intent, null)
                 }
                 noButton {
 

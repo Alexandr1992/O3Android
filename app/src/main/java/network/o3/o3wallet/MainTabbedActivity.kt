@@ -38,7 +38,7 @@ import zendesk.core.AnonymousIdentity
 import zendesk.core.Zendesk
 import zendesk.support.Support
 
-class MainTabbedActivity : AppCompatActivity() {
+class   MainTabbedActivity : AppCompatActivity() {
 
     private var currentNavController: LiveData<NavController>? = null
 
@@ -48,6 +48,7 @@ class MainTabbedActivity : AppCompatActivity() {
         setupKeyboardDetector()
         setupChannel()
         setupZendesk()
+        LocalBroadcastManager.getInstance(this).registerReceiver(needReloadThemeReciever, IntentFilter("need-reload-theme"))
 
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
@@ -205,12 +206,15 @@ class MainTabbedActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), IntentFilter("Alert"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(needReloadThemeReciever, IntentFilter("need-reload-theme"))
     }
 
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver((mMessageReceiver))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(needReloadThemeReciever)
     }
 

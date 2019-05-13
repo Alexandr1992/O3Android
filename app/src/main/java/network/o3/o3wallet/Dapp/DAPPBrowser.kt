@@ -76,7 +76,6 @@ class DAPPBrowser : Fragment() {
 
         setupWebClients()
 
-
         webView.visibility = View.INVISIBLE
         webView.loadUrl(dappViewModel.url)
         val webSettings = webView.settings
