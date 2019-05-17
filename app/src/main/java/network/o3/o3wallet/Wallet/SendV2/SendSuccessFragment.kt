@@ -1,6 +1,7 @@
 package network.o3.o3wallet.Wallet.SendV2
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -120,6 +121,16 @@ class SendSuccessFragment : Fragment() {
         }
     }
 
+    fun setTransactionResult(sendViewModel: SendViewModel) {
+        val intent = Intent()
+        intent.putExtra("assetName", sendViewModel.getSelectedAsset().value!!.name)
+        intent.putExtra("amount", sendViewModel.getSelectedSendAmount().toDouble())
+        intent.putExtra("address", sendViewModel.getSelectedAddress().value!!)
+        intent.putExtra("transactionId", sendViewModel.txID)
+
+        activity?.setResult(Activity.RESULT_OK, intent)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -130,6 +141,7 @@ class SendSuccessFragment : Fragment() {
         initiateSelectedRecipientDetails()
         initiateSelectedAssetDetails()
         initiateActionButtons()
+        setTransactionResult((activity as SendV2Activity).sendViewModel)
 
         return mView
     }
