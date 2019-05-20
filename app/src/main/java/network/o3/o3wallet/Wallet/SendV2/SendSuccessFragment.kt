@@ -1,7 +1,6 @@
 package network.o3.o3wallet.Wallet.SendV2
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
