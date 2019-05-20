@@ -94,12 +94,12 @@ class   SendReviewFragment : Fragment() {
         intent.putExtra("amount", sendViewModel.getSelectedSendAmount().toDouble())
         intent.putExtra("address", sendViewModel.getSelectedAddress().value!!)
 
-        if (sendViewModel.txID != null){
-            intent.putExtra("transactionId", sendViewModel.txID)
+        if (sendViewModel.txID != null && !sendViewModel.txID.isEmpty()) {
+            intent.putExtra("txId", sendViewModel.txID)
         }
 
-        if (sendResult != null){
-            intent.putExtra("sendResultDetails", sendResult)
+        if (sendResult != null) {
+            intent.putExtra("sendResult", sendResult)
         }
 
         return intent
