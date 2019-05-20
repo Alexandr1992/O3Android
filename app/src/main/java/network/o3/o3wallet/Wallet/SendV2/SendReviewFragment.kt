@@ -1,8 +1,10 @@
 package network.o3.o3wallet.Wallet.SendV2
 
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -86,14 +88,35 @@ class   SendReviewFragment : Fragment() {
         }
     }
 
+    fun createSendResultIntent(sendViewModel: SendViewModel, sendResult: String?): Intent {
+        val intent = Intent()
+        intent.putExtra("assetName", sendViewModel.getSelectedAsset().value!!.name)
+        intent.putExtra("amount", sendViewModel.getSelectedSendAmount().toDouble())
+        intent.putExtra("address", sendViewModel.getSelectedAddress().value!!)
+
+        if (sendViewModel.txID != null && !sendViewModel.txID.isEmpty()) {
+            intent.putExtra("txId", sendViewModel.txID)
+        }
+
+        if (sendResult != null) {
+            intent.putExtra("sendResult", sendResult)
+        }
+
+        return intent
+    }
+
     fun initiateSendResultListener() {
         val sendActivity = activity as SendV2Activity
         sendActivity.sendViewModel.getSendResult().observe(this, Observer { result ->
             sendActivity.sendingToast?.cancel()
+
+            val intent = createSendResultIntent(sendActivity.sendViewModel, result)
             if (result != null) {
-                (activity as SendV2Activity).sendViewModel.txID = result
+                sendActivity?.setResult(Activity.RESULT_OK, intent)
+                sendActivity.sendViewModel.txID = result
                 mView.findNavController().navigate(R.id.action_sendReviewFragment_to_sendSuccessFragment)
             } else {
+                sendActivity?.setResult(Activity.RESULT_CANCELED, intent)
                 mView.findNavController().navigate(R.id.action_sendReviewFragment_to_sendFailedFragment)
             }
         })
